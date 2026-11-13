@@ -14,6 +14,27 @@
 9. **Log everything:** every user, system and admin action is recorded (activity history, audit log, entity events — `database.md` §14, §14a) so that any action a user asks about can be proven later (who, what, when, before/after). No feature ships without its logging.
 10. **Product quality bar:** the app is simple, user-friendly, beautiful, elegant, professional and modern — never deviate from this. Usability, speed and performance are continuously optimised (budgets in `engineering_checklist.md`).
 
+## Sessions on both sides [DECIDED 2026-11-13]
+The user opens and closes sessions with "session aç" and "session kapat" on **both** sides. The single source for both is the GitHub repository (`main`), never a chat's memory.
+
+| | Claude Code (VS Code) | claude.ai (design side) |
+|---|---|---|
+| Procedure | `CLAUDE.md` › Session memory | below |
+| Report format | three tables: Bitenler · Açık işler · Sıradaki adım (`CLAUDE.md` › Session report format) | same |
+
+**claude.ai — "session aç":**
+1. Pull the latest `main` of `mrsbakanmetric/firsatgeldi`.
+2. Read `session_log.md` (newest first), the Progress table in `implementation_plan.md`, `screen_status.md`, `build_status.md`; list open PRs and the last merged ones.
+3. If the claude.ai project mirrors are older than `main`, say so and offer to refresh them.
+4. Reply with the three-table report; stop and wait for approval.
+
+**claude.ai — "session kapat":**
+1. List what was done in this session (design changes, PRs, decisions taken by the user, open questions).
+2. Design changes → `design-change` PR (PNGs + design version + change note in `screen_status.md`); decisions → `spec` PR updating all affected docs together.
+3. Add one entry at the top of `session_log.md` (side: claude.ai) in that PR, or in `chore/session-log-<date>`.
+4. Refresh the claude.ai project mirrors after the user merges.
+5. Reply with the three-table report (PRs to merge with links); stop.
+
 ## Role
 Senior software engineer building FırsatGeldi. FırsatGeldi is a **production product, not an MVP**: everything written is production quality.
 
