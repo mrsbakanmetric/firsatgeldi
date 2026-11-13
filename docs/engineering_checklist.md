@@ -161,7 +161,7 @@
 - [ ] Cached data shown immediately with age; refreshed in background
 
 ### "Check Now"
-- [ ] Cache window `check.cache_minutes` (default 5): a recent result is shown, no allowance used
+- [ ] Cache window `check_now.cache_minutes` (default 5): a recent result is shown, no allowance used
 - [ ] Daily allowance enforced server-side: Free 10, Premium 30 (package settings); Application Manager unlimited
 - [ ] Remaining allowance shown next to the button; disabled with reason at zero
 - [ ] **Bulk check** on Tracked Items: visible active items; number to be checked stated in advance; items within the cache window use no allowance
@@ -176,7 +176,7 @@
 ### Notifications
 - [ ] Web: bell **panel** (last 10, unread first) + "Tümü" page with filters; logic channel-agnostic (push added with mobile)
 - [ ] Email **on by default for all types except** "Aradığın ürün ucuzladı" (`SEARCHED_PRODUCT_DROP`), whose e-mail is **off by default** [DECIDED 2026-11-13]; per-type on/off (legal nature [DECIDE LATER] — legal opinion before launch)
-- [ ] Daily cap `notifications.daily_cap` (default 5); return ≤ 2 days not capped
+- [ ] Daily cap `notify.daily_cap` (default 5); return ≤ 2 days not capped
 - [ ] Optional daily digest; urgent items (deal + return ≤ 2 days, delivery question) never wait
 - [ ] **Mandatory account and security notifications** (welcome, verification, new device sign-in, password change/reset, sign-in method added, account deletion started/restored/completed, suspension, data export ready, package request outcome, support reply, re-consent required): in-app + email always, not capped, not digested, cannot be turned off
 - [ ] Admin notifications to the Application Manager: high-risk fraud case, source alert, budget threshold, daily digest of pending requests
@@ -264,7 +264,7 @@
 - [ ] Email verification, password reset, rate-limited sign-in; new-device sign-in notification
 - [ ] Web session in secure httpOnly cookies (mobile session storage decided with mobile)
 - [ ] KVKK notice + terms accepted at sign-up (versioned consents)
-- [ ] Data export; **account deletion** closes the account immediately, restorable by signing in within `account.restore_days` (default 30), then personal data deleted and statistics anonymised
+- [ ] Data export; **account deletion** closes the account immediately, restorable by signing in within `account.deletion_restore_days` (default 30), then personal data deleted and statistics anonymised
 - [ ] Development login removed before launch
 
 ### Internationalisation
