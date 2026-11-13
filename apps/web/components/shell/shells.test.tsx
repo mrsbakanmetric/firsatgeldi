@@ -36,6 +36,11 @@ describe.each(LOCALES)("shells in %s", (locale: Locale) => {
     const links = within(topNav as HTMLElement).getAllByRole("link");
     expect(links.map((link) => link.textContent)).toEqual([t("shell.nav.home"), t("shell.nav.tracking"), t("shell.nav.search"), t("shell.nav.discover"), t("shell.nav.savings")]);
     expect(links[1]?.getAttribute("aria-current")).toBe("page");
+    // md–lg: icon only, label visually hidden but still the accessible name, plus a tooltip hidden from lg.
+    for (const link of links) {
+      expect(link.querySelector("span")?.className).toContain("sr-only lg:not-sr-only");
+      expect(link.parentElement?.querySelector("[aria-hidden='true'].lg\\:hidden")?.textContent).toBe(link.textContent);
+    }
     expect(screen.getByRole("button", { name: t("shell.bell.unread", { count: 3 }) })).toBeDefined();
     expect(screen.getByRole("main")).toBeDefined();
     expect(screen.getByRole("link", { name: t("shell.skipToContent") }).getAttribute("href")).toBe("#main");

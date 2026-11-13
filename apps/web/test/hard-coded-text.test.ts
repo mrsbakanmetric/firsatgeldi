@@ -11,7 +11,8 @@ async function ruleIds(body: string): Promise<string[]> {
   return (result?.messages ?? []).map((message) => message.ruleId ?? message.message);
 }
 
-describe("hard-coded text lint (apps/web)", () => {
+// A cold ESLint start (Next.js + Tailwind design system) takes several seconds.
+describe("hard-coded text lint (apps/web)", { timeout: 30_000 }, () => {
   it("accepts catalogue texts and non-text attributes", async () => {
     expect(await ruleIds(`<main className="p-4" aria-label={t("a")} title={t("b")}>{t("c")}</main>`)).toEqual([]);
   });

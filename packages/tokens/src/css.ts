@@ -29,16 +29,33 @@ function colorDeclarations(colors: ColorMap): string[] {
 const UNITLESS_COMPONENT_KEY = /(?:^|-)(?:opacity|stroke-width)$/;
 const DURATION = /^\d+(?:\.\d+)?ms$/;
 
+/** Dimension references in component settings → the variable that holds the value. */
+const DIMENSION_REFERENCE: Record<string, string> = {
+  size: "--size-",
+  space: "--spacing-",
+  radius: "--radius-",
+  "border-width": "--border-width-",
+};
+
+function dimensionReference(value: string): string | null {
+  const match = /^([a-z-]+)\.([\w-]+)$/.exec(value);
+  const prefix = match?.[1] ? DIMENSION_REFERENCE[match[1]] : undefined;
+  return prefix && match?.[2] ? `var(${prefix}${match[2]})` : null;
+}
+
 /**
- * Numeric component settings as plain variables: components.switch["track-width"] = 48
- * → `--component-switch-track-width: 48px;`. Role references ("color.primary")
- * are not emitted: components use the matching theme variable directly.
+ * Component settings as plain variables: numbers (components.switch["track-width"] = 48
+ * → `--component-switch-track-width: 48px;`), durations, and dimension references
+ * (button.ghost["height-touch"] = "size.touch-target-min" → `var(--size-touch-target-min)`).
+ * Role references ("color.primary") are not emitted: components use the theme variable directly.
  */
 function componentDeclarations(components: object, prefix = "--component"): string[] {
   return Object.entries(components).flatMap(([key, value]): string[] => {
     const name = `${prefix}-${key}`;
     if (typeof value === "number") return [`${name}: ${UNITLESS_COMPONENT_KEY.test(key) ? value : px(value)};`];
     if (typeof value === "string" && DURATION.test(value)) return [`${name}: ${value};`];
+    const reference = typeof value === "string" ? dimensionReference(value) : null;
+    if (reference) return [`${name}: ${reference};`];
     if (typeof value === "object" && value !== null && !Array.isArray(value)) return componentDeclarations(value, name);
     return [];
   });

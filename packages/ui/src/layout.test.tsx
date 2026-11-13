@@ -67,6 +67,7 @@ describe("StepIndicator and SegmentedChoice", () => {
     const items = screen.getAllByRole("listitem");
     expect(items[1]?.getAttribute("aria-current")).toBe("step");
     expect(items[0]?.textContent).toContain("tamamlandı");
+    expect(items[1]?.querySelector("span")?.className).toContain("size-(--size-step-indicator-dot)");
   });
 
   it("announces the selected option as pressed", async () => {

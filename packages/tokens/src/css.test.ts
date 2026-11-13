@@ -79,6 +79,13 @@ describe("theme.css", () => {
     expect(root).not.toMatch(/--component-[\w-]+: color\./);
   });
 
+  it("turns dimension references in component settings into variables", () => {
+    const root = blockOf(":root");
+    expect(root).toContain("--component-button-ghost-height-touch: var(--size-touch-target-min);");
+    expect(root).toContain("--component-button-primary-padding-x: var(--spacing-5);");
+    for (const [, name] of root.matchAll(/var\((--[\w-]+)\)/g)) expect(css).toContain(`${name}:`);
+  });
+
   it("quotes font names that contain spaces", () => {
     const spaced = Object.values(tokens.typography["font-family"]).flat().filter((name) => name.includes(" "));
     for (const name of spaced) expect(blockOf("@theme static")).toContain(JSON.stringify(name));

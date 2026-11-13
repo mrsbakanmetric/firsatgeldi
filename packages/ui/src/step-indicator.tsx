@@ -31,7 +31,7 @@ export function StepIndicator({ label, steps, current, completedLabel, progress,
             <li key={step} aria-current={isCurrent ? "step" : undefined} className="flex min-w-0 flex-1 items-center gap-2 last:flex-none">
               <span
                 className={cn(
-                  "flex size-8 shrink-0 items-center justify-center rounded-pill text-caption font-bold",
+                  "flex size-(--size-step-indicator-dot) shrink-0 items-center justify-center rounded-pill text-caption font-bold",
                   done && "bg-primary text-on-primary",
                   isCurrent && "border-(length:--border-width-strong) border-primary text-primary",
                   !done && !isCurrent && "border-(length:--border-width-strong) border-border text-text-muted",

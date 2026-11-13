@@ -19,7 +19,9 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary: "min-h-(--component-button-primary-height) px-5 py-2 text-button bg-primary text-on-primary hover:bg-primary-hover",
   deal: "min-h-(--component-button-deal-height) px-5 py-2 text-button bg-accent text-on-accent hover:bg-accent-hover",
   secondary: "min-h-(--component-button-secondary-height) px-5 py-2 text-button border border-primary bg-surface text-primary hover:bg-primary-subtle",
-  ghost: "min-h-(--component-button-ghost-height) px-3 py-2 text-body-sm font-semibold text-primary hover:bg-surface-alt",
+  // 44 px below breakpoint.md and on touch; 40 px only from breakpoint.md with a mouse (§4.2).
+  ghost:
+    "min-h-(--component-button-ghost-height-touch) md:pointer-fine:min-h-(--component-button-ghost-height) px-3 py-2 text-body-sm font-semibold text-primary hover:bg-surface-alt",
   danger: "min-h-(--component-button-danger-height) px-5 py-2 text-button bg-danger text-text-inverse",
   link: "rounded-sm text-body font-medium text-primary underline underline-offset-4 hover:text-primary-hover",
 };

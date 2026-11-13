@@ -26,6 +26,13 @@ describe("Button", () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it("ghost button is 44 px on touch and below breakpoint.md, 40 px only from breakpoint.md with a mouse", () => {
+    render(<Button variant="ghost">Şimdi kontrol et</Button>);
+    const classes = screen.getByRole("button").className.split(" ");
+    expect(classes).toContain("min-h-(--component-button-ghost-height-touch)");
+    expect(classes).toContain("md:pointer-fine:min-h-(--component-button-ghost-height)");
+  });
+
   it("icon-only buttons carry their label as the accessible name", () => {
     render(<Button iconOnly icon={Trash2} label="Sil" variant="ghost" />);
     expect(screen.getByRole("button", { name: "Sil" })).toBeDefined();

@@ -6,7 +6,7 @@
 // see the normal navigation with "Giriş yap"; on the Landing Page they see the
 // guest navigation with "Giriş yap" + "Ücretsiz başla".
 import type { Locale } from "@firsatgeldi/i18n";
-import { buttonClasses, cn, focusRing, Icon, Menu } from "@firsatgeldi/ui";
+import { buttonClasses, cn, focusRing, Icon, Menu, Tooltip } from "@firsatgeldi/ui";
 import { CirclePlus, Compass, House, List, LogIn, Search, UserRound, Wallet, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,7 +34,7 @@ export interface AppShellProps {
 }
 
 const TOP_LINK_CLASSES =
-  "flex min-h-(--size-touch-target-min) shrink-0 items-center gap-2 border-y-(length:--border-width-strong) border-transparent px-3 text-body-sm whitespace-nowrap";
+  "flex min-h-(--size-touch-target-min) min-w-(--size-touch-target-min) shrink-0 items-center gap-2 border-y-(length:--border-width-strong) border-transparent px-3 text-body-sm whitespace-nowrap";
 
 export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut, children }: AppShellProps) {
   const t = useTranslator(locale);
@@ -54,16 +54,24 @@ export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut
             <nav aria-label={t("shell.mainNav")} className="hidden h-full min-w-0 items-stretch gap-1 overflow-x-auto md:flex">
               {APP_NAV.map((entry) => {
                 const active = entry.id === current;
+                // From breakpoint.md to below breakpoint.lg: icon only; the label stays the
+                // accessible name (visually hidden) and shows as a Tooltip [DECIDED 2026-11-14].
                 return (
-                  <Link
-                    key={entry.id}
-                    href={hrefFor(entry.route, locale)}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(TOP_LINK_CLASSES, active ? "border-b-primary font-semibold text-primary" : "font-medium text-text-muted hover:text-text", focusRing)}
-                  >
-                    <Icon icon={NAV_ICON[entry.id]} />
-                    <span>{t(entry.label)}</span>
-                  </Link>
+                  <Tooltip key={entry.id} text={t(entry.label)} duplicatesLabel bubbleClassName="lg:hidden">
+                    <Link
+                      href={hrefFor(entry.route, locale)}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        TOP_LINK_CLASSES,
+                        "justify-center lg:justify-start",
+                        active ? "border-b-primary font-semibold text-primary" : "font-medium text-text-muted hover:text-text",
+                        focusRing,
+                      )}
+                    >
+                      <Icon icon={NAV_ICON[entry.id]} />
+                      <span className="sr-only lg:not-sr-only">{t(entry.label)}</span>
+                    </Link>
+                  </Tooltip>
                 );
               })}
             </nav>

@@ -19,9 +19,11 @@ export interface TooltipProps {
    */
   duplicatesLabel?: boolean;
   placement?: "top" | "bottom";
+  /** Extra classes for the bubble, e.g. "lg:hidden" when the label becomes visible at a width. */
+  bubbleClassName?: string;
 }
 
-export function Tooltip({ text, children, duplicatesLabel = false, placement = "bottom" }: TooltipProps) {
+export function Tooltip({ text, children, duplicatesLabel = false, placement = "bottom", bubbleClassName }: TooltipProps) {
   const id = useId();
   const [open, setOpen] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -72,6 +74,7 @@ export function Tooltip({ text, children, duplicatesLabel = false, placement = "
           "rounded-sm bg-text px-2 py-1 text-caption text-text-inverse",
           placement === "bottom" ? "top-full mt-2" : "bottom-full mb-2",
           !open && "hidden",
+          bubbleClassName,
         )}
       >
         {text}
