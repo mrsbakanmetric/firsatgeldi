@@ -1,0 +1,552 @@
+{
+  "$meta": {
+    "name": "FırsatGeldi Design Tokens",
+    "version": "1.6.0",
+    "updated": "2026-11-12",
+    "activeTheme": "firsatgeldi-default",
+    "rule": "SINGLE SOURCE OF TRUTH for every visual value in web and mobile. Never hard-code colours, font sizes, spacing, radius, borders or shadows in code. Read this file before creating or changing ANY UI element (screen, button, text, heading, divider, card, badge, input, icon, chart, notification, email).",
+    "contrastStandard": "WCAG 2.1 AA: 4.5:1 normal text, 3:1 large text (>=18.66px bold or >=24px) and UI parts"
+  },
+  "palette": {
+    "emerald": {
+      "50": "#ECFDF5",
+      "100": "#D1FAE5",
+      "300": "#6EE7B7",
+      "400": "#34D399",
+      "600": "#059669",
+      "700": "#047857",
+      "800": "#065F46",
+      "950": "#052E22"
+    },
+    "coral": {
+      "300": "#FFA48F",
+      "400": "#FF7A5C",
+      "500": "#FF5A36",
+      "700": "#C73A1C",
+      "950": "#1A0A05"
+    },
+    "ink": {
+      "50": "#F7FAF9",
+      "100": "#EEF4F2",
+      "200": "#DCE5E1",
+      "500": "#4A5D6E",
+      "300": "#9FB3C4",
+      "700": "#24384B",
+      "800": "#16293B",
+      "850": "#0E1E2E",
+      "900": "#0B1F33",
+      "950": "#07131F"
+    },
+    "amber": {
+      "300": "#FCD34D",
+      "400": "#FBBF24",
+      "700": "#A16207",
+      "100": "#FEF3C7"
+    },
+    "red": {
+      "100": "#FEE2E2",
+      "400": "#F87171",
+      "700": "#B91C1C"
+    },
+    "sky": {
+      "100": "#E0F2FE",
+      "400": "#38BDF8",
+      "700": "#0369A1"
+    },
+    "white": "#FFFFFF"
+  },
+  "themes": {
+    "firsatgeldi-default": {
+      "description": "Kazanç Yeşili: emerald brand (= saving), coral accent only for the 'deal found' moment, ink neutrals.",
+      "light": {
+        "color": {
+          "primary": "{palette.emerald.700}",
+          "primary-hover": "{palette.emerald.800}",
+          "primary-subtle": "{palette.emerald.100}",
+          "on-primary": "{palette.white}",
+          "on-primary-subtle": "{palette.emerald.800}",
+          "accent": "{palette.coral.500}",
+          "accent-hover": "{palette.coral.400}",
+          "on-accent": "{palette.coral.950}",
+          "accent-text": "{palette.coral.700}",
+          "savings": "{palette.emerald.700}",
+          "savings-subtle": "{palette.emerald.100}",
+          "warning": "{palette.amber.700}",
+          "warning-subtle": "{palette.amber.100}",
+          "on-warning-subtle": "#854D0E",
+          "danger": "{palette.red.700}",
+          "danger-subtle": "{palette.red.100}",
+          "info": "{palette.sky.700}",
+          "info-subtle": "{palette.sky.100}",
+          "background": "{palette.ink.50}",
+          "surface": "{palette.white}",
+          "surface-alt": "{palette.ink.100}",
+          "border": "{palette.ink.200}",
+          "divider": "{palette.ink.200}",
+          "text": "{palette.ink.900}",
+          "text-muted": "{palette.ink.500}",
+          "text-inverse": "{palette.white}",
+          "focus-ring": "{palette.emerald.600}",
+          "overlay": "rgba(11,31,51,0.48)",
+          "chart-paid": "{palette.ink.900}",
+          "chart-best": "{palette.emerald.700}",
+          "chart-deal": "{palette.coral.500}",
+          "chart-grid": "{palette.ink.200}",
+          "chart-series": [
+            "#047857",
+            "#0369A1",
+            "#7C3AED",
+            "#A16207",
+            "#BE185D",
+            "#4A5D6E"
+          ],
+          "stock-in": "{palette.emerald.700}",
+          "stock-low": "{palette.amber.400}",
+          "stock-out-border": "{palette.red.700}",
+          "stock-out-fill": "{palette.white}",
+          "hero-surface": "{palette.ink.900}",
+          "on-hero-surface": "{palette.white}",
+          "on-hero-muted": "{palette.ink.200}",
+          "hero-savings": "{palette.emerald.300}",
+          "hero-line": "{palette.ink.700}",
+          "sparkle": "{palette.amber.300}",
+          "logo-surface": "{palette.white}",
+          "on-logo-surface": "{palette.ink.900}"
+        }
+      },
+      "dark": {
+        "color": {
+          "primary": "{palette.emerald.400}",
+          "primary-hover": "{palette.emerald.300}",
+          "primary-subtle": "#0F3A2C",
+          "on-primary": "{palette.emerald.950}",
+          "on-primary-subtle": "{palette.emerald.300}",
+          "accent": "{palette.coral.400}",
+          "accent-hover": "{palette.coral.300}",
+          "on-accent": "{palette.coral.950}",
+          "accent-text": "{palette.coral.400}",
+          "savings": "{palette.emerald.400}",
+          "savings-subtle": "#0F3A2C",
+          "warning": "{palette.amber.400}",
+          "warning-subtle": "#3A2E0B",
+          "on-warning-subtle": "{palette.amber.300}",
+          "danger": "{palette.red.400}",
+          "danger-subtle": "#3B1416",
+          "info": "{palette.sky.400}",
+          "info-subtle": "#0B2A3D",
+          "background": "{palette.ink.950}",
+          "surface": "{palette.ink.850}",
+          "surface-alt": "{palette.ink.800}",
+          "border": "{palette.ink.700}",
+          "divider": "{palette.ink.700}",
+          "text": "{palette.ink.100}",
+          "text-muted": "{palette.ink.300}",
+          "text-inverse": "{palette.ink.900}",
+          "focus-ring": "{palette.emerald.300}",
+          "overlay": "rgba(0,0,0,0.6)",
+          "chart-paid": "{palette.ink.100}",
+          "chart-best": "{palette.emerald.400}",
+          "chart-deal": "{palette.coral.400}",
+          "chart-grid": "{palette.ink.700}",
+          "chart-series": [
+            "#34D399",
+            "#38BDF8",
+            "#A78BFA",
+            "#FBBF24",
+            "#F472B6",
+            "#9FB3C4"
+          ],
+          "stock-in": "{palette.emerald.400}",
+          "stock-low": "{palette.amber.400}",
+          "stock-out-border": "{palette.red.400}",
+          "stock-out-fill": "{palette.ink.850}",
+          "hero-surface": "{palette.ink.800}",
+          "on-hero-surface": "{palette.ink.100}",
+          "on-hero-muted": "{palette.ink.300}",
+          "hero-savings": "{palette.emerald.300}",
+          "hero-line": "{palette.ink.700}",
+          "sparkle": "{palette.amber.300}",
+          "logo-surface": "{palette.white}",
+          "on-logo-surface": "{palette.ink.900}"
+        }
+      }
+    }
+  },
+  "typography": {
+    "font-family": {
+      "base": "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+      "numeric": "Inter, system-ui, sans-serif",
+      "note": "Inter fully supports Turkish characters (ı İ ş Ş ğ Ğ ç Ç ö Ö ü Ü). Prices use tabular numbers."
+    },
+    "weight": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "scale": {
+      "display": {
+        "size": "32px",
+        "line": "40px",
+        "weight": 700,
+        "use": "Savings hero numbers, onboarding, Landing Page h1 and deal-showcase title"
+      },
+      "h1": {
+        "size": "28px",
+        "line": "36px",
+        "weight": 700,
+        "use": "Screen titles"
+      },
+      "h2": {
+        "size": "22px",
+        "line": "30px",
+        "weight": 600,
+        "use": "Section titles"
+      },
+      "h3": {
+        "size": "18px",
+        "line": "26px",
+        "weight": 600,
+        "use": "Card titles"
+      },
+      "body": {
+        "size": "16px",
+        "line": "24px",
+        "weight": 400,
+        "use": "Default text"
+      },
+      "body-sm": {
+        "size": "14px",
+        "line": "20px",
+        "weight": 400,
+        "use": "Secondary text, meta"
+      },
+      "caption": {
+        "size": "12px",
+        "line": "16px",
+        "weight": 500,
+        "use": "Timestamps, 'checked 2 min ago', labels"
+      },
+      "price-lg": {
+        "size": "28px",
+        "line": "34px",
+        "weight": 700,
+        "numeric": "tabular",
+        "use": "Main price on offer/product screens"
+      },
+      "price": {
+        "size": "18px",
+        "line": "24px",
+        "weight": 600,
+        "numeric": "tabular",
+        "use": "Prices in cards/lists"
+      },
+      "button": {
+        "size": "16px",
+        "line": "24px",
+        "weight": 600,
+        "use": "Button labels"
+      }
+    }
+  },
+  "space": {
+    "0": "0px",
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "8": "32px",
+    "10": "40px",
+    "12": "48px",
+    "16": "64px"
+  },
+  "radius": {
+    "none": "0px",
+    "sm": "6px",
+    "md": "10px",
+    "lg": "14px",
+    "xl": "20px",
+    "pill": "999px"
+  },
+  "border-width": {
+    "hairline": "1px",
+    "strong": "2px"
+  },
+  "shadow": {
+    "none": "none",
+    "sm": "0 1px 2px rgba(11,31,51,0.06)",
+    "md": "0 4px 12px rgba(11,31,51,0.08)",
+    "lg": "0 12px 32px rgba(11,31,51,0.12)"
+  },
+  "motion": {
+    "fast": "120ms",
+    "base": "200ms",
+    "slow": "320ms",
+    "easing": "cubic-bezier(0.2, 0, 0, 1)"
+  },
+  "size": {
+    "touch-target-min": "44px",
+    "icon-sm": "16px",
+    "icon-md": "20px",
+    "icon-lg": "24px",
+    "content-max-width": "1200px",
+    "thumb-sm": "48px",
+    "thumb-md": "72px",
+    "progress-height": "4px",
+    "header-height": "64px",
+    "bottom-nav-height": "64px",
+    "side-panel-width": "440px",
+    "modal-width": "1120px",
+    "modal-aside-width": "360px"
+  },
+  "breakpoint": {
+    "md": "768px",
+    "rule": "Below md: single column, bottom navigation, panels open as bottom sheets. From md: top navigation, side panel."
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "bg": "color.primary",
+        "bg-hover": "color.primary-hover",
+        "text": "color.on-primary",
+        "radius": "radius.md",
+        "height": "48px",
+        "padding-x": "space.5",
+        "font": "typography.scale.button"
+      },
+      "deal": {
+        "bg": "color.accent",
+        "bg-hover": "color.accent-hover",
+        "text": "color.on-accent",
+        "radius": "radius.md",
+        "height": "48px",
+        "font": "typography.scale.button",
+        "use": "ONLY for the 'deal found' action (e.g. 'Fırsatı gör'). Max one per screen."
+      },
+      "secondary": {
+        "bg": "color.surface",
+        "text": "color.primary",
+        "border": "color.primary",
+        "border-width": "border-width.hairline",
+        "radius": "radius.md",
+        "height": "48px"
+      },
+      "ghost": {
+        "bg": "transparent",
+        "text": "color.primary",
+        "radius": "radius.md",
+        "height": "40px"
+      },
+      "danger": {
+        "bg": "color.danger",
+        "text": "color.text-inverse",
+        "radius": "radius.md",
+        "height": "48px"
+      },
+      "disabled": {
+        "opacity": 0.4
+      },
+      "focus": {
+        "ring": "color.focus-ring",
+        "ring-width": "border-width.strong",
+        "ring-offset": "2px"
+      },
+      "secondary-on-hero": {
+        "bg": "transparent",
+        "text": "color.on-hero-surface",
+        "border": "color.on-hero-muted",
+        "height": "44px"
+      }
+    },
+    "card": {
+      "bg": "color.surface",
+      "border": "color.border",
+      "radius": "radius.lg",
+      "padding": "space.4",
+      "shadow": "shadow.sm"
+    },
+    "input": {
+      "bg": "color.surface-alt",
+      "text": "color.text",
+      "placeholder": "color.text-muted",
+      "border": "color.border",
+      "border-focus": "color.primary",
+      "radius": "radius.md",
+      "height": "48px"
+    },
+    "search-box": {
+      "bg": "color.surface",
+      "border": "color.border",
+      "radius": "radius.xl",
+      "shadow": "shadow.md",
+      "min-height": "56px"
+    },
+    "divider": {
+      "color": "color.divider",
+      "width": "border-width.hairline"
+    },
+    "heading": {
+      "h1": {
+        "font": "typography.scale.h1",
+        "color": "color.text"
+      },
+      "h2": {
+        "font": "typography.scale.h2",
+        "color": "color.text"
+      },
+      "h3": {
+        "font": "typography.scale.h3",
+        "color": "color.text"
+      }
+    },
+    "text": {
+      "default": {
+        "font": "typography.scale.body",
+        "color": "color.text"
+      },
+      "muted": {
+        "font": "typography.scale.body-sm",
+        "color": "color.text-muted"
+      },
+      "caption": {
+        "font": "typography.scale.caption",
+        "color": "color.text-muted"
+      }
+    },
+    "badge": {
+      "savings": {
+        "bg": "color.savings-subtle",
+        "text": "color.on-primary-subtle",
+        "icon": "arrow-down",
+        "radius": "radius.pill"
+      },
+      "deal": {
+        "bg": "color.accent",
+        "text": "color.on-accent",
+        "icon": "zap",
+        "radius": "radius.pill"
+      },
+      "warning": {
+        "bg": "color.warning-subtle",
+        "text": "color.on-warning-subtle",
+        "icon": "clock",
+        "radius": "radius.pill",
+        "use": "Return deadline soon, low stock"
+      },
+      "danger": {
+        "bg": "color.danger-subtle",
+        "text": "color.danger",
+        "icon": "x-circle",
+        "radius": "radius.pill",
+        "use": "Sold out, expired"
+      },
+      "info": {
+        "bg": "color.info-subtle",
+        "text": "color.info",
+        "icon": "info",
+        "radius": "radius.pill"
+      },
+      "store": {
+        "bg": "color.surface-alt",
+        "text": "color.text",
+        "radius": "radius.sm",
+        "use": "Store name; never store brand colours"
+      }
+    },
+    "price": {
+      "current": {
+        "font": "typography.scale.price-lg",
+        "color": "color.text"
+      },
+      "old": {
+        "font": "typography.scale.body-sm",
+        "color": "color.text-muted",
+        "decoration": "line-through"
+      },
+      "saving": {
+        "font": "typography.scale.price",
+        "color": "color.savings"
+      }
+    },
+    "notification": {
+      "deal": {
+        "border-left": "color.accent",
+        "icon-color": "color.accent-text"
+      },
+      "deadline": {
+        "border-left": "color.warning",
+        "icon-color": "color.warning"
+      },
+      "info": {
+        "border-left": "color.info",
+        "icon-color": "color.info"
+      }
+    },
+    "chart": {
+      "paid-line": "color.chart-paid",
+      "best-line": "color.chart-best",
+      "deal-point": "color.chart-deal",
+      "grid": "color.chart-grid",
+      "series": "color.chart-series"
+    },
+    "stock-history": {
+      "unit": "one box = one day",
+      "in-stock": {
+        "fill": "color.stock-in"
+      },
+      "low-stock": {
+        "fill": "color.stock-low"
+      },
+      "out-of-stock": {
+        "fill": "color.stock-out-fill",
+        "border": "color.stock-out-border",
+        "border-style": "dashed",
+        "border-width": "border-width.strong"
+      },
+      "box-radius": "radius.sm",
+      "gap": "space.1",
+      "rule": "All boxes same size. Out of stock is hollow (not colour alone). Key always visible. Dates under the strip."
+    },
+    "price-history": {
+      "paid-line": "color.chart-paid (solid)",
+      "cheapest-line": "color.chart-best (dashed)",
+      "deal-point": "color.chart-deal",
+      "purchase-marker": "hollow point on paid line, label 'Aldın'",
+      "target-line": "color.text (dotted), want-to-buy mode",
+      "labels": "each series is labelled directly with its name and current value; dates on the axis",
+      "label-font": "typography.scale.caption",
+      "value-font": "typography.scale.body-sm bold"
+    },
+    "reveal-gate": {
+      "hidden": {
+        "icon": "lock",
+        "label": "store and seller hidden",
+        "shows": "price, saving, stock status"
+      },
+      "action-show": "button.secondary ('Göster')",
+      "action-hide": "button.secondary or ghost ('Gizle')",
+      "revealed": {
+        "store": "badge.store",
+        "go-to-store": "button.primary"
+      },
+      "rule": "One gate per cheaper store. Same component everywhere; later swapped for token/entitlement gate."
+    },
+    "deal-hero": {
+      "bg": "color.hero-surface",
+      "text": "color.on-hero-surface",
+      "muted": "color.on-hero-muted",
+      "saving": "color.hero-savings",
+      "action": "button.deal"
+    }
+  },
+  "semanticMeaning": {
+    "savings / primary (emerald)": "Money saved, deal value, positive change, brand",
+    "accent (coral)": "ONLY the 'deal found' moment: deal badge, 'Fırsatı gör' button, deal notification. Rare on purpose.",
+    "warning (amber)": "Return deadline approaching, low stock",
+    "danger (red)": "Sold out, expired, error, destructive action",
+    "info (sky)": "Neutral information, last-checked time",
+    "rule": "These meanings are fixed in every theme. Status colours always come with an icon or label (never colour alone)."
+  }
+}
