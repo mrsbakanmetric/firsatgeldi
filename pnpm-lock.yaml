@@ -141,6 +141,9 @@ importers:
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
         version: 4.11.0(eslint@10.14.0(jiti@2.7.0))(tailwindcss@4.3.5)(typescript@6.0.3)
+      eslint-plugin-react:
+        specifier: 7.37.5
+        version: 7.37.5(eslint@10.14.0(jiti@2.7.0))
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.72.2(eslint@10.14.0(jiti@2.7.0))(typescript@6.0.3)
@@ -189,6 +192,10 @@ importers:
         version: 5.1.0(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0))
 
   packages/i18n:
+    dependencies:
+      '@firsatgeldi/core':
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       '@firsatgeldi/config':
         specifier: workspace:*
