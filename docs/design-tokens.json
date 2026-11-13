@@ -102,6 +102,7 @@
           ],
           "stock-in": "{palette.emerald.700}",
           "stock-low": "{palette.amber.400}",
+          "stock-low-border": "{palette.amber.700}",
           "stock-out-border": "{palette.red.700}",
           "stock-out-fill": "{palette.white}",
           "hero-surface": "{palette.ink.900}",
@@ -158,6 +159,7 @@
           ],
           "stock-in": "{palette.emerald.400}",
           "stock-low": "{palette.amber.400}",
+          "stock-low-border": "{palette.amber.400}",
           "stock-out-border": "{palette.red.400}",
           "stock-out-fill": "{palette.ink.850}",
           "hero-surface": "{palette.ink.800}",
@@ -497,7 +499,10 @@
         "fill": "color.stock-in"
       },
       "low-stock": {
-        "fill": "color.stock-low"
+        "fill": "color.stock-low",
+        "border": "color.stock-low-border",
+        "border-style": "solid",
+        "border-width": "border-width.hairline"
       },
       "out-of-stock": {
         "fill": "color.stock-out-fill",
@@ -507,7 +512,7 @@
       },
       "box-radius": "radius.sm",
       "gap": "space.1",
-      "rule": "All boxes same size. Out of stock is hollow (not colour alone). Key always visible. Dates under the strip."
+      "rule": "All boxes same size. Low stock has a solid border so the box meets 3:1 non-text contrast on light surfaces. Out of stock is hollow (not colour alone). Key always visible. Dates under the strip."
     },
     "price-history": {
       "paid-line": "color.chart-paid (solid)",
