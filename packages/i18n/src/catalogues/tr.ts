@@ -14,6 +14,20 @@ export const tr = {
     showPassword: "Şifreyi göster",
     hidePassword: "Şifreyi gizle",
   },
+  // API error messages (packages/contracts ERRORS → messageKey "errors.*"); never show the code.
+  errors: {
+    validation: "Bazı bilgiler eksik ya da hatalı. Kontrol edip tekrar dene.",
+    unauthenticated: "Devam etmek için giriş yap.",
+    forbidden: "Bu işlem için yetkin yok.",
+    restricted: "Bu işlem şu an hesabında kullanılamıyor.",
+    consentRequired: "Devam etmeden önce güncellenen metinleri onaylaman gerekiyor.",
+    notFound: "Aradığın kayıt bulunamadı.",
+    alreadyTracking: "Bu ürünü zaten takip ediyorsun.",
+    limitReached: "Kullanım hakkın doldu.",
+    rateLimited: "Çok sık denedin. Biraz bekleyip tekrar dene.",
+    internal: "Bir şeyler ters gitti. Tekrar dene; yazdıkların duruyor.",
+    network: "Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.",
+  },
   // App shell, auth shell and admin shell (pagedesign.md §2, canvas "0 İskelet ve Bileşenler").
   shell: {
     skipToContent: "İçeriğe geç",

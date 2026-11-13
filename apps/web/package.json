@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/check-no-mock.mjs",
     "start": "next start",
     "lint": "eslint . && stylelint \"**/*.css\" --ignore-pattern \".next/**\"",
     "typecheck": "next typegen && tsc --noEmit",
@@ -17,6 +17,7 @@
     "@firsatgeldi/i18n": "workspace:*",
     "@firsatgeldi/tokens": "workspace:*",
     "@firsatgeldi/ui": "workspace:*",
+    "@tanstack/react-query": "catalog:",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@firsatgeldi/config": "workspace:*",
+    "@firsatgeldi/mocks": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
@@ -34,6 +36,7 @@
     "axe-core": "catalog:",
     "eslint": "catalog:",
     "jsdom": "catalog:",
+    "msw": "catalog:",
     "postcss": "catalog:",
     "stylelint": "catalog:",
     "tailwindcss": "catalog:",

@@ -1,0 +1,123 @@
+// Confirm and tracking (architecture.md §16 CONFIRM AND TRACKING; database.md §6, §8).
+import { z } from "zod";
+import { CalendarDay, Id, Money, StockState, Timestamp, WarrantyType } from "./common";
+import { HiddenOfferView, OfferRef } from "./offers";
+
+/** Return rule of a platform (database.md §6 `platform_return_rules`). */
+export const ReturnRule = z.object({
+  days: z.number().int().nonnegative(),
+  startType: z.enum(["ORDER", "DELIVERY"]),
+  avgDeliveryDays: z.number().int().nonnegative().nullable(),
+  /** AUTO = read from the store page · LOCKED = admin-corrected · DEFAULT = nothing read ("Varsayılan"). */
+  sourceState: z.enum(["AUTO", "LOCKED", "DEFAULT"]),
+  policyUrl: z.url().nullable(),
+});
+export type ReturnRule = z.infer<typeof ReturnRule>;
+
+/**
+ * Category notes shown next to the related field (design case H) [ASSUMPTION]:
+ * NO_BRAND_CODE = tracked only at the user's seller; CATEGORY_UNSUPPORTED = cannot be tracked yet.
+ */
+export const ConfirmWarning = z.enum(["NO_BRAND_CODE", "CATEGORY_UNSUPPORTED"]);
+
+/** Tracking modes (database.md §8 `tracked_items.mode`). */
+export const TrackingMode = z.enum(["BOUGHT", "WANT"]);
+export const TrackingDuration = z.enum(["1W", "1M", "3M", "UNLIMITED"]);
+export const OrderStatus = z.enum(["ORDERED", "SHIPPED", "DELIVERED"]);
+
+/**
+ * `GET /products/:id/confirm-context` — "platforms, return suggestion, withdrawal warning"
+ * (architecture.md §16). The platform list is the full list to pick the user's own
+ * platform from; it is not tied to any offer. Allowances come in `meta.entitlements`.
+ */
+export const ConfirmContext = z.object({
+  productId: Id,
+  platforms: z.array(z.object({ id: Id, name: z.string().min(1), returnRule: ReturnRule })),
+  /** Phones etc.: no right of withdrawal → suggest a price-difference request, not a return. */
+  noWithdrawalRight: z.boolean(),
+  warnings: z.array(ConfirmWarning),
+  /** Active tracking of the same product (design case G: "Zaten takip ediyorsun"). */
+  alreadyTracking: z.array(z.object({ trackedItemId: Id, mode: TrackingMode, since: Timestamp })),
+  /** Want-to-buy hints from the seller-less cheapest history (design case E) [ASSUMPTION]. */
+  targetHints: z.object({ lowest30Days: Money.nullable(), lowest6Months: Money.nullable() }),
+});
+export type ConfirmContext = z.infer<typeof ConfirmContext>;
+
+/** `POST /products/:id/seller-lookup` { platformId, name } → exact match or none; rate-limited (architecture.md §6.4 R1). */
+export const SellerLookupRequest = z.object({
+  platformId: Id,
+  name: z.string().trim().min(1),
+});
+
+/** The user's own seller: identity visible (architecture.md §6.1, column "Seller bought from"). */
+export const SellerLookupResult = z.object({
+  match: z
+    .object({
+      sellerRef: OfferRef,
+      sellerName: z.string().min(1),
+      sellerRating: z.number().min(0).max(5).nullable(),
+      sellerRatingCount: z.number().int().nonnegative().nullable(),
+      stockState: StockState,
+      warrantyType: WarrantyType,
+      listingUrl: z.url(),
+      lastCheckedAt: Timestamp,
+    })
+    .nullable(),
+});
+export type SellerLookupResult = z.infer<typeof SellerLookupResult>;
+
+/** `POST /products/:id/teaser` { pricePaid, sellerRef } — price in the body, never in the URL. */
+export const TeaserRequest = z.object({
+  pricePaid: Money,
+  sellerRef: OfferRef.nullable(),
+});
+
+/** → hidden cheaper offers (HiddenOfferView) + the line "N satıcıda daha ucuz · en çok X kazanç". */
+export const TeaserResult = z.object({
+  offers: z.array(HiddenOfferView),
+  summary: z.object({
+    cheaperCount: z.number().int().nonnegative(),
+    maxSaving: Money.nullable(),
+    lastCheckedAt: Timestamp.nullable(),
+  }),
+});
+export type TeaserResult = z.infer<typeof TeaserResult>;
+
+/** `POST /tracked-items` — BOUGHT | WANT; pricePaid only from the user (database.md §8, R1). */
+export const CreateTrackedItemRequest = z.discriminatedUnion("mode", [
+  z.object({
+    mode: z.literal("BOUGHT"),
+    productId: Id,
+    identifyRequestId: Id.nullable(),
+    platformId: Id,
+    sellerRef: OfferRef.nullable(),
+    pricePaid: Money,
+    pricePaidSource: z.enum(["USER_TYPED", "USER_LINK", "USER_SCREENSHOT"]),
+    orderedOn: CalendarDay,
+    orderStatus: OrderStatus,
+    /** Set only when the user changed the last day ("Son günü değiştir"). */
+    returnDeadline: CalendarDay.nullable(),
+  }),
+  z.object({
+    mode: z.literal("WANT"),
+    productId: Id,
+    identifyRequestId: Id.nullable(),
+    targetPrice: Money.nullable(),
+    trackingDuration: TrackingDuration,
+  }),
+]);
+export type CreateTrackedItemRequest = z.infer<typeof CreateTrackedItemRequest>;
+
+/** The new tracked item (database.md §8 `tracked_items`). */
+export const TrackedItemCreated = z.object({
+  id: Id,
+  productId: Id,
+  mode: TrackingMode,
+  state: z.enum(["ACTIVE", "ENDED", "EXPIRED"]),
+  returnDeadline: CalendarDay.nullable(),
+  returnDeadlineStatus: z.enum(["ESTIMATED", "CONFIRMED", "USER_EDITED", "UNVERIFIED_DEFAULT"]).nullable(),
+  noWithdrawalRight: z.boolean(),
+  trackingEndsAt: Timestamp.nullable(),
+  createdAt: Timestamp,
+});
+export type TrackedItemCreated = z.infer<typeof TrackedItemCreated>;

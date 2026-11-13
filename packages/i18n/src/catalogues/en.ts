@@ -16,6 +16,20 @@ export const en = {
     showPassword: "Show password",
     hidePassword: "Hide password",
   },
+  // API error messages (packages/contracts ERRORS → messageKey "errors.*"); never show the code.
+  errors: {
+    validation: "Some details are missing or wrong. Check them and try again.",
+    unauthenticated: "Sign in to continue.",
+    forbidden: "You don't have permission to do this.",
+    restricted: "This action isn't available on your account right now.",
+    consentRequired: "Please accept the updated terms before you continue.",
+    notFound: "We couldn't find that record.",
+    alreadyTracking: "You're already tracking this product.",
+    limitReached: "You've used up your allowance.",
+    rateLimited: "Too many tries. Wait a moment and try again.",
+    internal: "Something went wrong. Try again; what you entered is kept.",
+    network: "We couldn't connect. Check your internet connection and try again.",
+  },
   shell: {
     skipToContent: "Skip to content",
     logoHome: "FırsatGeldi home",
