@@ -11,9 +11,25 @@ On conflict, `docs/` wins; precedence is in `docs/architecture.md`.
 - `docs/session_log.md` — shared memory across sessions (Claude Code and claude.ai).
 
 ## Session memory
-- **Start of every session:** read `docs/session_log.md` (latest entries first) before anything else.
-- **End of every session:** add one entry at the top of `docs/session_log.md` — date, side (Claude Code / claude.ai), what was done, PRs, open questions, next step. Put it in that session's PR; if the session made no PR, open a `chore/session-log-<date>` PR for it.
-- Keep entries short (≤ 10 lines). Decisions never live only here: they go into the relevant doc in `docs/`.
+The user opens and closes every session with two phrases. Follow these procedures exactly; do nothing else in the same turn.
+
+### "session aç" — open
+1. `git fetch origin && git checkout main && git pull --ff-only`.
+2. Read `docs/session_log.md` (newest first), then `docs/build_status.md`, `docs/screen_status.md` and the docs named in the latest entries.
+3. `gh pr list --state open` and `gh pr list --state merged --limit 10`.
+4. Reply in Turkish, short, in three lists: **Bitenler** (done, with PR numbers) · **Açık işler** (open PRs, open questions, waiting decisions) · **Sıradaki adım** (one step).
+5. Stop and wait for the user's approval before doing that step.
+
+### "session kapat" — close
+1. List what this session did (files, PRs, decisions taken by the user, questions still open).
+2. **Specs:** if the user decided something in this session, update the affected docs in `docs/` (all of them together, so they do not contradict) on a `spec/<topic>` branch → `spec` PR. Never write an undecided item as decided.
+3. **Status:** update `docs/build_status.md` if code changed (in the code PR).
+4. **Log:** add one entry at the top of `docs/session_log.md` — date, side (Claude Code / claude.ai), done, PRs, open questions, next step (≤ 10 lines). Put it in the spec PR; if there is none, open `chore/session-log-<date>`.
+5. Make sure nothing is uncommitted; push every branch.
+6. Reply in Turkish with the PR links to merge and the next step; then stop.
+
+### Rules
+- Keep log entries short. Decisions never live only in the log: they go into the relevant doc in `docs/`.
 - Auto memory (`~/.claude/projects/…/memory/`) is machine-local and may hold small learned notes; anything the other side must know goes into `docs/session_log.md`.
 
 ## Read first
