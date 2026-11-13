@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Ayarlar durumlar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes fgpulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion: reduce){.fg-sk{animation:none!important}}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 2000px; box-sizing: border-box; padding: var(--s8) 40px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6); align-content: start; background: var(--background); color: var(--text); font-family: var(--font)">
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">1 · YENİDEN DOĞRULA · e-posta ya da telefonu görmek/değiştirmek için</span>
+<div role="dialog" aria-modal="true" aria-labelledby="rd" style="display: flex; flex-direction: column; gap: var(--s4); min-height: 380px; padding: var(--s6); border-radius: var(--r-xl); background: var(--surface); box-shadow: var(--sh-lg)">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 id="rd" style="margin: 0; font-size: var(--fs-h3); font-weight: 700">Önce sen olduğunu doğrula</h2><button type="button" aria-label="Kapat" style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Tam e-posta adresini göstermeden önce şifreni gir. 15 dakika boyunca tekrar sorulmaz.</span>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Şifre<input type="password" value="••••••••" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 2px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body)"></label>
+<button type="button" style="height: 44px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Google ile doğrula</button>
+<div style="display: flex; justify-content: flex-end; gap: var(--s2); margin-top: auto"><button type="button" style="height: 48px; padding: 0 var(--s5); border: 1px solid var(--border); border-radius: var(--r-md); background: transparent; color: var(--text); font: inherit; font-size: var(--fs-btn); font-weight: 600">Vazgeç</button><button type="button" style="height: 48px; padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Doğrula</button></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">2 · HESABI SİL · onay penceresi</span>
+<div role="dialog" aria-modal="true" aria-labelledby="hs" style="display: flex; flex-direction: column; gap: var(--s4); min-height: 380px; padding: var(--s6); border-radius: var(--r-xl); background: var(--surface); box-shadow: var(--sh-lg)">
+<h2 id="hs" style="margin: 0; font-size: var(--fs-h3); font-weight: 700">Hesabını silmek istediğine emin misin?</h2>
+<ul style="margin: 0; padding: 0 0 0 var(--s5); display: flex; flex-direction: column; gap: var(--s2); font-size: var(--fs-bsm); line-height: var(--lh-bsm)"><li>4 ürünün takibi ve bildirimlerin hemen durur.</li><li>1 jetonun ve bekleyen Premium isteğin iptal olur.</li><li>12 Aralık'a kadar giriş yaparsan her şey geri gelir.</li><li>Sonra kişisel verilerin kalıcı olarak silinir; istatistikler adsız kalır.</li></ul>
+<label style="display: flex; gap: var(--s2); align-items: center; font-size: var(--fs-bsm); font-weight: 500"><input type="checkbox" style="width: 20px; height: 20px; margin: 0; accent-color: var(--danger)">Bunları okudum, hesabımı silmek istiyorum</label>
+<div style="display: flex; justify-content: flex-end; gap: var(--s2); margin-top: auto"><button type="button" style="height: 48px; padding: 0 var(--s5); border: 1px solid var(--border); border-radius: var(--r-md); background: transparent; color: var(--text); font: inherit; font-size: var(--fs-btn); font-weight: 600">Vazgeç</button><button type="button" aria-disabled="true" style="height: 48px; padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--border); color: var(--text-muted); font: inherit; font-size: var(--fs-btn); font-weight: 600">Hesabımı sil</button></div>
+<span style="font-size: var(--fs-cap); color: var(--text-muted)">Kutuyu işaretleyince düğme kırmızı olur; sonra şifren sorulur.</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">3 · E-POSTA DEĞİŞİYOR · doğrulama bekleniyor</span>
+<div style="display: flex; flex-direction: column; gap: var(--s3); min-height: 200px; padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div role="status" style="display: flex; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--info-subtle); font-size: var(--fs-bsm); line-height: var(--lh-bsm)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; color: var(--info); margin-top: 2px" aria-hidden="true"><path d="M4 4h16v16H4zM4 6l8 7 8-7"/></svg><span><strong style="font-weight: 700">y***@o***.com</strong> adresine doğrulama bağlantısı gönderdik. Doğrulayana kadar eski adresin geçerli; eski adresine de bilgi e-postası gitti.</span></div>
+<div style="display: flex; gap: var(--s2)"><button type="button" style="height: 40px; padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tekrar gönder</button><button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Değişikliği iptal et</button></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">4 · VERİLERİM HAZIR</span>
+<div style="display: flex; flex-direction: column; gap: var(--s3); min-height: 200px; padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; align-items: center; gap: var(--s3)"><span style="width: 40px; height: 40px; border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span><div style="display: flex; flex-direction: column"><span style="font-size: var(--fs-body); font-weight: 700">Dosyan hazır</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">12 Kasım 18.20'de hazırlandı · 7 gün indirilebilir</span></div></div>
+<button type="button" style="align-self: flex-start; height: 44px; padding: 0 var(--s4); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">İndir (ZIP)</button>
+<span style="font-size: var(--fs-cap); color: var(--text-muted)">Hazırlanırken: "Dosyan hazırlanıyor · hazır olunca bildirim ve e-posta gelecek."</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">5 · KAYDEDİLMEDİ · alan hatası</span>
+<div style="display: flex; flex-direction: column; gap: var(--s3); min-height: 220px; padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div role="alert" style="display: flex; gap: var(--s2); align-items: center; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--danger-subtle); font-size: var(--fs-bsm); font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--danger)" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Değişiklikler kaydedilmedi · 1 alanı düzelt</div>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Kullanıcı adı<input value="serkan" aria-invalid="true" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 2px solid var(--danger); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body)"><span style="font-size: var(--fs-cap); font-weight: 600; color: var(--danger)">Bu kullanıcı adı alınmış · öneri: serkanb, serkan.b</span></label>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">6 · ESKİ VERİ · cihaz listesi güncellenemedi</span>
+<div style="display: flex; flex-direction: column; gap: var(--s3); min-height: 220px; padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div role="status" style="display: flex; gap: var(--s2); align-items: center; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-bsm); font-weight: 500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span style="flex: 1">Liste en az 10 dk önceki haliyle gösteriliyor.</span><button type="button" style="height: 36px; padding: 0 var(--s3); border: 0; background: transparent; color: inherit; font: inherit; font-size: var(--fs-bsm); font-weight: 700; text-decoration: underline">Yenile</button></div>
+<span style="font-size: var(--fs-bsm); color: var(--text-muted)">"Tüm cihazlardan çıkış yap" yine çalışır.</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">7 · HATA · bölüm yüklenemedi</span>
+<div role="alert" style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); min-height: 160px; box-sizing: border-box; padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-body); font-weight: 600">Ayarların şu an yüklenemedi</span><span style="font-size: var(--fs-bsm); color: var(--text-muted)">Son kaydettiğin ayarlar geçerli olmaya devam ediyor.</span></div>
+<button type="button" style="flex: none; height: var(--touch); padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tekrar dene</button>
+</div>
+</section>
+
+<section aria-busy="true" style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">8 · YÜKLENİYOR</span>
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: var(--s4); min-height: 160px; padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s2)"><sc-for list="{{four}}" as="x" hint-placeholder-count="4"><div class="fg-sk" style="height: 28px; border-radius: var(--r-md); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div></sc-for></div>
+<div style="display: flex; flex-direction: column; gap: var(--s2)"><sc-for list="{{four}}" as="x" hint-placeholder-count="4"><div class="fg-sk" style="height: 28px; border-radius: var(--r-md); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div></sc-for></div>
+</div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":2000}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","danger-subtle":"#FEE2E2","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","danger-subtle":"#3B1416","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-h3":"18px","fs-body":"16px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","fs-btn":"16px","touch":"44px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    return { rootStyle: s, four: [1, 2, 3, 4] };
+  }
+}
+</script>
+</body>
+</html>
