@@ -35,6 +35,12 @@ The user opens and closes sessions with "session aç" and "session kapat" on **b
 4. Refresh the claude.ai project mirrors after the user merges.
 5. Reply with the three-table report (PRs to merge with links); stop.
 
+**claude.ai — prompts for Claude Code [DECIDED 2026-11-13]:** every prompt the user is given to paste into Claude Code starts with a header line stating how to run it:
+- **Oturum:** new session or the same session
+- **Mod:** Plan mode / Ask before edits (manually approve) — never auto mode unless the user asks
+- **Model:** e.g. Opus 5.5 · **Düzey:** low / medium / high
+- **İzin verilecekler:** which commands and files to allow; anything else → ask the user first
+
 ## Role
 Senior software engineer building FırsatGeldi. FırsatGeldi is a **production product, not an MVP**: everything written is production quality.
 
