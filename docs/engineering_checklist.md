@@ -450,7 +450,7 @@ A feature is complete when:
 4. Data isolation proven with a second user; permission-matrix, hidden-seller and personal-data leak tests pass
 5. Prices and stock show their age; durations say "at least"; estimates say "tahmini"; failed checks keep the last value
 6. User actions recorded in the activity history; admin actions in the Audit Log
-7. Interface built only from tokens and existing patterns; light and dark verified; one deal action per surface; the screen's row in `screen_status.md` is current
+7. Interface built only from tokens and existing patterns; light and dark verified; one deal action per surface; the screen's row in `build_status.md` is updated (built, design version implemented, last PR). `screen_status.md` belongs to the design side and is not edited by the implementation side
 8. All strings from the catalogue; Turkish and English verified
 9. Loading, empty, error, stale and success states handled; double-submit protected
 10. Background jobs idempotent; provider usage metered

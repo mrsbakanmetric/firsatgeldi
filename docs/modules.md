@@ -134,17 +134,17 @@ These rules apply to every screen and are not repeated in each module.
 | 9 | Every screen draws five states: loading (skeleton) · empty · error · stale · success | checklist |
 | 10 | Every product shown anywhere carries its product image (category illustration as fallback) [DECIDED] | design §5.30 |
 | 11 | Every list has a search field; every product list has a category filter (chips or select, with counts) [DECIDED] | design §5.30 |
-| 10 | Status is never conveyed by colour alone (icon + text) | design §2.3 |
-| 11 | All text comes from the catalogue (tr default, en second); store data is not translated | spec §3.2 |
-| 12 | Money: `25.997 TL` (tr) / `TL 25,997` (en); saving always a positive amount + "kazanç" | design §5.9 |
-| 13 | Reversible actions undo in one tap; irreversible actions ask for confirmation | design §4.2 |
-| 14 | Stock and price are re-checked before going to the store; if gone, the user stays in the app | design §4.2 |
-| 15 | No hard-coded values, sizes or colours; tokens and defined patterns only | design §8 |
-| 16 | Every screen and action is bound to a permission key; checks happen **on the server** (web and mobile alike) [DECIDED] | Roles and access |
-| 17 | **Every user action** (search, add, reveal, check, report, share, sign-in) is written to the activity history; histories are kept **indefinitely** and anonymised when the account is deleted [DECIDED] | History Explorer |
-| 18 | The Application Manager always sees hidden seller identities; every view is recorded [DECIDED] | Roles and access |
-| 19 | Email and phone are **masked by default on every screen** (`m***@g***.com`, `+90 5** *** ** 67`); passwords are never shown or logged [DECIDED] | database §14c |
-| 20 | Images uploaded by a user (order screenshot, identification photo) are visible only to them and **deleted after 24 hours**; no personal data (name, address, phone, order number) is taken from images [DECIDED] | architecture §11a |
+| 12 | Status is never conveyed by colour alone (icon + text) | design §2.3 |
+| 13 | All text comes from the catalogue (tr default, en second); store data is not translated | spec §3.2 |
+| 14 | Money: `25.997 TL` (tr) / `TL 25,997` (en); saving always a positive amount + "kazanç" | design §5.9 |
+| 15 | Reversible actions undo in one tap; irreversible actions ask for confirmation | design §4.2 |
+| 16 | Stock and price are re-checked before going to the store; if gone, the user stays in the app | design §4.2 |
+| 17 | No hard-coded values, sizes or colours; tokens and defined patterns only | design §8 |
+| 18 | Every screen and action is bound to a permission key; checks happen **on the server** (web and mobile alike) [DECIDED] | Roles and access |
+| 19 | **Every user action** (search, add, reveal, check, report, share, sign-in) is written to the activity history; histories are kept **indefinitely** and anonymised when the account is deleted [DECIDED] | History Explorer |
+| 20 | The Application Manager always sees hidden seller identities; every view is recorded [DECIDED] | Roles and access |
+| 21 | Email and phone are **masked by default on every screen** (`m***@g***.com`, `+90 5** *** ** 67`); passwords are never shown or logged [DECIDED] | database §14c |
+| 22 | Images uploaded by a user (order screenshot, identification photo) are visible only to them and **deleted after 24 hours**; no personal data (name, address, phone, order number) is taken from images [DECIDED] | architecture §11a |
 
 **Shared components** (every module is built from these; a new one is added to the design pattern document first): `StatusFlag` · `MoneyDisplay` · `PriceHistory` (compact/full) · `StockHistory` · `RevealGate` · `MarkConfirm` · `SegmentedChoice` · `FreshnessLine` · `DealHero` · `EmptyState` · `ErrorState` · `AppShell` · `PageTemplate` · `MultiImageUpload` · `ImagePrivacyNote` · `AllowanceIndicator` · `SkeletonBlock` · `StepIndicator` · `Sheet`.
 

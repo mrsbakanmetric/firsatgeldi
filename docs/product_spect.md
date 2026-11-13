@@ -108,7 +108,7 @@ Turkish users rarely pay for app subscriptions (RevenueCat: 89% of Turkish devel
 | Histories | **[DECIDED]** Activity, search, product, price/stock and audit histories kept indefinitely; anonymised on account deletion (§13). |
 
 ### 3.1 Login & account module [DECIDED]
-**Build order: last.** During development the app runs with a development login; the full module is implemented before launch. User IDs are on all records from day one.
+**Build order: late** (step 11 of `modules.md` Appendix A; the permission framework and a development login come first, in infrastructure). During development the app runs with a development login; the full module is implemented before launch. User IDs are on all records from day one.
 
 | Method | Details |
 |---|---|
