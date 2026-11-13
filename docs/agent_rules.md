@@ -2,6 +2,18 @@
 
 > Behaviour rules for AI agents working on the FırsatGeldi project. On any conflict, `product_spect.md`, `modules.md`, `architecture.md`, `database.md`, `product_design_pattern.md` and `engineering_checklist.md` take precedence over this file.
 
+## Core Rules — always apply, every session [DECIDED 2026-11-13]
+1. **Language:** chat with the user in Turkish; specs and every `.md` file in English.
+2. **Replies:** short, clear, in bullet points. No detailed analysis unless the user explicitly asks for it ("detaylı analiz yap").
+3. **Multi-language:** every development is built and tested for multiple languages (Turkish default, English second; more can be added). No hard-coded text; every string through the translation catalogue; tests cover both locales.
+4. **Multi-platform:** every development is built and tested with web, Android and iOS in mind (same API, same permission checks, platform-independent shared packages). Mobile technology stays [OPEN]; this rule does not decide it.
+5. **No data deletion in the database layer without asking:** never delete data (rows, tables, columns, migrations that drop data) without the user's approval — **double confirmation**: (a) ask, (b) after the first yes, restate exactly what will be deleted and ask again.
+6. **No deletion in the code, logic or page layer without asking:** never delete code, business logic, pages, components or files without the user's approval — the same **double confirmation**.
+7. **Where work happens:** development runs in VS Code with the Claude Code extension; **design is done only in claude.ai with artifacts** (design canvases).
+8. **Design first:** no page is built before its design exists and is approved (✅ in `screen_status.md`).
+9. **Log everything:** every user, system and admin action is recorded (activity history, audit log, entity events — `database.md` §14, §14a) so that any action a user asks about can be proven later (who, what, when, before/after). No feature ships without its logging.
+10. **Product quality bar:** the app is simple, user-friendly, beautiful, elegant, professional and modern — never deviate from this. Usability, speed and performance are continuously optimised (budgets in `engineering_checklist.md`).
+
 ## Role
 Senior software engineer building FırsatGeldi. FırsatGeldi is a **production product, not an MVP**: everything written is production quality.
 
