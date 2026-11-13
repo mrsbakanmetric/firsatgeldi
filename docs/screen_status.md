@@ -1,12 +1,12 @@
 # FırsatGeldi — Screen Design Status (Web and Mobile)
 
-**Last updated:** 2026-11-13 · **Method:** draft → comment → revision → approval → documents updated (`pagedesign.md`, `modules.md`, `product_design_pattern.md`, `design-tokens.json`, `database.md`, `architecture.md`, `engineering_checklist.md`, `product_spect.md`)
+**Last updated:** 2026-11-14 · **Method:** draft → comment → revision → approval → documents updated (`pagedesign.md`, `modules.md`, `product_design_pattern.md`, `design-tokens.json`, `database.md`, `architecture.md`, `engineering_checklist.md`, `product_spect.md`)
 
 **How this file is used [DECIDED 2026-11-13]:** this is the single plan for screen work. Every screen plan starts from §5 "Order from here"; the file is updated in the same change as every new draft, approval, revision, hold, canvas link or platform decision (`agent_rules.md` › Screen Work Rules).
 
 **Design version and change note:** every design change to an approved screen raises its **Design version** (v1 → v2 …) in §2.1 and writes a one-line **Change note**, in the same `design-change` pull request that updates `design/`. The implementation side applies only the difference and records the implemented version in `build_status.md`. All screens start at v1 (repository import, 2026-11-13).
 
-**Where we are:** Web — all 15 user screen groups approved (Product Detail want-to-buy mode approved 2026-11-13); web screen drawing is complete apart from the backlog; Application Manager screens (12, all 18 modules) drawn on 2026-11-13 and pre-approved, review pending; the phone-width check is waiting for approval; Product Detail needs a revision. Mobile app — not started (separate track; technology still open).
+**Where we are:** Web — all 15 user screen groups approved (Product Detail want-to-buy mode approved 2026-11-13); web screen drawing is complete apart from the backlog; Application Manager screens (12, all 18 modules) drawn on 2026-11-13 and pre-approved, review pending; the phone-width check is waiting for approval; Product Detail needs a revision. Mobile app — not started; the track starts after the web is finished [DECIDED 2026-11-14] (technology still open).
 
 Legend: ✅ approved · 🔁 approved, revision needed · 🟡 waiting for approval · ⏸ on hold · ⬜ not started · 💡 proposal (not decided)
 
@@ -125,7 +125,7 @@ All 18 modules drawn in five canvases, light + dark, each with a States board (l
 
 ## 3. Mobile app
 
-Status: **⬜ not started** — separate track, technology [OPEN]. The web drafts are the content reference; the app is drawn from them with native patterns.
+Status: **⬜ not started** — separate track that starts after the web is finished [DECIDED 2026-11-14]; technology [OPEN]. The web drafts are the content reference; the app is drawn from them with native patterns.
 
 ### 3.1 Screens to design (same modules as web)
 
@@ -189,7 +189,7 @@ Everything else: Home, Search and Add, Product Detail, Tracked Items, Notificati
 | 1 | Both | Move to a GitHub repository as the single source (docs/, design/, CLAUDE.md); start Claude Code with an implementation plan | Repository created |
 | 2 | Both | One pass over open decisions and [ASSUMPTION] values (about 40) | — |
 | 3 | Data | Data-availability test: seller, name, rating, reviews, stock, campaign, installments for ~20 products × 5 stores | Environment with SerpApi and store access |
-| 4 | Mobile | Mobile app track (technology choice first) | Later |
+| 4 | Mobile | Mobile app track (technology choice first) | After the web is finished [DECIDED 2026-11-14] |
 
 ### Backlog (parked by the user on 2026-11-13, to revisit later)
 - Phone-width proposals (P): header 56 px, sheet max 92 %, "İade sayfası" short label.

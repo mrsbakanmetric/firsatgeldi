@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-14 · claude.ai
+- **Decided (user):** mobile app track starts after the web is finished (`product_spect.md` §3 Platform, `architecture.md` §21.2, `screen_status.md`) · icon library Lucide (`product_design_pattern.md` §5.36, `design-tokens.json` 1.7.1, `architecture.md` §3).
+- **Done:** remaining 16 canvases imported, one design-change PR each (#29–#44, sha256 checked); base primitives + z-index tokens (#45); temporary transfer artifact deleted (double confirmation); claude.ai project mirrors refreshed to `main`.
+- **Open:** Application Manager screens review, phone-width proposals, e-mail designs (backlog).
+- **Next:** Claude Code plan step 8 — app shell, new session.
+
+---
+
 ## 2026-11-14 · Claude Code
 - **Done:** plan steps 3–7 — monorepo skeleton (#20), basic CI with required check `ci` (#21), tokens + WCAG AA contrast test (#22, low-stock box checked by `stock-low-border` from #23), theme + hard-coded value lint (#24), i18n + localised routes + hard-coded text lint (#25).
 - **Decided (user), written in this PR:** MSW for the mock API (`implementation_plan.md` §4); English URL segments, Accept-Language q order, money format, Europe/Istanbul, relative times from the catalogue (`architecture.md` §19, `product_spect.md` §3.2); theme step proven by automated tests, no test page (plan step 6).
