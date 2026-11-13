@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Takip Ettiklerim</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1600px; display: flex; flex-direction: column; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<header style="height: var(--header-h); flex: none; background: var(--surface); border-bottom: 1px solid var(--border)">
+<div style="max-width: var(--content-max); height: 100%; margin: 0 auto; padding: 0 var(--s6); box-sizing: border-box; display: flex; align-items: center; gap: var(--s6)">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); text-decoration: none; color: var(--text)"><span style="width: 32px; height: 32px; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span><span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">FırsatGeldi</span></a>
+<nav aria-label="Ana menü" style="display: flex; align-items: stretch; height: 100%; gap: var(--s1)">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Ana Sayfa</a>
+<a href="#" aria-current="page" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 600; color: var(--primary); border-bottom: 2px solid var(--primary); border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Takip</a>
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Ara ve Ekle</a>
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/></svg>Kazancım</a>
+</nav>
+<div style="flex: 1"></div>
+<button type="button" aria-label="Bildirimler" style="width: var(--touch); height: var(--touch); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text); display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
+<button type="button" aria-label="Profil menüsü" style="display: flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s2) 0 var(--s1); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><span style="width: 34px; height: 34px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">SB</span>Profil</button>
+</div>
+</header>
+
+<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); box-sizing: border-box; display: flex; flex-direction: column; gap: var(--s5)">
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: var(--s4)">
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Takip ettiklerim</h1><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Takipte 4/10 · öncelik sırasıyla</span></div>
+<a href="#" style="display: inline-flex; align-items: center; gap: var(--s2); height: 48px; padding: 0 var(--s5); box-sizing: border-box; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-btn); font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ürün ekle</a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted); white-space: nowrap">{{t.k}}</span>
+<span style="{{t.vStyle}}">{{t.v}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">{{t.sub}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: var(--s3); align-items: center">
+<label style="flex: 1; display: flex; align-items: center; gap: var(--s2); height: 48px; padding: 0 var(--s4); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted); flex: none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Takip listesinde ara</span><input type="search" placeholder="Takip listende ara: ürün, marka, satıcın" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-bsm); color: var(--text); outline: none"></label>
+<label style="display: flex; align-items: center; gap: var(--s2); font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted)">Kategori<select style="height: 48px; min-width: 200px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><option>Tümü (5)</option><option>Elektronik (3)</option><option>Ev aletleri (1)</option><option>Giyim ve ayakkabı (1)</option></select></label>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); flex-wrap: wrap">
+<div role="group" aria-label="Filtre" style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="5"><button type="button" aria-pressed="{{f.pressed}}" style="{{f.style}}">{{f.label}}</button></sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: var(--s4)">
+<label style="display: flex; align-items: center; gap: var(--s2); font-size: var(--fs-bsm); color: var(--text-muted)">Sırala<select style="height: var(--touch); padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm)"><option>Öncelik</option><option>İade tarihi</option><option>Kazanç</option></select></label>
+<div style="display: flex; flex-direction: column; align-items: flex-end"><button type="button" style="display: inline-flex; align-items: center; gap: var(--s2); height: 40px; padding: 0 var(--s2); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>Görünenleri kontrol et (4)</button><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Bugün 7 hakkın kaldı · 4 ürün kontrol edilecek</span></div>
+</div>
+</div>
+
+<div role="table" aria-label="Takip ettiklerin" style="display: flex; flex-direction: column; gap: var(--s3)">
+<div role="row" style="display: grid; grid-template-columns: 72px minmax(0, 1fr) 230px 190px 200px 96px; gap: var(--s4); padding: 0 var(--s4); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">
+<span role="columnheader" style="grid-column: span 2">Ürün</span><span role="columnheader">Fiyat · 14 gün</span><span role="columnheader">Stok · 14 gün</span><span role="columnheader">Durum</span><span role="columnheader" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Eylem</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+<div role="row" style="{{r.box}}">
+<span role="img" aria-label="{{r.imgLabel}}" style="width: 72px; height: 72px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; overflow: hidden"><svg width="56" height="56" viewBox="0 0 48 48" aria-hidden="true"><path d="{{r.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{r.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{r.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<div role="cell" style="display: flex; flex-direction: column; gap: var(--s1); min-width: 0">
+<div style="display: flex; gap: var(--s1); height: 26px; overflow: hidden"><sc-for list="{{r.flags}}" as="fl" hint-placeholder-count="1"><span style="{{fl.style}}">{{fl.t}}</span></sc-for></div>
+<span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.line}}</span>
+</div>
+<div role="cell" style="display: flex; flex-direction: column; gap: var(--s1)">
+<svg viewBox="0 0 230 56" width="230" height="56" role="img" aria-label="{{r.chartLabel}}">
+<line x1="0" y1="52" x2="230" y2="52" style="stroke: var(--chart-grid)" stroke-width="1"/>
+<sc-if value="{{r.hasPaid}}" hint-placeholder-val="{{ true }}"><line x1="{{r.paidX}}" y1="{{r.paidY}}" x2="230" y2="{{r.paidY}}" style="stroke: var(--chart-paid)" stroke-width="2"/></sc-if>
+<sc-if value="{{r.hasTarget}}" hint-placeholder-val="{{ false }}"><line x1="0" y1="{{r.targetY}}" x2="230" y2="{{r.targetY}}" style="stroke: var(--text)" stroke-width="1.5" stroke-dasharray="2 3"/></sc-if>
+<polyline points="{{r.best}}" fill="none" style="stroke: var(--chart-best)" stroke-width="2" stroke-dasharray="5 4"/>
+</svg>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.conclusion}}</span>
+</div>
+<div role="cell" style="display: flex; flex-direction: column; gap: var(--s1)">
+<div style="display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 2px; height: 20px"><sc-for list="{{r.stock}}" as="d" hint-placeholder-count="14"><div style="{{d.style}}"></div></sc-for></div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.stockText}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">{{r.stockWho}}</span>
+</div>
+<div role="cell" style="display: flex; flex-direction: column; gap: var(--s1); min-width: 0">
+<span style="{{r.stateStyle}}">{{r.state}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">{{r.age}}</span>
+</div>
+<div role="cell" style="display: flex; justify-content: flex-end"><a href="#" style="display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); box-sizing: border-box; border: 1px solid var(--primary); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Detay</a></div>
+</div>
+</sc-for>
+
+<div style="display: flex; align-items: center; gap: var(--s3); padding: var(--s2) var(--s4) 0"><span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">BİTEN TAKİPLER</span><span style="flex: 1; height: 1px; background: var(--divider)"></span></div>
+<div role="row" style="display: grid; grid-template-columns: 72px minmax(0, 1fr) 230px 190px 200px 96px; gap: var(--s4); align-items: center; padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); opacity: 0.65">
+<span role="img" aria-label="Logitech MX Master 3S görseli" style="width: 72px; height: 72px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="56" height="56" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z" style="fill: var(--text)"/><path d="M23.5 4h1v14h-1z" style="fill: var(--surface)"/><path d="M22.5 9h3v7h-3z" style="fill: var(--text-muted)"/></svg></span>
+<div role="cell" style="display: flex; flex-direction: column; gap: var(--s1); min-width: 0">
+<div style="display: flex; height: 26px"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text-muted); font-size: var(--fs-cap); font-weight: 600">Takip bitti</span></div>
+<span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Logitech MX Master 3S</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Kullanıcı bitirdi · 2 Kasım 2026</span>
+</div>
+<span role="cell" style="font-size: var(--fs-cap); color: var(--text-muted)">—</span>
+<span role="cell" style="font-size: var(--fs-cap); color: var(--text-muted)">—</span>
+<span role="cell" style="font-size: var(--fs-bsm); font-weight: 600; color: var(--savings)">650 TL kazanç kaydedildi</span>
+<div role="cell" style="display: flex; justify-content: flex-end"><a href="#" style="display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Detay</a></div>
+</div>
+</div>
+
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Bu listede satıcı adı ve "Göster" yok; daha ucuz satıcıları Ürün Detayı'nda açarsın. Grafiklerde düz çizgi ödediğin fiyat, kesikli çizgi en ucuz fiyat, noktalı çizgi hedef fiyat.</span>
+</main>
+
+<footer style="flex: none; background: var(--surface); border-top: 1px solid var(--border)">
+<div style="max-width: var(--content-max); margin: 0 auto; padding: var(--s6); box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); font-size: var(--fs-bsm); line-height: var(--lh-bsm)">
+<nav aria-label="Yasal ve yardım" style="display: flex; flex-wrap: wrap; gap: var(--s5)"><a href="#" style="color: var(--text-muted)">KVKK aydınlatma metni</a><a href="#" style="color: var(--text-muted)">Kullanım koşulları</a><a href="#" style="color: var(--text-muted)">Çerez politikası</a><a href="#" style="color: var(--text-muted)">Komisyon açıklaması</a><a href="#" style="color: var(--text-muted)">Yardım ve SSS</a></nav>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Türkçe · English</span>
+</div>
+</footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1600}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","chart-paid":"#0B1F33","chart-best":"#047857","chart-grid":"#DCE5E1","stock-in":"#047857","stock-low":"#FBBF24","stock-out-border":"#B91C1C","stock-out-fill":"#FFFFFF"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","chart-paid":"#EEF4F2","chart-best":"#34D399","chart-grid":"#24384B","stock-in":"#34D399","stock-low":"#FBBF24","stock-out-border":"#F87171","stock-out-fill":"#0E1E2E"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-pill":"999px","fs-h1":"28px","lh-h1":"36px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px"};
+  }
+  art() {
+    return {
+      cam: ['M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z', 'M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M8 16h9v4H8z'],
+      watch: ['M13 12h22a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z', 'M18 3h12l2 9H16zM16 36h16l-2 9H18z', 'M15 16h18v16H15z'],
+      robot: ['M24 5a19 19 0 1 0 0 38 19 19 0 0 0 0-38z', 'M24 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24zM24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z', 'M24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z'],
+      mouse: ['M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z', 'M22.5 9h3v7h-3z', 'M23.5 4h1v14h-1z'],
+      ssd: ['M11 5h26a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M12 10h24v5H12z', 'M20 33h8v4h-8z'],
+      fryer: ['M12 11h24l3 32H9z', 'M19 4h10v7H19z', 'M15 17h18v11H15z'],
+      shoe: ['M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', 'M3 33h42v5H3z', 'M20 22h3v2h-3zM25 24h3v2h-3z'],
+      phones: ['M6 27h8v15H9a3 3 0 0 1-3-3zM34 27h8v12a3 3 0 0 1-3 3h-5z', 'M8 27a16 16 0 0 1 32 0v3h-4v-3a12 12 0 0 0-24 0v3H8z', 'M9 31h3v7H9zM36 31h3v7h-3z'],
+      buds: ['M14 16h20a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6z', 'M8 25h32v2H8z', 'M22.5 31h3v4h-3z'],
+      jacket: ['M17 5h14l9 7-3 10-3-2v23H14V20l-3 2-3-10z', 'M23 5h2v38h-2z', 'M18 5h12l-6 6z'],
+      stick: ['M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z', 'M30 16h4v20h-4z', 'M27 6h10v3H27z'],
+      speaker: ['M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z', 'M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z', 'M22 22h4v4h-4z'],
+      reader: ['M12 3h24a3 3 0 0 1 3 3v36a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', 'M16 12h16v2H16zM16 17h16v2H16zM16 22h11v2H16z', 'M13 8h22v30H13z']
+    };
+  }
+  A(k) { const x = this.art()[k]; return { a: x[0], b: x[1], c: x[2] }; }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const big = (good) => 'font-size:22px;line-height:30px;font-weight:700;white-space:nowrap;color:' + (good ? 'var(--savings)' : 'var(--text)');
+    const tiles = [
+      { k: 'TAKİPTE', v: '4 ürün', sub: '3 aldım · 1 almak istiyorum', vStyle: big(false) },
+      { k: 'AÇIK FIRSAT', v: '2 ürün', sub: 'En çok toplam 3.302 TL', vStyle: big(true) },
+      { k: 'İADESİ YAKLAŞAN', v: '1 ürün', sub: 'En yakını 14 Kasım', vStyle: big(false) },
+      { k: 'SON KONTROL', v: '4 dk önce', sub: 'Otomatik kontrol sürüyor', vStyle: big(false) }
+    ];
+    const fl = ['Tümü 5', 'Aldım 3', 'Almak istiyorum 1', 'Fırsat var 2', 'Biten 1'].map((l, i) => ({ label: l, pressed: i === 0 ? 'true' : 'false',
+      style: 'height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;' + (i === 0 ? 'border:1px solid var(--primary);background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:600' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500') }));
+    const pill = (t, kind) => ({ t, style: 'display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;' + (kind === 'warn' ? 'background:var(--warning-subtle);color:var(--on-warning-subtle)' : 'background:var(--surface-alt);color:var(--text)') });
+    const cell = (p) => ({ style: 'box-sizing:border-box;border-radius:3px;' + (p === 'i' ? 'background:var(--stock-in)' : p === 'l' ? 'background:var(--stock-low)' : 'background:var(--stock-out-fill);border:2px dashed var(--stock-out-border)') });
+    const pts = (vals, lo, hi) => vals.map((v, i) => (i * 230 / (vals.length - 1)).toFixed(1) + ',' + (6 + (hi - v) / (hi - lo) * 44).toFixed(1)).join(' ');
+    const y = (v, lo, hi) => (6 + (hi - v) / (hi - lo) * 44).toFixed(1);
+    const box = (strong) => 'display:grid;grid-template-columns:72px minmax(0,1fr) 230px 190px 200px 96px;gap:16px;align-items:center;padding:16px;border-radius:14px;background:var(--surface);' + (strong ? 'border:2px solid var(--primary)' : 'border:1px solid var(--border)');
+    const st = (good) => 'font-size:14px;line-height:20px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:' + (good ? 'var(--savings)' : 'var(--text)');
+    const rows = [
+      { flags: [pill('Fırsat geldi'), pill('İade için 4 gün', 'warn')], name: 'Insta360 Ace Pro 2 · Flash Print', art: this.A('cam'), imgLabel: 'Insta360 Ace Pro 2 · Flash Print görseli', line: 'Aldın 28.999 TL · Kamera Dünyası · Hepsiburada · 1 Kas',
+        hasPaid: true, paidX: '33', paidY: y(28999, 25500, 29600), hasTarget: false, targetY: '0', best: pts([29499,29499,28999,28999,28499,28499,27999,27999,27499,27499,26999,26999,26999,25997], 25500, 29600),
+        chartLabel: 'Ödediğin 28.999 TL, en ucuz 25.997 TL', conclusion: '3 saat önce 25.997 TL\'ye düştü', stock: 'iiiilooiiiiiii'.split('').map(cell), stockText: 'Stokta · en az 7 gündür', stockWho: 'En ucuz satıcı',
+        state: '3 satıcıda daha ucuz · en çok 3.002 TL', stateStyle: st(true), age: '4 dk önce kontrol edildi', box: box(true) },
+      { flags: [pill('Fırsat geldi')], name: 'Kışlık mont · erkek · lacivert', art: this.A('jacket'), imgLabel: 'Kışlık mont · erkek · lacivert görseli', line: 'Aldın 3.299 TL · LC Waikiki · 9 Kas · Kargoda',
+        hasPaid: true, paidX: '150', paidY: y(3299, 2900, 3400), hasTarget: false, targetY: '0', best: pts([3399,3399,3399,3399,3399,3299,3299,3299,3299,3299,3299,3299,2999,2999], 2900, 3400),
+        chartLabel: 'Ödediğin 3.299 TL, en ucuz 2.999 TL', conclusion: 'Dün 2.999 TL\'ye düştü', stock: 'iiiiiiiiiiiiii'.split('').map(cell), stockText: 'Stokta · en az 14 gündür', stockWho: 'En ucuz satıcı',
+        state: '1 satıcıda daha ucuz · en çok 300 TL', stateStyle: st(true), age: '12 dk önce kontrol edildi', box: box(false) },
+      { flags: [pill('İade için 2 gün', 'warn')], name: 'Dyson V15 Detect Absolute', art: this.A('stick'), imgLabel: 'Dyson V15 Detect Absolute görseli', line: 'Aldın 30.999 TL · Teknosa · 3 Kas · Teslim alındı',
+        hasPaid: true, paidX: '66', paidY: y(30999, 30500, 32500), hasTarget: false, targetY: '0', best: pts([32499,32499,31999,31999,31999,31499,31499,31499,31499,31499,31499,31499,31499,31499], 30500, 32500),
+        chartLabel: 'Ödediğin 30.999 TL, en ucuz başka satıcı 31.499 TL', conclusion: 'Son 14 günde daha ucuzu çıkmadı', stock: 'iiiiiiiiiiiiii'.split('').map(cell), stockText: 'Stokta · en az 14 gündür', stockWho: 'Aldığın satıcı',
+        state: 'Senin fiyatın en ucuz', stateStyle: st(false), age: '6 dk önce kontrol edildi', box: box(false) },
+      { flags: [pill('Almak istiyorum')], name: 'Apple AirPods Pro 2', art: this.A('buds'), imgLabel: 'Apple AirPods Pro 2 görseli', line: 'Hedef 7.500 TL · 1 ay takip · 18 gün kaldı',
+        hasPaid: false, paidX: '0', paidY: '0', hasTarget: true, targetY: y(7500, 7300, 8800), best: pts([8699,8699,8599,8599,8499,8499,8499,8399,8399,8299,8299,8150,8150,8150], 7300, 8800),
+        chartLabel: 'Hedef 7.500 TL, en ucuz 8.150 TL', conclusion: 'Son 30 günün en düşüğü · 8.150 TL', stock: 'iiiiiiilllliii'.split('').map(cell), stockText: 'Stokta · en az 3 gündür', stockWho: 'En ucuz satıcı',
+        state: 'Hedefe 650 TL kaldı', stateStyle: st(false), age: '9 dk önce kontrol edildi', box: box(false) }
+    ];
+    return { rootStyle: s, tiles, filters: fl, rows };
+  }
+}
+</script>
+</body>
+</html>
