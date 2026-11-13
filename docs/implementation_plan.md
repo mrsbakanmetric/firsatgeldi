@@ -1,11 +1,11 @@
 # FırsatGeldi — Implementation Plan
 
-> **Status:** Stage 0 draft, waiting for approval · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
-> **Sources:** `architecture.md` (§2, §9, §15, §16, §21, §24, §25), `modules.md`, `database.md`, `pagedesign.md` §8, `engineering_checklist.md`, `product_spect.md`, `screen_status.md`, `CLAUDE.md`.
+> **Status:** Stage 0 — user answers to §5 received 2026-11-13 and applied; waiting for PR approval · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
+> **Sources:** `architecture.md` (§2, §9, §15, §16, §21, §24, §25), `modules.md`, `database.md`, `pagedesign.md` §8, `engineering_checklist.md`, `product_spect.md`, `screen_status.md`, `CLAUDE.md` (incl. Core rules 1–10).
 
 This plan describes **how and in which order** the product is built. It decides nothing about the product: every item marked [OPEN], [DECIDE LATER], [RECOMMENDED], [ASSUMPTION] or [INTERIM] in the specs stays open until the user decides it. Items this plan introduces itself are marked **[PROPOSAL]** and need approval like any other change.
 
-**Labels used here:** [PROPOSAL] = introduced by this plan, needs approval · **Gate** = the point where work stops for the user's approval.
+**Labels used here:** [PROPOSAL] = introduced by this plan, needs approval · **[USER 2026-11-13]** = answered by the user on PR #4 (see §5); written into the affected docs only in separate `spec` PRs, not in this one · **Gate** = the point where work stops for the user's approval.
 
 ---
 
@@ -14,7 +14,7 @@ This plan describes **how and in which order** the product is built. It decides 
 2. [Stages 1–4: outputs and approval gates](#2-stages-14-outputs-and-approval-gates)
 3. [Screens: endpoints, tables, UI components, permission keys](#3-screens-endpoints-tables-ui-components-permission-keys)
 4. [Contradictions between documents](#4-contradictions-between-documents)
-5. [Questions (max 5)](#5-questions-max-5)
+5. [Answers to the Stage 0 questions](#5-answers-to-the-stage-0-questions)
 
 ---
 
@@ -75,7 +75,8 @@ Each stage ends with a **Gate**: work stops, the user reviews, nothing of the ne
 
 ### Stage 0 — Implementation plan (this document)
 - **Output:** `docs/implementation_plan.md` on `spec/implementation-plan`, `spec` PR.
-- **Gate:** the user approves the plan and answers §5.
+- **Gate:** the user approves the plan. Answers to §5 received 2026-11-13.
+- **Follow-up `spec` PRs after approval (not in this PR):** (1) write the §5 decisions into the affected docs; (2) fix the §4 contradictions, one PR per group (§4.1 … §4.6).
 
 ### Stage 1 — Data test
 **Goal:** know, before building, which source really gives which field and how reliably (`product_spect.md` §17-8a [DECIDED 2026-11-13]; `architecture.md` §26 R4, R7).
@@ -83,7 +84,7 @@ Each stage ends with a **Gate**: work stops, the user reviews, nothing of the ne
 | Item | Content |
 |---|---|
 | Sample | ~20 products × 5 stores; electronics and clothing (launch categories); products chosen from the spec's live tests (e.g. Insta360 Ace Pro 2, Dyson V15) plus clothing with and without brand/model code |
-| Stores [PROPOSAL] | Trendyol, Hepsiburada, Amazon TR, MediaMarkt, Teknosa (the five named in `product_spect.md` §6.1) |
+| Stores [USER 2026-11-13] | Trendyol, Hepsiburada, Amazon TR, MediaMarkt, Teknosa (the five named in `product_spect.md` §6.1) |
 | Sources | SerpApi Google Shopping (`engine=google_shopping`, `gl=tr`, `hl=tr`, Istanbul) **and** each store's site search **and** the product page (JSON-LD → site JSON → HTML; no LLM in the test) |
 | Fields measured | seller (owner of the offer), seller name, seller rating + count, product rating + count (+ distribution), stock state, campaign note, **installments**, shipping cost, delivery time, warranty type, claimed old price, return-policy page readability |
 | Per field | found yes/no per store × source, extraction path used, agreement between sources, read time |
@@ -92,7 +93,8 @@ Each stage ends with a **Gate**: work stops, the user reviews, nothing of the ne
 | Cost | SerpApi queries counted; expected well under one Starter plan month (≈ 20 products × a few queries) |
 
 - **Output:** (1) `feat/sources-data-test` PR — workspace root + `packages/config` + `packages/sources` (adapters, fixtures, tests, CLI); (2) `docs/data_test_report.md` in a `spec` PR — table per store × field × source with reliability, gaps, and what each gap means for the screens (e.g. installment note not shown for a store that does not expose it).
-- **Needs from the user:** a SerpApi key in a local `.env` (never committed); see Q3.
+- **Needs from the user:** the user puts the SerpApi key into the local `.env` themself [USER 2026-11-13]; it is never committed (`.env.example` holds only the variable name).
+- **Not in Stage 1:** the 2-week deal-frequency validation (`product_spect.md` §17-8, `architecture.md` R5) is a **separate task after Stage 1** [USER 2026-11-13].
 - **Gate:** the user reads the report and decides which stores/fields go into v1; affected docs are updated in a separate `spec` PR.
 
 ### Stage 2 — Open decisions and [ASSUMPTION] review
@@ -108,32 +110,42 @@ Delivered as separate PRs, in this order; each PR is green in CI before the next
 | 3a | `chore/monorepo-skeleton` | pnpm workspace, Turborepo pipeline, `packages/config` (env schema with Zod, tsconfig strict bases, ESLint + Prettier), dependency-boundary lint (§1.1), `.env.example`, `infra/` docker compose | `pnpm install && pnpm build && pnpm lint` pass on a clean clone |
 | 3b | `feat/tokens` | `packages/tokens`: `design-tokens.json` → CSS variables (light/dark, `theme.active`), Tailwind theme, platform-neutral JSON, contrast check (AA) as a test; lint rule that fails on literal colours/sizes in `apps/web` and `packages/ui` | contrast test and hard-coded-value lint run in CI |
 | 3c | `feat/i18n` | `packages/i18n`: tr/en catalogues, typed keys, missing-key check fails the build; locale resolution order (`architecture.md` §19) as a pure function in `core` | missing key breaks CI |
-| 3d | `feat/db-schema` | `packages/db`: full schema of `database.md` (all tables, CHECKs, indexes, partial uniques); raw SQL migrations for hypertables, continuous aggregates, pgvector index, `v_offer_public`, RLS policies, `app_admin` role, `audit_logs` INSERT-only privileges; seed: roles, permission catalogue (§3, after Q2), plans, all `system_settings` defaults of §18, launch categories (electronics + clothing open), generic category template, platforms | migrations apply and roll forward on a clean DB; migration check in CI |
-| 3e | `feat/api-core` | `apps/api` skeleton with the request lifecycle (§1.3): rate limit, session (`fg_session` cookie), **dev login** (absent from production builds), permission-key guard + `perm:{userId}` cache, restriction and consent gates, idempotency, response envelope, output validation, response shaping base, `pii` service (envelope encryption behind a KMS interface, blind index, masking in `core`), log redaction, audit + activity interceptors → `activity-ingest` queue, OpenAPI generation, typed client into `contracts` | permission-matrix and second-user test harnesses run on the first endpoints (`GET /me`, `GET /me/entitlements`) |
+| 3d | `feat/db-schema` | `packages/db`: full schema of `database.md` (all tables, CHECKs, indexes, partial uniques); raw SQL migrations for hypertables, continuous aggregates, pgvector index, `v_offer_public`, RLS policies, `app_admin` role, `audit_logs` INSERT-only privileges; seed: roles, permission catalogue (§3, approved as the catalogue [USER 2026-11-13]), plans, all `system_settings` defaults of §18, launch categories (electronics + clothing open), generic category template, platforms | migrations apply and roll forward on a clean DB; migration check in CI |
+| 3e | `feat/api-core` | `apps/api` skeleton with the request lifecycle (§1.3): rate limit, session (`fg_session` cookie), **dev login** (absent from production builds), permission-key guard + `perm:{userId}` cache, **explicit public allow-list** for guest endpoints (no `GUEST` role or access level [USER 2026-11-13]; an endpoint not on the list requires a session), restriction and consent gates, idempotency, response envelope, output validation, response shaping base, `pii` service (envelope encryption behind a KMS interface, blind index, masking in `core`), log redaction, audit + activity interceptors → `activity-ingest` queue, OpenAPI generation, typed client into `contracts` | permission-matrix and second-user test harnesses run on the first endpoints (`GET /me`, `GET /me/entitlements`) |
 | 3f | `feat/worker-core` | `apps/worker` skeleton: BullMQ queues, idempotent job base, `schedule-tick` frame, `activity-ingest`, `health`, `alerts` writing, OpenTelemetry | jobs retried without duplicate rows (test) |
 | 3g | `feat/web-shell` | `apps/web`: `/[locale]` routing + locale middleware, `AppShell`, `AuthShell`, `AdminShell` (sub-navigation only after the admin review — see §4), five page templates, base primitives in `packages/ui` (button, input, dialog, sheet, skeleton, status banner, empty/error state), theme switch, typed API client + TanStack Query + SSE hook | shell renders tr/en, light/dark, phone and desktop widths; no hard-coded value |
 | 3h | `chore/ci` | GitHub Actions per `architecture.md` §24: lint → typecheck → unit → integration (Postgres/Timescale/pgvector, Redis, Meilisearch, S3 emulator services) → hidden-seller leak test → personal-data leak test → data-isolation test → permission-matrix test → build (web, api, worker) → migration check; dependency scan; secret scan of client bundles | all jobs required on `main` |
 
-- **Not in Stage 3:** deploy/hosting (provider [OPEN] in the docs; see Q4), real sign-in (built last, `architecture.md` §17), any screen.
+- **Development providers [USER 2026-11-13]:** until hosting is chosen, every external provider runs as a local emulator behind its interface: S3 emulator (object storage), local KMS key (envelope encryption), console e-mail sink (`NotificationChannel`), **no LLM** (the LLM interface exists, no implementation is wired).
+- **Providers still [OPEN]:** LLM provider and transactional e-mail provider — not chosen now; code depends only on the interfaces.
+- **Not in Stage 3:** deploy/hosting (provider [OPEN] in the docs), real sign-in (built last, `architecture.md` §17), any screen.
 - **Gate:** the user approves the infrastructure before the first screen.
 
 ### Stage 4 — Screens
-Order from `CLAUDE.md` (see Q1 and §4 C1): **Search and Add → Product Detail → Tracked Items → Notifications and Preferences → Home → My Savings → others → Application Manager screens.** For "others" this plan uses the order of `modules.md` Appendix A: Packages and Premium → Landing Page + SEO product page → Legal Pages + Help and FAQ → Settings and Account → Sign-in and Sign-up → Discover and Profile.
+Order from `CLAUDE.md` [USER 2026-11-13] (`modules.md` Appendix A and `architecture.md` §25 are aligned to it in a later `spec` PR, §4 C1): **Search and Add → Product Detail → Tracked Items → Notifications and Preferences → Home → My Savings → others → Application Manager screens.** For "others" this plan uses the order of `modules.md` Appendix A: Packages and Premium → Landing Page + SEO product page → Legal Pages + Help and FAQ → Settings and Account → Sign-in and Sign-up → Discover and Profile. Want to Buy mode is built **with Product Detail** [USER 2026-11-13] (§4 C2).
 
 Per screen:
-1. **Precondition:** the screen's PNG boards are in `design/<NN-screen>/` and its row in `screen_status.md` is ✅ (or the user explicitly allows building from the canvas link).
+1. **Precondition (Core rule 8):** the screen's PNG boards are in `design/<NN-screen>/` **and** its row in `screen_status.md` is ✅. Without both, the page is not built — no exception, no building from a canvas link. Stop and tell the user.
 2. Branch `feat/<module>`; build **API + worker jobs + web + tests** for the screen as one vertical slice; split into several PRs when a slice is large (API first, then web), never mixing spec and code.
-3. Pass `engineering_checklist.md` (Definition of Done) including the leak, isolation and permission-matrix tests for every new endpoint.
+3. Pass `engineering_checklist.md` (Definition of Done) including the leak, isolation and permission-matrix tests for every new endpoint, **plus** the per-screen items below.
 4. Update `docs/build_status.md` (Built, Design version implemented, Last PR) in the code PR.
 5. **Gate:** stop after each screen for approval.
 
-**Screen 1 carries the first vertical slice** (`architecture.md` §25, A2 [RECOMMENDED]): the background price engine (sources, merge, schedule, verify, deal evaluation), `FreeToggleGate` and the outbound link are built here, because Search and Add's teaser already shows hidden cheaper offers with Göster.
+**Per-screen Definition of Done additions (Core rules 3, 4, 9)** — a screen is not done until all three hold:
+
+| Rule | Done when |
+|---|---|
+| 3 · Multi-language | Every string comes from the i18n catalogue (tr default, en second); missing-key check passes; unit, integration and UI tests run in **both `tr` and `en`** (formatting of money, dates and plurals included); no hard-coded text. |
+| 4 · Multi-platform | Business rules live in `core`, contracts in `contracts`, strings in `i18n`, values in `tokens` — all **platform-independent** (no DOM, Next or React imports; lint-enforced, §1.1); every endpoint is usable by web, Android and iOS clients alike (same API, same server-side permission checks, no web-only cookie assumptions in the contract); the web UI is checked at phone and desktop widths. The mobile app itself is not built. |
+| 9 · Log everything | Every user, system and admin action of the screen writes its record — `activity_events`, `audit_logs` (admin and sensitive actions, before/after), entity events (`tracked_item_events`, `product_events`, …) per `database.md` §14, §14a; tests assert the record (who, what, when, before/after) for each action. No action ships without its logging. |
+
+**Screen 1 carries the first vertical slice** (`architecture.md` §25, A2 — approved [USER 2026-11-13]): the background price engine (sources, merge, schedule, verify, deal evaluation), `FreeToggleGate` and the outbound link are built here, because Search and Add's teaser already shows hidden cheaper offers with Göster.
 
 ---
 
 ## 3. Screens: endpoints, tables, UI components, permission keys
 
-**Permission keys.** `database.md` §4 gives only examples; there is no complete catalogue in `docs/`. The keys below follow the examples' pattern `<area>.<scope>.<action>` (scope `own` = the user's own data). They are **[PROPOSAL]** until the user approves them (Q2); after approval they go into `database.md` §4 and `modules.md` in a `spec` PR. Guest-reachable endpoints are marked *(guest)*.
+**Permission keys.** `database.md` §4 gives only examples; there is no complete catalogue in `docs/`. The keys below follow the examples' pattern `<area>.<scope>.<action>` (scope `own` = the user's own data). The user approved them as the **official permission catalogue** [USER 2026-11-13]; they are written into `database.md` §4 and `modules.md` in a separate `spec` PR. Guest-reachable endpoints are marked *(guest)*: they form the API's **explicit public allow-list** — there is no `GUEST` role or access level [USER 2026-11-13]. Keys marked *(guest)* are listed for completeness of the catalogue; the allow-list, not a role, grants guest access.
 
 Endpoints are from `architecture.md` §16 unless noted; tables from `database.md` §19; components from `pagedesign.md` §5 and `modules.md` › Shared Rules.
 
@@ -171,7 +183,7 @@ Endpoints are from `architecture.md` §16 unless noted; tables from `database.md
 | | |
 |---|---|
 | **Endpoints** | `GET /notifications?type=&q=&category=&unread=&cursor=` · `PATCH /notifications/:id/read` · `POST /notifications/read-all` · `GET /notifications/unread-count` · `GET\|PUT /me/notification-preferences` · `GET /me/search-history` ("Senin için") · `POST /tracked-items/:id/delivered` (answer inside the notification) · "Takip et" dialog step 2 reuses 3.1/3.3 · `GET /me/stream` (`notification.new`) |
-| **Worker jobs** | `notify` (preferences, quiet hours, daily cap, digest routing, mandatory types), `digest`, `return-reminder`, `delivery-prompt`, `expiry`, email channel behind `NotificationChannel` (provider [OPEN], Q4) |
+| **Worker jobs** | `notify` (preferences, quiet hours, daily cap, digest routing, mandatory types), `digest`, `return-reminder`, `delivery-prompt`, `expiry`, email channel behind `NotificationChannel` (provider [OPEN]) |
 | **Tables** | `notifications`, `notification_deliveries`, `notification_digests`, `notification_preferences`, `notification_type_preferences`, `notification_templates` (seeded TR + EN, no seller variable), `search_events` |
 | **UI components** | `PageTemplate` (List + right column) · `NotificationItem` · `NotificationPreview` (560, left of panel) · bell panel (`Sheet` 440) · `ModeBadge` · `ProductImage` (80 / 52) · `FilterChips` · `SearchField` · `CategoryFilter` · `PriceSparkline` · fact tiles · `Dialog` (Takip et step 2) · `StatusBanner` (digest on, cap reached, live connection lost) |
 | **Preferences UI** | [PROPOSAL] the **Ayarlar › Bildirimler** section is built in this step inside the Settings template (only this section); the other Settings sections come with 3.10. Preferences are edited only there (`modules.md` › Notifications and Preferences). |
@@ -256,7 +268,7 @@ Endpoints are from `architecture.md` §16 unless noted; tables from `database.md
 
 All endpoints from `architecture.md` §16 › ADMIN. Shell: `AdminShell`; template: List with 380 px detail panel (§5.35 [RECOMMENDED]). Every view and action audited.
 
-| Canvas | Module | Main tables | Permission keys [PROPOSAL] |
+| Canvas | Module | Main tables | Permission keys |
 |---|---|---|---|
 | 12a | Admin Overview | `admin_kpi_hourly`, `alerts` | `admin.overview.view` |
 | 12a | Return Rules | `platform_return_rules` | `admin.return_rules.view` · `admin.return_rules.manage` |
@@ -284,7 +296,7 @@ Worker jobs used here: `kpi-rollup`, `rule-staleness`, `campaign-yearly-copy`, `
 
 ## 4. Contradictions between documents
 
-Found while writing this plan. **None is fixed here** (this PR adds only the plan). After approval, each group is fixed in its own `spec` PR, all affected docs together; items that need a product decision go to Stage 2.
+Found while writing this plan. **None is fixed here** (this PR adds only the plan). The user approved fixing them [USER 2026-11-13]: after approval, each group (§4.1 … §4.6) is fixed in its own `spec` PR, all affected docs together. C1, C2, C13 and C14 are decided (see §5); the others are wording/contract alignments.
 
 ### 4.1 Build order and process
 
@@ -317,8 +329,8 @@ Found while writing this plan. **None is fixed here** (this PR adds only the pla
 
 | # | Contradiction | Where |
 |---|---|---|
-| C13 | Email default: "email on by default for **all** types" vs "Aradığın ürün ucuzladı" e-mail **off by default**. | `architecture.md` §12.3 · `database.md` §3 `notification_type_preferences` · `modules.md` › Settings and Account › Screen · `engineering_checklist.md` › Notifications |
-| C14 | Upload retention: user uploads deleted after 24 h vs support screenshots kept 30 days [ASSUMPTION] (`uploads.purpose` includes `SUPPORT_ATTACHMENT`). | `agent_rules.md` › Security Rules · `engineering_checklist.md` › Images · `modules.md` › Help and FAQ · `database.md` §18 `support.attachment_retention_days` |
+| C13 | Email default: "email on by default for **all** types" vs "Aradığın ürün ucuzladı" e-mail **off by default**. **Decided [USER 2026-11-13]:** "Aradığın ürün ucuzladı" e-mail is **off by default**; the other types stay as documented. | `architecture.md` §12.3 · `database.md` §3 `notification_type_preferences` · `modules.md` › Settings and Account › Screen · `engineering_checklist.md` › Notifications |
+| C14 | Upload retention: user uploads deleted after 24 h vs support screenshots kept 30 days [ASSUMPTION] (`uploads.purpose` includes `SUPPORT_ATTACHMENT`). **Decided [USER 2026-11-13]:** support screenshots are kept **30 days**; the 24 h rule applies only to **order screenshots** and **identification photos**. | `agent_rules.md` › Security Rules · `engineering_checklist.md` › Images · `modules.md` › Help and FAQ · `database.md` §18 `support.attachment_retention_days` |
 | C15 | Provider budget described as "critical setting, **second approval**" vs Application Manager applies critical settings alone (no second approval) [DECIDED]. | `modules.md` › Provider Usage and Cost · `modules.md` › System Settings · `architecture.md` §18.2 |
 | C16 | Home interest picker: "optionally an interest picker" vs "no interest picker [DECIDED]". | `product_spect.md` §5.1, §9.4 · `modules.md` › Home › States |
 | C17 | 2FA: "optional 2FA … later" vs two-step verification **mandatory** for Application Manager accounts [DECIDED]. | `product_spect.md` §3.1 · `architecture.md` §16 › ME · `modules.md` › Settings and Account · `engineering_checklist.md` › Frontend › General |
@@ -343,10 +355,18 @@ Found while writing this plan. **None is fixed here** (this PR adds only the pla
 
 ---
 
-## 5. Questions (max 5)
+## 5. Answers to the Stage 0 questions
 
-1. **Screen order and first slice.** Do I follow the `CLAUDE.md` order (Search and Add → Product Detail → Tracked Items → Notifications → Home → My Savings → others by Appendix A → admin) and align `modules.md` Appendix A + `architecture.md` §25 to it in a `spec` PR (C1)? Is Product Detail's want-to-buy mode built with Product Detail (C2)? Does approving this plan also approve the first vertical slice A2 (§2 Stage 4, screen 3.1)?
-2. **Permission catalogue.** May the [PROPOSAL] keys in §3 become the permission catalogue (written into `database.md` §4 + `modules.md`)? For guests (not a role): mark guest endpoints with an explicit public allow-list in the API, or add a `GUEST` access level in `permissions` data?
-3. **Stage 1 data test.** Will you provide a SerpApi key (local `.env` only)? Are the five stores Trendyol, Hepsiburada, Amazon TR, MediaMarkt, Teknosa? Is the 2-week deal-frequency validation (`product_spect.md` §17-8, `architecture.md` R5) part of Stage 1 or a separate task?
-4. **Providers for development.** Until hosting is chosen, may Stage 3 use local emulators behind the provider interfaces (S3 emulator, local KMS key, console email sink, no LLM)? Which LLM provider and which transactional email provider should the interfaces be implemented for first?
-5. **Contradictions that need a decision.** C13 ("Aradığın ürün ucuzladı" e-mail default) and C14 (support screenshot retention 30 days vs 24 h): which value is correct? The other items in §4 are wording/contract alignments; may I fix them in `spec` PRs grouped as in §4?
+Answered by the user on PR #4, 2026-11-13. They are applied in this plan; writing them into the other docs happens in separate `spec` PRs (§2 Stage 0).
+
+| # | Topic | Answer [USER 2026-11-13] |
+|---|---|---|
+| 1 | Screen order and first slice | `CLAUDE.md` order. Want to Buy mode is built with Product Detail. First vertical slice A2 approved. |
+| 2 | Permission catalogue | The §3 keys become the official catalogue. Guests: explicit public allow-list in the API; no `GUEST` role or access level. |
+| 3 | Stage 1 data test | Stores: Trendyol, Hepsiburada, Amazon TR, MediaMarkt, Teknosa. The user puts the SerpApi key into the local `.env`. The 2-week deal-frequency test is a separate task after Stage 1. |
+| 4 | Development providers | Local emulators until hosting is chosen (S3 emulator, local KMS key, console e-mail, no LLM). LLM and e-mail providers are not chosen now: behind interfaces, [OPEN]. |
+| 5 | Contradictions | C13: "Aradığın ürün ucuzladı" e-mail off by default. C14: support screenshots 30 days; 24 h only for order screenshots and identification photos. All other §4 items: fixed in separate `spec` PRs grouped as in §4. |
+
+**Also added from `CLAUDE.md` Core rules (user request on PR #4):**
+- Core rule 8 — the canvas-link exception is removed from the Stage 4 precondition: no PNG + ✅ → the page is not built (§2 Stage 4, step 1).
+- Core rules 3, 4, 9 — tr/en tests, web + Android + iOS compatibility (platform-independent shared packages) and logging of every action are explicit per-screen Definition of Done items (§2 Stage 4).
