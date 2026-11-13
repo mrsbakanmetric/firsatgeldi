@@ -60,6 +60,32 @@ describe("theme.css", () => {
     expect(theme).not.toMatch(/--spacing:/);
   });
 
+  it("exposes the layer order (z-index) in the documented bottom-to-top order", () => {
+    const root = blockOf(":root");
+    const layers = Object.entries(tokens["z-index"]);
+    expect(layers.map(([key]) => key)).toEqual(["base", "raised", "sticky", "overlay", "modal", "popover", "tooltip"]);
+    for (const [key, value] of layers) expect(root).toContain(`--z-index-${key}: ${value};`);
+    const values = layers.map(([, value]) => value);
+    expect([...values].sort((a, b) => a - b)).toEqual(values);
+  });
+
+  it("exposes numeric component settings: px dimensions, unitless opacity and stroke, ms delays", () => {
+    const root = blockOf(":root");
+    expect(root).toContain(`--component-switch-track-width: ${tokens.components.switch["track-width"]}px;`);
+    expect(root).toContain(`--component-avatar-size-sm: ${tokens.components.avatar["size-sm"]}px;`);
+    expect(root).toContain(`--component-button-disabled-opacity: ${tokens.components.button.disabled.opacity};`);
+    expect(root).toContain(`--component-icon-stroke-width: ${tokens.components.icon["stroke-width"]};`);
+    expect(root).toContain(`--component-tooltip-delay: ${tokens.components.tooltip.delay};`);
+    expect(root).not.toMatch(/--component-[\w-]+: color\./);
+  });
+
+  it("turns dimension references in component settings into variables", () => {
+    const root = blockOf(":root");
+    expect(root).toContain("--component-button-ghost-height-touch: var(--size-touch-target-min);");
+    expect(root).toContain("--component-button-primary-padding-x: var(--spacing-5);");
+    for (const [, name] of root.matchAll(/var\((--[\w-]+)\)/g)) expect(css).toContain(`${name}:`);
+  });
+
   it("quotes font names that contain spaces", () => {
     const spaced = Object.values(tokens.typography["font-family"]).flat().filter((name) => name.includes(" "));
     for (const name of spaced) expect(blockOf("@theme static")).toContain(JSON.stringify(name));

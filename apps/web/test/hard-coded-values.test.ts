@@ -12,7 +12,8 @@ async function ruleIds(code: string): Promise<string[]> {
 
 const component = (body: string) => `export function Fixture() {\n  return ${body};\n}\n`;
 
-describe("hard-coded value lint (apps/web)", () => {
+// A cold ESLint start (Next.js + Tailwind design system) takes several seconds.
+describe("hard-coded value lint (apps/web)", { timeout: 30_000 }, () => {
   it("accepts token classes and token variables", async () => {
     expect(await ruleIds(component(`<div className="bg-surface p-4 text-body text-text rounded-md shadow-sm h-(--size-header-height)" />`))).toEqual([]);
   });
