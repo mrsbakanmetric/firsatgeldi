@@ -5,7 +5,7 @@ On conflict, `docs/` wins; precedence is in `docs/architecture.md`.
 
 ## Core rules — always apply, every session (no need to repeat them)
 1. **Language:** chat with the user in Turkish; specs and every `.md` file in English.
-2. **Replies:** short, clear, in bullet points. No detailed analysis unless the user explicitly asks ("detaylı analiz yap").
+2. **Replies:** short, clear, in bullet points. No detailed analysis unless the user explicitly asks ("detaylı analiz yap"). No short codes or ids (e.g. "C11", "§4.3") in chat: explain every item in plain Turkish; if a technical name is needed, say what it is next to it.
 3. **Multi-language:** build and test every change for multiple languages (tr default, en second, more later). No hard-coded text; all strings from the i18n catalogue; tests cover both locales.
 4. **Multi-platform:** build and test every change with web, Android and iOS in mind (same API, same server-side permission checks, platform-independent `core`/`contracts`/`i18n`/`tokens`). Mobile technology stays [OPEN]; building the mobile app is not started yet.
 5. **Database deletions need double confirmation:** never delete data (rows, tables, columns, data-dropping migrations) without asking. Ask → on yes, restate exactly what will be deleted → ask again → only then delete.

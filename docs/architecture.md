@@ -89,7 +89,7 @@ firsatgeldi/
     ├── sources/             # SerpApi + store site-search adapters + page verifier + link resolver + allow-list
     ├── tokens/              # design-tokens.json → CSS variables + Tailwind theme + contrast check
     ├── i18n/                # UI translation catalogues (tr, en), typed keys
-    ├── ui/                  # Pattern components (StatusFlag, MoneyDisplay, PriceHistory, StockHistory, RevealGate…)
+    ├── ui/                  # Pattern components — canonical list in pagedesign.md §5 (Flag, MoneyDisplay, PriceHistory, HiddenOfferCard…)
     └── config/              # env schema, ESLint (hard-coded value + i18n rules), tsconfig
 ```
 
@@ -834,7 +834,7 @@ activity_events / reports / link_submissions / package_requests / uploads
 
 - `design-tokens.json` is the single source [DECIDED]; `packages/tokens` produces CSS variables + Tailwind theme + contrast checks, plus platform-neutral JSON for mobile.
 - The hard-coded value lint rule breaks the build. Active theme in `system_settings.theme.active` (critical).
-- Pattern components: `StatusFlag` · `MoneyDisplay` · `PriceHistory` · `StockHistory` · `RevealGate` · `MarkConfirm` · `SegmentedChoice` · `FreshnessLine` · `DealHero` · `EmptyState` · `ErrorState`.
+- Pattern components: the canonical list is `pagedesign.md` §5 [DECIDED 2026-11-13]; `packages/ui` uses exactly those names. The server-side `RevealGate` interface (§6.3) is not a UI component; its UI is `HiddenOfferCard`.
 - **Patterns to add** (first to `product_design_pattern.md`): remaining-allowance indicator · step tick ("Yaptım ✓") · dimmed pre-tracking history · "tahmini" last day · fake-discount note · buy-or-wait hint · contextual help panel · consent dialog (legal) · masked field + time-limited "Göster" · multi-image upload (per-file progress and rejection) · image privacy note.
 - Screen designs follow `modules.md` Appendix E as visual drafts.
 

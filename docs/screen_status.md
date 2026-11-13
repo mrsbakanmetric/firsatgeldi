@@ -115,7 +115,7 @@ All 18 modules drawn in five canvases, light + dark, each with a States board (l
 3. List + 380 px detail panel as the admin template (new pattern); row click selects, actions open preview + confirm.
 4. Roles matrix columns: view/edit × web/mobile per permission key.
 5. Packages: a third tab "Elle verilenler" (manual grants, revocable).
-6. History Explorer: queries need a date range; maximum 12 months per query [ASSUMPTION].
+6. History Explorer: queries need a date range; maximum 12 months per query (`history.max_range_months`) [ASSUMPTION].
 7. Users: CSV export with personal data masked; e-mail search needs the full address.
 8. Example values (setting ranges, campaign boosts, mass-drop threshold, fraud thresholds) are illustrative [ASSUMPTION].
 
