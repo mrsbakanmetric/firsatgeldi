@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Premium ya da jeton iste</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+textarea::placeholder{color:var(--text-muted)}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="position: relative; width: 1280px; height: 900px; overflow: hidden; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<div aria-hidden="true" style="height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border)"></div>
+<div aria-hidden="true" style="max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); display: flex; flex-direction: column; gap: var(--s5)">
+<span style="font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Paketim</span>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s4)"><div style="height: 150px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 150px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 150px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 150px; border-radius: var(--r-lg); background: var(--surface)"></div></div>
+<div style="height: 380px; border-radius: var(--r-lg); background: var(--surface)"></div>
+</div>
+<div style="position: absolute; inset: 0; background: var(--overlay)"></div>
+
+<div role="dialog" aria-modal="true" aria-labelledby="ist-baslik" style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); width: var(--modal-w); height: 780px; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) var(--modal-aside-w); border-radius: var(--r-xl); background: var(--surface); box-shadow: var(--sh-lg); overflow: hidden">
+
+<div style="display: flex; flex-direction: column; min-height: 0">
+<div style="display: flex; align-items: center; gap: var(--s4); padding: var(--s6) var(--s6) var(--s4)">
+<span style="width: 48px; height: 48px; flex: none; border-radius: var(--r-lg); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><h2 id="ist-baslik" style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700">İstek gönder</h2><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Online ödeme şimdilik yok. Yönetici isteğini inceler; sonucu bildirim ve e-posta ile alırsın.</span></div>
+</div>
+
+<sc-if value="{{notSent}}" hint-placeholder-val="{{ true }}">
+<div style="flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(--s6) var(--s6); display: flex; flex-direction: column; gap: var(--s5)">
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: var(--s3)">
+<legend style="padding: 0; margin-bottom: var(--s3); font-size: var(--fs-body); font-weight: 600">Ne istiyorsun?</legend>
+<div role="radiogroup" aria-label="İstek türü" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{kinds}}" as="k" hint-placeholder-count="2">
+<button type="button" role="radio" aria-checked="{{k.checked}}" onClick="{{k.pick}}" style="{{k.style}}">
+<span style="{{k.iconStyle}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{k.icon}}"/></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px; text-align: left"><span style="font-size: var(--fs-body); font-weight: 700">{{k.t}}</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{k.d}}</span></span>
+</button>
+</sc-for>
+</div>
+</fieldset>
+
+<sc-if value="{{isPrem}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s4); border-radius: var(--r-lg); background: var(--surface-alt)">
+<span style="font-size: var(--fs-bsm); font-weight: 700">Premium ile</span>
+<ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2)">
+<sc-for list="{{perks}}" as="p" hint-placeholder-count="4"><li style="display: flex; align-items: center; gap: var(--s2); font-size: var(--fs-bsm)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--savings); flex: none" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>{{p.t}}</li></sc-for>
+</ul>
+<span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Fiyat henüz belli değil.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{isTok}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: var(--s2)">
+<span style="font-size: var(--fs-bsm); font-weight: 600">Kaç jeton?</span>
+<div style="display: flex; align-items: center; gap: var(--s3)">
+<button type="button" aria-label="Azalt" onClick="{{dec}}" style="width: var(--touch); height: var(--touch); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-h3); font-weight: 700; cursor: pointer">−</button>
+<output aria-live="polite" style="min-width: 64px; text-align: center; font-size: var(--fs-h2); font-weight: 700">{{qty}}</output>
+<button type="button" aria-label="Artır" onClick="{{inc}}" style="width: var(--touch); height: var(--touch); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-h3); font-weight: 700; cursor: pointer">+</button>
+<span style="font-size: var(--fs-bsm); color: var(--text-muted)">{{qtyNote}}</span>
+</div>
+<span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Jetonların süresi dolmaz. Açtığın teklif kısa sürede değişirse jeton geri gelir.</span>
+</div>
+</sc-if>
+
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Not <span style="font-weight: 500; color: var(--text-muted)">(isteğe bağlı, yöneticiye gider)</span><textarea rows="3" placeholder="Örneğin: bu ay çok ürün takip ediyorum" style="padding: var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 500; resize: vertical"></textarea></label>
+</div>
+</sc-if>
+
+<sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s3); padding: var(--s8); text-align: center">
+<span style="width: 64px; height: 64px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>
+<span style="font-size: var(--fs-h3); font-weight: 700">İsteğin alındı</span>
+<span style="max-width: 460px; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{sentText}} Durumu Paketim'de "İstekler" altında görürsün; sonuç bildirim ve e-posta ile gelir.</span>
+<button type="button" onClick="{{again}}" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Yeni istek (deneme)</button>
+</div>
+</sc-if>
+</div>
+
+<aside aria-label="Özet" style="position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--surface-alt); border-left: 1px solid var(--border)">
+<button type="button" aria-label="Kapat" style="position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+<div style="flex: 1; padding: 72px var(--s6) var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">ŞU AN</span>
+<dl style="margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: var(--s3); font-size: var(--fs-bsm)">
+<dt style="color: var(--text-muted)">Paket</dt><dd style="margin: 0; font-weight: 700">Ücretsiz</dd>
+<dt style="color: var(--text-muted)">Göster hakkı</dt><dd style="margin: 0; font-weight: 700">1 kaldı</dd>
+<dt style="color: var(--text-muted)">Jeton</dt><dd style="margin: 0; font-weight: 700">1</dd>
+<dt style="color: var(--text-muted)">Takip</dt><dd style="margin: 0; font-weight: 700">4 / 10</dd>
+</dl>
+<div style="height: 1px; background: var(--border)"></div>
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">İSTEĞİN</span>
+<span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">{{summary}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Bekleyen isteğin varken aynı türden yeni istek gönderilemez.</span>
+</div>
+<div style="padding: var(--s4) var(--s6) var(--s5); border-top: 1px solid var(--border); background: var(--surface)">
+<button type="button" onClick="{{send}}" aria-disabled="{{sendDisabled}}" style="{{sendStyle}}">{{sendLabel}}</button>
+</div>
+</aside>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { kind: 'prem', qty: 5, sent: false }; }
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","overlay":"rgba(11,31,51,0.48)"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","overlay":"rgba(0,0,0,0.6)"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px","modal-w":"1120px","modal-aside-w":"360px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const st = this.state, prem = st.kind === 'prem';
+    const kinds = [
+      { id: 'prem', t: 'Premium', d: 'Sınırsız Göster, 50 ürün takip, günde 30 kontrol, 2 kat sık kontrol', icon: 'M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z' },
+      { id: 'tok', t: 'Jeton', d: 'Ücretsiz Göster hakkın bitince 1 jetonla 1 satıcı açarsın', icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v10M9.5 9.5h4a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3h4' }
+    ].map(k => { const on = st.kind === k.id; return Object.assign(k, { checked: on ? 'true' : 'false', pick: () => this.setState({ kind: k.id }),
+      style: 'display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;padding:16px;border-radius:14px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer;' + (on ? 'border:2px solid var(--primary);box-shadow:0 4px 12px rgba(11,31,51,0.08)' : 'border:1px solid var(--border);margin:1px'),
+      iconStyle: 'width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;' + (on ? 'background:var(--primary);color:var(--on-primary)' : 'background:var(--surface-alt);color:var(--text)') }); });
+    const perks = ['Sınırsız Göster', '50 ürün aynı anda takip', 'Günde 30 kontrol', '2 kat daha sık kontrol'].map(t => ({ t }));
+    const summary = prem ? 'Premium' : st.qty + ' jeton';
+    return {
+      rootStyle: s, kinds, perks, isPrem: prem, isTok: !prem, qty: st.qty,
+      qtyNote: st.qty + ' satıcıyı açmaya yeter',
+      inc: () => this.setState({ qty: Math.min(st.qty + 1, 50) }), dec: () => this.setState({ qty: Math.max(st.qty - 1, 1) }),
+      sent: st.sent, notSent: !st.sent, summary,
+      sentText: (prem ? 'Premium isteğin' : st.qty + ' jeton isteğin') + ' yöneticiye gönderildi.',
+      send: () => this.setState({ sent: true }), again: () => this.setState({ sent: false }),
+      sendLabel: st.sent ? 'Gönderildi' : 'İsteği gönder',
+      sendDisabled: st.sent ? 'true' : 'false',
+      sendStyle: 'width:100%;height:52px;border:0;border-radius:10px;font:inherit;font-size:16px;font-weight:600;' + (st.sent ? 'background:var(--border);color:var(--text-muted);cursor:not-allowed' : 'background:var(--primary);color:var(--on-primary);cursor:pointer')
+    };
+  }
+}
+</script>
+</body>
+</html>
