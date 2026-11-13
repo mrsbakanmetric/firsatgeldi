@@ -1,6 +1,6 @@
 # FırsatGeldi — Implementation Plan
 
-> **Status:** Phase 1 — steps 1 and 3–6 done (#16, #20, #21, #22, #24); step 7 (i18n) in progress (#25); next: step 8 (app shell) · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
+> **Status:** Phase 1 — steps 1 and 3–7 done (#16, #20, #21, #22, #24, #25); next: step 8 (app shell) · **Last updated:** 2026-11-14 · **Owner:** implementation side (Claude Code)
 > **Sources:** `CLAUDE.md` (The plan and the daily flow, Phases), `architecture.md` (§2, §3, §6, §15, §16, §19–§21, §24, §25), `pagedesign.md` (§2–§5, §7, §8), `product_design_pattern.md`, `engineering_checklist.md`, `screen_status.md`, `modules.md` Appendix A.
 
 **This is the single project plan.** Every working day follows it, one step at a time (`CLAUDE.md` › The plan and the daily flow):
@@ -44,7 +44,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 4 | Basic CI | Lint, typecheck and unit tests on every PR | ✅ | #21 | 2026-11-13 |
 | 5 | Tokens | `design-tokens.json` in code + platform-neutral JSON; contrast test | ✅ | #22 | 2026-11-13 |
 | 6 | Theme | CSS variables, Tailwind preset, light/dark, hard-coded-value lint | ✅ | #24 | 2026-11-13 |
-| 7 | i18n | Turkish/English catalogues, `/tr` and `/en` routes, money/date formats | 🛠 | #25 | 2026-11-13 |
+| 7 | i18n | Turkish/English catalogues, `/tr` and `/en` routes, money/date formats | ✅ | #25 | 2026-11-13 |
 | 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ⬜ | — | — |
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ⬜ | — | — |
 | 10 | Search and Add | Screen as designed, on mock data | ⬜ | — | — |
@@ -130,7 +130,7 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 - **PR:** design side, not Claude Code.
 
 ### Step 3 — Monorepo skeleton
-- **Content:** pnpm workspaces + Turborepo; `apps/web` (Next.js App Router, TypeScript strict); packages `core`, `contracts`, `tokens`, `i18n`, `ui`, `config`, and `mocks` [PROPOSAL] (§4). Dependency-boundary lint (`core` and `contracts` framework-free; `web` never imports `mocks` outside development and test). `.env.example`. One root command (`pnpm dev`) starts the web app. **Not created:** `apps/api`, `apps/worker`, `packages/db`, `packages/sources` (Phase 2).
+- **Content:** pnpm workspaces + Turborepo; `apps/web` (Next.js App Router, TypeScript strict); packages `core`, `contracts`, `tokens`, `i18n`, `ui`, `config` (`mocks` is created in step 9, §4). Dependency-boundary lint (`core` and `contracts` framework-free; `web` never imports `mocks` outside development and test). `.env.example`. One root command (`pnpm dev`) starts the web app. **Not created:** `apps/api`, `apps/worker`, `packages/db`, `packages/sources` (Phase 2).
 - **Done when:** on a clean clone, `pnpm install && pnpm build && pnpm lint && pnpm typecheck && pnpm test` pass and `pnpm dev` opens a page on `localhost`.
 - **PR:** `chore/monorepo-skeleton`.
 
@@ -146,11 +146,11 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 
 ### Step 6 — Theme
 - **Content:** CSS variables for light and dark, Tailwind preset generated from the tokens, theme switch (system default + user choice), lint rule that fails on literal colours, sizes and spacing in `apps/web` and `packages/ui`.
-- **Done when:** a test page switches light/dark with no hard-coded value; the lint rule fails on a deliberate literal in a test fixture.
+- **Done when:** light/dark switching is proven by automated tests (no separate test page [DECIDED 2026-11-13]) with no hard-coded value; the lint rule fails on a deliberate literal in a test fixture.
 - **PR:** `feat/theme`.
 
 ### Step 7 — i18n
-- **Content:** `packages/i18n` with `tr` (default) and `en` catalogues and typed keys; missing-key check fails the build; locale resolution order of `architecture.md` §19 as a pure function in `core`; `/tr/...` and `/en/...` routes with translated path segments (Next.js middleware); money, date and plural formatting via `Intl` in `core`.
+- **Content:** `packages/i18n` with `tr` (default) and `en` catalogues and typed keys; missing-key check fails the build; locale resolution order of `architecture.md` §19 as a pure function in `core`; `/tr/...` and `/en/...` routes with translated path segments (Next.js proxy, formerly middleware); money, date and plural formatting via `Intl` in `core`.
 - **Done when:** tests run in both locales; a missing key breaks CI; the root `/` redirects to the resolved locale.
 - **PR:** `feat/i18n`.
 
@@ -190,7 +190,7 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 
 ## 4. Mock API
 
-**What it is.** [PROPOSAL] Mock Service Worker (MSW) running **in the browser, in development and test only**. Handlers and fixtures live in `packages/mocks` (depends on `contracts` and `core`; never imported by production code).
+**What it is.** [DECIDED 2026-11-13] Mock Service Worker (MSW) running **in the browser, in development and test only**. Handlers and fixtures live in `packages/mocks` (depends on `contracts` and `core`; never imported by production code).
 
 **How it works.**
 - Same paths (`/api/v1/...`), same response envelope (`architecture.md` §15.2) and same request/response shapes as the API contract (`architecture.md` §16); every request and response is validated with the Zod schemas in `packages/contracts`.
