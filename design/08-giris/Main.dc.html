@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Giriş</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+input::placeholder{color:var(--text-muted)}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 960px; display: flex; flex-direction: column; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<header style="height: var(--header-h); flex: none; background: var(--surface); border-bottom: 1px solid var(--border)">
+<div style="max-width: var(--content-max); height: 100%; margin: 0 auto; padding: 0 var(--s6); box-sizing: border-box; display: flex; align-items: center; justify-content: space-between">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); text-decoration: none; color: var(--text)"><span style="width: 32px; height: 32px; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span><span style="font-size: var(--fs-h3); font-weight: 700">FırsatGeldi</span></a>
+<div role="group" aria-label="Dil" style="display: flex; gap: 2px; padding: 4px; border-radius: var(--r-md); background: var(--surface-alt)"><button type="button" aria-pressed="true" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 700">Türkçe</button><button type="button" aria-pressed="false" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-bsm); font-weight: 500">English</button></div>
+</div>
+</header>
+
+<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 480px; gap: var(--s8); align-items: start">
+
+<section aria-label="FırsatGeldi nedir" style="display: flex; flex-direction: column; gap: var(--s6); padding: var(--s8); border-radius: var(--r-xl); background: var(--hero-surface); color: var(--on-hero-surface)">
+<h1 style="margin: 0; font-size: var(--fs-display); line-height: var(--lh-display); font-weight: 700">Aldığın ürün ucuzlarsa haberin olsun.</h1>
+<p style="margin: 0; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--on-hero-muted)">İade süren bitmeden daha ucuzu çıkarsa söyleriz. İade edip daha ucuza yeniden alırsın, farkı cebine koyarsın.</p>
+<div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--s4); align-items: center; padding: var(--s4); border-radius: var(--r-lg); background: var(--surface); color: var(--text)">
+<span role="img" aria-label="Aksiyon kamerası görseli" style="width: 96px; height: 96px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="76" height="76" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" style="fill: var(--text)"/><path d="M8 16h9v4H8z" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<div style="display: flex; flex-direction: column; gap: var(--s1)">
+<span style="align-self: flex-start; display: inline-flex; align-items: center; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); font-size: var(--fs-cap); font-weight: 700">Fırsat geldi</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">Bu kamerayı 28.999 TL'ye aldın; başka bir satıcıda 25.997 TL.</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">3.002 TL kazanç · iade için 4 gün · örnek bildirim</span>
+</div>
+</div>
+<ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{how}}" as="h" hint-placeholder-count="3"><li style="display: flex; flex-direction: column; gap: var(--s2)"><span style="width: 28px; height: 28px; border-radius: var(--r-pill); background: var(--hero-savings); color: var(--hero-surface); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">{{h.n}}</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{h.t}}</span></li></sc-for>
+</ol>
+</section>
+
+<section aria-label="Giriş" style="display: flex; flex-direction: column; gap: var(--s4)">
+
+<sc-if value="{{fromGuest}}" hint-placeholder-val="{{ true }}">
+<div role="status" style="display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--s3); align-items: center; padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<span role="img" aria-label="Insta360 Ace Pro 2 görseli" style="width: 56px; height: 56px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" style="fill: var(--text)"/><path d="M8 16h9v4H8z" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 700">Seçtiğin ürün seni bekliyor</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Insta360 Ace Pro 2 · Flash Print · girince onay adımından devam edersin, yazdıkların duruyor</span></span>
+</div>
+</sc-if>
+
+<div style="display: flex; flex-direction: column; gap: var(--s4); padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-xl); background: var(--surface); box-shadow: var(--sh-md)">
+
+<sc-if value="{{isAuth}}" hint-placeholder-val="{{ true }}">
+<div role="tablist" aria-label="Giriş ya da kayıt" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 4px; border-radius: var(--r-md); background: var(--surface-alt)"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="2"><button type="button" role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button></sc-for></div>
+
+<div style="display: flex; flex-direction: column; gap: var(--s2)">
+<button type="button" style="display: grid; grid-template-columns: 24px minmax(0, 1fr) 24px; align-items: center; height: 48px; padding: 0 var(--s4); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-btn); font-weight: 600"><span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">G</span><span>Google ile devam et</span><span></span></button>
+<button type="button" style="display: grid; grid-template-columns: 24px minmax(0, 1fr) 24px; align-items: center; height: 48px; padding: 0 var(--s4); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-btn); font-weight: 600"><span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">A</span><span>Apple ile devam et</span><span></span></button>
+</div>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: var(--s3); font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)"><span style="height: 1px; background: var(--divider)"></span>ya da e-posta ile<span style="height: 1px; background: var(--divider)"></span></div>
+
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">E-posta<input type="email" autocomplete="email" value="{{email}}" onInput="{{onEmail}}" placeholder="ornek@eposta.com" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body); font-weight: 500"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600"><span style="display: flex; justify-content: space-between">Şifre<sc-if value="{{isSignin}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{goForgot}}" style="border: 0; padding: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Şifremi unuttum</button></sc-if></span>
+<span style="display: flex; align-items: center; height: 48px; padding: 0 var(--s1) 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface)"><input type="{{pwType}}" autocomplete="{{pwAuto}}" value="{{pw}}" onInput="{{onPw}}" style="flex: 1; min-width: 0; border: 0; background: transparent; color: var(--text); font: inherit; font-size: var(--fs-body); font-weight: 500; outline: none"><button type="button" onClick="{{toggleShow}}" aria-label="{{showLabel}}" style="width: 40px; height: 40px; border: 0; border-radius: var(--r-md); background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{eye}}"/></svg></button></span></label>
+
+<sc-if value="{{isSignup}}" hint-placeholder-val="{{ false }}">
+<ul aria-label="Şifre kuralları" style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2)"><sc-for list="{{rules}}" as="r" hint-placeholder-count="3"><li style="{{r.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.icon}}"/></svg>{{r.t}}</li></sc-for></ul>
+<label style="display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: var(--s2); align-items: start; font-size: var(--fs-bsm); line-height: var(--lh-bsm); cursor: pointer"><input type="checkbox" checked="{{agree}}" onChange="{{toggleAgree}}" style="width: 20px; height: 20px; margin: 0; accent-color: var(--primary)"><span><a href="#" style="color: var(--primary); font-weight: 600">Kullanım koşullarını</a> okudum ve kabul ediyorum. Kişisel verilerin <a href="#" style="color: var(--primary); font-weight: 600">KVKK aydınlatma metnindeki</a> gibi işlenir.</span></label>
+</sc-if>
+
+<button type="button" onClick="{{submit}}" aria-disabled="{{ctaDisabled}}" style="{{ctaStyle}}">{{cta}}</button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: center">{{ctaHint}}</span>
+</sc-if>
+
+<sc-if value="{{isForgot}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{goSignin}}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0; border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Girişe dön</button>
+<h2 style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700">Şifreni sıfırla</h2>
+<p style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Hesabının e-postasını yaz; şifre sıfırlama bağlantısı gönderelim.</p>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">E-posta<input type="email" value="{{email}}" onInput="{{onEmail}}" placeholder="ornek@eposta.com" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body); font-weight: 500"></label>
+<button type="button" onClick="{{sendReset}}" style="height: 52px; border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600; cursor: pointer">Bağlantı gönder</button>
+</sc-if>
+
+<sc-if value="{{isMail}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-direction: column; align-items: center; gap: var(--s3); padding: var(--s4) 0; text-align: center">
+<span style="width: 64px; height: 64px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4zM4 6l8 7 8-7"/></svg></span>
+<h2 style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700">{{mailTitle}}</h2>
+<p style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{mailText}} <strong style="color: var(--text)">{{masked}}</strong></p>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Gelmediyse istenmeyen klasörüne bak. 60 sn sonra tekrar gönderebilirsin.</span>
+<div style="display: flex; gap: var(--s2)"><button type="button" aria-disabled="true" style="height: 44px; padding: 0 var(--s4); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text-muted); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tekrar gönder · 0:58</button><button type="button" onClick="{{goSignin}}" style="height: 44px; padding: 0 var(--s4); border: 0; border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Girişe dön</button></div>
+</div>
+</sc-if>
+
+</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: center">Aynı e-postayla Google ya da Apple'dan gelirsen hesapların tek hesapta birleşir.</span>
+</section>
+</main>
+
+<footer style="flex: none; background: var(--surface); border-top: 1px solid var(--border)">
+<div style="max-width: var(--content-max); margin: 0 auto; padding: var(--s5) var(--s6); box-sizing: border-box; display: flex; flex-wrap: wrap; gap: var(--s5); font-size: var(--fs-bsm)"><a href="#" style="color: var(--text-muted)">KVKK aydınlatma metni</a><a href="#" style="color: var(--text-muted)">Kullanım koşulları</a><a href="#" style="color: var(--text-muted)">Çerez politikası</a><a href="#" style="color: var(--text-muted)">Yardım ve SSS</a></div>
+</footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { mode: 'signin', email: '', pw: '', show: false, agree: false, fromGuest: true }; }
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","accent":"#FF5A36","on-accent":"#1A0A05","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","hero-surface":"#0B1F33","on-hero-surface":"#FFFFFF","on-hero-muted":"#DCE5E1","hero-savings":"#6EE7B7"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","accent":"#FF7A5C","on-accent":"#1A0A05","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","hero-surface":"#16293B","on-hero-surface":"#EEF4F2","on-hero-muted":"#9FB3C4","hero-savings":"#6EE7B7"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-md":"0 4px 12px rgba(11,31,51,0.08)","fs-display":"32px","lh-display":"40px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const st = this.state, signin = st.mode === 'signin', signup = st.mode === 'signup';
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(st.email.trim());
+    const r1 = st.pw.length >= 8, r2 = /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(st.pw), r3 = /[0-9]/.test(st.pw);
+    const rules = [[r1, 'En az 8 karakter'], [r2, 'En az bir harf'], [r3, 'En az bir rakam']].map(x => ({ t: x[1], icon: x[0] ? 'm5 12 5 5 9-10' : 'M12 12h.01',
+      style: 'display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:' + (x[0] ? 'var(--savings)' : 'var(--text-muted)') }));
+    const ready = signin ? (emailOk && st.pw.length > 0) : (emailOk && r1 && r2 && r3 && st.agree);
+    const tabs = [['signin', 'Giriş yap'], ['signup', 'Kayıt ol']].map(t => ({ label: t[1], sel: st.mode === t[0] ? 'true' : 'false', pick: () => this.setState({ mode: t[0] }),
+      style: 'height:40px;border:0;border-radius:8px;font:inherit;font-size:14px;cursor:pointer;' + (st.mode === t[0] ? 'background:var(--surface);color:var(--text);font-weight:700' : 'background:transparent;color:var(--text-muted);font-weight:500') }));
+    const e = st.email.trim(), at = e.indexOf('@');
+    const masked = at > 0 ? e[0] + '***' + e.slice(at, at + 2) + '***' + e.slice(e.lastIndexOf('.')) : 'e***@e***.com';
+    return {
+      rootStyle: s, tabs, rules, email: st.email, pw: st.pw, agree: st.agree, fromGuest: st.fromGuest && (signin || signup),
+      isAuth: signin || signup, isSignin: signin, isSignup: signup, isForgot: st.mode === 'forgot', isMail: st.mode === 'resetSent' || st.mode === 'verify',
+      how: [{ n: 1, t: 'Aldığın ürünü ekle' }, { n: 2, t: 'Fiyatını biz izleyelim' }, { n: 3, t: 'Daha ucuzu çıkınca iade et, yeniden al' }],
+      onEmail: (ev) => this.setState({ email: ev.target.value }), onPw: (ev) => this.setState({ pw: ev.target.value }),
+      toggleShow: () => this.setState({ show: !st.show }), toggleAgree: () => this.setState({ agree: !st.agree }),
+      pwType: st.show ? 'text' : 'password', pwAuto: signin ? 'current-password' : 'new-password', showLabel: st.show ? 'Şifreyi gizle' : 'Şifreyi göster',
+      eye: st.show ? 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM3 3l18 18' : 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+      goForgot: () => this.setState({ mode: 'forgot' }), goSignin: () => this.setState({ mode: 'signin' }),
+      sendReset: () => this.setState({ mode: 'resetSent' }),
+      submit: () => { if (ready && signup) this.setState({ mode: 'verify' }); },
+      cta: signin ? 'Giriş yap' : 'Hesap oluştur',
+      ctaHint: signin ? 'Hesabın yok mu? Üstten "Kayıt ol"a geç.' : 'Kayıt olunca 3 hediye jeton hesabına eklenir.',
+      ctaDisabled: ready ? 'false' : 'true',
+      ctaStyle: 'height:52px;border:0;border-radius:10px;font:inherit;font-size:16px;font-weight:600;' + (ready ? 'background:var(--primary);color:var(--on-primary);cursor:pointer' : 'background:var(--border);color:var(--text-muted);cursor:not-allowed'),
+      mailTitle: st.mode === 'verify' ? 'E-postanı doğrula' : 'Bağlantıyı gönderdik',
+      mailText: st.mode === 'verify' ? 'Hesabını açmak için şu adrese gönderdiğimiz bağlantıya tıkla:' : 'Bu adrese kayıtlı bir hesap varsa sıfırlama bağlantısı gönderdik:',
+      masked
+    };
+  }
+}
+</script>
+</body>
+</html>
