@@ -173,7 +173,7 @@ Use this pattern whenever the system has guessed something the user must own (pr
 
 ### 5.7 Stock history pattern
 - A row of equal boxes, **one box = one day**, with dates under the first and last box.
-- Three states, different by fill as well as colour: **in stock** = solid emerald, **low stock** = solid amber, **out of stock** = hollow box with dashed red border.
+- Three states, different by fill as well as colour: **in stock** = solid emerald, **low stock** = solid amber with a solid darker amber border (`stock-low-border`, so the box meets 3:1 non-text contrast on light surfaces), **out of stock** = hollow box with dashed red border.
 - A visible key explains the three states wherever the pattern appears.
 - States which seller it refers to (by rank if hidden, or "the seller you bought from").
 - Out-of-stock periods are named with dates where space allows; one sentence gives the current state and duration.
