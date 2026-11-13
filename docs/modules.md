@@ -1156,7 +1156,7 @@ Each rule can be turned on/off; threshold and weight are editable.
 
 ## Appendix A — Build order
 
-[DECIDED 2026-11-13] Same order as `CLAUDE.md` › Stages (4) and `architecture.md` §25. The first vertical slice (A2) is approved. One module group = one screen step; each step stops for approval.
+[DECIDED 2026-11-13] Same order as the screen order in `CLAUDE.md` › Phases and `architecture.md` §25. This is the **backend** build order: Phase 1 first builds the same screens on mock data; Phase 2 builds the backend and connects the screens in this order (rows 1–11); rows 12–13 are Phase 3 (`docs/implementation_plan.md`). The first vertical slice (A2) is approved. One module group = one screen step; each step stops for approval.
 
 | Order | Modules | Why |
 |---|---|---|

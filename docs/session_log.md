@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-13 (late night) · Claude Code
+- **Decided (user):** three phases — Phase 1 setup + approved screens on mock data; Phase 2 real data; Phase 3 Application Manager, Discover and Profile connection, deploy. Screen PNGs arrive screen by screen; base primitives added to the component list by the design side before the app shell (`docs/implementation_plan.md`, `CLAUDE.md` › Phases).
+- **Done:** three-phase plan with Progress tables (#16); `CLAUDE.md` three phases (#17); build-order references in `architecture.md` §25 and `modules.md` Appendix A aligned (this PR); plan step 1 marked ✅.
+- **Open:** "0 İskelet ve Bileşenler" PNGs + base primitives in `pagedesign.md` §5 (design side, before the app shell) · mock API tool (MSW) and `packages/mocks` are [PROPOSAL] in the plan.
+- **Next:** step 3 — monorepo skeleton (`chore/monorepo-skeleton`), after the user's approval.
+
+---
+
 ## 2026-11-13 (night) · claude.ai
 - **Decided (user):** Phase A first — screens built with real code, mock data, no database / real API / live data; backend is Phase B. `docs/implementation_plan.md` is the single plan with a Progress table; every day follows it one step at a time (`CLAUDE.md` › The plan and the daily flow, Phases).
 - **Done:** claude.ai project mirrors refreshed to `main` @ `1e8ee2c`.

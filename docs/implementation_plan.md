@@ -1,6 +1,6 @@
 # FırsatGeldi — Implementation Plan
 
-> **Status:** Phase 1, step 1 (this plan) in review · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
+> **Status:** Phase 1 — step 1 done (#16); next: step 3 (monorepo skeleton) · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
 > **Sources:** `CLAUDE.md` (The plan and the daily flow, Phases), `architecture.md` (§2, §3, §6, §15, §16, §19–§21, §24, §25), `pagedesign.md` (§2–§5, §7, §8), `product_design_pattern.md`, `engineering_checklist.md`, `screen_status.md`, `modules.md` Appendix A.
 
 **This is the single project plan.** Every working day follows it, one step at a time (`CLAUDE.md` › The plan and the daily flow):
@@ -38,7 +38,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 
 | # | Step | Delivers | Status | PR | Date |
 |---|---|---|---|---|---|
-| 1 | Plan update | This three-phase plan (no code) | 🛠 | — | 2026-11-13 |
+| 1 | Plan update | This three-phase plan (no code) | ✅ | #16 | 2026-11-13 |
 | 2 | Screen PNGs before each screen | Rule step: before each screen step, that screen's PNGs are in `design/`; before step 8, the "0 İskelet ve Bileşenler" PNGs | ⬜ (recurring) | — | — |
 | 3 | Monorepo skeleton | Building empty workspace; one command starts the web app | ⬜ | — | — |
 | 4 | Basic CI | Lint, typecheck and unit tests on every PR | ⬜ | — | — |
