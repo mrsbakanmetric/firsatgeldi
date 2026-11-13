@@ -94,7 +94,7 @@ All templates use the content width `size.content-max-width`, vertical padding `
 | **Summary** | stat tiles (equal columns, aligned) or a hero block |
 | **Toolbar** | search field · category filter · type/state filters with counts · sort · period |
 | **Content** | the list / detail sections / flow steps |
-| **Side column** | 320–360 px; secondary context (allowance, explanations, suggestions) |
+| **Side column** | `size.side-column-width` (360 px); secondary context (allowance, explanations, suggestions) |
 
 ### 3.1 List template
 Used by **Tracked Items**, **Notifications**, and every future list (admin lists included).
@@ -121,7 +121,7 @@ Used by **Home**, **My Savings**, **Packages and Premium**.
 
 ### 3.5 Settings template
 Used by **Settings and Account** (both roles) and admin settings screens.
-- Title → two columns: section menu (260 px, icon + label, current = `primary-subtle`, `aria-current`) | section content (section title + one-line description + "Kaydedildi" status, then cards/tables).
+- Title → two columns: section menu (`size.section-menu-width`, 260 px, icon + label, current = `primary-subtle`, `aria-current`) | section content (section title + one-line description + "Kaydedildi" status, then cards/tables).
 - Each section has its own URL (`/ayarlar/{section}`); sections shown depend on the role's permissions.
 - Switches save instantly; forms save with their own "Kaydet"; sensitive actions ask for re-authentication in a Dialog.
 
