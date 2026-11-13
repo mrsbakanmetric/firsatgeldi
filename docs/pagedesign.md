@@ -1,6 +1,6 @@
 # FırsatGeldi — Page Design
 
-**Status:** v1.1 · **Last updated:** 2026-11-12 · **Scope:** web, desktop 1280 (layout switches below `breakpoint.md`), light and dark · **Language of UI copy:** Turkish (English supported, see product_spect §3.2)
+**Status:** v1.2 · **Last updated:** 2026-11-14 · **Scope:** web, desktop 1280 (layout switches below `breakpoint.md`), light and dark · **Language of UI copy:** Turkish (English supported, see product_spect §3.2)
 
 This document explains **how every page is built**: the one shell, the page templates, the shared components, the global page rules, the page-by-page anatomy of the approved screens, and the procedure for deriving any new page. It is the bridge between `product_design_pattern.md` (rules and patterns), `design-tokens.json` (values), `modules.md` (what each screen must do) and the code.
 
@@ -135,7 +135,7 @@ Used by **Settings and Account** (both roles) and admin settings screens.
 | **Sheet / side panel** | design §5.25 | `size.side-panel-width` (440), full height under the header | Bell panel · Kaydı düzelt (My Savings) · confirm panel on phones |
 | **Bell preview** | design §5.29 | 560 px card to the **left** of the bell panel | Preview of the clicked notification |
 
-Rules: dimmed page (`color.overlay`), page state kept, focus moved in and trapped, Escape and the round 40 px bordered × close it, focus returns to the opener. Below `breakpoint.md` every overlay is a bottom sheet.
+Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (`color.overlay`), page state kept, focus moved in and trapped, Escape and the round 40 px bordered × close it, focus returns to the opener. Below `breakpoint.md` every overlay is a bottom sheet.
 
 ---
 
@@ -170,6 +170,15 @@ Rules: dimmed page (`color.overlay`), page state kept, focus moved in and trappe
 | `ConfirmPanel` (mark → confirm, typed seller and price) | §5.1 | Search and Add, Add product dialog step 2, Want to Buy "Aldım, kaydet" |
 | `SegmentedChoice` | §4.3 | order status, ranges, durations, tabs |
 | `MultiImageUpload` + `ImagePrivacyNote` | §5.19, §5.20 | Search and Add, Add product dialog, Bize yaz |
+| `Button` | §4.1, §4.2, §5.36 | every action |
+| `TextField` | §5.36 | every form (Sign-in, Settings, Bize yaz, confirm panel, admin forms) |
+| `Select` | §5.36 | list toolbars (base of `SortSelect`, `PeriodSelect`, `CategoryFilter`), forms |
+| `Switch` | §5.36 | Settings (notification types × channels, privacy), admin settings |
+| `Checkbox` | §5.36 | consent and terms, admin bulk selection |
+| `Menu` | §5.36 | profile menu, row "more" actions, admin actions |
+| `Tooltip` | §5.36 | labels of icon-only buttons, supplementary hints |
+| `Avatar` | §5.34, §5.36 | top bar profile button, person rows, profile header, admin user rows |
+| `Icon` | §5.36 | everywhere an icon appears |
 
 **This table is the canonical component list [DECIDED 2026-11-13].** `packages/ui` uses exactly these names. Former names in other documents map as follows: `StatusFlag` → `Flag` · `RevealGate` (UI) → `HiddenOfferCard` (the server-side `RevealGate` interface in `architecture.md` §6.3 keeps its name) · `AllowanceIndicator` → `AllowanceMeter` · `DealHero` → `HeroBlock` · `ErrorState` → `StatusBanner` (danger) · `MarkConfirm` → `ConfirmPanel` · compact `PriceHistory` → `PriceSparkline` · compact `StockHistory` → `StockStrip`. A new component is added to this table and to `product_design_pattern.md` first, then used.
 

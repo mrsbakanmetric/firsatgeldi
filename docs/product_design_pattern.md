@@ -1,6 +1,6 @@
 # FırsatGeldi — Product Design Patterns
 
-**Status:** v1.4 · **Last updated:** 2026-11-12 · **Applies to:** web and mobile
+**Status:** v1.5 · **Last updated:** 2026-11-14 · **Applies to:** web and mobile
 
 This document explains **how the product should look, feel and behave**: the colour logic, how users take action, and how any new screen, button or component must be built so the whole product stays consistent. It contains **no screen layouts** — it is the rulebook that every screen is built from.
 
@@ -331,6 +331,21 @@ The Landing Page's "Bu hafta bulunan fırsatlardan" block is the product's sales
 
 ### 5.32 Small recommendation strips
 Strips of **6 items or fewer** (e.g. "Benzer ürünler", "Senin için") are exempt from the list search/category rule (§5.30); they still show product images, price and check time. Anything longer, or anything the user browses, is a list and follows §5.30.
+
+### 5.36 Base primitives [DECIDED 2026-11-14]
+The smallest building blocks. Every larger component (§5.21–§5.35) is made from them; screens never style a native control directly. Values are in `design-tokens.json` › `components`.
+- **Button (`Button`):** variants exactly as §4.1 (primary, deal, secondary, ghost, danger, link) and behaviour as §4.2. Loading keeps the width; an icon-only button must carry an accessible label (shown as a Tooltip on pointer devices).
+- **Text field (`TextField`):** label always visible above the field (placeholder is never the label), optional helper text below. Types: text, email, password (show/hide toggle), number, search. Error = icon + message under the field + `danger` border, never colour alone; the message says how to fix it. Height and colours from `components.input`.
+- **Select (`Select`):** single choice from a list; options may carry counts ("Elektronik · 12"). `SortSelect`, `PeriodSelect` and the many-categories form of `CategoryFilter` are built on it. Toolbar selects use the compact height (`size.touch-target-min`). Below `breakpoint.md` the option list opens as a bottom sheet (§5.25).
+- **Switch (`Switch`):** on/off that takes effect immediately (no Save button). Track 48 × 28, thumb 22; on = `primary`, off = `border`. A locked switch is shown at reduced opacity with the reason next to it. `role="switch"` with `aria-checked`.
+- **Checkbox (`Checkbox`):** 20 px box inside a 44 px touch target; checked = `primary` fill with a check icon. Consent checkboxes are never pre-ticked. Indeterminate state for "select all" in admin tables.
+- **Menu (`Menu`):** a list of actions opened from a button (profile menu, row "more" actions). Items 44 px high with icon + label; a destructive item uses `danger` text and still asks for confirmation (§4.2). Arrow keys move, Enter selects, Escape closes and returns focus to the opener. Below `breakpoint.md` it opens as a bottom sheet.
+- **Tooltip (`Tooltip`):** supplementary text only, shown on hover and keyboard focus after a short delay; never shown on touch. Anything the user needs to act or decide (limits, privacy notes, reasons) is never placed only in a tooltip (§5.20).
+- **Avatar (`Avatar`):** initials on `primary-subtle`; sizes 34 (top bar profile button), 40 (rows, §5.34, §5.35), 96 (profile header). Initials only; a real name is never required. Decorative when inside a labelled button.
+- **Icon (`Icon`):** one outline icon set, stroke 2, `currentColor`, sizes `icon-sm` / `icon-md` / `icon-lg`. Decorative icons are hidden from assistive technology; an icon that carries meaning has a text label. Library: Lucide [RECOMMENDED — not decided].
+
+### 5.37 Layer order (`z-index`) [DECIDED 2026-11-14]
+Stacking uses only the `z-index` tokens, from bottom to top: **base** (page content) · **raised** (sticky table header) · **sticky** (top bar, bottom tab bar) · **overlay** (dimmed backdrop) · **modal** (Dialog, Sheet, bell panel) · **popover** (Menu, Select list, autocomplete — above modal because they also open inside dialogs) · **tooltip** (always on top). No literal z-index values in code.
 
 ---
 

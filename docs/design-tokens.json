@@ -1,8 +1,8 @@
 {
   "$meta": {
     "name": "FırsatGeldi Design Tokens",
-    "version": "1.6.0",
-    "updated": "2026-11-12",
+    "version": "1.7.0",
+    "updated": "2026-11-14",
     "activeTheme": "firsatgeldi-default",
     "rule": "SINGLE SOURCE OF TRUTH for every visual value in web and mobile. Never hard-code colours, font sizes, spacing, radius, borders or shadows in code. Read this file before creating or changing ANY UI element (screen, button, text, heading, divider, card, badge, input, icon, chart, notification, email).",
     "contrastStandard": "WCAG 2.1 AA: 4.5:1 normal text, 3:1 large text (>=18.66px bold or >=24px) and UI parts"
@@ -307,6 +307,16 @@
     "md": "768px",
     "rule": "Below md: single column, bottom navigation, panels open as bottom sheets. From md: top navigation, side panel."
   },
+  "z-index": {
+    "base": 0,
+    "raised": 10,
+    "sticky": 100,
+    "overlay": 300,
+    "modal": 310,
+    "popover": 400,
+    "tooltip": 600,
+    "rule": "Use only these layers, never a literal z-index. base = page content · raised = sticky table header, selected row lift · sticky = AppShell top bar and bottom tab bar · overlay = dimmed backdrop (color.overlay) · modal = Dialog, Sheet, bell panel · popover = Menu, Select list, autocomplete (above modal because they also open inside dialogs) · tooltip = Tooltip, always on top."
+  },
   "components": {
     "button": {
       "primary": {
@@ -544,6 +554,87 @@
       "muted": "color.on-hero-muted",
       "saving": "color.hero-savings",
       "action": "button.deal"
+    },
+    "text-field": {
+      "field": "components.input",
+      "label-font": "typography.scale.body-sm",
+      "label-weight": "typography.weight.semibold",
+      "label-gap": "space.2",
+      "helper-font": "typography.scale.caption",
+      "helper-color": "color.text-muted",
+      "error-color": "color.danger",
+      "error-border": "color.danger",
+      "rule": "Label always visible above the field (placeholder is never the label). Error = icon + text under the field + danger border, never colour alone."
+    },
+    "select": {
+      "field": "components.input",
+      "compact-height": "size.touch-target-min",
+      "compact-bg": "color.surface",
+      "list": "components.menu",
+      "rule": "Toolbar selects (sort, period, category) use the compact height. Below breakpoint.md the option list opens as a bottom sheet."
+    },
+    "switch": {
+      "track-width": "48px",
+      "track-height": "28px",
+      "thumb-size": "22px",
+      "thumb-offset": "3px",
+      "track-on": "color.primary",
+      "track-off": "color.border",
+      "thumb": "color.surface",
+      "thumb-shadow": "shadow.sm",
+      "radius": "radius.pill",
+      "locked-opacity": 0.6,
+      "touch-target": "size.touch-target-min"
+    },
+    "checkbox": {
+      "box-size": "20px",
+      "radius": "radius.sm",
+      "border": "color.border",
+      "border-width": "border-width.strong",
+      "checked-bg": "color.primary",
+      "checked-icon": "color.on-primary",
+      "touch-target": "size.touch-target-min"
+    },
+    "avatar": {
+      "size-sm": "34px",
+      "size-md": "40px",
+      "size-lg": "96px",
+      "bg": "color.primary-subtle",
+      "text": "color.on-primary-subtle",
+      "radius": "radius.pill",
+      "font-weight": "typography.weight.bold",
+      "use": "sm = top bar profile button · md = rows and lists · lg = profile header"
+    },
+    "menu": {
+      "min-width": "220px",
+      "bg": "color.surface",
+      "border": "color.border",
+      "radius": "radius.lg",
+      "shadow": "shadow.md",
+      "padding": "space.1",
+      "item-height": "size.touch-target-min",
+      "item-hover-bg": "color.surface-alt",
+      "item-danger-text": "color.danger",
+      "layer": "z-index.popover"
+    },
+    "tooltip": {
+      "bg": "color.text",
+      "text": "color.text-inverse",
+      "font": "typography.scale.caption",
+      "radius": "radius.sm",
+      "padding-x": "space.2",
+      "padding-y": "space.1",
+      "max-width": "280px",
+      "delay": "500ms",
+      "layer": "z-index.tooltip"
+    },
+    "icon": {
+      "size-sm": "size.icon-sm",
+      "size-md": "size.icon-md",
+      "size-lg": "size.icon-lg",
+      "stroke-width": 2,
+      "color": "currentColor",
+      "library": "Lucide [RECOMMENDED — not decided]"
     }
   },
   "semanticMeaning": {
