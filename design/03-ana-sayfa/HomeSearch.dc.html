@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Ana Sayfa arama anlık sonuçlar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1200px; box-sizing: border-box; padding: var(--s8) 40px; display: flex; flex-direction: column; gap: var(--s6); background: var(--background); color: var(--text); font-family: var(--font)">
+
+<div style="display: flex; flex-direction: column; gap: var(--s2)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Ana Sayfa · arama kutusu · yaz, alan açılsın; sil, kapansın</span>
+<h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Merhaba Serkan</h1>
+<p style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Takipte 4 ürün · <strong style="color: var(--text); font-weight: 600">63.297 TL</strong> koruma altında · tümü 4 dk önce kontrol edildi</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 0">
+<label style="{{boxStyle}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted); flex: none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Ürün ekle</span>
+<input type="search" aria-controls="anlik" aria-expanded="{{expanded}}" value="{{q}}" onInput="{{onQ}}" placeholder="Yeni ürün ekle: ad, mağaza linki veya fotoğraf" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-body); color: var(--text); outline: none">
+<sc-if value="{{open}}" hint-placeholder-val="{{ true }}"><button type="button" aria-label="Aramayı temizle" onClick="{{clear}}" style="width: var(--touch); height: var(--touch); border: 0; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></sc-if>
+<button type="button" style="height: var(--touch); padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; display: flex; align-items: center; gap: var(--s2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>Fotoğraf ekle</button>
+<button type="button" style="height: var(--touch); padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Ara</button>
+</label>
+
+<sc-if value="{{open}}" hint-placeholder-val="{{ true }}">
+<section id="anlik" aria-label="Anlık sonuçlar" aria-live="polite" style="box-sizing: border-box; padding: var(--s4); border: 1px solid var(--border); border-top: 0; border-radius: 0 0 var(--r-xl) var(--r-xl); background: var(--surface); box-shadow: var(--sh-md); display: flex; flex-direction: column; gap: var(--s3)">
+<sc-if value="{{hasHits}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">{{head}}</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Yazdıkça güncellenir · fiyat ve mağaza bir sonraki adımda</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="3">
+<a href="#" style="display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--s3); align-items: center; padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); text-decoration: none; color: var(--text)">
+<span role="img" aria-label="{{t.imgLabel}}" style="width: 96px; height: 72px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; overflow: hidden"><svg width="60" height="60" viewBox="0 0 48 48" aria-hidden="true"><path d="{{t.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{t.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{t.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.name}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.meta}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--primary)">Seç ve ekle</span>
+</span>
+</a>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding-top: var(--s2); border-top: 1px solid var(--divider)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Enter ya da "Ara" → tüm sonuçlar Ara ve Ekle'de</span>
+<a href="#" style="font-size: var(--fs-bsm); font-weight: 600; color: var(--primary)">{{allText}}</a>
+</div>
+</sc-if>
+<sc-if value="{{noHits}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s3)"><span style="font-size: var(--fs-bsm)">Kataloğumuzda henüz yok.</span><a href="#" style="font-size: var(--fs-bsm); font-weight: 600; color: var(--primary)">{{noText}}</a></div>
+</sc-if>
+</section>
+</sc-if>
+</div>
+
+<section aria-label="Hemen Gözat" style="background: var(--surface); border: 2px solid var(--primary); border-radius: var(--r-lg); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">HEMEN GÖZAT · alan açılınca aşağı kayar, üstüne binmez</span>
+<span style="font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 600">Insta360 Ace Pro 2 · Flash Print Bundle</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6)"><div style="height: 200px; border-radius: var(--r-md); background: var(--surface-alt)"></div><div style="height: 200px; border-radius: var(--r-md); background: var(--surface-alt)"></div></div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1200}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { q: 'insta360' }; }
+  tokens() {
+    return {
+      light: {"primary":"#047857","on-primary":"#FFFFFF","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","on-primary":"#052E22","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-md":"0 4px 12px rgba(11,31,51,0.08)","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px"};
+  }
+  catalog() {
+    return [
+      ['Insta360 Ace Pro 2', 'Aksiyon kamerası · 9 mağazada'], ['Insta360 Ace Pro 2 Flash Print Bundle', 'Paket · 7 mağazada'], ['Insta360 Ace Pro', '1. nesil · 5 mağazada'],
+      ['Insta360 X4', '360 derece kamera · 11 mağazada'], ['GoPro Hero 13 Black', 'Aksiyon kamerası · 12 mağazada'], ['GoPro Hero 12 Black', 'Aksiyon kamerası · 8 mağazada'],
+      ['DJI Osmo Action 5 Pro', 'Aksiyon kamerası · 10 mağazada'], ['Sony ZV-E10 II', 'Vlog kamerası · 6 mağazada'], ['Dyson V15 Detect Absolute', 'Kablosuz süpürge · 8 mağazada'], ['Apple AirPods Pro 2', 'Kulaklık · 15 mağazada']
+    ];
+  }
+  art() {
+    return {
+      cam: ['M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z', 'M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M8 16h9v4H8z'],
+      watch: ['M13 12h22a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z', 'M18 3h12l2 9H16zM16 36h16l-2 9H18z', 'M15 16h18v16H15z'],
+      robot: ['M24 5a19 19 0 1 0 0 38 19 19 0 0 0 0-38z', 'M24 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24zM24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z', 'M24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z'],
+      mouse: ['M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z', 'M22.5 9h3v7h-3z', 'M23.5 4h1v14h-1z'],
+      ssd: ['M11 5h26a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M12 10h24v5H12z', 'M20 33h8v4h-8z'],
+      fryer: ['M12 11h24l3 32H9z', 'M19 4h10v7H19z', 'M15 17h18v11H15z'],
+      shoe: ['M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', 'M3 33h42v5H3z', 'M20 22h3v2h-3zM25 24h3v2h-3z'],
+      phones: ['M6 27h8v15H9a3 3 0 0 1-3-3zM34 27h8v12a3 3 0 0 1-3 3h-5z', 'M8 27a16 16 0 0 1 32 0v3h-4v-3a12 12 0 0 0-24 0v3H8z', 'M9 31h3v7H9zM36 31h3v7h-3z'],
+      buds: ['M14 16h20a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6z', 'M8 25h32v2H8z', 'M22.5 31h3v4h-3z'],
+      jacket: ['M17 5h14l9 7-3 10-3-2v23H14V20l-3 2-3-10z', 'M23 5h2v38h-2z', 'M18 5h12l-6 6z'],
+      stick: ['M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z', 'M30 16h4v20h-4z', 'M27 6h10v3H27z'],
+      speaker: ['M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z', 'M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z', 'M22 22h4v4h-4z'],
+      reader: ['M12 3h24a3 3 0 0 1 3 3v36a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', 'M16 12h16v2H16zM16 17h16v2H16zM16 22h11v2H16z', 'M13 8h22v30H13z']
+    };
+  }
+  A(k) { const x = this.art()[k] || this.art().cam; return { a: x[0], b: x[1], c: x[2] }; }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const q = this.state.q, open = q.trim().length > 0;
+    const toks = q.toLocaleLowerCase('tr').replace(/ı/g, 'i').split(/\s+/).filter(Boolean);
+    const hits = open ? this.catalog().filter(p => { const n = (p[0] + ' ' + p[1]).toLocaleLowerCase('tr').replace(/ı/g, 'i'); return toks.every(t => n.indexOf(t) >= 0); }) : [];
+    const kind = (n) => /dyson/i.test(n) ? 'stick' : /airpods/i.test(n) ? 'buds' : 'cam';
+    const tiles = hits.slice(0, 3).map(p => ({ name: p[0], meta: p[1], imgLabel: p[0] + ' görseli', art: this.A(kind(p[0])) }));
+    return {
+      rootStyle: s, q, open, expanded: open ? 'true' : 'false',
+      boxStyle: 'display:flex;align-items:center;gap:12px;min-height:56px;padding:0 8px 0 16px;box-sizing:border-box;background:var(--surface);border:' + (open ? '2px solid var(--primary);border-radius:20px 20px 0 0' : '1px solid var(--border);border-radius:20px') + ';box-shadow:var(--sh-md)',
+      onQ: (e) => this.setState({ q: e.target.value }),
+      clear: () => this.setState({ q: '' }),
+      hasHits: hits.length > 0, noHits: open && !hits.length, tiles,
+      head: hits.length + ' ürün bulundu · ilk 3',
+      allText: 'Tüm sonuçları gör (' + hits.length + ')',
+      noText: '"' + q + '" için mağazalarda ara'
+    };
+  }
+}
+</script>
+</body>
+</html>

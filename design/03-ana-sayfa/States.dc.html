@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Ana Sayfa durumları</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 2600px; box-sizing: border-box; padding: var(--s12); display: flex; flex-direction: column; gap: var(--s8); background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<header style="display: flex; flex-direction: column; gap: var(--s2)">
+<h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Ana Sayfa · durumlar</h1>
+<p style="margin: 0; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-muted)">Başarılı durum ana panoda. Takipte ürün varsa sayfa her zaman kayıtlı veriyle hemen açılır; yeni veri arka planda gelir.</p>
+</header>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">1 · Boş · yeni kullanıcı</h2>
+<div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: var(--s8); display: flex; flex-direction: column; gap: var(--s6)">
+<div style="display: flex; flex-direction: column; gap: var(--s2)"><span style="font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Hoş geldin</span><span style="font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-muted)">Aldığın ya da almak istediğin bir ürünü ekle; fiyatı düşerse iade süren bitmeden haber verelim.</span></div>
+<label style="display: flex; align-items: center; gap: var(--s3); min-height: 56px; padding: 0 var(--s2) 0 var(--s4); box-sizing: border-box; background: var(--surface); border: 2px solid var(--primary); border-radius: var(--r-xl); box-shadow: var(--sh-md)">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted); flex: none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Ürün ekle</span>
+<input type="search" placeholder="Ürün adı, mağaza linki veya fotoğraf" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-body); color: var(--text); outline: none">
+<button type="button" style="height: var(--touch); padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Ara</button>
+</label>
+<ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
+<li style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background)">
+<span style="width: 36px; height: 36px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-bsm); font-weight: 700">{{st.n}}</span>
+<span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">{{st.t}}</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted); min-height: 40px">{{st.d}}</span>
+</li>
+</sc-for>
+</ol>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">2 · Takipte ama fırsat yok</h2>
+<div style="background: var(--surface); border: 2px solid var(--primary); border-radius: var(--r-lg); padding: var(--s6); display: flex; justify-content: space-between; align-items: center; gap: var(--s6)">
+<span role="img" aria-label="Dyson V15 Detect Absolute görseli" style="width: 120px; height: 120px; flex: none; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="93" height="93" viewBox="0 0 48 48" aria-hidden="true"><path d="M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M27 6h10v3H27z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M30 16h4v20h-4z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: var(--s2)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">HEMEN GÖZAT · iadesi en yakın ürün</span>
+<span style="display: inline-flex; align-self: flex-start; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>İade için 2 gün · 14 Kasım</span>
+<span style="font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 600">Dyson V15 Detect Absolute</span>
+<span style="font-size: var(--fs-bsm)">Aldın 30.999 TL · Teknosa · 3 Kasım</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--fs-body); font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" style="color: var(--savings)" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Şu an senin fiyatın en ucuz · 8 satıcı kontrol edildi · 6 dk önce</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: var(--s2); flex: none">
+<a href="#" style="display: inline-flex; align-items: center; height: 48px; padding: 0 var(--s5); box-sizing: border-box; border: 1px solid var(--primary); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-btn); font-weight: 600; text-decoration: none">Detayı aç</a>
+<button type="button" style="height: 40px; padding: 0 var(--s2); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Şimdi kontrol et</button>
+</div>
+</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Fırsat yokken mercan renk kullanılmaz; "Hemen Gözat" iadesi en yakın ürünü gösterir.</span>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">3 · Eski veri · kontrol ediliyor</h2>
+<div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s3)">
+<span style="display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--fs-bsm); color: var(--text-muted)"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: var(--r-pill); border: 2px solid var(--primary); border-right-color: transparent"></span>Takipte 4 ürün · 63.297 TL koruma altında · son değerler 3 saat önce · şimdi kontrol ediliyor</span>
+<div role="status" style="display: flex; gap: var(--s2); padding: var(--s3); border-radius: var(--r-md); background: var(--surface-alt)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; margin-top: 1px; color: var(--text-muted)" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500">Bazı mağazalara ulaşılamadı. Son bilinen değerler yaşlarıyla gösteriliyor.</span></div>
+<sc-for list="{{staleRows}}" as="r" hint-placeholder-count="3">
+<div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 300px 160px; gap: var(--s4); align-items: center; padding: var(--s3) var(--s4); border: 1px solid var(--border); border-radius: var(--r-md)">
+<span role="img" aria-label="{{r.name}} görseli" style="width: 44px; height: 44px; flex: none; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><path d="{{r.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{r.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{r.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<span style="font-size: var(--fs-bsm); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+<span style="font-size: var(--fs-bsm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.state}}</span>
+<span style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">{{r.age}}</span><span style="{{r.bar}}"></span></span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">4 · Hata · kayıtlı veri yok</h2>
+<div role="alert" style="background: var(--danger-subtle); border-radius: var(--r-lg); padding: var(--s6); display: flex; justify-content: space-between; align-items: center; gap: var(--s4)">
+<span style="display: flex; flex-direction: column; gap: var(--s1)"><span style="display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--fs-body); font-weight: 600; color: var(--danger)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Takip ettiklerin yüklenemedi</span><span style="font-size: var(--fs-bsm); color: var(--text)">Bağlantını kontrol edip tekrar dene. Takiplerin ve kontroller etkilenmedi; arama kutusu çalışıyor.</span></span>
+<button type="button" style="height: 48px; padding: 0 var(--s5); flex: none; border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Tekrar dene</button>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">5 · Yükleniyor · ilk açılış</h2>
+<div aria-busy="true" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="height: 14px; width: 40%; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6)"><div style="height: 220px; border-radius: var(--r-md); background: var(--surface-alt)"></div><div style="height: 220px; border-radius: var(--r-md); background: var(--surface-alt)"></div></div>
+<sc-for list="{{three}}" as="x" hint-placeholder-count="3"><div style="height: 64px; border-radius: var(--r-md); background: var(--surface-alt)"></div></sc-for>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Yalnız hiç kayıtlı veri yokken görünür; içeriğin biçiminde yer tutucu, tam ekran dönen simge yok.</span>
+</div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":2600}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","danger-subtle":"#FEE2E2","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","danger-subtle":"#3B1416","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","s12":"48px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-md":"0 4px 12px rgba(11,31,51,0.08)","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px"};
+  }
+  art() {
+    return {
+      cam: ['M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z', 'M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M8 16h9v4H8z'],
+      watch: ['M13 12h22a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z', 'M18 3h12l2 9H16zM16 36h16l-2 9H18z', 'M15 16h18v16H15z'],
+      robot: ['M24 5a19 19 0 1 0 0 38 19 19 0 0 0 0-38z', 'M24 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24zM24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z', 'M24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z'],
+      mouse: ['M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z', 'M22.5 9h3v7h-3z', 'M23.5 4h1v14h-1z'],
+      ssd: ['M11 5h26a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M12 10h24v5H12z', 'M20 33h8v4h-8z'],
+      fryer: ['M12 11h24l3 32H9z', 'M19 4h10v7H19z', 'M15 17h18v11H15z'],
+      shoe: ['M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', 'M3 33h42v5H3z', 'M20 22h3v2h-3zM25 24h3v2h-3z'],
+      phones: ['M6 27h8v15H9a3 3 0 0 1-3-3zM34 27h8v12a3 3 0 0 1-3 3h-5z', 'M8 27a16 16 0 0 1 32 0v3h-4v-3a12 12 0 0 0-24 0v3H8z', 'M9 31h3v7H9zM36 31h3v7h-3z'],
+      buds: ['M14 16h20a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6z', 'M8 25h32v2H8z', 'M22.5 31h3v4h-3z'],
+      jacket: ['M17 5h14l9 7-3 10-3-2v23H14V20l-3 2-3-10z', 'M23 5h2v38h-2z', 'M18 5h12l-6 6z'],
+      stick: ['M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z', 'M30 16h4v20h-4z', 'M27 6h10v3H27z'],
+      speaker: ['M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z', 'M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z', 'M22 22h4v4h-4z'],
+      reader: ['M12 3h24a3 3 0 0 1 3 3v36a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', 'M16 12h16v2H16zM16 17h16v2H16zM16 22h11v2H16z', 'M13 8h22v30H13z']
+    };
+  }
+  A(k) { const x = this.art()[k] || this.art().cam; return { a: x[0], b: x[1], c: x[2] }; }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const bar = (pct) => 'display:block;height:4px;border-radius:999px;background:linear-gradient(90deg,var(--primary) ' + pct + '%,var(--surface-alt) ' + pct + '%)';
+    return {
+      rootStyle: s,
+      three: [1, 2, 3],
+      steps: [
+        { n: '1', t: 'Ekle', d: 'Ürün adını yaz, mağaza linkini yapıştır ya da sipariş ekranının fotoğrafını ekle.' },
+        { n: '2', t: 'Biz takip edelim', d: 'Fiyatını ve stoğunu satıcı satıcı izleriz; iade süreni de takip ederiz.' },
+        { n: '3', t: 'Fark senin', d: 'Daha ucuzu çıkınca haber veririz; iade et, ucuza yeniden al, farkı kazan.' }
+      ],
+      staleRows: [
+        { art: this.A('cam'), name: 'Insta360 Ace Pro 2 · Flash Print', state: '3 satıcıda daha ucuz · en çok 3.002 TL', age: '3 saat önce · kontrol ediliyor', bar: bar(60) },
+        { art: this.A('stick'), name: 'Dyson V15 Detect Absolute', state: 'Senin fiyatın en ucuz', age: '3 saat önce · sırada', bar: bar(0) },
+        { art: this.A('buds'), name: 'Apple AirPods Pro 2', state: 'Hedefe 650 TL kaldı', age: 'Az önce kontrol edildi', bar: bar(100) }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
