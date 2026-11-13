@@ -9,3 +9,5 @@ coverage/
 .DS_Store
 next-env.d.ts
 *.tsbuildinfo
+# Generated from docs/design-tokens.json on every build (packages/tokens).
+packages/tokens/generated/

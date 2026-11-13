@@ -9,6 +9,7 @@ export const ignores = globalIgnores([
   "**/.next/**",
   "**/.turbo/**",
   "**/coverage/**",
+  "**/generated/**",
   "**/next-env.d.ts",
 ]);
 
