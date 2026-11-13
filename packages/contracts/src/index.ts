@@ -1,5 +1,6 @@
 // API contract (architecture.md §15, §16): Zod schemas, endpoint registry and the typed client.
 export * from "./activity";
+export * from "./client";
 export * from "./common";
 export * from "./endpoints";
 export * from "./envelope";
