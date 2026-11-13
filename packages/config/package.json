@@ -10,7 +10,8 @@
     "./eslint/framework-free": "./eslint/framework-free.mjs",
     "./eslint/next": "./eslint/next.mjs",
     "./eslint/hard-coded-values": "./eslint/hard-coded-values.mjs",
-    "./stylelint": "./stylelint/config.mjs"
+    "./stylelint": "./stylelint/config.mjs",
+    "./eslint/hard-coded-text": "./eslint/hard-coded-text.mjs"
   },
   "scripts": {
     "lint": "eslint .",
@@ -20,6 +21,7 @@
     "@eslint/js": "catalog:",
     "eslint-config-next": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-react": "7.37.5",
     "typescript-eslint": "catalog:"
   },
   "devDependencies": {
