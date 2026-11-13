@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Yasal metinler</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+input::placeholder,textarea::placeholder{color:var(--text-muted)}
+details>summary{list-style:none}
+details>summary::-webkit-details-marker{display:none}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1900px; display: flex; flex-direction: column; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+<header style="height: var(--header-h); flex: none; background: var(--surface); border-bottom: 1px solid var(--border)">
+<div style="max-width: var(--content-max); height: 100%; margin: 0 auto; padding: 0 var(--s6); box-sizing: border-box; display: flex; align-items: center; gap: var(--s6)">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); text-decoration: none; color: var(--text)"><span style="width: 32px; height: 32px; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span><span style="font-size: var(--fs-h3); font-weight: 700">FırsatGeldi</span></a>
+<nav aria-label="Ana menü" style="display: flex; gap: var(--s5); font-size: var(--fs-bsm); font-weight: 500"><a href="#" style="color: var(--text-muted); text-decoration: none">Nasıl çalışır</a><a href="#" style="color: var(--text-muted); text-decoration: none">Örnek fırsatlar</a><a href="#" style="color: var(--text-muted); text-decoration: none">Haklarını bil</a><a href="#" style="color: var(--text-muted); text-decoration: none">Yardım</a></nav>
+<div style="flex: 1"></div>
+<a href="#" style="display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Giriş yap</a>
+<a href="#" style="display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Ücretsiz başla</a>
+</div>
+</header>
+
+<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s6) var(--s6) var(--s12); box-sizing: border-box; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: var(--s8); align-items: start">
+<nav aria-label="Yasal metinler" style="display: flex; flex-direction: column; gap: var(--s1); padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<span style="padding: var(--s1) var(--s3) var(--s2); font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">Yasal metinler</span>
+<sc-for list="{{docs}}" as="d" hint-placeholder-count="4"><button type="button" aria-current="{{d.cur}}" onClick="{{d.pick}}" style="{{d.style}}">{{d.label}}</button></sc-for>
+<div style="margin-top: var(--s2); padding: var(--s3); border-top: 1px solid var(--divider); display: flex; flex-direction: column; gap: var(--s2); font-size: var(--fs-bsm)"><a href="#" style="color: var(--primary); font-weight: 600">Önceki sürümler</a><a href="#" style="color: var(--primary); font-weight: 600">Yardım merkezi</a></div>
+</nav>
+<article style="display: flex; flex-direction: column; gap: var(--s5)">
+<header style="display: flex; flex-direction: column; gap: var(--s3)">
+<h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">{{title}}</h1>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); font-size: var(--fs-bsm); color: var(--text-muted)"><span style="display: inline-flex; align-items: center; height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text); font-size: var(--fs-cap); font-weight: 600">{{ver}}</span><span>{{eff}}</span><span aria-hidden="true">·</span><span>Türkçe metin bağlayıcıdır</span><span aria-hidden="true">·</span><a href="#" style="color: var(--primary)">English</a></div>
+<p style="margin: 0; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-muted)">{{lead}}</p>
+</header>
+<details style="padding: var(--s4) var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)"><summary style="display: flex; justify-content: space-between; font-size: var(--fs-bsm); font-weight: 700; cursor: pointer">Bu sürümde ne değişti?<span aria-hidden="true" style="color: var(--text-muted)">+</span></summary><p style="margin: var(--s2) 0 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{change}}</p></details>
+<nav aria-label="Bu sayfada" style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s4) var(--s5); border-radius: var(--r-lg); background: var(--surface-alt)"><span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">Bu sayfada</span><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s1) var(--s6)"><sc-for list="{{secs}}" as="x" hint-placeholder-count="6"><a href="#" style="font-size: var(--fs-bsm); color: var(--primary)">{{x.n}}. {{x.h}}</a></sc-for></div></nav>
+<sc-for list="{{secs}}" as="x" hint-placeholder-count="6">
+<section style="display: flex; flex-direction: column; gap: var(--s2); padding-bottom: var(--s4); border-bottom: 1px solid var(--divider)"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">{{x.n}}. {{x.h}}</h2><p style="margin: 0; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-muted)">{{x.p}}</p></section>
+</sc-for>
+<sc-if value="{{hasCta}}" hint-placeholder-val="{{ true }}"><div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s5); border-radius: var(--r-lg); background: var(--primary-subtle); color: var(--on-primary-subtle)"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-body); font-weight: 700">{{ctaT}}</span><span style="font-size: var(--fs-bsm)">{{ctaD}}</span></span><a href="#" style="flex: none; display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">{{ctaB}}</a></div></sc-if>
+<span style="font-size: var(--fs-cap); color: var(--text-muted)">Taslak metin: içerik hukuk onayından sonra Yasal Metinler ve İçerik ekranından yayınlanır.</span>
+</article>
+</main>
+<footer style="flex: none; background: var(--surface); border-top: 1px solid var(--border)">
+<div style="max-width: var(--content-max); margin: 0 auto; padding: var(--s6); box-sizing: border-box; display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); font-size: var(--fs-bsm)"><nav aria-label="Yasal ve yardım" style="display: flex; flex-wrap: wrap; gap: var(--s5)"><a href="#" style="color: var(--text-muted)">KVKK aydınlatma metni</a><a href="#" style="color: var(--text-muted)">Kullanım koşulları</a><a href="#" style="color: var(--text-muted)">Çerez politikası</a><a href="#" style="color: var(--text-muted)">Komisyon açıklaması</a><a href="#" style="color: var(--text-muted)">Yardım ve SSS</a></nav><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Türkçe · English</span></div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); color: var(--text-muted)">Bazı mağaza bağlantılarından komisyon alabiliriz; bu, gösterdiğimiz fiyatları ve sıralamayı değiştirmez.</span>
+</div>
+</footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { doc: 'kvkk' }; }
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","accent":"#FF5A36","on-accent":"#1A0A05","danger":"#B91C1C","danger-subtle":"#FEE2E2","info-subtle":"#E0F2FE","info":"#0369A1","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","hero-surface":"#0B1F33","on-hero-surface":"#FFFFFF","on-hero-muted":"#DCE5E1","hero-savings":"#6EE7B7","hero-line":"#24384B","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","overlay":"rgba(11,31,51,0.48)","logo-surface":"#FFFFFF","on-logo-surface":"#0B1F33"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","accent":"#FF7A5C","on-accent":"#1A0A05","danger":"#F87171","danger-subtle":"#3B1416","info-subtle":"#0B2A3D","info":"#38BDF8","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","hero-surface":"#16293B","on-hero-surface":"#EEF4F2","on-hero-muted":"#9FB3C4","hero-savings":"#6EE7B7","hero-line":"#24384B","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","overlay":"rgba(0,0,0,0.6)","logo-surface":"#FFFFFF","on-logo-surface":"#0B1F33"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","s10":"40px","s12":"48px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-display":"32px","lh-display":"40px","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px","aside-w":"360px"};
+  }
+  art() {
+    return {
+      cam: ['M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z', 'M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M8 16h9v4H8z'],
+      watch: ['M13 12h22a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z', 'M18 3h12l2 9H16zM16 36h16l-2 9H18z', 'M15 16h18v16H15z'],
+      robot: ['M24 5a19 19 0 1 0 0 38 19 19 0 0 0 0-38z', 'M24 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24zM24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z', 'M24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z'],
+      mouse: ['M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z', 'M22.5 9h3v7h-3z', 'M23.5 4h1v14h-1z'],
+      ssd: ['M11 5h26a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M12 10h24v5H12z', 'M20 33h8v4h-8z'],
+      fryer: ['M12 11h24l3 32H9z', 'M19 4h10v7H19z', 'M15 17h18v11H15z'],
+      shoe: ['M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', 'M3 33h42v5H3z', 'M20 22h3v2h-3zM25 24h3v2h-3z'],
+      phones: ['M6 27h8v15H9a3 3 0 0 1-3-3zM34 27h8v12a3 3 0 0 1-3 3h-5z', 'M8 27a16 16 0 0 1 32 0v3h-4v-3a12 12 0 0 0-24 0v3H8z', 'M9 31h3v7H9zM36 31h3v7h-3z'],
+      buds: ['M14 16h20a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6z', 'M8 25h32v2H8z', 'M22.5 31h3v4h-3z'],
+      jacket: ['M17 5h14l9 7-3 10-3-2v23H14V20l-3 2-3-10z', 'M23 5h2v38h-2z', 'M18 5h12l-6 6z'],
+      stick: ['M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z', 'M30 16h4v20h-4z', 'M27 6h10v3H27z'],
+      speaker: ['M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z', 'M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z', 'M22 22h4v4h-4z'],
+      reader: ['M12 3h24a3 3 0 0 1 3 3v36a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', 'M16 12h16v2H16zM16 17h16v2H16zM16 22h11v2H16z', 'M13 8h22v30H13z']
+    };
+  }
+  A(k) { const x = this.art()[k] || this.art().cam; return { a: x[0], b: x[1], c: x[2] }; }
+  fold(t) { return String(t).toLocaleLowerCase('tr').replace(/ı/g, 'i'); }
+  chip(on) { return 'height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap;' + (on ? 'border:1px solid var(--primary);background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:600' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500'); }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const st = this.state;
+    const D = {
+      kvkk: { label: 'KVKK aydınlatma metni', title: 'KVKK aydınlatma metni', ver: 'Sürüm 1.2', eff: 'Yürürlük 1 Kasım 2026',
+        lead: 'Kişisel verilerini hangi amaçla işlediğimizi, ne kadar sakladığımızı ve haklarını nasıl kullanacağını anlatıyoruz.',
+        change: 'Ekran görüntülerinin saklanma süresi ve destek talepleri eklendi.',
+        secs: [['Veri sorumlusu', 'Veri sorumlusunun unvanı, adresi ve iletişim bilgileri.'], ['Hangi verileri işliyoruz', 'Hesap bilgileri, takip ettiğin ürünler, ödediğin fiyat ve sipariş tarihleri, bildirim tercihleri, cihaz ve oturum bilgileri.'], ['Amaçlar ve hukuki sebepler', 'Fiyat takibi ve bildirim hizmetini sunmak (sözleşmenin ifası), güvenlik (meşru menfaat), pazarlama iletileri (açık rıza).'], ['Kimlerle paylaşıyoruz', 'Barındırma, e-posta ve bildirim hizmet sağlayıcıları. Satıcılarla kişisel veri paylaşmayız.'], ['Saklama süreleri', 'Hesap silinince 30 gün içinde geri alınabilir, sonra silinir. Görsellerin özel kopyaları 24 saatte silinir.'], ['Hakların ve başvuru', 'Verine erişme, düzeltme, silme ve itiraz hakların var. Ayarlar › Verilerim ve hesap’tan ya da başvuru formuyla kullanabilirsin.']],
+        cta: ['Haklarını hemen kullan', 'Verilerini indir ya da hesabını sil.', 'Verilerim ve hesap'] },
+      kosul: { label: 'Kullanım koşulları', title: 'Kullanım koşulları', ver: 'Sürüm 2.0', eff: 'Yürürlük 1 Kasım 2026',
+        lead: 'FırsatGeldi’yi kullanırken geçerli kurallar. Önemli değişikliklerde girişte yeniden onayını isteriz.',
+        change: 'Paketler ve jetonlar bölümü eklendi; Göster hakkının süresi 1 hafta olarak yazıldı.',
+        secs: [['Hizmetin kapsamı', 'Fiyatları mağazalardan toplar, daha ucuz satıcıyı bulunca haber veririz. Satış yapmayız.'], ['Fiyatların doğruluğu', 'Fiyatlar kontrol anındaki değerdir; sepette değişebilir. Satın almadan önce mağazada kontrol et.'], ['Kararlar senin', 'İade, iptal ve fiyat farkı isteme kararı ve sonucu sana ve mağazaya aittir.'], ['Hesap kuralları', 'Hesabını başkasıyla paylaşamazsın; otomatik toplu kullanım yasaktır.'], ['Paketler ve jetonlar', 'Göster hakkı 1 hafta geçerlidir. Paket değerleri Paketim sayfasında yazar.'], ['Değişiklikler', 'Önemli değişiklikleri girişte, küçük değişiklikleri bildirimle duyururuz.']], cta: null },
+      cerez: { label: 'Çerez politikası', title: 'Çerez politikası', ver: 'Sürüm 1.1', eff: 'Yürürlük 15 Ekim 2026',
+        lead: 'Zorunlu çerezler dışında hiçbir çerez sen izin vermeden yüklenmez.',
+        change: 'Analitik çerezlerin listesi güncellendi.',
+        secs: [['Zorunlu çerezler', 'Oturumu açık tutmak ve güvenlik için gerekir; kapatılamaz.'], ['Tercih çerezleri', 'Dil ve tema seçimini hatırlar.'], ['Analitik çerezler', 'Hangi ekranların kullanıldığını adsız ölçer.'], ['Pazarlama çerezleri', 'Mağaza bağlantılarında komisyon takibi için kullanılır.'], ['Tercihini değiştirmek', 'Ayarlar › Gizlilik ve çerezler’den istediğin zaman değiştirebilirsin.'], ['Saklama süreleri', 'Her çerezin süresi tabloda yazar.']],
+        cta: ['Çerez tercihlerin', 'Şu an: yalnızca zorunlu ve tercih çerezleri.', 'Tercihleri değiştir'] },
+      komisyon: { label: 'Komisyon açıklaması', title: 'Komisyon açıklaması', ver: 'Sürüm 1.0', eff: 'Yürürlük 1 Kasım 2026',
+        lead: 'Bazı mağaza bağlantılarından alışveriş yapılınca komisyon alabiliriz. Bu, sana gösterdiğimiz fiyatı ve sıralamayı değiştirmez.',
+        change: 'İlk sürüm.',
+        secs: [['Hangi bağlantılar', '“Mağazaya git” düğmeleri bazı mağazalarda ortaklık bağlantısıdır; düğmenin yanında bunu yazarız.'], ['Sıralama', 'Satıcılar yalnızca fiyata göre sıralanır; komisyon sıralamayı etkilemez.'], ['Fiyatın değişmez', 'Komisyon mağazanın bize ödediği paydır; sana ek ücret yansımaz.'], ['Neden komisyon?', 'Hizmetin ücretsiz kalmasına yardım eder.'], ['Komisyonsuz mağazalar', 'Komisyon vermeyen mağazaları da aynı şekilde gösteririz.'], ['Soruların', 'Yardım merkezinden bize yazabilirsin.']], cta: null }
+    };
+    const d = D[st.doc];
+    return {
+      rootStyle: s, title: d.title, ver: d.ver, eff: d.eff, lead: d.lead, change: d.change,
+      secs: d.secs.map((x, i) => ({ n: i + 1, h: x[0], p: x[1] })),
+      hasCta: !!d.cta, ctaT: d.cta ? d.cta[0] : '', ctaD: d.cta ? d.cta[1] : '', ctaB: d.cta ? d.cta[2] : '',
+      docs: Object.keys(D).map(k => ({ label: D[k].label, cur: st.doc === k ? 'page' : 'false', pick: () => this.setState({ doc: k }),
+        style: 'min-height:44px;padding:0 12px;text-align:left;border:0;border-radius:10px;font:inherit;font-size:14px;cursor:pointer;' + (st.doc === k ? 'background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:700' : 'background:transparent;color:var(--text);font-weight:500') }))
+    };
+  }
+}
+</script>
+</body>
+</html>
