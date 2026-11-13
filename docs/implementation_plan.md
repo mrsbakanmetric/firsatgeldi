@@ -1,6 +1,6 @@
 # FırsatGeldi — Implementation Plan
 
-> **Status:** Phase 1 — steps 1 and 3–7 done (#16, #20, #21, #22, #24, #25); next: step 8 (app shell) · **Last updated:** 2026-11-14 · **Owner:** implementation side (Claude Code)
+> **Status:** Phase 1 — steps 1 and 3–8 done (#16, #20, #21, #22, #24, #25, #50); next: step 9 (mock API and fixtures) · **Last updated:** 2026-11-14 · **Owner:** implementation side (Claude Code)
 > **Sources:** `CLAUDE.md` (The plan and the daily flow, Phases), `architecture.md` (§2, §3, §6, §15, §16, §19–§21, §24, §25), `pagedesign.md` (§2–§5, §7, §8), `product_design_pattern.md`, `engineering_checklist.md`, `screen_status.md`, `modules.md` Appendix A.
 
 **This is the single project plan.** Every working day follows it, one step at a time (`CLAUDE.md` › The plan and the daily flow):
@@ -45,7 +45,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 5 | Tokens | `design-tokens.json` in code + platform-neutral JSON; contrast test | ✅ | #22 | 2026-11-13 |
 | 6 | Theme | CSS variables, Tailwind preset, light/dark, hard-coded-value lint | ✅ | #24 | 2026-11-13 |
 | 7 | i18n | Turkish/English catalogues, `/tr` and `/en` routes, money/date formats | ✅ | #25 | 2026-11-13 |
-| 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ⬜ | — | — |
+| 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ✅ | #50 | 2026-11-14 |
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ⬜ | — | — |
 | 10 | Search and Add | Screen as designed, on mock data | ⬜ | — | — |
 | 11 | Product Detail | Screen incl. Want to Buy mode | ⬜ | — | — |
