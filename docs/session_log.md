@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-13 (midnight) · claude.ai
+- **Decided (user):** designs reach `design/` as canvas HTML, PNG optional; flow "tasarım güncellendi, GitHub'a gönder" → design-change PR (#26, `design/README.md`) · low-stock box gets a `stock-low-border` (#23) · mock API with MSW, i18n route table, money format (`25.997 TL` / `TL 25,997`), browser-language order, relative time from the catalogue, Europe/Istanbul default · mobile app after the web is finished — these last decisions are not yet in `docs/` (Claude Code's session-close spec PR).
+- **Done:** reviewed plan steps 3–7 (#20, #21, #22, #24, #25); `ci` required on `main` (ruleset checked); spec #23, #26; design import 00 and 01 (#27).
+- **Open:** 16 canvases to import (02…13, 12a–12e) · base primitives + z-index tokens (spec PR, before the app shell) · delete the temporary artifact "FırsatGeldi — tasarım aktarımı (geçici)" (user approval) · refresh claude.ai project mirrors (stale since `1e8ee2c`).
+- **Next:** new claude.ai session → import the remaining canvases, then base primitives + z-index tokens; Claude Code plan step 8 (app shell) waits for those.
+
+---
+
 ## 2026-11-13 (late night) · Claude Code
 - **Decided (user):** three phases — Phase 1 setup + approved screens on mock data; Phase 2 real data; Phase 3 Application Manager, Discover and Profile connection, deploy. Screen PNGs arrive screen by screen; base primitives added to the component list by the design side before the app shell (`docs/implementation_plan.md`, `CLAUDE.md` › Phases).
 - **Done:** three-phase plan with Progress tables (#16); `CLAUDE.md` three phases (#17); build-order references in `architecture.md` §25 and `modules.md` Appendix A aligned (this PR); plan step 1 marked ✅.
