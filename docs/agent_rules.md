@@ -119,7 +119,7 @@ If a request conflicts with one of these rules, do not implement it; report the 
 - Do not process the user's personal and purchase data beyond what is needed; do not send it outside
 - Never leave authorisation to the interface alone; always enforce it on the server. Every screen and action is bound to a **permission key** (e.g. `tracking.own.write`, `admin.offers.view_hidden_seller`), checked on web and mobile alike; row-level security is the second line
 - **Personal data:** email and phone are stored encrypted (AES-256-GCM envelope) with a separate-key blind index for lookup; passwords Argon2id + pepper; masked by default on every screen; never written to logs (redaction); a full value is shown to the Application Manager only with a reason, for 10 minutes, audited; the personal-data leak test must pass in CI
-- **Images:** no binary in the database; store content-addressed (SHA-256) objects; strip all metadata (EXIF/GPS); keep no original; user uploads in a private bucket, visible only to the owner, deleted after 24 hours; never extract name, address, phone or order number from images
+- **Images:** no binary in the database; store content-addressed (SHA-256) objects; strip all metadata (EXIF/GPS); keep no original; user uploads in a private bucket, visible only to the owner; order screenshots and identification photos deleted after 24 hours, support-request screenshots after 30 days; never extract name, address, phone or order number from images
 - Every Application Manager view of personal data or hidden seller identity is written to the Audit Log
 
 ## Bug Fix Protocol

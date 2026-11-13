@@ -63,7 +63,7 @@ This document describes **how the product is built**: service boundaries, module
 | 11 | **Every change is tracked** | Settings, rules, templates, catalogue and personal-data access go to the audit log; versioned records are revertible |
 | 12 | **No history is ever deleted** [DECIDED] | Price, stock, product, search and activity histories are indefinite; on account deletion only the personal link is anonymised |
 | 13 | **Authorisation on the server, by permission key** [DECIDED] | Web and mobile share the API and permission checks; the Application Manager sees and manages everything everywhere |
-| 14 | **Images never in the DB** [DECIDED] | Object storage, content-addressed and de-duplicated, metadata stripped, size variants; user uploads private and deleted after 24 h |
+| 14 | **Images never in the DB** [DECIDED] | Object storage, content-addressed and de-duplicated, metadata stripped, size variants; user uploads private; order screenshots and identification photos deleted after 24 h, support-request screenshots after 30 days |
 | 15 | **Personal data encrypted and masked** [DECIDED] | Email/phone encrypted at application level + blind index; password Argon2id; masked on screen, in logs and in exports |
 
 ---
@@ -161,8 +161,8 @@ Internal pattern: `controller` (HTTP + Zod) → `service` (business rules) → `
 | Search | Meilisearch |
 | Files / images | S3-compatible object storage (catalogue: public behind CDN · private: signed short-lived links · quarantine) + image processing library (libvips-based) |
 | Key management | KMS (envelope encryption, key rotation) + secret manager |
-| AI | Vision-capable LLM + embeddings, behind a provider interface |
-| Email | Transactional email provider, behind an interface |
+| AI | Vision-capable LLM + embeddings, behind a provider interface; **provider [OPEN]** |
+| Email | Transactional email provider, behind an interface; **provider [OPEN]** |
 | Observability | OpenTelemetry + error tracking + metrics/alerts |
 | Hosting | Containers, region close to Türkiye, CDN + WAF |
 
@@ -468,7 +468,7 @@ Client ──(3) POST /uploads/complete {batchId}──▶ API ──▶ queue: 
 | Topic | Rule |
 |---|---|
 | Space | Content-addressed single copy; no original kept; AVIF/WebP variants; ref_count 0 → cleanup; quarantine bucket with 24 h lifecycle |
-| Privacy | All metadata stripped; user uploads in a **private bucket**, only signed short-lived links to the owner; order screenshots and identification photos **deleted after 24 h**; no personal data taken from images |
+| Privacy | All metadata stripped; user uploads in a **private bucket**, only signed short-lived links to the owner; order screenshots and identification photos **deleted after 24 h**; support-request screenshots after **30 days** (`support.attachment_retention_days`) [DECIDED 2026-11-13]; no personal data taken from images |
 | Platform privacy | Store images copied to our storage and served at `/img/{sha256}/{variant}`; source URL not kept (hash only) |
 | Multiple images | Up to 5 per request (setting), batch presign, parallel processing, order kept; one rejection does not stop the others; identification runs once all finish; a multi-product screenshot → bulk-add list |
 | Limits | File ≤ 10 MB, ≤ 40 MP, daily per-user count (all settings); types JPEG/PNG/WebP/HEIC |
@@ -476,7 +476,7 @@ Client ──(3) POST /uploads/complete {batchId}──▶ API ──▶ queue: 
 | Sending to the LLM | Only processed (metadata-stripped) images; provider must not retain data |
 | Avatar | Separate kind; signed link or CDN according to privacy level; deleted with the account |
 | Fraud | Upload count and rejection ratio are risk-rule signals |
-| Admin | The Application Manager can view private uploads within their 24 h life with a reason; every view audited |
+| Admin | The Application Manager can view private uploads within their retention period (24 h, or 30 days for support screenshots) with a reason; every view audited |
 
 ---
 
@@ -494,7 +494,7 @@ Client ──(3) POST /uploads/complete {batchId}──▶ API ──▶ queue: 
 
 ### 12.3 Notification channels and rules [DECIDED]
 - Channels: `IN_APP`, `EMAIL` (v1); `PUSH` with mobile. `NotificationChannel` interface.
-- **Email on by default for all types**; type × channel preferences. Legal nature [OPEN — later]; once decided the default changes via setting.
+- **Email on by default for all types except** "Aradığın ürün ucuzladı" (`SEARCHED_PRODUCT_DROP`), whose e-mail is **off by default** [DECIDED 2026-11-13]; type × channel preferences. Legal nature [OPEN — later]; once decided the default changes via setting.
 - Daily cap 5 (setting); return ≤ 2 days uncapped; when the cap is reached, lower priority goes to the next day / digest.
 - Daily digest optional; urgent ones never wait.
 - **Account and security notifications are mandatory:** independent of preferences, never capped or digested; in-app + email always.
@@ -576,6 +576,7 @@ Rate limit → Session → Account state (suspended / pending deletion) → Auth
  → Idempotency → Controller (Zod) → Service → Repository → Response shaping (§6) + masking (§22a) → Output validation
  → Audit + activity interceptors (§18) → Exception filter
 ```
+- **Authorisation without a session** [DECIDED 2026-11-13]: only endpoints on the explicit **public allow-list** pass; every other endpoint is refused without a session (sign-in required). Signed-in callers are checked by permission key on every endpoint, allow-listed or not.
 - **Consent gate** [DECIDED]: if the user has not accepted a "consent required" version, tracking/write endpoints return `CONSENT_REQUIRED`; reading, data download and account deletion stay open.
 - **Suspended users** cannot reach write endpoints.
 
@@ -769,10 +770,10 @@ GET|POST       /admin/link-submissions (later slice)
 ## 18. Roles, access, histories and fraud
 
 ### 18.1 Roles and permissions [DECIDED]
-- **Two roles:** `APP_MANAGER` (Application Manager) and `USER`. Guest is a signed-out access level, not a role.
+- **Two roles:** `APP_MANAGER` (Application Manager) and `USER`. Guest is not a role and has no data representation: guest-reachable endpoints are an **explicit public allow-list in the API** [DECIDED 2026-11-13].
 - Built as data: `roles`, `permissions`, `role_permissions`, `user_roles`. Code checks **permission keys**; new roles (support, moderator…) are added as data only.
 - The **Application Manager** holds every permission and **sees and manages everything on web and mobile**; the role cannot be deleted; at least one always remains.
-- **Page and action authorisation:** every screen and endpoint is bound to a permission key (`modules.md` access matrix). Web: Next.js middleware + server component checks; mobile calls the same API; **the final decision is always in the API**.
+- **Page and action authorisation:** every screen and endpoint is bound to a permission key (`modules.md` access matrix; catalogue in `database.md` §4 [DECIDED 2026-11-13]). Web: Next.js middleware + server component checks; mobile calls the same API; **the final decision is always in the API**.
 - **User data:** service ownership check + PostgreSQL RLS (`app.user_id`); the Application Manager reads through a separate DB role (`app_admin`), every access audited.
 - **View-as-user** [RECOMMENDED]: read-only via `admin_view_sessions`; write endpoints closed in that session.
 
@@ -951,36 +952,51 @@ push → lint (tokens + i18n + hard-coded values) → typecheck → unit tests (
 
 Environments `dev` → `staging` → `prod`; no production without backups + a **tested restore** (including KMS key recovery).
 
+**Development providers [DECIDED 2026-11-13]:** until hosting is chosen, every external provider runs as a local implementation behind its interface:
+
+| Interface | Local implementation |
+|---|---|
+| Object storage | S3-compatible emulator (`catalog`, `private`, `quarantine` buckets) |
+| KMS / envelope encryption | Local key (development only; never used outside `dev`) |
+| Email (`NotificationChannel` `EMAIL`) | Console sink (messages written to the log, recipient masked) |
+| LLM + embeddings | **None** — the interface exists, no implementation is wired; LLM steps are unavailable in `dev` |
+
+Hosting provider, LLM provider and transactional email provider are **[OPEN]**; code depends only on the interfaces.
+
 ---
 
 ## 25. Build order and first vertical slice
 
-Same as `modules.md` Appendix A.
+Same as `modules.md` Appendix A and `CLAUDE.md` › Stages (4) [DECIDED 2026-11-13].
 
 | Order | Scope |
 |---|---|
 | 1 | **First vertical slice:** Search and Add (text + link + image upload) → confirm → tracking + `check_schedules` → scheduled check (SerpApi + at least one store adapter) → merge + history → verified deal (`deals`) → hidden seller (leak test included) → Göster/Gizle (`FreeToggleGate`) → outbound. With dev login; **permission checks, activity capture and personal-data encryption from day one**. |
-| 2 | Product Detail + Price and Stock History + Return Window + Check Now |
-| 3 | Home + Tracked Items |
-| 4 | Notifications (incl. account/security) + My Savings + Trust and Accuracy |
-| 5 | Want to Buy + Packages and Premium (`EntitlementGate`) + admin modules (incl. History Explorer, Fraud Monitoring, Roles and Permissions) |
-| 6 | Landing Page + Legal Pages + Help and FAQ |
-| 7 | Settings and Account + Sign-in and Sign-up |
-| 8 | Discover and Community + Profile and Following |
+| 2 | Product Detail + Want to Buy (mode of Product Detail) + Price and Stock History + Return Window + Check Now + Trust and Accuracy (user side) |
+| 3 | Tracked Items |
+| 4 | Notifications and Preferences (incl. account/security) |
+| 5 | Home |
+| 6 | My Savings |
+| 7 | Packages and Premium (`EntitlementGate`) |
+| 8 | Landing Page (+ SEO product page) |
+| 9 | Legal Pages + Help and FAQ |
+| 10 | Settings and Account |
+| 11 | Sign-in and Sign-up |
+| 12 | Discover and Community + Profile and Following |
+| 13 | Admin modules (incl. History Explorer, Fraud Monitoring, Roles and Permissions) |
 
-First slice approval [RECOMMENDED — A2].
+First slice approval: [DECIDED 2026-11-13 — A2].
 
 ---
 
 ## 26. Open decisions and risks
 
 ### Closed in this version
-Roles (Application Manager + User) · web/mobile screen coverage · indefinite histories · Application Manager applies critical settings alone · image architecture · personal-data encryption and masking · A1 technology stack · A3 platform name hidden before reveal · all sellers hidden in want mode · R1 seller entry (no seller list, exact-match lookup, price paid from the user) · launch categories · follow model · package model and defaults.
+Roles (Application Manager + User) · web/mobile screen coverage · indefinite histories · Application Manager applies critical settings alone · image architecture · personal-data encryption and masking · A1 technology stack · A3 platform name hidden before reveal · all sellers hidden in want mode · R1 seller entry (no seller list, exact-match lookup, price paid from the user) · launch categories · follow model · package model and defaults · A2 first vertical slice and build order (2026-11-13) · permission catalogue and guest public allow-list (2026-11-13).
 
 ### Open
 | # | Topic |
 |---|---|
-| A2 | First vertical slice approval (§25) |
 | — | Show more expensive sellers by name? (spec §17-7) |
 | — | Legal nature of email (decide later) |
 | — | Premium/token prices, tiered tokens, payment provider (decide later) |
@@ -991,6 +1007,9 @@ Roles (Application Manager + User) · web/mobile screen coverage · indefinite h
 | — | Indefinite history + search-history hiding ↔ KVKK right to erasure (legal opinion) |
 | — | Discover sharing reward (interim) |
 | — | Mobile technology and infrastructure |
+| — | Hosting provider (§24) |
+| — | LLM provider (§2; none wired in development) |
+| — | Transactional email provider (§2; console sink in development) |
 | — | Screen designs (`modules.md` Appendix E) |
 
 ### Risks
