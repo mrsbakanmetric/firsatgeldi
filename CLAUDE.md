@@ -17,8 +17,35 @@ The user opens and closes every session with two phrases. Follow these procedure
 1. `git fetch origin && git checkout main && git pull --ff-only`.
 2. Read `docs/session_log.md` (newest first), then `docs/build_status.md`, `docs/screen_status.md` and the docs named in the latest entries.
 3. `gh pr list --state open` and `gh pr list --state merged --limit 10`.
-4. Reply in Turkish, short, in three lists: **Bitenler** (done, with PR numbers) · **Açık işler** (open PRs, open questions, waiting decisions) · **Sıradaki adım** (one step).
+4. Reply in Turkish using the **session report format** below.
 5. Stop and wait for the user's approval before doing that step.
+
+### Session report format (used by "session aç" and "session kapat")
+Three sections, each a table, separated by a horizontal rule (`---`). Rows newest date first; dates as `YYYY-MM-DD`; one short line per cell; PRs as `#N`; write "—" in empty cells. No text outside the tables except the section headings.
+
+```
+## ✅ Bitenler
+| Tarih | Ne yapıldı | Taraf | PR |
+|---|---|---|---|
+| 2026-11-13 | … | claude.ai / Claude Code | #2 |
+
+---
+
+## 🟡 Açık işler
+| Tarih | Konu | Ne bekleniyor | Kimden | PR |
+|---|---|---|---|---|
+| 2026-11-13 | … | Karar / PNG / inceleme | Kullanıcı / Claude Code | — |
+
+---
+
+## ➡️ Sıradaki adım
+| # | Adım | Kim yapar | Onay gerekir mi |
+|---|---|---|---|
+| 1 | … | … | Evet |
+```
+- **Bitenler:** from `docs/session_log.md` and merged PRs, last 10 items.
+- **Açık işler:** open PRs, open questions, decisions waiting for the user, missing inputs.
+- **Sıradaki adım:** exactly one row.
 
 ### "session kapat" — close
 1. List what this session did (files, PRs, decisions taken by the user, questions still open).
@@ -26,7 +53,7 @@ The user opens and closes every session with two phrases. Follow these procedure
 3. **Status:** update `docs/build_status.md` if code changed (in the code PR).
 4. **Log:** add one entry at the top of `docs/session_log.md` — date, side (Claude Code / claude.ai), done, PRs, open questions, next step (≤ 10 lines). Put it in the spec PR; if there is none, open `chore/session-log-<date>`.
 5. Make sure nothing is uncommitted; push every branch.
-6. Reply in Turkish with the PR links to merge and the next step; then stop.
+6. Reply in Turkish using the **session report format** (Bitenler = this session's work; Açık işler includes the PRs to merge, with links); then stop.
 
 ### Rules
 - Keep log entries short. Decisions never live only in the log: they go into the relevant doc in `docs/`.
