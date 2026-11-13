@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Onay paneli</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+
+<div style="flex: none; padding: var(--s2) var(--s4) var(--s3) var(--s5); border-bottom: 1px solid var(--divider); display: flex; flex-direction: column; gap: var(--s1)">
+<sc-if value="{{sheet}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 40px; height: 4px; align-self: center; border-radius: var(--r-pill); background: var(--border)"></span></sc-if>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s2)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Emin ol, sonra onayla</h2>
+<button type="button" aria-label="Paneli kapat" style="width: var(--touch); height: var(--touch); flex: none; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Varsaydıklarımızı kontrol et; dokunup değiştirebilirsin.</span>
+</div>
+
+<div style="flex: 1 1 auto; overflow: hidden; padding: var(--s5); display: flex; flex-direction: column; gap: var(--s5)">
+
+<sc-if value="{{showTop}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; gap: var(--s3); align-items: center">
+<div role="img" aria-label="Ürün görseli" style="width: var(--thumb-sm); height: var(--thumb-sm); flex: none; border-radius: var(--r-sm); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="38" height="38" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M8 16h9v4H8z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">Insta360 Ace Pro 2</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">2. nesil · Flash Print Bundle · Siyah</span></div>
+<button type="button" style="height: 40px; padding: 0 var(--s2); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Değiştir</button>
+</div>
+
+<sc-if value="{{prefilled}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; gap: var(--s2); padding: var(--s3); border-radius: var(--r-md); background: var(--info-subtle)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; margin-top: 1px; color: var(--info)" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text)">{{prefillNote}}</span>
+</div>
+</sc-if>
+
+<section aria-label="Aldığın ilan" style="display: flex; flex-direction: column; gap: var(--s3)">
+<h3 style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--text-muted)">ALDIĞIN İLAN</h3>
+<label style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">Platform</span>
+<select style="height: 48px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-alt); color: var(--text); font: inherit; font-size: var(--fs-body)"><option>Hepsiburada</option></select></label>
+<label style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">Satıcı</span>
+<input type="text" value="Kamera Dünyası" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-alt); color: var(--text); font: inherit; font-size: var(--fs-body)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Adını tam yaz ya da ilan linkini yapıştır.</span></label>
+<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-md)">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--savings)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Bu üründe bulundu</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2)">
+<sc-for list="{{facts}}" as="f" hint-placeholder-count="3">
+<div style="{{f.box}}">
+<sc-if value="{{f.ok}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" style="flex: none" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></sc-if>
+<sc-if value="{{f.bad}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" style="flex: none" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></sc-if>
+<span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{f.k}}</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{f.v}}</span></span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s2)"><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">6 dk önce kontrol edildi</span><a href="#" style="display: inline-flex; align-items: center; gap: var(--s1); min-height: var(--touch); font-size: var(--fs-bsm); font-weight: 600; color: var(--primary)">İlanı aç<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+</div>
+</section>
+
+<section aria-label="Satın alma" style="display: flex; flex-direction: column; gap: var(--s3)">
+<h3 style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--text-muted)">SATIN ALMA</h3>
+<label style="display: flex; flex-direction: column; gap: var(--s1)"><span style="display: flex; align-items: center; justify-content: space-between; gap: var(--s2)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">Ödediğin fiyat</span><sc-if value="{{prefilled}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--info-subtle); color: var(--info); font-size: var(--fs-cap); font-weight: 600">{{prefillTag}}</span></sc-if></span>
+<span style="display: flex; align-items: center; height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 2px solid var(--primary); border-radius: var(--r-md); background: var(--surface)"><input type="text" inputmode="decimal" value="28.999" style="flex: 1; min-width: 0; border: 0; background: transparent; color: var(--text); font: inherit; font-size: var(--fs-price); font-weight: 600; outline: none"><span style="font-size: var(--fs-body); font-weight: 600; color: var(--text-muted)">TL</span></span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{priceHelp}}</span></label>
+<label style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">Sipariş tarihi</span>
+<input type="text" value="8 Kasım 2026" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-alt); color: var(--text); font: inherit; font-size: var(--fs-body)"></label>
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">Sipariş durumu</span>
+<div role="group" aria-label="Sipariş durumu" style="display: flex; padding: var(--s1); gap: var(--s1); background: var(--surface-alt); border-radius: var(--r-md)">
+<button type="button" aria-pressed="false" style="flex: 1; min-height: 40px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-cap); font-weight: 500">Sipariş verdim</button>
+<button type="button" aria-pressed="true" style="flex: 1; min-height: 40px; border: 0; border-radius: var(--r-sm); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-cap); font-weight: 600; box-shadow: var(--sh-sm)">Kargoda</button>
+<button type="button" aria-pressed="false" style="flex: 1; min-height: 40px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-cap); font-weight: 500">Teslim aldım</button>
+</div></div>
+</section>
+</sc-if>
+
+<sc-if value="{{showBottom}}" hint-placeholder-val="{{ true }}">
+<section aria-label="İade süresi" style="display: flex; flex-direction: column; gap: var(--s2)">
+<h3 style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--text-muted)">İADE SÜRESİ</h3>
+<div style="display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap">
+<span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Son gün 24 Kasım 2026</span>
+<span style="display: inline-flex; align-items: center; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--info-subtle); color: var(--info); font-size: var(--fs-cap); font-weight: 600">tahmini</span>
+<button type="button" aria-label="Tahmini nedir?" style="width: var(--touch); height: var(--touch); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg></button>
+</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Bu platform ve kategoride teslimden itibaren 14 gün. Teslim tarihi bilinmediği için ortalama teslim süresiyle hesaplandı; teslim alınca soracağız.</span>
+<button type="button" style="align-self: flex-start; height: 40px; padding: 0; border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Son günü değiştir</button>
+</section>
+
+<section aria-label="Daha ucuz fiyat" style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4); border-radius: var(--r-lg); background: var(--surface-alt)">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s2)">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>Fırsat geldi</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">4 dk önce</span>
+</div>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)"><strong style="font-weight: 600">2 satıcıda daha ucuz</strong> · en çok <strong style="font-weight: 700; color: var(--savings)">3.002 TL kazanç</strong></span>
+<sc-for list="{{offers}}" as="o" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface)">
+<div style="display: flex; justify-content: space-between; gap: var(--s2); align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{{o.rank}} · satıcı gizli</span>
+<span style="font-size: var(--fs-price); line-height: var(--lh-price); font-weight: 600">{{o.price}}</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--savings)">{{o.saving}}</span>
+</div>
+<button type="button" style="height: var(--touch); padding: 0 var(--s4); flex: none; border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Göster</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)"><span style="{{o.stockStyle}}">{{o.stock}}</span><span>{{o.ship}}</span><span>Resmi garanti</span></div>
+</div>
+</sc-for>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Kazanç kargo dahil hesaplandı. Göster şimdilik ücretsiz.</span>
+</section>
+</sc-if>
+
+<sc-if value="{{inlineActions}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: var(--s2)">
+<button type="button" style="height: 48px; border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Evet, bunu aldım</button>
+<button type="button" style="height: 48px; border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Almadım, sadece takip et</button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: center">Takip ancak sen onaylayınca başlar.</span>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{sheet}}" hint-placeholder-val="{{ false }}">
+<div style="flex: none; padding: var(--s3) var(--s4) var(--s4); border-top: 1px solid var(--divider); background: var(--surface); display: flex; gap: var(--s2)">
+<button type="button" style="flex: 1; min-height: 48px; padding: 0 var(--s2); border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Sadece takip et</button>
+<button type="button" style="flex: 1.3; min-height: 48px; padding: 0 var(--s2); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Evet, bunu aldım</button>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"part":{"editor":"enum","options":["all","top","bottom"],"default":"all"},"sheet":{"editor":"boolean","default":false},"prefill":{"editor":"enum","options":["none","link","screenshot"],"default":"none"},"listing":{"editor":"enum","options":["good","mixed"],"default":"good"},"$preview":{"width":440,"height":1560}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","accent":"#FF5A36","on-accent":"#1A0A05","savings":"#047857","warning":"#A16207","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","danger-subtle":"#FEE2E2","savings-subtle":"#D1FAE5","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","accent":"#FF7A5C","on-accent":"#1A0A05","savings":"#34D399","warning":"#FBBF24","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","danger-subtle":"#3B1416","savings-subtle":"#0F3A2C","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-sm":"0 1px 2px rgba(11,31,51,0.06)","sh-md":"0 4px 12px rgba(11,31,51,0.08)","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-price":"18px","lh-price":"24px","fs-btn":"16px","touch":"44px","thumb-sm":"48px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const part = this.props.part ?? 'all';
+    const sheet = this.props.sheet ?? false;
+    const prefill = this.props.prefill ?? 'none';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    s += 'width:100%;' + (sheet ? 'height:100%;' : 'min-height:1560px;') + 'box-sizing:border-box;display:flex;flex-direction:column;background:var(--surface);color:var(--text);font-family:var(--font);font-variant-numeric:tabular-nums;' + (sheet ? '' : 'border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh-md);');
+    const prefilled = prefill !== 'none';
+    const listing = this.props.listing ?? 'good';
+    const fact = (k, v, ok) => ({ k, v, ok, bad: !ok, box: 'display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;' + (ok ? 'background:var(--savings-subtle);color:var(--on-primary-subtle)' : 'background:var(--danger-subtle);color:var(--danger)') });
+    const facts = listing === 'mixed'
+      ? [fact('Satıcı puanı', '3,1 / 5', false), fact('Stok', 'Tükendi', false), fact('Garanti', 'Resmi garanti', true)]
+      : [fact('Satıcı puanı', '4,7 / 5', true), fact('Stok', 'Stokta', true), fact('Garanti', 'Resmi garanti', true)];
+    return {
+      rootStyle: s, sheet, facts,
+      showTop: part !== 'bottom', showBottom: part !== 'top', inlineActions: !sheet,
+      prefilled,
+      prefillNote: prefill === 'link' ? 'Mağaza linki algılandı: ürün, satıcı ve ödediğin fiyat linkten dolduruldu. Kontrol et, gerekirse değiştir.' : 'Sipariş ekranından okundu: ürün, satıcı, fiyat ve sipariş tarihi. Kontrol et, gerekirse değiştir. Ad, adres ve sipariş numarası alınmadı.',
+      prefillTag: prefill === 'link' ? 'Linkinden okundu' : 'Ekrandan okundu',
+      priceHelp: prefilled ? 'Senin linkinden/ekranından okundu; değiştirebilirsin.' : 'Ödediğin tutarı yaz; bizim fiyat verimizden doldurulmaz.',
+      offers: [
+        { rank: 'En ucuz satıcı', price: '25.997 TL', saving: '3.002 TL kazanç', stock: 'Stokta · en az 3 gündür', ship: 'Kargo 0 TL · 2 gün teslim', stockStyle: '' },
+        { rank: '2. ucuz satıcı', price: '27.199 TL', saving: '1.750 TL kazanç', stock: 'Az stok', ship: 'Kargo 50 TL · 3 gün teslim', stockStyle: 'color:var(--on-warning-subtle);background:var(--warning-subtle);padding:0 6px;border-radius:999px;font-weight:600' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>İskelet telefon</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 390px; height: 844px; display: flex; flex-direction: column; overflow: hidden; background: var(--background); color: var(--text); font-family: var(--font)">
+
+<header style="height: var(--header-h); flex: none; box-sizing: border-box; padding: 0 var(--s4); display: flex; align-items: center; gap: var(--s2); background: var(--surface); border-bottom: 1px solid var(--border)">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); text-decoration: none; color: var(--text); flex: 1">
+<span style="width: 28px; height: 28px; border-radius: var(--r-sm); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span>
+<span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">FırsatGeldi</span>
+</a>
+<button type="button" aria-label="Ara" style="width: var(--touch); height: var(--touch); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text); display: flex; align-items: center; justify-content: center">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+</button>
+<sc-if value="{{signedIn}}" hint-placeholder-val="{{ true }}">
+<button type="button" aria-label="Bildirimler, 3 okunmamış" style="position: relative; width: var(--touch); height: var(--touch); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text); display: flex; align-items: center; justify-content: center">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+<span style="position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: var(--r-pill); background: var(--text); color: var(--text-inverse); font-size: var(--fs-cap); line-height: 18px; font-weight: 600; text-align: center">3</span>
+</button>
+</sc-if>
+<sc-if value="{{guest}}" hint-placeholder-val="{{ false }}">
+<a href="#" style="display: flex; align-items: center; height: var(--touch); padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--primary); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Giriş yap</a>
+</sc-if>
+</header>
+
+<main style="flex: 1 1 auto; overflow: hidden; padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; flex-direction: column; gap: var(--s1); padding: var(--s2); border: 1px dashed var(--border); border-radius: var(--r-md)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--info)">1 · Sayfa başlığı</span>
+<h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Sayfa başlığı</h1>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s1); padding: var(--s2); border: 1px dashed var(--border); border-radius: var(--r-md)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--info)">2 · Özet satırı</span>
+<p style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Takipte 4 ürün · 38.400 TL koruma altında · 4 dk önce</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s2); border: 1px dashed var(--border); border-radius: var(--r-md)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--info)">3 · İçerik (tek sütun)</span>
+<div style="height: 88px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--sh-sm)"></div>
+<div style="height: 88px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--sh-sm)"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s2); border: 1px dashed var(--border); border-radius: var(--r-md)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--info)">5 · Sayfa eylemleri (tam genişlik)</span>
+<button type="button" style="height: 48px; border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Birincil eylem</button>
+</div>
+<div style="padding: var(--s2) 0; display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">
+<a href="#" style="color: var(--text-muted)">KVKK</a><a href="#" style="color: var(--text-muted)">Koşullar</a><a href="#" style="color: var(--text-muted)">Çerezler</a><a href="#" style="color: var(--text-muted)">Komisyon</a><a href="#" style="color: var(--text-muted)">Yardım</a><span>· alt bilgi içeriğin sonunda</span>
+</div>
+</main>
+
+<div style="flex: none; margin: 0 var(--s2); padding: var(--s2) var(--s4) var(--s3); background: var(--surface); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--r-xl) var(--r-xl) 0 0; box-shadow: var(--sh-lg); display: flex; flex-direction: column; align-items: center; gap: var(--s1)">
+<span style="width: 40px; height: 4px; border-radius: var(--r-pill); background: var(--border)"></span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--info)">4 · Yan panel burada alt sayfa olarak açılır</span>
+</div>
+
+<nav aria-label="Ana menü" style="height: var(--bottomnav-h); flex: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--surface); border-top: 1px solid var(--border)">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="5">
+<a href="#" aria-current="{{n.current}}" style="{{n.style}}">
+<sc-if value="{{n.isHome}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></sc-if>
+<sc-if value="{{n.isList}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></sc-if>
+<sc-if value="{{n.isAdd}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></sc-if>
+<sc-if value="{{n.isWallet}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/></svg></sc-if>
+<sc-if value="{{n.isUser}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></sc-if>
+<span>{{n.label}}</span>
+</a>
+</sc-for>
+</nav>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"guest":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-hover":"#065F46","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","accent":"#FF5A36","on-accent":"#1A0A05","accent-text":"#C73A1C","savings":"#047857","savings-subtle":"#D1FAE5","warning":"#A16207","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","danger-subtle":"#FEE2E2","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","text-inverse":"#FFFFFF","focus-ring":"#059669"},
+      dark: {"primary":"#34D399","primary-hover":"#6EE7B7","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","accent":"#FF7A5C","on-accent":"#1A0A05","accent-text":"#FF7A5C","savings":"#34D399","savings-subtle":"#0F3A2C","warning":"#FBBF24","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","danger-subtle":"#3B1416","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","text-inverse":"#0B1F33","focus-ring":"#6EE7B7"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-sm":"0 1px 2px rgba(11,31,51,0.06)","sh-md":"0 4px 12px rgba(11,31,51,0.08)","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-h1":"28px","lh-h1":"36px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","bottomnav-h":"64px"};
+  }
+  rootVars(theme) {
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    return s;
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const guest = this.props.guest ?? false;
+    const items = [['Ana Sayfa','home',true],['Takip','list',false],['Ara ve Ekle','add',false],['Kazancım','wallet',false],[guest ? 'Giriş' : 'Profil','user',false]];
+    const nav = items.map(([label, ic, cur]) => ({
+      label,
+      current: cur ? 'page' : 'false',
+      isHome: ic === 'home', isList: ic === 'list', isAdd: ic === 'add', isWallet: ic === 'wallet', isUser: ic === 'user',
+      style: 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:44px;text-decoration:none;font-size:12px;line-height:16px;text-align:center;border-top:2px solid ' + (cur ? 'var(--primary)' : 'transparent') + ';color:' + (cur ? 'var(--primary)' : 'var(--text-muted)') + ';font-weight:' + (cur ? '600' : '500')
+    }));
+    return { rootStyle: this.rootVars(theme), nav, guest, signedIn: !guest };
+  }
+}
+</script>
+</body>
+</html>
