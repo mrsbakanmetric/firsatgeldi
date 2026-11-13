@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Tanıtım durumları</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+input::placeholder{color:var(--text-muted)}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1500px; box-sizing: border-box; padding: var(--s8) 40px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6); align-content: start; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">1 · RAKAMLAR EŞİK ALTINDA · tanıtım sayfası, rakam yerine ne sunduğumuz</span>
+<div style="display: flex; flex-direction: column; gap: var(--s3); min-height: 380px; padding: var(--s6); box-sizing: border-box; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border)">
+<div style="display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: var(--s3); align-items: center; padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg)"><span style="width: 48px; height: 48px; border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12V8H4v4M2 12h20v8H2zM12 8v12"/></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-body); font-weight: 700">Ücretsiz</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">Ayda 3 Göster hakkı ve 10 ürün takibi</span></span></div><div style="display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: var(--s3); align-items: center; padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg)"><span style="width: 48px; height: 48px; border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-body); font-weight: 700">Satıcı satıcı karşılaştırma</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">Pazaryerleri ve markaların kendi siteleri</span></span></div><div style="display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: var(--s3); align-items: center; padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg)"><span style="width: 48px; height: 48px; border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2"/></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-body); font-weight: 700">İade süresi takibi</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">Süren bitmeden haber veririz</span></span></div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); color: var(--text-muted)">Bir rakam eşiğin altındaysa üç kutu da bu metinlere döner; tek tek karışık gösterilmez. Örnek fırsatlar en az 3 kayıt yoksa bölümce gizlenir.</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">2 · ARAMADA SONUÇ YOK · misafir</span>
+<div style="display: flex; flex-direction: column; gap: var(--s4); min-height: 380px; padding: var(--s6); box-sizing: border-box; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border)">
+<label style="display: flex; align-items: center; gap: var(--s2); height: 52px; padding: 0 var(--s4); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted)" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Ürün ara</span><input type="search" value="Kodak Ektar H35 yarım kare" style="flex: 1; border: 0; background: transparent; font: inherit; font-size: var(--fs-body); color: var(--text); outline: none"></label>
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s3); text-align: center">
+<span style="width: 64px; height: 64px; border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text-muted); display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8 11h6"/></svg></span>
+<span style="font-size: var(--fs-h3); font-weight: 700">Bu ürünü kayıtlarımızda bulamadık</span>
+<span style="max-width: 420px; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Mağaza linkini yapıştırırsan ürünü tanırız. Üye olunca ürünü elle de ekleyebilirsin; takibe alınca fiyatını biz izleriz.</span>
+<div style="display: flex; gap: var(--s3)"><a href="#" style="display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Linki yapıştır</a><a href="#" style="display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Ücretsiz başla ve ekle</a></div>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">3 · AZ VERİ · ürün sayfası arama motorlarına kapalı (noindex)</span>
+<div style="display: flex; flex-direction: column; gap: var(--s4); min-height: 380px; padding: var(--s6); box-sizing: border-box; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border)">
+<div style="display: flex; gap: var(--s4); align-items: center"><span role="img" aria-label="Marshall Middleton II görseli" style="width: 120px; height: 120px; flex: none; border-radius: var(--r-lg); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="93" height="93" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M22 22h4v4h-4z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-cap); color: var(--text-muted)">Elektronik · Hoparlör</span><span style="font-size: var(--fs-h3); font-weight: 700">Marshall Middleton II</span><span style="font-size: var(--fs-bsm)">1 satıcıda <strong>12.499 TL</strong></span><span style="font-size: var(--fs-cap); color: var(--text-muted)">Fiyat 12 dk önce kontrol edildi</span></div></div>
+<div style="display: flex; flex-direction: column; gap: var(--s1); padding: var(--s4); border-radius: var(--r-lg); background: var(--surface-alt)"><span style="font-size: var(--fs-bsm); font-weight: 600">Bu ürünün fiyat geçmişi henüz oluşmadı</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Takip başlayalı 3 gün oldu ve tek satıcıda bulduk. Karşılaştırma için en az 2 satıcı ve 14 günlük veri gerekiyor.</span></div>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); border: 1px dashed var(--border); font-size: var(--fs-cap); color: var(--text-muted)">Tasarım notu · sayfa noindex, site haritasında yok</span>
+<div style="flex: 1"></div>
+<a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 52px; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-btn); font-weight: 600; text-decoration: none">Bu ürünü takip et</a>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">4 · ÜRÜN BULUNAMADI · satıştan kalktı ya da adres yanlış</span>
+<div style="display: flex; flex-direction: column; gap: var(--s4); min-height: 380px; padding: var(--s6); box-sizing: border-box; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border)">
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-h3); font-weight: 700">Bu ürün artık hiçbir satıcıda yok</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Insta360 Ace Pro · 30 gündür stokta görmedik. Yerine bakabileceğin benzer ürünler:</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s3)"><a href="#" style="display: flex; flex-direction: column; gap: var(--s1); color: var(--text); text-decoration: none"><span role="img" aria-label="GoPro Hero 13 Black görseli" style="height: 96px; flex: none; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M8 16h9v4H8z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span><span style="font-size: var(--fs-cap); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">GoPro Hero 13 Black</span><span style="font-size: var(--fs-cap); font-weight: 700">21.499 TL’den</span></a><a href="#" style="display: flex; flex-direction: column; gap: var(--s1); color: var(--text); text-decoration: none"><span role="img" aria-label="DJI Osmo Action 5 Pro görseli" style="height: 96px; flex: none; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M8 16h9v4H8z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span><span style="font-size: var(--fs-cap); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">DJI Osmo Action 5 Pro</span><span style="font-size: var(--fs-cap); font-weight: 700">19.999 TL’den</span></a><a href="#" style="display: flex; flex-direction: column; gap: var(--s1); color: var(--text); text-decoration: none"><span role="img" aria-label="Insta360 Ace Pro 2 görseli" style="height: 96px; flex: none; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M8 16h9v4H8z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span><span style="font-size: var(--fs-cap); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Insta360 Ace Pro 2</span><span style="font-size: var(--fs-cap); font-weight: 700">25.997 TL’den</span></a></div>
+<div style="flex: 1"></div>
+<div style="display: flex; gap: var(--s3)"><a href="#" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; height: var(--touch); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Ürün ara</a><a href="#" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; height: var(--touch); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Ana sayfaya dön</a></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">5 · HATA VE ESKİ VERİ · ürün sayfası</span>
+<div style="display: flex; flex-direction: column; gap: var(--s4); min-height: 380px; padding: var(--s6); box-sizing: border-box; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border)">
+<div role="alert" style="display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s4); border-radius: var(--r-lg); border: 1px solid var(--border); background: var(--surface-alt)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; color: var(--text)" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg><div style="display: flex; flex-direction: column; gap: 2px; flex: 1"><span style="font-size: var(--fs-bsm); font-weight: 700">Güncel fiyatları şu an getiremedik</span><span style="font-size: var(--fs-bsm); color: var(--text-muted)">Aşağıdaki fiyatlar 3 saat önceki kontrolden. Satın almadan önce satıcıda kontrol et.</span></div><button type="button" style="flex: none; height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tekrar dene</button></div>
+<div style="display: flex; gap: var(--s4); align-items: center; opacity: 0.72"><span role="img" aria-label="Insta360 Ace Pro 2 görseli" style="width: 120px; height: 120px; flex: none; border-radius: var(--r-lg); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="93" height="93" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M8 16h9v4H8z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-h3); font-weight: 700">Insta360 Ace Pro 2</span><span style="font-size: var(--fs-bsm)">6 satıcıda, en düşük <strong>25.997 TL</strong></span><span style="font-size: var(--fs-cap); color: var(--text-muted)">Fiyatlar 3 saat önce kontrol edildi · eski</span></div></div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); color: var(--text-muted)">Hiç veri yoksa yalnızca uyarı ve "Tekrar dene" görünür. Eski veri 1 saati geçince bu uyarı çıkar [VARSAYIM].</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">6 · YÜKLENİYOR · ürün sayfası iskeleti</span>
+<div aria-busy="true" aria-label="Yükleniyor" style="display: flex; flex-direction: column; gap: var(--s4); min-height: 380px; padding: var(--s6); box-sizing: border-box; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border)">
+<div style="display: flex; gap: var(--s4)"><span style="width: 120px; height: 120px; border-radius: var(--r-lg); background: var(--surface-alt)"></span><div style="flex: 1; display: flex; flex-direction: column; gap: var(--s2); padding-top: var(--s2)"><span style="width: 40%; height: 12px; border-radius: var(--r-sm); background: var(--surface-alt)"></span><span style="width: 75%; height: 22px; border-radius: var(--r-sm); background: var(--surface-alt)"></span><span style="width: 55%; height: 12px; border-radius: var(--r-sm); background: var(--surface-alt)"></span></div></div>
+<span style="height: 52px; border-radius: var(--r-md); background: var(--surface-alt)"></span><span style="height: 52px; border-radius: var(--r-md); background: var(--surface-alt)"></span><span style="height: 52px; border-radius: var(--r-md); background: var(--surface-alt)"></span>
+<span style="font-size: var(--fs-cap); color: var(--text-muted)">Arama motoru için sayfa sunucuda hazırlanır; iskelet yalnızca sayfa içi geçişlerde görünür.</span>
+</div>
+</section>
+
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1500}}'>
+class Component extends DCLogic {
+    tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","accent":"#FF5A36","on-accent":"#1A0A05","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","hero-surface":"#0B1F33","on-hero-surface":"#FFFFFF","on-hero-muted":"#DCE5E1","hero-savings":"#6EE7B7"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","accent":"#FF7A5C","on-accent":"#1A0A05","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","hero-surface":"#16293B","on-hero-surface":"#EEF4F2","on-hero-muted":"#9FB3C4","hero-savings":"#6EE7B7"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","s10":"40px","s12":"48px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-display":"32px","lh-display":"40px","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px"};
+  }
+  art() {
+    return {
+      cam: ['M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z', 'M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M8 16h9v4H8z'],
+      watch: ['M13 12h22a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z', 'M18 3h12l2 9H16zM16 36h16l-2 9H18z', 'M15 16h18v16H15z'],
+      robot: ['M24 5a19 19 0 1 0 0 38 19 19 0 0 0 0-38z', 'M24 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24zM24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z', 'M24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z'],
+      mouse: ['M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z', 'M22.5 9h3v7h-3z', 'M23.5 4h1v14h-1z'],
+      ssd: ['M11 5h26a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M12 10h24v5H12z', 'M20 33h8v4h-8z'],
+      fryer: ['M12 11h24l3 32H9z', 'M19 4h10v7H19z', 'M15 17h18v11H15z'],
+      shoe: ['M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', 'M3 33h42v5H3z', 'M20 22h3v2h-3zM25 24h3v2h-3z'],
+      phones: ['M6 27h8v15H9a3 3 0 0 1-3-3zM34 27h8v12a3 3 0 0 1-3 3h-5z', 'M8 27a16 16 0 0 1 32 0v3h-4v-3a12 12 0 0 0-24 0v3H8z', 'M9 31h3v7H9zM36 31h3v7h-3z'],
+      buds: ['M14 16h20a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6z', 'M8 25h32v2H8z', 'M22.5 31h3v4h-3z'],
+      jacket: ['M17 5h14l9 7-3 10-3-2v23H14V20l-3 2-3-10z', 'M23 5h2v38h-2z', 'M18 5h12l-6 6z'],
+      stick: ['M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z', 'M30 16h4v20h-4z', 'M27 6h10v3H27z'],
+      speaker: ['M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z', 'M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z', 'M22 22h4v4h-4z'],
+      reader: ['M12 3h24a3 3 0 0 1 3 3v36a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', 'M16 12h16v2H16zM16 17h16v2H16zM16 22h11v2H16z', 'M13 8h22v30H13z']
+    };
+  }
+  A(k) { const x = this.art()[k] || this.art().cam; return { a: x[0], b: x[1], c: x[2] }; }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    return { rootStyle: s };
+  }
+}
+</script>
+</body>
+</html>
