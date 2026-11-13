@@ -39,7 +39,7 @@ Modules are referred to **by name only** (no short codes). Turkish UI strings ar
 - [Legal Pages](#legal-pages)
 - [Help and FAQ](#help-and-faq)
 
-**Admin modules (web `/admin`, authorised role — roles OPEN)**
+**Admin modules (web + mobile `/admin`, Application Manager role — roles [DECIDED])**
 - [Admin Overview](#admin-overview)
 - [Return Rules](#return-rules)
 - [Category Templates](#category-templates)
@@ -510,7 +510,7 @@ Search → mark → **Almadım, sadece takip et** → target price (optional) + 
 - **Bell panel + preview:** clicking an item in the panel marks it read and opens a **preview to the left of the panel**: product image, mode, message, three key values for that type (e.g. paid · cheapest now · saving; delivered · last return day · days left; target · cheapest now · left to target), 14-day cheapest-price chart where relevant, check time, and the item's actions ("Fırsatı gör" / "Ürün detayı" / "Takip et" / "İade adımları"…).
 - **"Takip et" from a notification or recent search:** opens the Add product dialog (Tracked Items) at step 2 with the product selected: "Aldım" (platform, typed seller with exact-match check, price paid, order date, order status; cheaper-price teaser after the price) or "Almak istiyorum" (optional target with suggestion chips, tracking duration). Same rules as Search and Add / Want to Buy.
 - **Delivery question** is answered inside the notification ("Evet, aldım" / "Henüz değil").
-- **Retention:** notifications older than 30 days are deleted from the list; savings and tracking records stay on their pages.
+- **Retention:** notifications older than 30 days no longer appear in the list; the records themselves are kept indefinitely as delivery evidence (`database.md` §16) [DECIDED 2026-11-13: list window only, rows not deleted]; savings and tracking records stay on their pages.
 
 ### Notification types
 | Type | Example text (no seller name) |
@@ -980,7 +980,7 @@ Canvas "FırsatGeldi — 11 Yasal Sayfalar ve Yardım": Help home, return guide 
 **Content:** monthly usage and cost per provider · plan quota usage · cost per active user · budget alerts · month-end forecast.
 
 ### Rules
-- **Budget [DECIDED]:** a monthly budget per provider (critical setting, second approval).
+- **Budget [DECIDED]:** a monthly budget per provider (critical setting: the Application Manager applies it alone with preview + confirmation; audit log + one-click rollback — System Settings).
 - **When the budget is reached [DECIDED] — warning and saving mode together:**
   - At 80%: panel + email warning.
   - At 100%: warning **and** saving mode — normal products' check interval lengthens, cheaper sources (site search, list pages) are preferred. Items with an approaching return deadline, items in a campaign and "Şimdi kontrol et" requests are protected.

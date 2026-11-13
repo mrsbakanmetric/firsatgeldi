@@ -123,7 +123,7 @@ Rules:
 - Session: secure, refreshable web session; sign out from all devices; devices and recent sign-ins visible in Security settings.
 - **Account deletion [DECIDED]:** closes the account immediately; signing in within **30 days** restores it; then personal data is permanently deleted and statistics stay anonymous. Data export available.
 - **Mandatory account and security notifications** (welcome, verification, new device, password, deletion, suspension, export, package outcome, support reply, re-consent) are always sent in-app + email and cannot be turned off.
-- Security: rate-limited sign-in; optional 2FA and SMS verification later.
+- Security: rate-limited sign-in; **two-step verification mandatory for Application Manager accounts** [DECIDED] (authenticator app + backup codes); optional 2FA for users and SMS verification later.
 
 ### 3.2 Multi-language (i18n) [DECIDED]
 - Languages: **Turkish (default)** and **English**; a new language is added through translation files, the supported-locales setting and translations of admin data — no database schema change.
@@ -191,7 +191,7 @@ Defines **what each screen shows and does**, not how it looks. All screens obey 
 
 ### 5.1 Home (first screen)
 
-**Rule:** if the user tracks at least one product, Home opens with their latest data immediately (cache first, refreshed in the background). A new user sees the search box (and optionally an interest picker). Signed-out visitors see the Landing Page.
+**Rule:** if the user tracks at least one product, Home opens with their latest data immediately (cache first, refreshed in the background). A new user sees the search box and three steps below it (no interest picker [DECIDED]; `modules.md` › Home). Signed-out visitors see the Landing Page.
 
 **Order:** summary line → (A) search box → (B) "Hemen Gözat" → return reminder line → (C) other tracked products.
 
@@ -393,7 +393,7 @@ Defined in `database.md` (products, offers, sellers, platforms, price/stock hist
 **Meilisearch [DECIDED].** Turkish normalisation, typo tolerance, synonyms, brand/model boosting, accessory demotion. Autocomplete without API calls.
 
 ### 9.4 Personalised ranking
-Engine returns ~100 candidates → re-ranker: `score = text_match × (1 + 0.4·personal + 0.3·social + 0.2·popularity + 0.1·deal)`; signals precomputed and cached. Cold start: popularity + deals + optional interest picker.
+Engine returns ~100 candidates → re-ranker: `score = text_match × (1 + 0.4·personal + 0.3·social + 0.2·popularity + 0.1·deal)`; signals precomputed and cached. Cold start: popularity + deals (no interest picker [DECIDED]).
 
 ### 9.5 Performance rules
 Cached first; progressive loading; pre-warm popular products; query cache 1–4 h; targets: own-index search < 100 ms, live query < 3 s, add product < 10 s.

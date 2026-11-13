@@ -915,7 +915,7 @@ Pure functions in `packages/core`; tests mandatory.
 | `audit_logs`, `token_ledger`, `setting_changes` | **Indefinite** | Immutable |
 | `risk_signals`, `risk_cases`, `user_restrictions` | **Indefinite** | Fraud evidence |
 | `api_usage` | Indefinite (summarised) | Cost |
-| `notifications`, `notification_deliveries` | Indefinite | Delivery evidence |
+| `notifications`, `notification_deliveries` | Indefinite | Delivery evidence; the user's notification list shows only the last 30 days, older rows are kept, not deleted [DECIDED 2026-11-13] |
 | `uploads` + private images (identification, order screenshot) | **24 hours** (`media.private_retention_hours`) [DECIDED] | Image deleted; the extraction with personal data stripped remains |
 | `uploads` with purpose `SUPPORT_ATTACHMENT` (support-request screenshots) | **30 days** (`support.attachment_retention_days`) [DECIDED 2026-11-13] | Image deleted; the support request and its messages remain |
 | Catalogue images | While linked to a product; ref_count 0 → cleanup | Single copy |
