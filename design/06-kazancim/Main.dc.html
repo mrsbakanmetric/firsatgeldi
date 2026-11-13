@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Kazancım</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1720px; display: flex; flex-direction: column; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+<header style="height: var(--header-h); flex: none; background: var(--surface); border-bottom: 1px solid var(--border)">
+<div style="max-width: var(--content-max); height: 100%; margin: 0 auto; padding: 0 var(--s6); box-sizing: border-box; display: flex; align-items: center; gap: var(--s6)">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); text-decoration: none; color: var(--text)"><span style="width: 32px; height: 32px; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span><span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">FırsatGeldi</span></a>
+<nav aria-label="Ana menü" style="display: flex; align-items: stretch; height: 100%; gap: var(--s1)">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Ana Sayfa</a>
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Takip</a>
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Ara ve Ekle</a>
+<a href="#" aria-current="page" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 600; color: var(--primary); border-bottom: 2px solid var(--primary); border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/></svg>Kazancım</a>
+</nav>
+<div style="flex: 1"></div>
+<button type="button" aria-label="Bildirimler, 3 okunmamış" style="position: relative; width: var(--touch); height: var(--touch); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text); display: flex; align-items: center; justify-content: center"><span aria-hidden="true" style="position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); font-size: var(--fs-cap); line-height: 18px; font-weight: 700; text-align: center">3</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
+<button type="button" aria-label="Profil menüsü" style="display: flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s2) 0 var(--s1); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><span style="width: 34px; height: 34px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">SB</span>Profil</button>
+</div>
+</header>
+<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); box-sizing: border-box; display: flex; flex-direction: column; gap: var(--s6)">
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: var(--s4)">
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Kazancım</h1><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Tüm rakamlar kayıtlarından hesaplanır · son kayıt 11 Kasım</span></div>
+<div role="group" aria-label="Dönem" style="display: flex; gap: 2px; padding: 4px; border-radius: var(--r-md); background: var(--surface-alt)">
+<sc-for list="{{periods}}" as="p" hint-placeholder-count="3"><button type="button" aria-pressed="{{p.pressed}}" onClick="{{p.pick}}" style="{{p.style}}">{{p.label}}</button></sc-for>
+</div>
+</div>
+
+<section aria-label="Toplam kazanç" style="display: grid; grid-template-columns: minmax(0, 1fr) 560px; gap: var(--s8); align-items: end; padding: var(--s8); border-radius: var(--r-xl); background: var(--hero-surface); color: var(--on-hero-surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--on-hero-muted)">{{heroLabel}}</span>
+<span style="font-size: var(--fs-display); line-height: var(--lh-display); font-weight: 700; color: var(--hero-savings); letter-spacing: -0.5px">{{heroValue}}</span>
+<span style="font-size: var(--fs-body); line-height: var(--lh-body); color: var(--on-hero-surface)">{{heroSub}}</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4); margin-top: var(--s3); padding-top: var(--s4); border-top: 1px solid var(--hero-line)">
+<sc-for list="{{heroStats}}" as="h" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--on-hero-muted); white-space: nowrap">{{h.k}}</span><span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700; white-space: nowrap">{{h.v}}</span></div></sc-for>
+</div>
+</div>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: var(--s2)">
+<figcaption style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--on-hero-muted)">Aylara göre kazanç · 2026</figcaption>
+<svg viewBox="0 0 560 168" width="560" height="168" role="img" aria-label="{{chartLabel}}">
+<line x1="0" y1="140" x2="560" y2="140" style="stroke: var(--hero-line)" stroke-width="1"/>
+<sc-for list="{{bars}}" as="bar" hint-placeholder-count="12">
+<rect x="{{bar.x}}" y="{{bar.y}}" width="32" height="{{bar.h}}" rx="4" style="{{bar.style}}"/>
+<text x="{{bar.cx}}" y="{{bar.ty}}" text-anchor="middle" style="fill: var(--on-hero-surface); font-size: 12px; font-weight: 700">{{bar.val}}</text>
+<text x="{{bar.cx}}" y="160" text-anchor="middle" style="fill: var(--on-hero-muted); font-size: 12px; font-weight: 500">{{bar.m}}</text>
+</sc-for>
+</svg>
+</figure>
+</section>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--s6); align-items: start">
+
+<div style="display: flex; flex-direction: column; gap: var(--s6); min-width: 0">
+
+<section aria-labelledby="yontem" style="display: flex; flex-direction: column; gap: var(--s3)">
+<h2 id="yontem" style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Nasıl kazandın?</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{methods}}" as="m" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; align-items: center; gap: var(--s2)"><span style="width: 32px; height: 32px; border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.icon}}"/></svg></span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; white-space: nowrap">{{m.k}}</span></div>
+<span style="font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700; color: var(--savings); white-space: nowrap">{{m.v}}</span>
+<div style="height: var(--progress-h); border-radius: var(--r-pill); background: var(--surface-alt); overflow: hidden"><div style="{{m.bar}}"></div></div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{m.sub}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section aria-labelledby="kayitlar" style="display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="kayitlar" style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Kazanç kayıtların</h2><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">{{recordCount}}</span></div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3)">
+<label style="flex: 1 1 260px; display: flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted); flex: none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Kayıtlarda ara</span><input type="search" value="{{q}}" onInput="{{onQ}}" placeholder="Ürün adıyla ara" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-bsm); color: var(--text); outline: none"></label>
+<div role="group" aria-label="Kategori" style="display: flex; flex-wrap: wrap; gap: var(--s2)"><sc-for list="{{cats}}" as="ct" hint-placeholder-count="4"><button type="button" aria-pressed="{{ct.pressed}}" onClick="{{ct.pick}}" style="{{ct.style}}">{{ct.label}}</button></sc-for></div>
+</div>
+<sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s3); padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); font-size: var(--fs-bsm)"><span>Bu aramayla eşleşen kayıt yok.</span><button type="button" onClick="{{resetF}}" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Filtreyi temizle</button></div></sc-if>
+<sc-if value="{{hasRows}}" hint-placeholder-val="{{ true }}"><div role="table" aria-label="Kazanç kayıtları" style="display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden">
+<div role="row" style="display: grid; grid-template-columns: 56px minmax(0, 1fr) 104px 112px 104px 112px; gap: var(--s3); align-items: center; padding: var(--s3) var(--s4); background: var(--surface-alt); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">
+<span role="columnheader" style="grid-column: span 2">Ürün</span><span role="columnheader" style="text-align: right">İlk ödediğin</span><span role="columnheader" style="text-align: right">Yeniden ödediğin</span><span role="columnheader" style="text-align: right">Kazanç</span><span role="columnheader" style="text-align: right">Kayıt</span>
+</div>
+<sc-for list="{{records}}" as="r" hint-placeholder-count="6">
+<div role="row" style="display: grid; grid-template-columns: 56px minmax(0, 1fr) 104px 112px 104px 112px; gap: var(--s3); align-items: center; padding: var(--s3) var(--s4); border-top: 1px solid var(--divider)">
+<span role="img" aria-label="{{r.imgLabel}}" style="width: 56px; height: 56px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; overflow: hidden"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><path d="{{r.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{r.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{r.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<div role="cell" style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><a href="#" style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--text); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</a><span style="display: flex; align-items: center; gap: var(--s2); min-width: 0"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: var(--r-pill); background: var(--surface-alt); font-size: var(--fs-cap); font-weight: 600; white-space: nowrap">{{r.method}}</span><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">{{r.date}}</span></span></div>
+<span role="cell" style="font-size: var(--fs-bsm); text-align: right; color: var(--text-muted)">{{r.paid}}</span>
+<span role="cell" style="font-size: var(--fs-bsm); text-align: right">{{r.rebuy}}</span>
+<span role="cell" style="font-size: var(--fs-body); text-align: right; font-weight: 700; color: var(--savings)">{{r.saving}}</span>
+<div role="cell" style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<sc-if value="{{r.editable}}" hint-placeholder-val="{{ false }}"><a href="#" style="display: inline-flex; align-items: center; height: 36px; padding: 0 var(--s3); border: 1px solid var(--primary); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-cap); font-weight: 700; text-decoration: none">Düzelt</a><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">{{r.left}}</span></sc-if>
+<sc-if value="{{r.final}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted); white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"/></svg>Kesinleşti</span></sc-if>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{hasManual}}" hint-placeholder-val="{{ true }}"><div style="padding: var(--s3) var(--s4); border-top: 1px solid var(--divider); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">* Yeniden ödediğin fiyatı elle değiştirdin; kayıtta işaretli.</div></sc-if>
+</div></sc-if>
+</section>
+
+<section aria-labelledby="kacan" style="display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="kacan" style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Kaçan fırsatlar</h2><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Toplama dahil değil</span></div>
+<div style="display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s4); background: var(--surface-alt)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)">Bu yıl 2 fırsatı kullanamadın; toplam <strong style="font-weight: 700">1.120 TL</strong> daha kazanabilirdin.</span><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">Bilgi amaçlı</span></div>
+<sc-for list="{{missed}}" as="x" hint-placeholder-count="2">
+<div style="display: grid; grid-template-columns: 56px minmax(0, 1fr) 216px 112px; gap: var(--s3); align-items: center; padding: var(--s3) var(--s4); border-top: 1px solid var(--divider)">
+<span role="img" aria-label="{{x.imgLabel}}" style="width: 56px; height: 56px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; overflow: hidden; opacity: 0.7"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><path d="{{x.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{x.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{x.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{x.name}}</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{x.reason}}</span></div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{x.tip}}</span>
+<span style="font-size: var(--fs-body); text-align: right; font-weight: 600; color: var(--text-muted)">{{x.amount}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+</div>
+
+<aside aria-label="Daha fazla kazan" style="display: flex; flex-direction: column; gap: var(--s4)">
+<section style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 2px solid var(--primary); border-radius: var(--r-lg); background: var(--surface)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">ŞU AN KAZANABİLECEĞİN</span>
+<span style="font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700; color: var(--savings)">en çok 3.302 TL</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)">2 üründe açık fırsat var. En yakın iade süresi 4 gün sonra bitiyor.</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Fiyatlar 4 dk önce kontrol edildi</span>
+<a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 48px; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-btn); font-weight: 600; text-decoration: none">Açık fırsatlarına git</a>
+</section>
+<section style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<h2 style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 700">Nasıl hesaplıyoruz?</h2>
+<ul style="margin: 0; padding: 0 0 0 var(--s4); display: flex; flex-direction: column; gap: var(--s2); font-size: var(--fs-bsm); line-height: var(--lh-bsm)">
+<li>Kazanç = ilk ödediğin − yeniden ödediğin.</li>
+<li>Kayıt, takibi bitirirken seçtiğin yöntemle oluşur.</li>
+<li>Bir kaydı 7 gün içinde düzeltebilirsin; sonra kesinleşir.</li>
+<li>Kaçan fırsatlar toplama girmez.</li>
+</ul>
+</section>
+</aside>
+
+</div>
+</main>
+<footer style="flex: none; background: var(--surface); border-top: 1px solid var(--border)">
+<div style="max-width: var(--content-max); margin: 0 auto; padding: var(--s6); box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); font-size: var(--fs-bsm); line-height: var(--lh-bsm)">
+<nav aria-label="Yasal ve yardım" style="display: flex; flex-wrap: wrap; gap: var(--s5)"><a href="#" style="color: var(--text-muted)">KVKK aydınlatma metni</a><a href="#" style="color: var(--text-muted)">Kullanım koşulları</a><a href="#" style="color: var(--text-muted)">Çerez politikası</a><a href="#" style="color: var(--text-muted)">Komisyon açıklaması</a><a href="#" style="color: var(--text-muted)">Yardım ve SSS</a></nav>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Türkçe · English</span>
+</div>
+</footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1720}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { period: 1, q: '', cat: 0 }; }
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","accent":"#FF5A36","on-accent":"#1A0A05","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","hero-surface":"#0B1F33","on-hero-surface":"#FFFFFF","on-hero-muted":"#DCE5E1","hero-savings":"#6EE7B7","hero-line":"#24384B"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","accent":"#FF7A5C","on-accent":"#1A0A05","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","hero-surface":"#16293B","on-hero-surface":"#EEF4F2","on-hero-muted":"#9FB3C4","hero-savings":"#6EE7B7","hero-line":"#24384B"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","fs-display":"32px","lh-display":"40px","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px","progress-h":"4px"};
+  }
+  art() {
+    return {
+      cam: ['M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z', 'M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M8 16h9v4H8z'],
+      watch: ['M13 12h22a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z', 'M18 3h12l2 9H16zM16 36h16l-2 9H18z', 'M15 16h18v16H15z'],
+      robot: ['M24 5a19 19 0 1 0 0 38 19 19 0 0 0 0-38z', 'M24 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24zM24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z', 'M24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z'],
+      mouse: ['M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z', 'M22.5 9h3v7h-3z', 'M23.5 4h1v14h-1z'],
+      ssd: ['M11 5h26a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M12 10h24v5H12z', 'M20 33h8v4h-8z'],
+      fryer: ['M12 11h24l3 32H9z', 'M19 4h10v7H19z', 'M15 17h18v11H15z'],
+      shoe: ['M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', 'M3 33h42v5H3z', 'M20 22h3v2h-3zM25 24h3v2h-3z'],
+      phones: ['M6 27h8v15H9a3 3 0 0 1-3-3zM34 27h8v12a3 3 0 0 1-3 3h-5z', 'M8 27a16 16 0 0 1 32 0v3h-4v-3a12 12 0 0 0-24 0v3H8z', 'M9 31h3v7H9zM36 31h3v7h-3z'],
+      buds: ['M14 16h20a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6z', 'M8 25h32v2H8z', 'M22.5 31h3v4h-3z'],
+      jacket: ['M17 5h14l9 7-3 10-3-2v23H14V20l-3 2-3-10z', 'M23 5h2v38h-2z', 'M18 5h12l-6 6z'],
+      stick: ['M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z', 'M30 16h4v20h-4z', 'M27 6h10v3H27z'],
+      speaker: ['M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z', 'M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z', 'M22 22h4v4h-4z'],
+      reader: ['M12 3h24a3 3 0 0 1 3 3v36a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', 'M16 12h16v2H16zM16 17h16v2H16zM16 22h11v2H16z', 'M13 8h22v30H13z']
+    };
+  }
+  A(k) { const x = this.art()[k] || this.art().cam; return { a: x[0], b: x[1], c: x[2] }; }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const P = { watch: 'M8 3h8l1 4H7zM7 17h10l-1 4H8zM6 7h12v10H6zM12 10v2l1.5 1', robot: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM7 15h10', mouse: 'M12 3a6 6 0 0 0-6 6v6a6 6 0 0 0 12 0V9a6 6 0 0 0-6-6zM12 7v3', ssd: 'M5 4h14v16H5zM9 8h6M9 16h.01', fryer: 'M6 6h12l-1 14H7zM5 6h14M9 3h6v3M10 11h4', shoe: 'M3 15c3 0 5-2 6-5l3 1c1 2 3 3 6 3h3v3H3z', speaker: 'M7 7h10a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-4a3 3 0 0 1 3-3zM9 12h.01M15 12h.01', book: 'M6 3h12v18H6zM9 7h6' };
+    const all = [
+      { name: 'Apple Watch SE 2 · 44 mm', art: this.A('watch'), cat: 'e', icon: P.watch, method: 'İade + yeniden alım', date: '7 Kasım 2026', m: 10, paid: 9499, rebuy: 7999, editable: true, left: '2 gün kaldı' },
+      { name: 'Xiaomi Robot Süpürge S10', art: this.A('robot'), cat: 'h', icon: P.robot, method: 'Fiyat farkı', date: '10 Kasım 2026', m: 10, paid: 8999, rebuy: 8299, editable: true, left: '5 gün kaldı', manual: true },
+      { name: 'Logitech MX Master 3S', art: this.A('mouse'), cat: 'e', icon: P.mouse, method: 'İade + yeniden alım', date: '2 Kasım 2026', m: 10, paid: 4299, rebuy: 3649 },
+      { name: 'Samsung T7 SSD · 2 TB', art: this.A('ssd'), cat: 'e', icon: P.ssd, method: 'İptal + yeniden alım', date: '21 Ekim 2026', m: 9, paid: 6499, rebuy: 5799 },
+      { name: 'Philips Airfryer XXL', art: this.A('fryer'), cat: 'h', icon: P.fryer, method: 'İade + yeniden alım', date: '14 Eylül 2026', m: 8, paid: 9999, rebuy: 7999 },
+      { name: 'Nike Pegasus 41 · 43', art: this.A('shoe'), cat: 'w', icon: P.shoe, method: 'Fiyat farkı', date: '3 Ağustos 2026', m: 7, paid: 4999, rebuy: 4199 }
+    ];
+    const fmt = (n) => n.toLocaleString('tr-TR') + ' TL';
+    const per = this.state.period;
+    const recs = per === 0 ? all.filter(r => r.m === 10) : all;
+    const total = recs.reduce((a, r) => a + r.paid - r.rebuy, 0);
+    const month = all.filter(r => r.m === 10).reduce((a, r) => a + r.paid - r.rebuy, 0);
+    const year = all.reduce((a, r) => a + r.paid - r.rebuy, 0);
+    const periods = ['Bu ay', 'Bu yıl', 'Tümü'].map((l, i) => ({ label: l, pressed: per === i ? 'true' : 'false', pick: () => this.setState({ period: i }),
+      style: 'height:40px;padding:0 16px;border:0;border-radius:8px;font:inherit;font-size:14px;cursor:pointer;' + (per === i ? 'background:var(--surface);color:var(--text);font-weight:700;box-shadow:0 1px 2px rgba(11,31,51,0.08)' : 'background:transparent;color:var(--text-muted);font-weight:500') }));
+    const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    const byM = months.map((_, i) => all.filter(r => r.m === i).reduce((a, r) => a + r.paid - r.rebuy, 0));
+    const max = Math.max.apply(null, byM);
+    const bars = months.map((m, i) => { const v = byM[i], h = v ? Math.max(6, Math.round(v / max * 110)) : 3, x = i * 46 + 4, fut = i === 11;
+      return { m, x, y: 140 - h, h, cx: x + 16, ty: 140 - h - 6, val: v ? (v >= 1000 ? (v / 1000).toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' B' : String(v)) : '',
+        style: fut ? 'fill: transparent; stroke: var(--hero-line); stroke-dasharray: 3 3' : v ? 'fill: var(--hero-savings)' : 'fill: var(--hero-line)' }; });
+    const groups = [['İade + yeniden alım', 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5'], ['İptal + yeniden alım', 'M18 6 6 18M6 6l12 12'], ['Fiyat farkı', 'M12 5v14M5 12h14']];
+    const methods = groups.map(g => { const rs = recs.filter(r => r.method === g[0]); const v = rs.reduce((a, r) => a + r.paid - r.rebuy, 0);
+      return { k: g[0], icon: g[1], v: fmt(v), sub: rs.length + ' üründe · toplamın %' + (total ? Math.round(v / total * 100) : 0) + '\'i', bar: 'height:100%;background:var(--primary);width:' + (total ? Math.round(v / total * 100) : 0) + '%' }; });
+    const CATS = [['all', 'Tümü'], ['e', 'Elektronik'], ['h', 'Ev aletleri'], ['w', 'Giyim ve ayakkabı']];
+    const ql = this.state.q.trim().toLocaleLowerCase('tr').replace(/ı/g, 'i'), ck = CATS[this.state.cat][0];
+    const shown = recs.filter(r => (ck === 'all' || r.cat === ck) && (!ql || r.name.toLocaleLowerCase('tr').replace(/ı/g, 'i').indexOf(ql) >= 0));
+    const cats = CATS.map((x, i) => ({ label: x[1] + ' ' + recs.filter(r => x[0] === 'all' || r.cat === x[0]).length, pressed: this.state.cat === i ? 'true' : 'false', pick: () => this.setState({ cat: i }),
+      style: 'height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;' + (this.state.cat === i ? 'border:1px solid var(--primary);background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:600' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500') }));
+    const records = shown.map(r => ({ art: r.art, name: r.name, icon: r.icon, imgLabel: r.name + ' görseli', method: r.method, date: r.date, paid: fmt(r.paid), rebuy: fmt(r.rebuy) + (r.manual ? ' *' : ''), saving: '+' + fmt(r.paid - r.rebuy), editable: !!r.editable, final: !r.editable, left: r.left || '' }));
+    const missed = [
+      { name: 'JBL Charge 5', art: this.A('speaker'), icon: P.speaker, imgLabel: 'JBL Charge 5 görseli', reason: 'Fırsat sen bakmadan bitti · 18 Ekim', tip: 'Fırsat bildirimlerini anında almak için günlük özet kapalı kalsın', amount: '600 TL' },
+      { name: 'Kindle Paperwhite', art: this.A('reader'), icon: P.book, imgLabel: 'Kindle Paperwhite görseli', reason: 'İade süresi doldu · 27 Eylül', tip: 'İadeye 2 gün kala ayrıca hatırlatırız', amount: '520 TL' }
+    ];
+    return {
+      rootStyle: s, periods, bars, methods, records, missed, hasManual: shown.some(r => r.manual), cats, q: this.state.q, onQ: (e) => this.setState({ q: e.target.value }), resetF: () => this.setState({ q: '', cat: 0 }), hasRows: shown.length > 0, noMatch: shown.length === 0,
+      heroLabel: ['Bu ay kazandığın', 'Bu yıl kazandığın', 'Toplam kazancın'][per],
+      heroValue: fmt(total),
+      heroSub: recs.length + ' üründe · daha ucuza yeniden alarak ya da fiyat farkı alarak',
+      heroStats: [{ k: 'Bu ay', v: fmt(month) }, { k: 'Bu yıl', v: fmt(year) }, { k: 'Ürün başına ortalama', v: fmt(Math.round(year / all.length)) }],
+      chartLabel: 'Aylara göre kazanç: Ağustos 800 TL, Eylül 2.000 TL, Ekim 700 TL, Kasım 2.850 TL',
+      recordCount: shown.length + ' / ' + recs.length + ' kayıt · yeniden eskiye'
+    };
+  }
+}
+</script>
+</body>
+</html>
