@@ -220,7 +220,7 @@ U: `(provider, provider_subject_bidx)`. The same verified email arriving through
 id · user_id (FK) · refresh_hash · user_agent_family (browser/OS family, not the raw UA) · ip_hash · device_hash · created_at · expires_at · revoked_at (N). Index `(user_id) WHERE revoked_at IS NULL`. "Sign out from all devices" = set `revoked_at` on all.
 
 ### `user_backup_codes`
-id · user_id (FK) · code_hash (hashed, never stored in clear) · used_at (N; single use) · created_at. Index `(user_id) WHERE used_at IS NULL`. Regenerating codes replaces all unused rows [DECIDED: hashed, single use — §9].
+id · user_id (FK) · code_hash (hashed, never stored in clear) · used_at (N; single use) · created_at. Index `(user_id) WHERE used_at IS NULL`. Hashed and single use [DECIDED — §9]. Regenerating codes replaces all unused rows [ASSUMPTION].
 
 ### `email_tokens`
 id · user_id · purpose CHECK (`VERIFY_EMAIL`,`RESET_PASSWORD`,`CHANGE_EMAIL`) · token_hash (U) · expires_at · used_at (N) · created_at.
