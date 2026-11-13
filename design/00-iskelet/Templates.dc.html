@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Sayfa şablonları</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1400px; box-sizing: border-box; padding: var(--s12); display: flex; flex-direction: column; gap: var(--s8); background: var(--background); color: var(--text); font-family: var(--font)">
+
+<header style="display: flex; flex-direction: column; gap: var(--s2)">
+<h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Sayfa şablonları</h1>
+<p style="margin: 0; max-width: 900px; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-muted)">Her ekran bu dört şablondan birini seçer. Bölgelerin sırası hep aynıdır: 1 başlık · 2 özet satırı · 3 içerik · 4 yan panel (telefonda alt sayfa) · 5 sayfa eylemleri. Şablon yalnız yerleşimi belirler; içerik bileşenlerden gelir. Beş durum (yükleniyor, boş, hata, eski veri, başarılı) her zaman bölge 3'te çizilir.</p>
+</header>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6)">
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 600">Liste</h2>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Takip Ettiklerim · Bildirimler</span>
+</div>
+<div style="display: flex; gap: var(--s4); align-items: flex-start">
+<div style="flex: 1; min-width: 0; padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background); display: flex; flex-direction: column; gap: var(--s2)">
+<div style="height: 14px; width: 40%; border-radius: var(--r-sm); background: var(--text-muted)"></div>
+<div style="height: 8px; width: 70%; border-radius: var(--r-sm); background: var(--border)"></div>
+<div style="display: flex; gap: var(--s1)"><div style="height: 20px; width: 56px; border-radius: var(--r-pill); background: var(--primary-subtle); border: 1px solid var(--primary)"></div><div style="height: 20px; width: 56px; border-radius: var(--r-pill); background: var(--surface-alt)"></div><div style="height: 20px; width: 56px; border-radius: var(--r-pill); background: var(--surface-alt)"></div><div style="flex: 1"></div><div style="height: 20px; width: 72px; border-radius: var(--r-sm); background: var(--surface-alt)"></div></div>
+<div style="height: 40px; border-radius: var(--r-sm); background: var(--surface); border: 2px solid var(--primary)"></div>
+<div style="height: 40px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 40px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 40px; border-radius: var(--r-sm); background: var(--surface-alt); opacity: 0.6"></div>
+</div>
+<div style="width: 96px; flex: none; padding: var(--s2); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background); display: flex; flex-direction: column; gap: var(--s1)">
+<div style="height: 10px; width: 60%; border-radius: var(--r-sm); background: var(--text-muted)"></div>
+<div style="height: 14px; border-radius: var(--r-pill); background: var(--surface-alt)"></div>
+<div style="height: 30px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 30px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 30px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 16px; margin-top: var(--s2); border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+</div>
+</div>
+<ul style="margin: 0; padding-left: var(--s5); font-size: var(--fs-bsm); line-height: var(--lh-bsm); display: flex; flex-direction: column; gap: var(--s1)">
+<li>2 · özet satırı + 3 · filtre (sayılı segment) ve sıralama</li>
+<li>3 · satırlar öncelik sırasıyla; öncelikli satır güçlü kenarlı</li>
+<li>Biten öğeler soluk, "Tümü"nün en altında</li>
+<li>Telefonda filtreler yatay kayar; sıralama alt sayfada</li>
+</ul>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 600">Detay</h2>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Ürün Detayı</span>
+</div>
+<div style="display: flex; gap: var(--s4); align-items: flex-start">
+<div style="flex: 1; min-width: 0; padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background); display: flex; flex-direction: column; gap: var(--s2)">
+<div style="display: flex; gap: var(--s1)"><div style="height: 16px; width: 64px; border-radius: var(--r-pill); background: var(--warning-subtle)"></div><div style="height: 16px; width: 64px; border-radius: var(--r-pill); background: var(--surface-alt)"></div></div>
+<div style="height: 14px; width: 55%; border-radius: var(--r-sm); background: var(--text-muted)"></div>
+<div style="height: 8px; width: 75%; border-radius: var(--r-sm); background: var(--border)"></div>
+<div style="display: flex; gap: var(--s2)">
+<div style="flex: 1; display: flex; flex-direction: column; gap: var(--s2)">
+<div style="height: 56px; border-radius: var(--r-sm); background: var(--hero-surface)"></div>
+<div style="height: 52px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 36px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 36px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+</div>
+<div style="width: 34%; display: flex; flex-direction: column; gap: var(--s2)">
+<div style="height: 120px; border-radius: var(--r-sm); background: var(--surface); border: 1px dashed var(--border)"></div>
+<div style="height: 60px; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+</div>
+</div>
+</div>
+<div style="width: 96px; flex: none; padding: var(--s2); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background); display: flex; flex-direction: column; gap: var(--s1)">
+<div style="height: 10px; width: 70%; border-radius: var(--r-sm); background: var(--text-muted)"></div>
+<div style="height: 36px; border-radius: var(--r-sm); background: var(--hero-surface)"></div>
+<div style="height: 30px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+</div>
+</div>
+<ul style="margin: 0; padding-left: var(--s5); font-size: var(--fs-bsm); line-height: var(--lh-bsm); display: flex; flex-direction: column; gap: var(--s1)">
+<li>1 · başlık bloğu: durum etiketleri, ad, satın alma satırı, iade süresi</li>
+<li>3 · ana sütun: fırsat bloğu → geçmiş → satıcılar → stok → adımlar</li>
+<li>4 · yan sütun: eylem adımları ve yardım (telefonda akış içine iner)</li>
+<li>Sıra: durum → ne olduğu → para/zaman → kanıt → eylem</li>
+</ul>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 600">Akış</h2>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Ara ve Ekle · Giriş</span>
+</div>
+<div style="display: flex; gap: var(--s4); align-items: flex-start">
+<div style="flex: 1; min-width: 0; padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background); display: flex; gap: var(--s2)">
+<div style="flex: 1; display: flex; flex-direction: column; gap: var(--s2)">
+<div style="display: flex; gap: var(--s1); align-items: center"><div style="width: 16px; height: 16px; border-radius: var(--r-pill); background: var(--primary)"></div><div style="height: 2px; flex: 1; background: var(--primary)"></div><div style="width: 16px; height: 16px; border-radius: var(--r-pill); border: 2px solid var(--primary); box-sizing: border-box"></div><div style="height: 2px; flex: 1; background: var(--border)"></div><div style="width: 16px; height: 16px; border-radius: var(--r-pill); border: 2px solid var(--border); box-sizing: border-box"></div></div>
+<div style="height: 32px; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--sh-md)"></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2)">
+<div style="height: 64px; border-radius: var(--r-sm); background: var(--surface); border: 2px solid var(--primary)"></div>
+<div style="height: 64px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 64px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 64px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+</div>
+</div>
+<div style="width: 38%; padding: var(--s2); border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--sh-md); display: flex; flex-direction: column; gap: var(--s2)">
+<div style="height: 10px; width: 60%; border-radius: var(--r-sm); background: var(--text-muted)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+<div style="height: 36px; border-radius: var(--r-sm); background: var(--info-subtle)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--primary)"></div>
+</div>
+</div>
+<div style="width: 96px; flex: none; padding: var(--s2); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background); display: flex; flex-direction: column; gap: var(--s1); position: relative; overflow: hidden; height: 200px; box-sizing: border-box">
+<div style="height: 6px; border-radius: var(--r-pill); background: var(--primary)"></div>
+<div style="height: 20px; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 30px; border-radius: var(--r-sm); background: var(--surface); border: 2px solid var(--primary)"></div>
+<div style="height: 30px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 88px; border-radius: var(--r-md) var(--r-md) 0 0; background: var(--surface); border-top: 1px solid var(--border); box-shadow: var(--sh-lg); display: flex; flex-direction: column; gap: 4px; padding: 6px"><div style="height: 3px; width: 24px; align-self: center; border-radius: var(--r-pill); background: var(--border)"></div><div style="height: 12px; border-radius: 3px; background: var(--surface-alt)"></div><div style="height: 12px; border-radius: 3px; background: var(--surface-alt)"></div><div style="height: 16px; border-radius: 3px; background: var(--primary)"></div></div>
+</div>
+</div>
+<ul style="margin: 0; padding-left: var(--s5); font-size: var(--fs-bsm); line-height: var(--lh-bsm); display: flex; flex-direction: column; gap: var(--s1)">
+<li>Üstte adım göstergesi; en fazla 3 adım</li>
+<li>3 · adım içeriği; 4 · onay paneli (telefonda alt sayfa)</li>
+<li>Geri dönüşte girilen değerler korunur</li>
+<li>Hiçbir şey son birincil butondan önce kaydedilmez</li>
+</ul>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 600">Özet</h2>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Ana Sayfa · Kazancım · Paketim ve Premium</span>
+</div>
+<div style="display: flex; gap: var(--s4); align-items: flex-start">
+<div style="flex: 1; min-width: 0; padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background); display: flex; flex-direction: column; gap: var(--s2)">
+<div style="height: 8px; width: 70%; border-radius: var(--r-sm); background: var(--border)"></div>
+<div style="height: 30px; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--sh-md)"></div>
+<div style="height: 84px; border-radius: var(--r-sm); background: var(--surface); border: 2px solid var(--primary); display: flex; gap: var(--s2); padding: var(--s2); box-sizing: border-box"><div style="flex: 1; display: flex; flex-direction: column; gap: 4px"><div style="height: 8px; width: 50%; border-radius: 3px; background: var(--text-muted)"></div><div style="height: 30px; border-radius: 3px; background: var(--surface-alt)"></div></div><div style="width: 30%; border-radius: 3px; background: var(--hero-surface)"></div></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2)">
+<div style="height: 44px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 44px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 44px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+</div>
+<div style="height: 30px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+</div>
+<div style="width: 96px; flex: none; padding: var(--s2); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--background); display: flex; flex-direction: column; gap: var(--s1)">
+<div style="height: 6px; width: 80%; border-radius: var(--r-sm); background: var(--border)"></div>
+<div style="height: 18px; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 64px; border-radius: var(--r-sm); background: var(--surface); border: 2px solid var(--primary)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+<div style="height: 22px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border)"></div>
+</div>
+</div>
+<ul style="margin: 0; padding-left: var(--s5); font-size: var(--fs-bsm); line-height: var(--lh-bsm); display: flex; flex-direction: column; gap: var(--s1)">
+<li>2 · özet satırı en üstte (tazelik dahil)</li>
+<li>3 · tek öne çıkan blok (Hemen Gözat / toplam kazanç / paket)</li>
+<li>Altında ölçü kartları ve kısa satırlar; "Tümü" linki</li>
+<li>Öne çıkan blok sayfada bir kez</li>
+</ul>
+</section>
+
+</div>
+
+<section style="background: var(--surface-alt); border-radius: var(--r-lg); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Yeni bir sayfa nasıl eklenir</h2>
+<ol style="margin: 0; padding-left: var(--s5); font-size: var(--fs-bsm); line-height: var(--lh-bsm); display: flex; flex-direction: column; gap: var(--s1)">
+<li>İskelet hazır: menüde hangi sekmeye ait olduğu seçilir (yoksa menüye eklenmez, bağlantıyla açılır).</li>
+<li>Dört şablondan biri seçilir; yeni şablon gerekiyorsa önce product_design_pattern.md'ye önerilir.</li>
+<li>Bölgelere yalnız ortak bileşenler yerleştirilir; yeni bileşen gerekiyorsa önce desen belgesine eklenir.</li>
+<li>Beş durum bölge 3'te çizilir; metinler katalog anahtarlarından gelir; açık ve koyu temada kontrol edilir.</li>
+</ol>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1400}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","warning-subtle":"#FEF3C7","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","hero-surface":"#0B1F33"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","warning-subtle":"#3A2E0B","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","hero-surface":"#16293B"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","s12":"48px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-sm":"0 1px 2px rgba(11,31,51,0.06)","sh-md":"0 4px 12px rgba(11,31,51,0.08)","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    return { rootStyle: s };
+  }
+}
+</script>
+</body>
+</html>

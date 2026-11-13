@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Ortak bileşenler</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 3000px; box-sizing: border-box; padding: var(--s12); display: flex; flex-direction: column; gap: var(--s6); background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<header style="display: flex; flex-direction: column; gap: var(--s2)">
+<h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Ortak bileşenler</h1>
+<p style="margin: 0; max-width: 960px; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-muted)">Katalog sayfası: her bileşen tüm hâlleriyle bir arada. Gerçek bir ekranda mercan renk yalnız bir kez ve yalnız fırsat için görünür. Ad ve rakamlar örnek; satıcı adları köşeli parantezle yer tutucudur.</p>
+</header>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6); align-items: start">
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Butonlar</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">Button</code></div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center">
+<button type="button" style="height: 48px; padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Evet, bunu aldım</button>
+<button type="button" style="height: 48px; padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--accent); color: var(--on-accent); font: inherit; font-size: var(--fs-btn); font-weight: 600; display: flex; align-items: center; gap: var(--s2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>Fırsatı gör</button>
+<button type="button" style="height: 48px; padding: 0 var(--s5); border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">İşaretle</button>
+<button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; display: flex; align-items: center; gap: var(--s2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>Şimdi kontrol et</button>
+<button type="button" style="height: 48px; padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--danger); color: var(--text-inverse); font: inherit; font-size: var(--fs-btn); font-weight: 600">Hesabı sil</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s4); align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: var(--s1)">
+<button type="button" disabled style="height: 48px; padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600; opacity: 0.4">Evet, bunu aldım</button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Pasif · nedeni yanında: "Ödediğin fiyatı yaz"</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s1)">
+<button type="button" aria-busy="true" style="width: 172px; height: 48px; border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: var(--s2)"><span style="width: 16px; height: 16px; box-sizing: border-box; border-radius: var(--r-pill); border: 2px solid var(--on-primary); border-right-color: transparent"></span>Kaydediliyor</button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Yükleniyor · genişlik sabit, iki kez basılamaz</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s1)">
+<button type="button" style="height: 48px; padding: 0 var(--s5); border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-btn); font-weight: 600; outline: 2px solid var(--focus-ring); outline-offset: 2px">Göster</button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Odak halkası</span>
+</div>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Birincil · Fırsat (mercan, yüzeyde bir kez) · İkincil · Hayalet · Tehlike. Etiket hep fiil + nesne. Yükseklik 48 / hayalet 40; dokunma alanı en az 44.</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Durum etiketleri</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">StatusFlag</code></div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>Fırsat geldi</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>İade için 2 gün</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--info-subtle); color: var(--info); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>İade için 9 gün</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--danger-subtle); color: var(--danger); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg>İade süresi bitti</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Az stok</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--danger-subtle); color: var(--danger); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg>Tükendi</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>Almak istiyorum</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>İşaretlendi</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--savings-subtle); color: var(--on-primary-subtle); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>En ucuz</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text-muted); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>Takip bitti</span>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Sözlük sabit; her etiket ikon + metin. 3 günden fazla: bilgi rengi, 3 gün ve altı: sarı, bitti: kırmızı.</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Fiyat ve tazelik</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">MoneyDisplay · FreshnessLine</code></div>
+<div style="display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap">
+<span style="font-size: var(--fs-price-lg); line-height: var(--lh-price-lg); font-weight: 700">25.997 TL</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted); text-decoration: line-through">27.499 TL</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-price); line-height: var(--lh-price); font-weight: 600; color: var(--savings)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>3.002 TL kazanç</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s2); font-size: var(--fs-bsm); line-height: var(--lh-bsm)">
+<span>Senin ödediğin <strong style="font-weight: 600">28.999 TL</strong> · en ucuz şu an <strong style="font-weight: 600; color: var(--savings)">25.997 TL</strong></span>
+<span>Başka bir satıcı <strong style="font-weight: 600">900 TL daha pahalı</strong> <span style="color: var(--text-muted)">(aleyhine fark kırmızı değil, sözle)</span></span>
+<span style="display: inline-flex; align-items: center; gap: var(--s2); flex-wrap: wrap">Kazanç kargo dahil <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text-muted); font-size: var(--fs-cap); font-weight: 500">kargo hariç</span> <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--info-subtle); color: var(--info); font-size: var(--fs-cap); font-weight: 600">tahmini</span></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s1)">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>2 dk önce kontrol edildi</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Stokta · en az 3 gündür · fiyat en az 2 gündür aynı</span>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Para tr: 25.997 TL · en: TL 25,997. Kazanç hep pozitif + "kazanç". Her fiyatın yanında kontrol zamanı; süreler "en az".</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Gizli satıcı</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">RevealGate</code></div>
+<div style="border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; justify-content: space-between; gap: var(--s3); align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: var(--s1)">
+<span style="display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>En ucuz satıcı · satıcı gizli</span>
+<span style="font-size: var(--fs-price); line-height: var(--lh-price); font-weight: 600">25.997 TL <span style="font-size: var(--fs-bsm); font-weight: 400; color: var(--text-muted); text-decoration: line-through">26.499 TL</span></span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--savings)">3.002 TL kazanç</span>
+</div>
+<button type="button" style="height: 48px; padding: 0 var(--s5); border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">Göster</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)"><span>Stokta · en az 3 gündür</span><span>Resmi garanti</span><span>Kargo 0 TL · 2 gün teslim</span><span>Fiyat en az 2 gündür</span><span>4 dk önce kontrol edildi</span></div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); border-top: 1px dashed var(--border); padding-top: var(--s2)">Hak notu yuvası · ilk sürümde: "Göster ücretsiz"</span>
+</div>
+<div style="border: 1px solid var(--primary); border-radius: var(--r-md); padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; justify-content: space-between; gap: var(--s3); align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: var(--s1)">
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">[Satıcı adı] · 4,8 puan</span>
+<span style="display: inline-flex; align-self: flex-start; height: 24px; align-items: center; padding: 0 var(--s2); border-radius: var(--r-sm); background: var(--surface-alt); font-size: var(--fs-cap); font-weight: 500">[Platform]</span>
+<span style="font-size: var(--fs-price); line-height: var(--lh-price); font-weight: 600">25.997 TL <span style="font-size: var(--fs-bsm); font-weight: 600; color: var(--savings)">3.002 TL kazanç</span></span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: var(--s1)">
+<a href="#" style="display: flex; align-items: center; height: 48px; padding: 0 var(--s5); border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-btn); font-weight: 600; text-decoration: none">Mağazaya git</a>
+<button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Gizle</button>
+</div>
+</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">1 hafta açık kalır · Bu linkten alışverişte komisyon alabiliriz; fiyat sana değişmez.</span>
+</div>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Aday kartı · işaretle</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">MarkConfirm</code></div>
+<div style="display: flex; gap: var(--s3); padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); align-items: center">
+<div role="img" aria-label="Ürün görseli" style="width: var(--thumb-md); height: var(--thumb-md); flex: none; border-radius: var(--r-sm); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; color: var(--text-muted)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Insta360 Ace Pro 2</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">2. nesil · Flash Print Bundle · Siyah</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">7 mağazada bulundu</span>
+</div>
+<button type="button" style="height: 48px; padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-btn); font-weight: 600">İşaretle</button>
+</div>
+<div style="display: flex; gap: var(--s3); padding: var(--s3); border: 2px solid var(--primary); border-radius: var(--r-md); align-items: center; background: var(--surface)">
+<div role="img" aria-label="Ürün görseli" style="width: var(--thumb-md); height: var(--thumb-md); flex: none; border-radius: var(--r-sm); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; color: var(--text-muted)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="display: inline-flex; align-self: flex-start; align-items: center; gap: var(--s1); height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); font-size: var(--fs-cap); font-weight: 600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>İşaretlendi</span>
+<span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Insta360 Ace Pro 2</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">2. nesil · Standart paket · Siyah</span>
+</div>
+<button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">İşareti kaldır</button>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Kartta mağaza adı ve fiyat yok. İşaretlemek hiçbir şey kaydetmez; tek dokunuşla geri alınır.</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Segment seçici</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">SegmentedChoice</code></div>
+<div role="group" aria-label="Sipariş durumu" style="display: flex; padding: var(--s1); gap: var(--s1); background: var(--surface-alt); border-radius: var(--r-md)">
+<button type="button" aria-pressed="false" style="flex: 1; height: 40px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-bsm); font-weight: 500">Sipariş verdim</button>
+<button type="button" aria-pressed="true" style="flex: 1; height: 40px; border: 0; border-radius: var(--r-sm); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600; box-shadow: var(--sh-sm)">Kargoda</button>
+<button type="button" aria-pressed="false" style="flex: 1; height: 40px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-bsm); font-weight: 500">Teslim aldım</button>
+</div>
+<div role="group" aria-label="Filtre" style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<button type="button" aria-pressed="true" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--primary); border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tümü 12</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 500">Aldım 8</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 500">Almak istiyorum 3</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 500">Fırsat var 2</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 500">Biten 1</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<span style="font-size: var(--fs-cap); line-height: 44px; font-weight: 500; color: var(--text-muted)">Hızlı seçim çipleri:</span>
+<button type="button" style="height: var(--touch); padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text); font: inherit; font-size: var(--fs-cap); font-weight: 500">Son 30 günün en düşüğü</button>
+<button type="button" style="height: var(--touch); padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text); font: inherit; font-size: var(--fs-cap); font-weight: 500">Flash Print Bundle</button>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Seçili seçenek dolgu + ağırlıkla öne çıkar; aria-pressed ile duyurulur. Çipler tek dokunuşla uygulanır; dokunma alanı 44 px.</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Çoklu görsel yükleme</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">MultiImageUpload · ImagePrivacyNote</code></div>
+<label style="display: flex; flex-direction: column; align-items: center; gap: var(--s2); padding: var(--s5); border: 2px dashed var(--border); border-radius: var(--r-lg); background: var(--surface-alt); color: var(--text); text-align: center">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">Fotoğraf ekle · en çok 5</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">JPEG, PNG, WebP, HEIC · dosya başına en çok 10 MB</span>
+<input type="file" multiple accept="image/jpeg,image/png,image/webp,image/heic" style="position: absolute; width: 1px; height: 1px; opacity: 0">
+</label>
+<div style="display: flex; flex-direction: column; gap: var(--s2)">
+<div style="display: flex; align-items: center; gap: var(--s3)">
+<div style="width: var(--thumb-sm); height: var(--thumb-sm); flex: none; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">siparis-ekrani.png</span><span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--savings)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Hazır</span></div>
+<button type="button" aria-label="siparis-ekrani.png kaldır" style="width: var(--touch); height: var(--touch); border: 0; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+<div style="display: flex; align-items: center; gap: var(--s3)">
+<div style="width: var(--thumb-sm); height: var(--thumb-sm); flex: none; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">etiket.heic</span><div role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="etiket.heic yükleniyor" style="height: var(--progress-h); border-radius: var(--r-pill); background: var(--surface-alt); overflow: hidden"><div style="width: 60%; height: 100%; background: var(--primary)"></div></div><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Yükleniyor · %60</span></div>
+<button type="button" aria-label="etiket.heic kaldır" style="width: var(--touch); height: var(--touch); border: 0; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+<div style="display: flex; align-items: center; gap: var(--s3); padding: var(--s2); border-radius: var(--r-md); background: var(--danger-subtle)">
+<div style="width: var(--thumb-sm); height: var(--thumb-sm); flex: none; border-radius: var(--r-sm); border: 2px dashed var(--danger); box-sizing: border-box"></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">urun-videosu.mov</span><span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--danger)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg>Desteklenmeyen dosya · diğerleri devam ediyor</span></div>
+<button type="button" aria-label="urun-videosu.mov kaldır" style="width: var(--touch); height: var(--touch); border: 0; background: transparent; color: var(--danger); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+</div>
+<div style="display: flex; gap: var(--s2); padding: var(--s3); border-radius: var(--r-md); background: var(--info-subtle); color: var(--info)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="flex: none; margin-top: 1px" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text)">Görselin yalnız ürünü tanımak için kullanılır, 24 saat sonra silinir; ad, adres gibi bilgilerin kaydedilmez.</span>
+</div>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Kalan hak göstergesi</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">AllowanceIndicator</code></div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s3) 0; border-bottom: 1px solid var(--divider)">
+<button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Şimdi kontrol et</button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Bugün 7 hakkın kaldı</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s3) 0; border-bottom: 1px solid var(--divider)">
+<button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Şimdi kontrol et</button>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-cap); font-weight: 600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Bugün 1 hakkın kaldı</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s3) 0; border-bottom: 1px solid var(--divider)">
+<button type="button" disabled style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; opacity: 0.4">Şimdi kontrol et</button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Hakkın bitti · Yarın tekrar · ya da <a href="#" style="color: var(--primary); font-weight: 600">Premium</a></span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s4); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">
+<span>Takipte 8/10</span><span>Bu ay 2 Göster hakkın kaldı</span><span>Aylık hakkından kullanıldı</span>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Bol hak: soluk metin · bir hak: sarı · sıfır: pasif buton + neden + sonraki adım. Sınırsızda gösterilmez. Engelleyici pencere yok.</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Adım göstergesi</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">StepIndicator</code></div>
+<ol aria-label="Adımlar" style="margin: 0; padding: 0; list-style: none; display: flex; align-items: center; gap: var(--s2)">
+<li style="display: flex; align-items: center; gap: var(--s2)"><span style="width: 28px; height: 28px; border-radius: var(--r-pill); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Bul</span></li>
+<li aria-hidden="true" style="flex: 1; height: 2px; background: var(--primary)"></li>
+<li aria-current="step" style="display: flex; align-items: center; gap: var(--s2)"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: var(--r-pill); border: 2px solid var(--primary); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">2</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">Hangisi seninki?</span></li>
+<li aria-hidden="true" style="flex: 1; height: 2px; background: var(--border)"></li>
+<li style="display: flex; align-items: center; gap: var(--s2)"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: var(--r-pill); border: 2px solid var(--border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">3</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Onayla</span></li>
+</ol>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s3); border-radius: var(--r-md); background: var(--surface-alt)">
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">3 ürün bulduk · 2/3</span>
+<button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Atla</button>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Biten adım: onay ikonu · şu anki adım: kalın + çerçeve · atlanan ürün saklanır, sonra dönülebilir.</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Stok geçmişi · 14 gün</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">StockHistory</code></div>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">En ucuz satıcı</span>
+<div style="display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: var(--s1)">
+<sc-for list="{{stock}}" as="d" hint-placeholder-count="14"><div style="{{d.style}}"></div></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)"><span>30 Eki</span><span>bugün</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s4); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500">
+<span style="display: inline-flex; align-items: center; gap: var(--s1)"><span style="width: 12px; height: 12px; border-radius: 3px; background: var(--stock-in)"></span>Stokta</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1)"><span style="width: 12px; height: 12px; border-radius: 3px; background: var(--stock-low)"></span>Az stok</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1)"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; background: var(--stock-out-fill); border: 2px dashed var(--stock-out-border)"></span>Tükendi</span>
+</div>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)">Şu an stokta · en az 3 gündür</span>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Fırsat bloğu</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">DealHero</code></div>
+<div style="background: var(--hero-surface); color: var(--on-hero-surface); border-radius: var(--r-lg); padding: var(--s5); display: flex; flex-direction: column; gap: var(--s3)">
+<span style="display: inline-flex; align-self: flex-start; align-items: center; gap: var(--s1); height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); font-size: var(--fs-cap); font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>Fırsat geldi</span>
+<span style="font-size: var(--fs-display); line-height: var(--lh-display); font-weight: 700; color: var(--hero-savings)">3.002 TL kazanç</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--on-hero-muted)">3 satıcıda daha ucuz · iade için 4 gün · 4 dk önce doğrulandı</span>
+<button type="button" style="align-self: flex-start; height: 44px; padding: 0 var(--s4); border: 1px solid var(--on-hero-muted); border-radius: var(--r-md); background: transparent; color: var(--on-hero-surface); font: inherit; font-size: var(--fs-btn); font-weight: 600">Satıcılara git</button>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Yüzeyde bir tane. Mercan burada etikette; aynı yüzeyde "Fırsatı gör" butonu varsa etiket rengi değil, buton mercan olur (biri seçilir).</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Panel · alt sayfa</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">Sheet</code></div>
+<div style="display: flex; gap: var(--s4); align-items: flex-end">
+<div style="flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--sh-md); display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s2); padding: var(--s3) var(--s3) var(--s3) var(--s4); border-bottom: 1px solid var(--divider)">
+<span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Emin ol, sonra onayla</span>
+<button type="button" aria-label="Paneli kapat" style="width: var(--touch); height: var(--touch); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+<div style="padding: var(--s4); display: flex; flex-direction: column; gap: var(--s2)"><div style="height: 12px; width: 70%; border-radius: var(--r-sm); background: var(--surface-alt)"></div><div style="height: 12px; width: 50%; border-radius: var(--r-sm); background: var(--surface-alt)"></div><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Masaüstü · sağda 440 px</span></div>
+</div>
+<div style="width: 180px; flex: none; border: 1px solid var(--border); border-bottom: 0; border-radius: var(--r-xl) var(--r-xl) 0 0; background: var(--surface); box-shadow: var(--sh-lg); padding: var(--s2) var(--s3) var(--s4); display: flex; flex-direction: column; gap: var(--s2)">
+<span style="width: 40px; height: 4px; align-self: center; border-radius: var(--r-pill); background: var(--border)"></span>
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: var(--fs-bsm); font-weight: 600">Başlık</span><span style="color: var(--text-muted)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+<div style="height: 10px; border-radius: var(--r-sm); background: var(--surface-alt)"></div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Telefon · alttan</span>
+</div>
+</div>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Kapatma her zaman görünür; odak panelde kalır; Esc kapatır; arka sayfa durumunu korur.</p>
+</section>
+
+<section style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-sm); padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Uzun metin · English</h2><code style="font-size: var(--fs-cap); color: var(--text-muted)">i18n</code></div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center">
+<button type="button" style="min-height: 48px; max-width: 260px; padding: var(--s2) var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); line-height: var(--lh-body); font-weight: 600; text-align: center">Yes, this is the one I bought</button>
+<button type="button" style="min-height: 48px; max-width: 260px; padding: var(--s2) var(--s5); border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-btn); line-height: var(--lh-body); font-weight: 600; text-align: center">I didn't buy it, just track the price</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); min-height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-cap); font-weight: 600">Return window ends in 2 days</span>
+<span style="display: inline-flex; align-items: center; gap: var(--s1); min-height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--surface-alt); color: var(--text); font-size: var(--fs-cap); font-weight: 600">Want to buy</span>
+</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Checked 2 min ago · in stock for at least 3 days · TL 25,997</span>
+<p style="margin: 0; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Buton ve etiketler satıra sarar, yükseklik büyür, kesilmez. Menü etiketleri telefonda iki satıra iner.</p>
+</section>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":3000}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-hover":"#065F46","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","accent":"#FF5A36","accent-hover":"#FF7A5C","on-accent":"#1A0A05","accent-text":"#C73A1C","savings":"#047857","savings-subtle":"#D1FAE5","warning":"#A16207","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","danger-subtle":"#FEE2E2","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","text-inverse":"#FFFFFF","focus-ring":"#059669","stock-in":"#047857","stock-low":"#FBBF24","stock-out-border":"#B91C1C","stock-out-fill":"#FFFFFF","hero-surface":"#0B1F33","on-hero-surface":"#FFFFFF","on-hero-muted":"#DCE5E1","hero-savings":"#6EE7B7"},
+      dark: {"primary":"#34D399","primary-hover":"#6EE7B7","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","accent":"#FF7A5C","accent-hover":"#FFA48F","on-accent":"#1A0A05","accent-text":"#FF7A5C","savings":"#34D399","savings-subtle":"#0F3A2C","warning":"#FBBF24","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","danger-subtle":"#3B1416","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","text-inverse":"#0B1F33","focus-ring":"#6EE7B7","stock-in":"#34D399","stock-low":"#FBBF24","stock-out-border":"#F87171","stock-out-fill":"#0E1E2E","hero-surface":"#16293B","on-hero-surface":"#EEF4F2","on-hero-muted":"#9FB3C4","hero-savings":"#6EE7B7"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","s12":"48px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-sm":"0 1px 2px rgba(11,31,51,0.06)","sh-md":"0 4px 12px rgba(11,31,51,0.08)","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-display":"32px","lh-display":"40px","fs-h1":"28px","lh-h1":"36px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-price-lg":"28px","lh-price-lg":"34px","fs-price":"18px","lh-price":"24px","fs-btn":"16px","touch":"44px","thumb-sm":"48px","thumb-md":"72px","progress-h":"4px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const pattern = ['in','in','in','low','out','out','in','in','in','in','low','in','in','in'];
+    const stock = pattern.map(p => ({ style: 'height:28px;box-sizing:border-box;border-radius:6px;' + (p === 'in' ? 'background:var(--stock-in)' : p === 'low' ? 'background:var(--stock-low)' : 'background:var(--stock-out-fill);border:2px dashed var(--stock-out-border)') }));
+    return { rootStyle: s, stock };
+  }
+}
+</script>
+</body>
+</html>
