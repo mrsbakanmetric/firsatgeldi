@@ -94,7 +94,7 @@ Turkish users rarely pay for app subscriptions (RevenueCat: 89% of Turkish devel
 
 | Topic | Decision |
 |---|---|
-| Platform | **[DECIDED]** Web first (responsive, installable); development starts there. Mobile later. **Mobile screen coverage and permissions are defined** (`modules.md` access matrix); **mobile technology, requirements and infrastructure are [OPEN]**. |
+| Platform | **[DECIDED]** Web first (responsive, installable); development starts there. **The mobile app track (technology choice, design, build) starts after the web is finished [DECIDED 2026-11-14].** **Mobile screen coverage and permissions are defined** (`modules.md` access matrix); **mobile technology, requirements and infrastructure are [OPEN]**. |
 | Market | **[DECIDED]** Türkiye only. International stores parked (§12). |
 | Login | **[DECIDED]** Google, Apple, and email sign-up. Built last. |
 | Roles | **[DECIDED]** **Application Manager** (sees and manages everything, everywhere — web and mobile) + **User** (own data only). Guest is an access level (landing, SEO pages, legal, help, search and mark). Authorisation is data: every screen and action is bound to a permission key; future roles are added by selecting permissions. |

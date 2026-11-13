@@ -1,6 +1,6 @@
 # FırsatGeldi — Product Design Patterns
 
-**Status:** v1.5 · **Last updated:** 2026-11-14 · **Applies to:** web and mobile
+**Status:** v1.6 · **Last updated:** 2026-11-14 · **Applies to:** web and mobile
 
 This document explains **how the product should look, feel and behave**: the colour logic, how users take action, and how any new screen, button or component must be built so the whole product stays consistent. It contains **no screen layouts** — it is the rulebook that every screen is built from.
 
@@ -342,7 +342,7 @@ The smallest building blocks. Every larger component (§5.21–§5.35) is made f
 - **Menu (`Menu`):** a list of actions opened from a button (profile menu, row "more" actions). Items 44 px high with icon + label; a destructive item uses `danger` text and still asks for confirmation (§4.2). Arrow keys move, Enter selects, Escape closes and returns focus to the opener. Below `breakpoint.md` it opens as a bottom sheet.
 - **Tooltip (`Tooltip`):** supplementary text only, shown on hover and keyboard focus after a short delay; never shown on touch. Anything the user needs to act or decide (limits, privacy notes, reasons) is never placed only in a tooltip (§5.20).
 - **Avatar (`Avatar`):** initials on `primary-subtle`; sizes 34 (top bar profile button), 40 (rows, §5.34, §5.35), 96 (profile header). Initials only; a real name is never required. Decorative when inside a labelled button.
-- **Icon (`Icon`):** one outline icon set, stroke 2, `currentColor`, sizes `icon-sm` / `icon-md` / `icon-lg`. Decorative icons are hidden from assistive technology; an icon that carries meaning has a text label. Library: Lucide [RECOMMENDED — not decided].
+- **Icon (`Icon`):** one outline icon set, stroke 2, `currentColor`, sizes `icon-sm` / `icon-md` / `icon-lg`. Decorative icons are hidden from assistive technology; an icon that carries meaning has a text label. Library: Lucide [DECIDED 2026-11-14].
 
 ### 5.37 Layer order (`z-index`) [DECIDED 2026-11-14]
 Stacking uses only the `z-index` tokens, from bottom to top: **base** (page content) · **raised** (sticky table header) · **sticky** (top bar, bottom tab bar) · **overlay** (dimmed backdrop) · **modal** (Dialog, Sheet, bell panel) · **popover** (Menu, Select list, autocomplete — above modal because they also open inside dialogs) · **tooltip** (always on top). No literal z-index values in code.

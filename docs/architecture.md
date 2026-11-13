@@ -150,6 +150,7 @@ Internal pattern: `controller` (HTTP + Zod) → `service` (business rules) → `
 | Monorepo | pnpm + Turborepo |
 | Web | Next.js (App Router) + React + TypeScript (strict) |
 | Interface | Tailwind CSS (generated from tokens) + Radix UI / React Aria |
+| Icons | Lucide (outline, stroke 2) [DECIDED 2026-11-14] |
 | Server state | TanStack Query |
 | Live updates | Server-Sent Events |
 | Charts | In-house SVG components |
@@ -887,7 +888,7 @@ apps/web/app/[locale]/
 ```
 
 ### 21.2 Mobile [technology OPEN]
-Every user and admin screen in the access matrix also exists on mobile [DECIDED]; same API, same permission keys, same `contracts`/`core`/`i18n`/`tokens` packages. The push channel is added with mobile. Technology and infrastructure to be decided separately.
+Every user and admin screen in the access matrix also exists on mobile [DECIDED]; same API, same permission keys, same `contracts`/`core`/`i18n`/`tokens` packages. The push channel is added with mobile. Technology and infrastructure to be decided separately. **Timing [DECIDED 2026-11-14]:** the mobile track (technology choice, design, build) starts after the web is finished.
 
 ### 21.3 Data flow
 Server components stream the first view, TanStack Query takes over; actions update optimistically; SSE invalidates queries; every screen draws the five states; all calls through the typed client generated from `contracts`.
