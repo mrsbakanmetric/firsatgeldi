@@ -1,7 +1,7 @@
 {
   "$meta": {
     "name": "FırsatGeldi Design Tokens",
-    "version": "1.8.0",
+    "version": "1.9.0",
     "updated": "2026-11-14",
     "activeTheme": "firsatgeldi-default",
     "rule": "SINGLE SOURCE OF TRUTH for every visual value in web and mobile. Never hard-code colours, font sizes, spacing, radius, borders or shadows in code. Read this file before creating or changing ANY UI element (screen, button, text, heading, divider, card, badge, input, icon, chart, notification, email).",
@@ -303,11 +303,13 @@
     "modal-width": "1120px",
     "modal-aside-width": "360px",
     "side-column-width": "360px",
-    "section-menu-width": "260px"
+    "section-menu-width": "260px",
+    "step-indicator-dot": "28px"
   },
   "breakpoint": {
     "md": "768px",
-    "rule": "Below md: single column, bottom navigation, panels open as bottom sheets. From md: top navigation, side panel."
+    "lg": "1024px",
+    "rule": "Below md: single column, bottom navigation, panels open as bottom sheets. From md: top navigation, side panel. From md to below lg the top-bar navigation shows icons only (label as accessible name + Tooltip); from lg icon + text."
   },
   "z-index": {
     "base": 0,
@@ -351,7 +353,9 @@
         "bg": "transparent",
         "text": "color.primary",
         "radius": "radius.md",
-        "height": "40px"
+        "height": "40px",
+        "height-touch": "size.touch-target-min",
+        "rule": "40px only from breakpoint.md with a fine pointer (mouse). Below breakpoint.md or on a coarse pointer (touch) the height is height-touch (44px)."
       },
       "danger": {
         "bg": "color.danger",

@@ -1,6 +1,6 @@
 # FırsatGeldi — Page Design
 
-**Status:** v1.2 · **Last updated:** 2026-11-14 · **Scope:** web, desktop 1280 (layout switches below `breakpoint.md`), light and dark · **Language of UI copy:** Turkish (English supported, see product_spect §3.2)
+**Status:** v1.3 · **Last updated:** 2026-11-14 · **Scope:** web, desktop 1280 (layout switches below `breakpoint.md`), light and dark · **Language of UI copy:** Turkish (English supported, see product_spect §3.2)
 
 This document explains **how every page is built**: the one shell, the page templates, the shared components, the global page rules, the page-by-page anatomy of the approved screens, and the procedure for deriving any new page. It is the bridge between `product_design_pattern.md` (rules and patterns), `design-tokens.json` (values), `modules.md` (what each screen must do) and the code.
 
@@ -65,7 +65,7 @@ Every page = **shell + one template + shared components + the five states**. A p
 ### 2.1 `AppShell` (signed-in and guest)
 - **Header** (height `size.header-height`, `surface`, bottom `border`), content centred in `size.content-max-width` with `space.6` side padding:
   - Logo (links to Home).
-  - Main navigation, fixed order: **Ana Sayfa · Takip · Ara ve Ekle · Keşfet · Kazancım** (icon + text) [DECIDED 2026-11-12]. Current section: `primary` text, weight 600, 2 px indicator bar, `aria-current="page"`.
+  - Main navigation, fixed order: **Ana Sayfa · Takip · Ara ve Ekle · Keşfet · Kazancım** (icon + text) [DECIDED 2026-11-12]. From `breakpoint.md` to below `breakpoint.lg` icons only, label as accessible name + Tooltip [DECIDED 2026-11-14]. Current section: `primary` text, weight 600, 2 px indicator bar, `aria-current="page"`.
   - Right end: **notification bell** (counter: coral only when an unread deal exists, otherwise neutral ink) and the **profile avatar menu**.
   - Profile menu entries: **Profilim** · **Paketim** · **Ayarlar** (Bildirimler, Güvenlik, Arama geçmişi, Dil, Tema, Gizlilik, Hesap) · **Çıkış**. When a page inside the menu is open, the avatar button carries `aria-current="page"` and a 2 px `primary` border.
   - Guest (Landing Page, product pages, legal, help): navigation becomes **Nasıl çalışır · Örnek fırsatlar · Haklarını bil · Yardım**; right end **Giriş yap** (text) + **Ücretsiz başla** (primary). Inside the app a guest sees the normal navigation with "Giriş yap" in place of bell and avatar.

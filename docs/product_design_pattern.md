@@ -1,6 +1,6 @@
 # FırsatGeldi — Product Design Patterns
 
-**Status:** v1.6 · **Last updated:** 2026-11-14 · **Applies to:** web and mobile
+**Status:** v1.7 · **Last updated:** 2026-11-14 · **Applies to:** web and mobile
 
 This document explains **how the product should look, feel and behave**: the colour logic, how users take action, and how any new screen, button or component must be built so the whole product stays consistent. It contains **no screen layouts** — it is the rulebook that every screen is built from.
 
@@ -113,7 +113,7 @@ The token file is authoritative; if this table and the file differ, the file win
 ### 4.2 Button behaviour
 - **Label = verb + object** in the user's language ("Takibi bitir", "Mağazaya git", "Şimdi kontrol et"). No vague labels ("Tamam", "Devam").
 - **States:** default, hover, pressed, focus (visible ring), disabled (reduced opacity, with a reason nearby), loading (label replaced by progress, width unchanged, not clickable twice).
-- **Minimum touch target 44 px** on every interactive element.
+- **Minimum touch target 44 px** on every interactive element. The ghost button is 40 px high only from `breakpoint.md` with a mouse; below `breakpoint.md` or on a touch screen it is 44 px (`button.ghost.height-touch`) [DECIDED 2026-11-14].
 - **Result is immediate and visible:** after an action the surface changes in place (marked, revealed, checked "just now"); avoid full-page reloads.
 - **Reversible actions are simply undoable** (mark ↔ unmark, show ↔ hide, step tick ↔ untick). **Irreversible or costly actions are confirmed** (end tracking with unrecorded saving, delete account, applying a critical setting, and later: spending tokens).
 - **External navigation** (go to store) re-checks stock and price first; if the offer is gone or the price rose, the user stays in the app and is shown the next option.
@@ -245,7 +245,7 @@ Small pill with icon + short text. Vocabulary is fixed: deal found (coral, bolt)
 
 ### 5.21 App shell (`AppShell`)
 - Defined once; every user screen renders inside it. Regions: **top bar** (logo, search entry, notification bell with panel, profile menu), **main navigation**, **content area**, **footer**.
-- Main navigation order is fixed: Ana Sayfa · Takip · Ara ve Ekle · Keşfet · Kazancım · Profil [DECIDED 2026-11-12]. From `breakpoint.md` upward the first five sit in the top bar as text + icon links and **Profil is the avatar menu at the right end** of the top bar; below `breakpoint.md` they form a bottom tab bar (which five items go in the phone bar is [DECIDE LATER — together with the mobile app designs]; until then the phone-width drafts show Ana Sayfa · Takip · Ara ve Ekle · Kazancım · Profil) (`size.bottom-nav-height`) with icon + label. The current section is highlighted by weight, an indicator bar and `aria-current` (not by colour alone). [DECIDED]
+- Main navigation order is fixed: Ana Sayfa · Takip · Ara ve Ekle · Keşfet · Kazancım · Profil [DECIDED 2026-11-12]. From `breakpoint.lg` upward the first five sit in the top bar as text + icon links; from `breakpoint.md` to below `breakpoint.lg` they show the icon only, with the label as accessible name and Tooltip [DECIDED 2026-11-14]; in both cases **Profil is the avatar menu at the right end** of the top bar; below `breakpoint.md` they form a bottom tab bar (which five items go in the phone bar is [DECIDE LATER — together with the mobile app designs]; until then the phone-width drafts show Ana Sayfa · Takip · Ara ve Ekle · Kazancım · Profil) (`size.bottom-nav-height`) with icon + label. The current section is highlighted by weight, an indicator bar and `aria-current` (not by colour alone). [DECIDED]
 - Until Profile and Following ships, the **Profil** entry opens Settings and Account. [DECIDED]
 - Top bar height `size.header-height`; content centred within `size.content-max-width`.
 - Footer: legal links (KVKK, Koşullar, Çerezler, Komisyon), help link, commission note. On phones it sits at the end of the content, above the bottom tab bar.
@@ -266,7 +266,7 @@ Small pill with icon + short text. Vocabulary is fixed: deal found (coral, bolt)
 - With reduced motion, placeholders are static (no shimmer).
 
 ### 5.24 Step indicator (`StepIndicator`)
-- Shows position in an ordered flow (e.g. identify → mark → confirm) and in bulk add ("2/3"). Numbered steps with text labels; the current step is emphasised by weight and border, completed steps carry a check icon.
+- Shows position in an ordered flow (e.g. identify → mark → confirm) and in bulk add ("2/3"). Numbered steps (circle `size.step-indicator-dot`, 28 px [DECIDED 2026-11-14]) with text labels; the current step is emphasised by weight and border, completed steps carry a check icon.
 - A skippable step offers a ghost "Atla" control; skipped items are kept and can be returned to.
 
 ### 5.25 Panel / sheet (`Sheet`)
