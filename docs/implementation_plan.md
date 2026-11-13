@@ -1,6 +1,6 @@
 # FırsatGeldi — Implementation Plan
 
-> **Status:** Phase 1 — steps 1, 3 and 4 done (#16, #20, #21); step 5 (tokens) in progress (#22); next: step 6 (theme) · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
+> **Status:** Phase 1 — steps 1, 3, 4 and 5 done (#16, #20, #21, #22); step 6 (theme) in progress (#24); next: step 7 (i18n) · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
 > **Sources:** `CLAUDE.md` (The plan and the daily flow, Phases), `architecture.md` (§2, §3, §6, §15, §16, §19–§21, §24, §25), `pagedesign.md` (§2–§5, §7, §8), `product_design_pattern.md`, `engineering_checklist.md`, `screen_status.md`, `modules.md` Appendix A.
 
 **This is the single project plan.** Every working day follows it, one step at a time (`CLAUDE.md` › The plan and the daily flow):
@@ -42,8 +42,8 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 2 | Screen PNGs before each screen | Rule step: before each screen step, that screen's PNGs are in `design/`; before step 8, the "0 İskelet ve Bileşenler" PNGs | ⬜ (recurring) | — | — |
 | 3 | Monorepo skeleton | Building empty workspace; one command starts the web app | ✅ | #20 | 2026-11-13 |
 | 4 | Basic CI | Lint, typecheck and unit tests on every PR | ✅ | #21 | 2026-11-13 |
-| 5 | Tokens | `design-tokens.json` in code + platform-neutral JSON; contrast test | 🛠 | #22 | 2026-11-13 |
-| 6 | Theme | CSS variables, Tailwind preset, light/dark, hard-coded-value lint | ⬜ | — | — |
+| 5 | Tokens | `design-tokens.json` in code + platform-neutral JSON; contrast test | ✅ | #22 | 2026-11-13 |
+| 6 | Theme | CSS variables, Tailwind preset, light/dark, hard-coded-value lint | 🛠 | #24 | 2026-11-13 |
 | 7 | i18n | Turkish/English catalogues, `/tr` and `/en` routes, money/date formats | ⬜ | — | — |
 | 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ⬜ | — | — |
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ⬜ | — | — |

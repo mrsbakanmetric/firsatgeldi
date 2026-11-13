@@ -1,11 +1,16 @@
 import type { ReactNode } from "react";
+import { themeInitScript } from "../lib/theme/theme-dom";
+import "./globals.css";
 
-// Skeleton only. The language attribute, metadata and theme come from the
-// i18n and theme steps (implementation_plan.md, steps 6 and 7).
+// The language attribute and metadata come from the i18n step (implementation_plan.md, step 7).
+// suppressHydrationWarning: the inline theme script may set data-theme on <html> before React hydrates.
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="tr">
-      <body>{children}</body>
+    <html lang="tr" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="bg-background font-base text-body text-text antialiased">{children}</body>
     </html>
   );
 }

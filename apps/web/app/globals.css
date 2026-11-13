@@ -1,0 +1,5 @@
+/* Tailwind + the theme generated from docs/design-tokens.json. No literal values here (stylelint). */
+@import "tailwindcss";
+@import "@firsatgeldi/tokens/theme.css";
+
+@source "../../../packages/ui/src";

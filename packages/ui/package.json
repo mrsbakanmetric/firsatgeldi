@@ -14,7 +14,11 @@
   "devDependencies": {
     "@firsatgeldi/config": "workspace:*",
     "eslint": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "dependencies": {
+    "@firsatgeldi/tokens": "workspace:*"
   }
 }

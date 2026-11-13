@@ -15,7 +15,9 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {},
+    "lint": {
+      "dependsOn": ["^generate"]
+    },
     "typecheck": {
       "dependsOn": ["^generate", "generate"]
     },
