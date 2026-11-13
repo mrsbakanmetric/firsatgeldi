@@ -1,8 +1,8 @@
 # FırsatGeldi — System Architecture
 
-> **Version:** 1.3
+> **Version:** 1.4
 > **Status:** Approved — technology stack confirmed [DECIDED — A1]; roles (Application Manager + User), web/mobile access, indefinite histories, fraud monitoring, image architecture and personal-data protection included
-> **Last updated:** 2026-11-12
+> **Last updated:** 2026-11-14
 > **Scope:** Web + mobile screen coverage (same API, same permissions) + API + background workers. Mobile **technology** intentionally left open.
 
 This document describes **how the product is built**: service boundaries, modules, flows, queue jobs, the API contract and how the hidden-seller rule is enforced on the server. **The complete data model is in `database.md`.** What the product does is in `product_spect.md` and `modules.md`; how it looks is in `product_design_pattern.md` + `design-tokens.json`; acceptance rules are in `engineering_checklist.md`.
@@ -285,7 +285,7 @@ interface RevealGate {
 | Discover links | A verified link becomes an offer shown as a hidden seller; the raw link is never published [DECIDED] |
 | Price-difference message | Addressed only to the seller bought from; no hidden seller name [DECIDED] |
 | Audit / activity logs | `contains_hidden_seller` rows readable only with permission |
-| Confirm-step seller entry (R1) | **Closed [DECIDED]:** no seller list; exact-match seller lookup (rate-limited); price paid from the user (or their own link/screenshot) |
+| Confirm-step seller entry (R1) | **Closed [DECIDED]:** no seller list; exact-match seller lookup, signed-in users only, rate-limited per user by `seller_lookup.rate_limit_per_minute` (10) [DECIDED 2026-11-14]; price paid from the user (or their own link/screenshot) |
 
 ### 6.5 Mandatory test
 **Hidden-seller leak contract test:** every endpoint returning offers (from OpenAPI) + SEO product pages + notification/email outputs are scanned as a second user; any hidden seller name, `external_id`, platform name/domain or listing URL breaks the build.
@@ -476,6 +476,7 @@ Client ──(3) POST /uploads/complete {batchId}──▶ API ──▶ queue: 
 | Serving | Catalogue: CDN, `Cache-Control: immutable` (the URL derives from content and never changes); `<picture>` with AVIF → WebP → JPEG; size-appropriate variant (`srcset`) |
 | Sending to the LLM | Only processed (metadata-stripped) images; provider must not retain data |
 | Avatar | Separate kind; signed link or CDN according to privacy level; deleted with the account |
+| Upload status for guests [DECIDED 2026-11-14] | A guest's upload is bound to the guest session (`anon_id`). `GET /uploads/:id` is on the public allow-list and returns only the caller's own uploads; another session's or user's upload answers `NOT_FOUND`. Guests get no live updates (§13): they poll every `upload.guest_poll_interval_seconds` (2) and stop after `upload.guest_poll_max_seconds` (60), then show the error state. Every status read writes an activity row (`upload.status`). |
 | Fraud | Upload count and rejection ratio are risk-rule signals |
 | Admin | The Application Manager can view private uploads within their retention period (24 h, or 30 days for support screenshots) with a reason; every view audited |
 
@@ -545,6 +546,8 @@ Client ──(3) POST /uploads/complete {batchId}──▶ API ──▶ queue: 
 
 Event payloads contain no identity and no personal data.
 
+**Signed-in users only [DECIDED 2026-11-14]:** the stream is not on the public allow-list; guests poll for the results they need (upload status, §11a).
+
 ---
 
 ## 14. Cache strategy
@@ -590,6 +593,21 @@ Rate limit → Session → Account state (suspended / pending deletion) → Auth
 { error: { code: string; messageKey: string; params?: Record<string, string|number>; fields?: Record<string, string> } }
 ```
 Money `{ amount, currency }`; formatting on the client via `core`; error text translated on the client from the catalogue. Personal fields come as `emailMasked` / `phoneMasked`; full values only from dedicated endpoints.
+
+**Error codes** (source in code: `packages/contracts` › `ERRORS`). The client never shows `code`; it translates `messageKey` from the i18n catalogue (`errors.*`, every language). A response the client cannot read shows `errors.network`.
+
+| Code | HTTP | `messageKey` | Source |
+|---|---|---|---|
+| `VALIDATION` | 400 | `errors.validation` | General code [DECIDED 2026-11-14]; `fields` names the invalid inputs |
+| `UNAUTHENTICATED` | 401 | `errors.unauthenticated` | General code [DECIDED 2026-11-14]; no session on a non-allow-listed endpoint (§15.1) |
+| `FORBIDDEN` | 403 | `errors.forbidden` | General code [DECIDED 2026-11-14]; permission key missing |
+| `RESTRICTED` | 403 | `errors.restricted` | §6.3, §18.4 |
+| `CONSENT_REQUIRED` | 403 | `errors.consentRequired` | §15.1 |
+| `NOT_FOUND` | 404 | `errors.notFound` | General code [DECIDED 2026-11-14]; also another user's or session's record |
+| `ALREADY_TRACKING` | 409 | `errors.alreadyTracking` | [ASSUMPTION] (design "1 Ara ve Ekle" case G; `database.md` §8 unique active tracking) |
+| `LIMIT_REACHED` | 409 | `errors.limitReached` | §6.3; `params.limit` for the tracking limit |
+| `RATE_LIMITED` | 429 | `errors.rateLimited` | General code [DECIDED 2026-11-14]; e.g. seller lookup (§6.4) |
+| `INTERNAL` | 500 | `errors.internal` | General code [DECIDED 2026-11-14]; also a response that breaks the contract |
 
 ### 15.3 Headers
 Cookie `fg_session` (httpOnly, Secure, SameSite=Lax; mobile session storage decided with mobile technology) · `X-CSRF-Token` · `Accept-Language` · `X-Client-Platform` (`web`/`mobile`) · `Idempotency-Key` (confirm, reveal, check, end, package request, upload complete).
@@ -639,7 +657,7 @@ GET       /me/stream                   # SSE
 GET  /search/autocomplete?q=        # own catalogue only: id, name, image variant, category, brand, generation, colours, bundles, store count; never price or store; ranked, paged for the scroll list
 POST /uploads/presign            # { purpose, files:[{mime, bytes}] } → batchId + presigned URLs
 POST /uploads/complete           # { batchId } → processing queue; result via SSE upload.ready
-GET  /uploads/:id                # status, extraction (personal data stripped)
+GET  /uploads/:id                # status, extraction (personal data stripped); own uploads only — guests via anon_id, polling (§11a)
 GET  /img/:sha256/:variant       # catalogue image (CDN)
 POST /identify                   # { text?, uploadIds?, link? } → { understood, questions[], candidates[] | items[] }
 POST /identify/:requestId/answer
@@ -649,7 +667,7 @@ GET  /products/:id · GET /products/:id/similar
 ### CONFIRM AND TRACKING
 ```
 GET   /products/:id/confirm-context    # platforms, return suggestion, withdrawal warning
-POST  /products/:id/seller-lookup      # { platformId, name } → exact match or none; rate-limited
+POST  /products/:id/seller-lookup      # { platformId, name } → exact match or none; signed-in only; rate-limited (seller_lookup.rate_limit_per_minute)
 POST  /products/:id/teaser             # { pricePaid, sellerRef } → hidden cheaper offers (HiddenOfferView); price in the body, never in the URL
 POST  /tracked-items                   # BOUGHT | WANT; pricePaid from the user
 GET   /tracked-items?filter=all|bought|want|deal|ended&sort=priority|deadline|saving&q=&category=&cursor=
@@ -753,6 +771,87 @@ GET|POST       /admin/content · POST /admin/content/:id/publish
 GET|PATCH      /admin/support-requests · POST /admin/support-requests/:id/reply|forward
 GET|POST       /admin/link-submissions (later slice)
 ```
+
+### 16.1 Field-level contract — Search and Add and session reads
+
+Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and served by the mock API in Phase 1. **[ASSUMPTION]** marks fields or names without an earlier counterpart in the docs; they stand until the user decides otherwise. Money is `{ amount, currency }` with `amount` in **minor units (kuruş)** [ASSUMPTION — follows `database.md` §1]. Times are ISO 8601 with offset; calendar days are `YYYY-MM-DD` (Europe/Istanbul).
+
+**Endpoint registry.** Every endpoint is one entry: method, path, request/response schemas, permission key, public allow-list flag, `Idempotency-Key` requirement, activity action (`database.md` §14a) and whether the response can contain offers (scanned by the hidden-seller test, §6.5). A registry test requires an activity action on every write endpoint.
+
+| Endpoint | Key | Guest | Idempotent | Activity |
+|---|---|---|---|---|
+| `GET /me` | `account.own.view` | — (guest → `UNAUTHENTICATED`) | | — |
+| `GET /me/entitlements` | `packages.own.view` | — | | — |
+| `GET /me/search-history` | `account.own.view` | — | | — |
+| `GET /me/stream` | `account.own.view` [ASSUMPTION] | — (§13) | | — |
+| `GET /search/autocomplete` | `search.use` | ✓ | | `search` |
+| `POST /uploads/presign` | `upload.own.create` | ✓ | | `upload` |
+| `POST /uploads/complete` | `upload.own.create` | ✓ | ✓ | `upload` |
+| `GET /uploads/:id` | `upload.own.create` [ASSUMPTION — key] | ✓ own only [DECIDED 2026-11-14] | | `upload.status` [DECIDED 2026-11-14 — logged; name ASSUMPTION] |
+| `GET /img/:sha256/:variant` | `catalog.view` | ✓ | | — |
+| `POST /identify` · `POST /identify/:requestId/answer` | `identify.use` | ✓ | | `identify` |
+| `GET /products/:id` · `GET /products/:id/similar` | `catalog.view` | ✓ | | — |
+| `GET /products/:id/confirm-context` | `tracking.own.write` | — | | — |
+| `POST /products/:id/seller-lookup` | `tracking.own.write` | — [DECIDED 2026-11-14] | | `seller_lookup` [ASSUMPTION] |
+| `POST /products/:id/teaser` | `tracking.own.write` | — | | `teaser` [ASSUMPTION] |
+| `POST /tracked-items` | `tracking.own.write` | — | ✓ | `tracking.confirm` |
+| `POST /offers/:ref/reveal` | `reveal.own.use` | — | ✓ | `reveal` |
+| `POST /offers/:ref/hide` | `reveal.own.use` | — | | `reveal.hide` [ASSUMPTION] |
+| `POST /offers/:ref/go` | `offer.own.go` | — | | `offer.go` |
+
+**Session reads**
+
+| Schema | Fields | Source |
+|---|---|---|
+| `Me` | `id`, `displayName`, `username`, `emailMasked`, `phoneMasked`, `locale`, `theme`, `privacyLevel` | §16 ME, §15.2; `database.md` §3 |
+| `Me` | `roles`, `permissions` (the UI shows/hides actions as the server checks them) | `implementation_plan.md` §4; `database.md` §4 |
+| `EntitlementSummary` | `plan`, `tracking`, `reveals`, `checkNow`, `tokenBalance` | §16 ME; `database.md` §9 |
+| `EntitlementSummary` | allowance shape `{ used, limit }` (`limit: null` = unlimited), `premiumEndsAt` | [ASSUMPTION] shape; `database.md` §9 `user_subscriptions.ends_at` |
+| `SearchHistory` | `items[{ id, query, source, occurredAt }]` | §16; `database.md` §11 `search_events` |
+
+**Search, catalogue and uploads**
+
+| Schema | Fields | Source |
+|---|---|---|
+| `ProductSummary` (autocomplete item) | `id`, `name`, `imageSha256`, `category{id,name}`, `brand`, `generation`, `colors[]`, `bundles[]`, `storeCount` — never price or store | §16 autocomplete; §11a |
+| `AutocompleteResult` | `items[]`; `meta.total`, `meta.nextCursor` | §16 ("ranked, paged") |
+| `AutocompleteResult` | `tileCount` (`search.autocomplete_tiles`), `didYouMean` | [ASSUMPTION] (design "Bunu mu demek istedin") |
+| `ProductView` | `id`, `slug`, `title`, `category`, `brand`, `attributes[{key,label,value}]`, `images[]` (SHA-256), `storeCount` | `database.md` §5 |
+| `ProductView` | `variantLine` ("2. nesil · Flash Print Bundle · Siyah") | [ASSUMPTION] |
+| `SimilarProducts` | `items[{ product, difference }]`; `difference` ∈ `GENERATION`, `BUNDLE`, `VARIANT`, `ACCESSORY` | §16; `difference` [ASSUMPTION] (design "Benzer ama farklı") |
+| `PresignRequest` / `PresignResult` | `purpose`, `files[{mime,bytes}]` → `batchId`, `uploads[{ uploadId, position, uploadUrl, method: PUT, headers, expiresAt }]` | §11a; `database.md` §14b; item shape [ASSUMPTION] |
+| `CompleteUploadResult` | `batchId`, `uploads[{ uploadId, status }]` | §11a |
+| `UploadView` | `id`, `batchId`, `purpose`, `position`, `status`, `rejectReason`, `extracted`, `purgeAt` | `database.md` §14b |
+| `UploadView.extracted` | `productText`, `sellerName`, `platformName`, `pricePaid`, `orderedOn` — product, seller, price, date only | `database.md` §14b; names [ASSUMPTION] |
+| `IdentifyRequest` | `text?`, `uploadIds?`, `link?` (at least one) | §16 |
+| `IdentifyResult` | `requestId`, `understood[{key,label,value,confidence}]`, `questions[]`, `candidates[]`, `items[]` | §16; `database.md` §5, §11 |
+| `IdentifyResult` | question `{ id, attributeKey, prompt, options[{id,label}], selectedOptionId }` | [ASSUMPTION] (design "Paket doğru mu?") |
+| `IdentifyResult` | candidate `{ product, variantLine, match: EXACT\|CLOSE, difference }` | [ASSUMPTION] (design case D) |
+| `IdentifyResult` | `similarCount`; `link{ platformId, platformName, sellerName, pricePaid }` (the user's own link) | [ASSUMPTION] (design "Benzer ama farklı · 4", case A) |
+| `IdentifyAnswer` | `{ questionId, optionId }` or `{ attributeKey, value }` | [ASSUMPTION] (design "özelliği değiştir") |
+
+**Confirm, tracking and offers**
+
+| Schema | Fields | Source |
+|---|---|---|
+| `ConfirmContext` | `productId`, `platforms[{ id, name, returnRule{ days, startType, avgDeliveryDays, sourceState, policyUrl } }]`, `noWithdrawalRight`; allowances in `meta.entitlements` | §16; `database.md` §6 |
+| `ConfirmContext` | `warnings[]` (`NO_BRAND_CODE`, `CATEGORY_UNSUPPORTED`), `alreadyTracking[{ trackedItemId, mode, since }]`, `targetHints{ lowest30Days, lowest6Months }` | [ASSUMPTION] (design cases H, G, E) |
+| `SellerLookupRequest` | `{ platformId, name }` → exact match or `null` | §16, §6.4 |
+| `SellerLookupResult.match` | `sellerRef`, `sellerName`, `sellerRating`, `sellerRatingCount`, `stockState`, `warrantyType`, `listingUrl`, `lastCheckedAt` — the user's own seller, so visible | §6.1; shape [ASSUMPTION] |
+| `TeaserRequest` / `TeaserResult` | `{ pricePaid, sellerRef }` → `offers[]` (`HiddenOfferView`) | §16 |
+| `TeaserResult` | `summary{ cheaperCount, maxSaving, lastCheckedAt }` | [ASSUMPTION] (design "2 satıcıda daha ucuz · en çok …") |
+| `CreateTrackedItemRequest` | BOUGHT: `productId`, `platformId`, `pricePaid`, `pricePaidSource`, `orderStatus`, `returnDeadline` (only when the user changed it); WANT: `productId`, `targetPrice`, `trackingDuration` | `database.md` §8 |
+| `CreateTrackedItemRequest` | `sellerRef`, `identifyRequestId`, `orderedOn` | [ASSUMPTION] names |
+| `TrackedItemCreated` | `id`, `productId`, `mode`, `state`, `returnDeadline`, `returnDeadlineStatus`, `noWithdrawalRight`, `trackingEndsAt`, `createdAt` | `database.md` §8 |
+| `HiddenOfferView` | `ref`, `price`, `previousPrice`, `saving`, `netSaving`, `shippingCost`, `deliveryDays{min,max}`, `stockState`, `stockSince`, `priceSince`, `warrantyType`, `lastCheckedAt`, `fakeDiscountNote{ claimedOldPrice }` | §6.1; `database.md` §6 |
+| `HiddenOfferView` | `rank` (1 = cheapest) instead of `rankLabel`; the label comes from the catalogue | [ASSUMPTION] |
+| `RevealedOfferView` | + `sellerName`, `sellerRating`, `platformName`, `listingUrl`, `commissionNote`, `revealExpiresAt`, `gateUsed` | §6.1, §6.3 |
+| Reveal result | `{ allowed: true, offer }` \| `{ allowed: false, reason, options }` | §6.3; `offer` wrapper [ASSUMPTION] |
+| Hide result | `{ offer: HiddenOfferView }` | [ASSUMPTION] |
+| Go result | `{ status: OK, url }` \| `{ status: GONE\|PRICE_CHANGED, next }` | §16; `status` discriminator [ASSUMPTION] |
+| Stream events | `upload.ready{ uploadId, batchId }`, `upload.rejected{ uploadId, batchId, reason }` | §13; payloads [ASSUMPTION] |
+
+**Open (not part of the contract yet):** "Katalogda yok → mağazalarda ara" (design "1 Ara ve Ekle", autocomplete case C) has no endpoint [OPEN] — the user decides before the Search and Add screen step.
 
 ---
 
