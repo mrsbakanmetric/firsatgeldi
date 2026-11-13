@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Ürün ekle penceresi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+.fg-opt:hover{background:var(--surface-alt)}
+.fg-ghost:hover{background:var(--surface-alt)}
+.fg-tile:hover{box-shadow:var(--sh-md)}
+input::placeholder{color:var(--text-muted)}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="position: relative; width: 1280px; height: 1200px; overflow: hidden; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<div aria-hidden="true" style="height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border)"></div>
+<div aria-hidden="true" style="max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); display: flex; flex-direction: column; gap: var(--s5)">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Takip ettiklerim</span><span style="height: 48px; width: 140px; border-radius: var(--r-md); background: var(--primary)"></span></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s4)"><div style="height: 98px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 98px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 98px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 98px; border-radius: var(--r-lg); background: var(--surface)"></div></div>
+<div style="height: 110px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 110px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 110px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 110px; border-radius: var(--r-lg); background: var(--surface)"></div>
+</div>
+<div style="position: absolute; inset: 0; background: var(--overlay)"></div>
+
+<div role="dialog" aria-modal="true" aria-labelledby="ekle-baslik" style="position: absolute; top: 56px; left: 50%; transform: translateX(-50%); width: var(--modal-w); height: 1000px; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) var(--modal-aside-w); border-radius: var(--r-xl); background: var(--surface); box-shadow: var(--sh-lg); overflow: hidden">
+
+<!-- SOL: bul -->
+<div style="display: flex; flex-direction: column; min-height: 0">
+
+<div style="display: flex; align-items: center; gap: var(--s4); padding: var(--s6) var(--s6) var(--s4)">
+<span style="width: 48px; height: 48px; flex: none; border-radius: var(--r-lg); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<h2 id="ekle-baslik" style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700">Ürün ekle</h2>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Aldığın ya da almak istediğin ürünü bul; fiyatını biz izleyelim.</span>
+</div>
+<ol aria-label="Adımlar" style="display: flex; align-items: center; gap: var(--s2); margin: 0; padding: 0; list-style: none; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600">
+<li aria-current="step" style="display: flex; align-items: center; gap: 6px; color: var(--text)"><span style="width: 22px; height: 22px; border-radius: var(--r-pill); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center">1</span>Ürünü bul</li>
+<li aria-hidden="true" style="width: 20px; height: 1px; background: var(--border)"></li>
+<li style="display: flex; align-items: center; gap: 6px; color: var(--text-muted)"><span style="width: 22px; height: 22px; box-sizing: border-box; border-radius: var(--r-pill); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center">2</span>Fiyat ve satıcı</li>
+</ol>
+</div>
+
+<div style="padding: 0 var(--s6)">
+<div style="{{boxStyle}}">
+<span style="color: var(--text-muted); display: flex; flex: none"><sc-if value="{{isLink}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></sc-if><sc-if value="{{notLink}}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></sc-if></span>
+<label for="ekle-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Ürün adı ya da mağaza linki</label>
+<input id="ekle-q" type="search" role="combobox" aria-controls="oneriler" aria-expanded="{{expanded}}" aria-autocomplete="list" value="{{q}}" onInput="{{onQ}}" placeholder="Ürün adı yaz ya da mağaza linkini yapıştır" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-body); color: var(--text); outline: none">
+<sc-if value="{{hasQ}}" hint-placeholder-val="{{ true }}"><button type="button" class="fg-ghost" aria-label="Temizle" onClick="{{clear}}" style="width: 36px; height: 36px; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></sc-if>
+<span aria-hidden="true" style="width: 1px; height: 28px; background: var(--divider)"></span>
+<button type="button" class="fg-ghost" onClick="{{pasteLink}}" title="Panodaki linki yapıştır" style="display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>Link yapıştır</button>
+<button type="button" class="fg-ghost" onClick="{{photo}}" style="display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg>Fotoğraf</button>
+</div>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow-y: auto; padding: var(--s4) var(--s6) var(--s6); display: flex; flex-direction: column; gap: var(--s5)">
+
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4)">
+<button type="button" onClick="{{pasteLink}}" class="fg-tile" style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--s2); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); color: var(--text); font: inherit; text-align: left; cursor: pointer"><span style="width: 40px; height: 40px; border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></span><span style="font-size: var(--fs-body); font-weight: 600">Mağaza linkini yapıştır</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Siparişindeki ya da sepetindeki ürün linki. Fiyat ve satıcı kendiliğinden dolar.</span></button>
+<button type="button" onClick="{{photo}}" class="fg-tile" style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--s2); padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); background: var(--surface); color: var(--text); font: inherit; text-align: left; cursor: pointer"><span style="width: 40px; height: 40px; border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg></span><span style="font-size: var(--fs-body); font-weight: 600">Fotoğraf ya da ekran görüntüsü</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Sürükleyip bırak ya da seç. Sipariş ekranı görüntüsünden fiyat okunur.</span></button>
+</div>
+</sc-if>
+
+<sc-if value="{{isLink}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); font-size: var(--fs-bsm); line-height: var(--lh-bsm)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><strong style="font-weight: 600">Link tanındı · {{domain}}</strong> · ürün bulundu, fiyat ve satıcı onay adımında hazır gelir.</span></div>
+</sc-if>
+
+<sc-if value="{{isPhoto}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: center; gap: var(--s3); padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-md)"><span style="width: 48px; height: 48px; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--surface-alt), var(--primary-subtle))"></span><div style="flex: 1; display: flex; flex-direction: column"><span style="font-size: var(--fs-bsm); font-weight: 600">siparis-ekrani.png</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">Görselden 3 ürün tanındı · fiyat onay adımında okunur</span></div><button type="button" class="fg-ghost" onClick="{{clear}}" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Kaldır</button></div>
+</sc-if>
+
+<sc-if value="{{showSug}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: var(--s1)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted); padding: 0 var(--s2)">Öneriler</span>
+<ul id="oneriler" role="listbox" aria-label="Öneriler" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<sc-for list="{{sugs}}" as="g" hint-placeholder-count="4">
+<li role="option" class="fg-opt" aria-selected="{{g.sel}}" onClick="{{g.pick}}" style="{{g.style}}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted); flex: none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+<span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{g.pre}}<strong style="font-weight: 700">{{g.hit}}</strong>{{g.rest}}</span>
+<span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">{{g.kind}}</span>
+</li>
+</sc-for>
+</ul>
+</div>
+</sc-if>
+
+<sc-if value="{{hasTiles}}" hint-placeholder-val="{{ true }}">
+<section aria-label="Sonuçlar" aria-live="polite" style="display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding: 0 var(--s2)"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">{{tilesHead}}</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{tilesSub}}</span></div>
+<div role="radiogroup" aria-label="Hangisi seninki?" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="3">
+<button type="button" class="fg-tile" role="radio" aria-checked="{{t.checked}}" onClick="{{t.pick}}" style="{{t.style}}">
+<span role="img" aria-label="{{t.imgLabel}}" style="position: relative; height: 168px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; color: var(--on-primary-subtle)">
+<svg width="120" height="120" viewBox="0 0 48 48" aria-hidden="true"><path d="{{t.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{t.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{t.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg>
+<sc-if value="{{t.isSel}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: var(--r-pill); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center; box-shadow: var(--sh-md)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span></sc-if>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px; padding: 0 var(--s1)">
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; text-align: left">{{t.title}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.variant}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: left">{{t.meta}}</span>
+</span>
+</button>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{noHits}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--s2); padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg)"><span style="font-size: var(--fs-body); font-weight: 600">Kataloğumuzda henüz yok</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Mağaza linkini yapıştırırsan ürünü senin için ekleriz.</span><a href="#" style="font-size: var(--fs-bsm); font-weight: 600; color: var(--primary)">{{noText}}</a></div>
+</sc-if>
+
+</div>
+
+<div style="display: flex; align-items: center; padding: var(--s4) var(--s6); border-top: 1px solid var(--divider)">
+<a href="#" style="display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-bsm); font-weight: 600; color: var(--primary); text-decoration: none">{{allText}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+</div>
+</div>
+
+<!-- SAĞ: seçilen ürün ve özellikler -->
+<aside aria-label="Seçtiğin ürün" style="position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--surface-alt); border-left: 1px solid var(--border)">
+<button type="button" class="fg-ghost" aria-label="Kapat" style="position: absolute; top: 16px; right: 16px; z-index: 1; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+
+<sc-if value="{{noSel}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s3); padding: var(--s8) var(--s6); text-align: center">
+<span style="width: 72px; height: 72px; border-radius: var(--r-xl); background: var(--surface); border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-muted)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+<span style="font-size: var(--fs-body); font-weight: 600">Henüz ürün seçmedin</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Soldan ürününü seç; rengini, paketini ya da bedenini burada düzenlersin.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{hasSel}}" hint-placeholder-val="{{ true }}">
+<div style="flex: 1; min-height: 0; overflow-y: auto; padding: var(--s6); display: flex; flex-direction: column; gap: var(--s5)">
+<div style="display: flex; flex-direction: column; gap: var(--s3); padding-top: var(--s8)">
+<span role="img" aria-label="{{selImg}}" style="height: 184px; border-radius: var(--r-lg); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; color: var(--on-primary-subtle); box-shadow: var(--sh-md)"><svg width="150" height="150" viewBox="0 0 48 48" aria-hidden="true"><path d="{{selArt.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{selArt.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{selArt.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<sc-if value="{{fromLink}}" hint-placeholder-val="{{ false }}"><span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); font-size: var(--fs-cap); font-weight: 600">Linkinden geldi</span></sc-if>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">{{selTitle}}</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{selMeta}}</span></div>
+</div>
+
+<div style="height: 1px; background: var(--divider)"></div>
+
+<div style="display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: var(--fs-bsm); font-weight: 700">Özellikler</span><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Değiştir, sonuçlar yenilenir</span></div>
+<sc-for list="{{attrs}}" as="a" hint-placeholder-count="2">
+<div role="radiogroup" aria-label="{{a.label}}" style="display: flex; flex-direction: column; gap: var(--s2)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">{{a.label}}</span>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<sc-for list="{{a.opts}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.v}}</button></sc-for>
+</div>
+</div>
+</sc-for>
+<a href="#" style="font-size: var(--fs-cap); font-weight: 600; color: var(--primary)">Aradığın özellik listede yok mu? Yaz</a>
+</div>
+
+<sc-if value="{{hasUndo}}" hint-placeholder-val="{{ false }}"><div role="status" style="display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s2) var(--s3); border-radius: var(--r-md); background: var(--surface); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500"><span>{{undoText}}</span><button type="button" onClick="{{undo}}" style="height: 32px; padding: 0 var(--s2); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-cap); font-weight: 700; cursor: pointer">Geri al</button></div></sc-if>
+</div>
+</sc-if>
+
+<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s4) var(--s6) var(--s5); border-top: 1px solid var(--border); background: var(--surface)">
+<button type="button" aria-disabled="{{nextDisabled}}" style="{{nextStyle}}">Devam et<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: center">{{nextHint}}</span>
+</div>
+</aside>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1200}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { q: 'ace pro', sel: 'ace|Flash Print Bundle|Siyah', src: 'search', prev: null, changed: null }; }
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","overlay":"rgba(11,31,51,0.48)"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","overlay":"rgba(0,0,0,0.6)"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-md":"0 4px 12px rgba(11,31,51,0.08)","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px","modal-w":"1120px","modal-aside-w":"360px"};
+  }
+  families() {
+    return {
+      ace: { name: 'Insta360 Ace Pro 2', kind: 'Aksiyon kamerası', icon: 'cam', attrs: [['Paket', ['Standart', 'Flash Print Bundle', 'Dual Battery Bundle']], ['Renk', ['Siyah']]] },
+      ace1: { name: 'Insta360 Ace Pro', kind: 'Aksiyon kamerası · 1. nesil', icon: 'cam', attrs: [['Paket', ['Standart', 'Creator Bundle']], ['Renk', ['Siyah']]] },
+      x4: { name: 'Insta360 X4', kind: '360 derece kamera', icon: 'cam', attrs: [['Paket', ['Standart', 'Essential Bundle']], ['Renk', ['Siyah']]] },
+      gopro: { name: 'GoPro Hero 13 Black', kind: 'Aksiyon kamerası', icon: 'cam', attrs: [['Paket', ['Standart', 'Creator Edition']], ['Renk', ['Siyah']]] },
+      dji: { name: 'DJI Osmo Action 5 Pro', kind: 'Aksiyon kamerası', icon: 'cam', attrs: [['Paket', ['Standart', 'Adventure Combo']], ['Renk', ['Siyah']]] },
+      pods: { name: 'Apple AirPods Pro 2', kind: 'Kulaklık', icon: 'audio', attrs: [['Şarj kutusu', ['USB-C', 'Lightning']], ['Renk', ['Beyaz']]] },
+      mont: { name: 'Kışlık mont erkek', kind: 'Giyim', icon: 'wear', attrs: [['Renk', ['Lacivert', 'Siyah', 'Haki']], ['Beden', ['S', 'M', 'L', 'XL', 'XXL']]] }
+    };
+  }
+  icons() {
+    return { cam: 'M5.5 6h13A2.5 2.5 0 0 1 21 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5v-8A2.5 2.5 0 0 1 5.5 6zM12 9a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM7 6V4.5h4V6',
+      audio: 'M7 4a3 3 0 0 0-3 3v5a2 2 0 0 0 2 2h1.5V8H6M17 4a3 3 0 0 1 3 3v5a2 2 0 0 1-2 2h-1.5V8H18M7.5 14v5M16.5 14v5',
+      wear: 'M9 3h6l5 4-2 4-2-1v11H8V10l-2 1-2-4zM12 3v18' };
+  }
+  items() {
+    const out = [], F = this.families();
+    for (const id in F) {
+      const f = F[id];
+      const combos = f.attrs.reduce((acc, a) => acc.flatMap(c => a[1].map(v => c.concat([v]))), [[]]);
+      combos.forEach((vals, i) => out.push({ key: id + '|' + vals.join('|'), fam: id, vals, title: f.name, variant: vals.join(' · '), name: f.name + ' · ' + vals.join(' · '), kind: f.kind, icon: f.icon, stores: 3 + ((id.length * 7 + i * 5) % 10) }));
+    }
+    return out;
+  }
+  art() {
+    return {
+      cam: ['M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z', 'M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M8 16h9v4H8z'],
+      watch: ['M13 12h22a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z', 'M18 3h12l2 9H16zM16 36h16l-2 9H18z', 'M15 16h18v16H15z'],
+      robot: ['M24 5a19 19 0 1 0 0 38 19 19 0 0 0 0-38z', 'M24 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24zM24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z', 'M24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z'],
+      mouse: ['M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z', 'M22.5 9h3v7h-3z', 'M23.5 4h1v14h-1z'],
+      ssd: ['M11 5h26a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M12 10h24v5H12z', 'M20 33h8v4h-8z'],
+      fryer: ['M12 11h24l3 32H9z', 'M19 4h10v7H19z', 'M15 17h18v11H15z'],
+      shoe: ['M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', 'M3 33h42v5H3z', 'M20 22h3v2h-3zM25 24h3v2h-3z'],
+      phones: ['M6 27h8v15H9a3 3 0 0 1-3-3zM34 27h8v12a3 3 0 0 1-3 3h-5z', 'M8 27a16 16 0 0 1 32 0v3h-4v-3a12 12 0 0 0-24 0v3H8z', 'M9 31h3v7H9zM36 31h3v7h-3z'],
+      buds: ['M14 16h20a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6z', 'M8 25h32v2H8z', 'M22.5 31h3v4h-3z'],
+      jacket: ['M17 5h14l9 7-3 10-3-2v23H14V20l-3 2-3-10z', 'M23 5h2v38h-2z', 'M18 5h12l-6 6z'],
+      stick: ['M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z', 'M30 16h4v20h-4z', 'M27 6h10v3H27z'],
+      speaker: ['M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z', 'M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z', 'M22 22h4v4h-4z'],
+      reader: ['M12 3h24a3 3 0 0 1 3 3v36a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', 'M16 12h16v2H16zM16 17h16v2H16zM16 22h11v2H16z', 'M13 8h22v30H13z']
+    };
+  }
+  A(k) { const x = this.art()[k] || this.art().cam; return { a: x[0], b: x[1], c: x[2] }; }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const F = this.families(), all = this.items(), st = this.state, I = this.icons();
+    const q = st.q, hasQ = q.trim().length > 0;
+    const isLink = /^https?:\/\/|\.com|\.net|\.tr\//i.test(q.trim());
+    const isPhoto = st.src === 'photo';
+    const toks = q.toLocaleLowerCase('tr').replace(/ı/g, 'i').split(/[\s·]+/).filter(t => t.length > 0);
+    let hits = (hasQ && !isLink) ? all.filter(it => { const n = (it.name + ' ' + it.kind).toLocaleLowerCase('tr').replace(/ı/g, 'i'); return toks.every(t => n.indexOf(t) >= 0); }) : [];
+    if (isLink || isPhoto) hits = all.filter(it => it.fam === 'ace');
+    const sel = all.find(it => it.key === st.sel) || null;
+    let tiles = hits.slice();
+    if (sel) {
+      const sib = all.filter(it => it.fam === sel.fam && it.key !== sel.key);
+      tiles = [sel].concat(hits.filter(it => it.key !== sel.key), sib.filter(it => !hits.some(h => h.key === it.key)));
+    }
+    tiles = tiles.slice(0, 3);
+    const reset = { prev: null, changed: null };
+    const sugs = [];
+    if (!isLink && !isPhoto) {
+      const seen = {};
+      hits.forEach(it => { if (!seen[it.fam]) { seen[it.fam] = 1; sugs.push({ name: F[it.fam].name, kind: F[it.fam].kind }); } });
+      hits.forEach(it => { if (sugs.length < 4 && !sugs.some(x => x.name === it.name)) sugs.push({ name: it.name, kind: it.kind, item: it.key }); });
+    }
+    const ql = q.trim().toLocaleLowerCase('tr').replace(/ı/g, 'i');
+    const sugRows = sugs.slice(0, 4).map(g => {
+      const isSel = !!(sel && g.item === sel.key);
+      const n = g.name, at = ql ? n.toLocaleLowerCase('tr').replace(/ı/g, 'i').indexOf(ql) : -1, a0 = at < 0 ? 0 : at, a1 = at < 0 ? 0 : at + ql.length;
+      return { pre: n.slice(0, a0), hit: n.slice(a0, a1), rest: n.slice(a1), kind: g.kind, sel: isSel ? 'true' : 'false',
+        style: 'display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:10px;font-size:14px;cursor:pointer;' + (isSel ? 'background:var(--primary-subtle);color:var(--on-primary-subtle)' : 'color:var(--text)'),
+        pick: () => this.setState(Object.assign({ q: g.name, sel: g.item || null, src: 'search' }, reset)) };
+    });
+    const tileRows = tiles.map(it => {
+      const isSel = !!(sel && it.key === sel.key);
+      return { title: it.title, variant: it.variant, meta: it.stores + ' mağazada satılıyor', imgLabel: it.name + ' görseli', isSel, checked: isSel ? 'true' : 'false',
+        art: this.A(({ cam: 'cam', audio: 'buds', wear: 'jacket' })[it.icon]),
+        style: 'display:flex;flex-direction:column;gap:12px;padding:8px 8px 12px;border-radius:14px;background:var(--surface);font:inherit;color:var(--text);cursor:pointer;transition:box-shadow .15s;' + (isSel ? 'border:2px solid var(--primary);box-shadow:var(--sh-md)' : 'border:1px solid var(--border);margin:1px'),
+        pick: () => this.setState(Object.assign({ sel: it.key }, reset)) };
+    });
+    const attrs = sel ? F[sel.fam].attrs.map((a, ai) => ({ label: a[0],
+      opts: a[1].map(v => { const on = v === sel.vals[ai];
+        return { v, checked: on ? 'true' : 'false',
+          style: 'min-height:44px;padding:0 14px;border-radius:10px;font:inherit;font-size:14px;cursor:pointer;' + (on ? 'border:2px solid var(--primary);background:var(--surface);color:var(--text);font-weight:600' : 'border:1px solid var(--border);margin:1px;background:var(--surface);color:var(--text);font-weight:500'),
+          pick: () => { if (on) return; const nv = sel.vals.slice(); nv[ai] = v; this.setState({ sel: sel.fam + '|' + nv.join('|'), q: isLink || isPhoto ? st.q : F[sel.fam].name + ' ' + v, prev: { sel: sel.key, q: st.q }, changed: [a[0], v] }); } }; }) })) : [];
+    const n = hits.length;
+    let domain = '';
+    if (isLink) { const m = q.replace(/^https?:\/\//, '').split('/')[0]; domain = m.replace(/^www\./, ''); }
+    return {
+      rootStyle: s, q, hasQ: hasQ || isPhoto, isLink, notLink: !isLink, isPhoto, domain, expanded: sugRows.length ? 'true' : 'false',
+      boxStyle: 'display:flex;align-items:center;gap:8px;height:60px;padding:0 8px 0 16px;box-sizing:border-box;background:var(--surface);border:2px solid var(--primary);border-radius:14px;box-shadow:var(--sh-md)',
+      onQ: (e) => { const v = e.target.value, link = /^https?:\/\/|\.com|\.net|\.tr\//i.test(v.trim()); this.setState(Object.assign({ q: v, sel: link ? 'ace|Flash Print Bundle|Siyah' : null, src: link ? 'link' : 'search' }, reset)); },
+      clear: () => this.setState(Object.assign({ q: '', sel: null, src: 'search' }, reset)),
+      pasteLink: () => this.setState(Object.assign({ q: 'https://www.hepsiburada.com/insta360-ace-pro-2-flash-print-bundle-p-HBC000071A', sel: 'ace|Flash Print Bundle|Siyah', src: 'link' }, reset)),
+      photo: () => this.setState(Object.assign({ q: '', sel: null, src: 'photo' }, reset)),
+      isEmpty: !hasQ && !isPhoto,
+      showSug: sugRows.length > 0, sugs: sugRows,
+      hasTiles: tileRows.length > 0, tiles: tileRows,
+      tilesHead: isLink ? 'Linkteki ürün' : isPhoto ? 'Fotoğraftaki ürün hangisi?' : 'Hangisi seninki?',
+      tilesSub: isLink ? 've aynı ürünün diğer paketleri' : sel ? 'seçtiğin ve benzerleri' : n + ' sonuçtan ilk 3',
+      noHits: hasQ && !isLink && !n && !sel, noText: '"' + q + '" için mağazalarda ara',
+      noSel: !sel, hasSel: !!sel, fromLink: isLink && !!sel,
+      selTitle: sel ? sel.title : '', selMeta: sel ? sel.kind + ' · ' + sel.stores + ' mağazada satılıyor' : '', selImg: sel ? sel.name + ' görseli' : '', selIcon: sel ? I[sel.icon] : '', selArt: { art: this.A(sel ? ({ cam: 'cam', audio: 'buds', wear: 'jacket' })[sel.icon] : 'cam') },
+      attrs,
+      hasUndo: !!st.prev, undoText: st.changed ? st.changed[0] + ' "' + st.changed[1] + '" yapıldı · sonuçlar yenilendi' : '',
+      undo: () => st.prev && this.setState({ sel: st.prev.sel, q: st.prev.q, prev: null, changed: null }),
+      allText: 'Tüm sonuçları Ara ve Ekle\'de gör (' + n + ')',
+      nextDisabled: sel ? 'false' : 'true',
+      nextHint: sel ? 'Sonraki adım: satıcını ve ödediğin fiyatı yaz' : 'Devam etmek için soldan bir ürün seç',
+      nextStyle: 'display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border:0;border-radius:10px;font:inherit;font-size:16px;font-weight:600;' + (sel ? 'background:var(--primary);color:var(--on-primary);cursor:pointer' : 'background:var(--border);color:var(--text-muted);cursor:not-allowed')
+    };
+  }
+}
+</script>
+</body>
+</html>

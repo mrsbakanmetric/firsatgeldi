@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Takip Ettiklerim durumlar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes fgpulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion: reduce){.fg-sk{animation:none!important}}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 2200px; box-sizing: border-box; padding: var(--s8) 40px; display: flex; flex-direction: column; gap: var(--s8); background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<!-- 1 Boş -->
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">1 · BOŞ · henüz takip edilen ürün yok</span>
+<div style="display: flex; flex-direction: column; align-items: center; gap: var(--s3); padding: var(--s8) var(--s6); border: 1px dashed var(--border); border-radius: var(--r-lg); background: var(--surface); text-align: center">
+<span style="width: 56px; height: 56px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Henüz takip ettiğin ürün yok</h2>
+<p style="margin: 0; max-width: 520px; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Aldığın ya da almak istediğin bir ürünü ekle. Fiyatı ve stoğu senin yerine kontrol ederiz; daha ucuzu çıkınca haber veririz.</p>
+<a href="#" style="display: inline-flex; align-items: center; gap: var(--s2); height: 48px; padding: 0 var(--s5); box-sizing: border-box; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-btn); font-weight: 600; text-decoration: none">İlk ürünü ekle</a>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Paketinde 10 ürün takip hakkın var</span>
+</div>
+</section>
+
+<!-- 2 Boş filtre -->
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">2 · BOŞ FİLTRE · "Fırsat var" seçili, eşleşen ürün yok</span>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="5"><button type="button" aria-pressed="{{f.pressed}}" style="{{f.style}}">{{f.label}}</button></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Şu an fırsatı olan ürün yok</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">4 ürünün tümü 5 dk önce kontrol edildi · daha ucuzu çıkınca bildirim gelir</span></div>
+<button type="button" style="height: var(--touch); padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tümünü göster</button>
+</div>
+</section>
+
+<!-- 3 Toplu kontrol -->
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">3 · TOPLU KONTROL · hak yetmiyor, sonra çalışıyor</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6)">
+<div role="dialog" aria-label="Görünenleri kontrol et" style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--sh-md)">
+<span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">4 ürünü kontrol et</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)">Bugün 3 hakkın kaldı. İlk 3 ürün öncelik sırasıyla kontrol edilir; AirPods Pro 2 otomatik kontrolde kalır.</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Hakların gece 00.00'da yenilenir · Paketim ve Premium'da hak sayını gör</span>
+<div style="display: flex; justify-content: flex-end; gap: var(--s2); margin-top: auto"><button type="button" style="height: var(--touch); padding: 0 var(--s4); border: 1px solid var(--border); border-radius: var(--r-md); background: transparent; color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Vazgeç</button><button type="button" style="height: var(--touch); padding: 0 var(--s4); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">İlk 3'ü kontrol et</button></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Kontrol ediliyor · 2/3</span><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Sayfadan çıkabilirsin</span></div>
+<div role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="2" aria-label="Kontrol ilerlemesi" style="height: var(--progress-h); border-radius: var(--r-pill); background: var(--surface-alt); overflow: hidden"><div style="width: 66%; height: 100%; background: var(--primary)"></div></div>
+<sc-for list="{{checks}}" as="c" hint-placeholder-count="3">
+<div style="display: grid; grid-template-columns: 24px minmax(0, 1fr) 180px; gap: var(--s3); align-items: center; min-height: 28px">
+<span style="{{c.dot}}"></span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.name}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: right; white-space: nowrap">{{c.st}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<!-- 4 Eski veri -->
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">4 · ESKİ VERİ · bir ürün en az 6 saattir kontrol edilemedi</span>
+<div role="status" style="display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Kışlık mont mağazası yanıt vermiyor. Gösterilen fiyat ve stok en az 6 saat önceki.</div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 230px 190px 220px 96px; gap: var(--s4); align-items: center; padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s1); min-width: 0"><div style="display: flex; height: 26px"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-cap); font-weight: 600">Güncel değil</span></div><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Kışlık mont · erkek · lacivert</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Aldın 3.299 TL · LC Waikiki · 9 Kas</span></div>
+<div style="height: 56px; border-radius: var(--r-sm); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Son bilinen: 2.999 TL</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Stok bilgisi en az 6 saat önceki</span>
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">Fırsat doğrulanamadı</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">6 sa önce kontrol edildi · tekrar deneniyor</span></div>
+<div style="display: flex; justify-content: flex-end"><a href="#" style="display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); box-sizing: border-box; border: 1px solid var(--primary); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Detay</a></div>
+</div>
+</section>
+
+<!-- 5 Hata -->
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">5 · HATA · liste yüklenemedi</span>
+<div role="alert" style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; gap: var(--s3); align-items: flex-start"><span style="color: var(--danger); display: flex; padding-top: 2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Takip listen şu an yüklenemedi</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Takiplerin silinmedi; otomatik kontrol arka planda sürüyor. Bağlantını kontrol edip tekrar dene.</span></div></div>
+<button type="button" style="flex: none; height: var(--touch); padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tekrar dene</button>
+</div>
+</section>
+
+<!-- 6 Yükleniyor -->
+<section aria-busy="true" style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">6 · YÜKLENİYOR · iskelet, gerçek düzenle aynı ölçüler</span>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{four}}" as="x" hint-placeholder-count="4"><div class="fg-sk" style="height: 98px; border-radius: var(--r-lg); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div></sc-for>
+</div>
+<sc-for list="{{four}}" as="x" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 230px 190px 220px 96px; gap: var(--s4); align-items: center; padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s2)"><div class="fg-sk" style="width: 120px; height: 20px; border-radius: var(--r-pill); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div><div class="fg-sk" style="width: 70%; height: 20px; border-radius: var(--r-sm); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div><div class="fg-sk" style="width: 50%; height: 14px; border-radius: var(--r-sm); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div></div>
+<div class="fg-sk" style="height: 76px; border-radius: var(--r-sm); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div>
+<div class="fg-sk" style="height: 56px; border-radius: var(--r-sm); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div>
+<div class="fg-sk" style="height: 40px; border-radius: var(--r-sm); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div>
+<div class="fg-sk" style="height: 44px; border-radius: var(--r-md); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div>
+</div>
+</sc-for>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":2200}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-pill":"999px","sh-md":"0 4px 12px rgba(11,31,51,0.08)","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","progress-h":"4px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const filters = ['Tümü 4', 'Aldım 3', 'Almak istiyorum 1', 'Fırsat var 0', 'Biten 0'].map((l, i) => ({ label: l, pressed: i === 3 ? 'true' : 'false',
+      style: 'height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;' + (i === 3 ? 'border:1px solid var(--primary);background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:600' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500') }));
+    const dot = (k) => 'width:12px;height:12px;border-radius:999px;box-sizing:border-box;' + (k === 'done' ? 'background:var(--primary)' : k === 'run' ? 'border:2px solid var(--primary)' : 'border:2px solid var(--border)');
+    const checks = [
+      { name: 'Insta360 Ace Pro 2 · Flash Print', st: 'Bitti · şimdi kontrol edildi', dot: dot('done') },
+      { name: 'Kışlık mont · erkek · lacivert', st: 'Bitti · şimdi kontrol edildi', dot: dot('done') },
+      { name: 'Dyson V15 Detect Absolute', st: 'Kontrol ediliyor', dot: dot('run') }
+    ];
+    return { rootStyle: s, filters, checks, four: [1, 2, 3, 4] };
+  }
+}
+</script>
+</body>
+</html>
