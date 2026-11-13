@@ -98,7 +98,7 @@ Turkish users rarely pay for app subscriptions (RevenueCat: 89% of Turkish devel
 | Market | **[DECIDED]** Türkiye only. International stores parked (§12). |
 | Login | **[DECIDED]** Google, Apple, and email sign-up. Built last. |
 | Roles | **[DECIDED]** **Application Manager** (sees and manages everything, everywhere — web and mobile) + **User** (own data only). Guest is an access level (landing, SEO pages, legal, help, search and mark). Authorisation is data: every screen and action is bound to a permission key; future roles are added by selecting permissions. |
-| Notifications | **[DECIDED]** Web: in-app centre (bell panel + "Tümü" page) + email (on by default). Push in the mobile phase. Channel-agnostic logic. |
+| Notifications | **[DECIDED]** Web: in-app centre (bell panel + "Tümü" page) + email (on by default; "Aradığın ürün ucuzladı" e-mail off by default). Push in the mobile phase. Channel-agnostic logic. |
 | Price data | **[DECIDED]** Google Shopping via SerpApi **and** the stores' own site searches together; product-page verification before notifying and on click. Seller-level offers. |
 | Monetisation | **[DECIDED]** Free + Premium + tokens + affiliate (§11). No online payment for now. |
 | Language | **[DECIDED]** Turkish default, English second, in all packages. |
@@ -150,7 +150,7 @@ Full content per module is in `modules.md`. Release column: **v1** = first publi
 | 3a | Price summary | Lowest/highest/average 7 / 30 days, current cheapest, difference vs. price paid. | v1 |
 | 4 | Product confirmation | Two steps (§0); price paid typed by the user; no seller list (typed seller, exact match, or own link/screenshot); similar-but-different shown separately. | v1 |
 | 5 | Action | Ordered steps with "Yaptım ✓" ticks; ready price-difference message; `.ics` calendar; end tracking with method and re-bought price. | v1 |
-| 6 | Notifications | Bell panel + "Tümü" page; email on by default; daily cap; optional digest; mandatory account/security notifications. Push in mobile phase. | v1 |
+| 6 | Notifications | Bell panel + "Tümü" page; email on by default (except "Aradığın ürün ucuzladı"); daily cap; optional digest; mandatory account/security notifications. Push in mobile phase. | v1 |
 | 7 | Community (Discover) | Popular tracked items, deals caught, feed from followed users, verified user links (shown as hidden-seller offers); consent-based; anonymity threshold; "Keşfet" in the main navigation. Anatomy: `pagedesign.md` §8.12. | later slice |
 | 8 | Extras (warranty, cargo tracking, coupons) | To be discussed; cargo tracking link field [RECOMMENDED]. | post-v1 |
 | 9 | Savings report (My Savings) | Total + month/year, per product with method, missed deals separately; records editable for 7 days. | v1 |
@@ -405,7 +405,7 @@ Max 3 steps; auto-fill from link/screenshot; max 1–2 tappable questions; typo-
 
 ## 10. Notifications
 
-- **Channels [DECIDED]:** web in-app (bell panel, "Tümü" page) + email; **email on by default for all types**, per-type opt-out. Push in the mobile phase. Telegram bot [RECOMMENDED] for the web phase.
+- **Channels [DECIDED]:** web in-app (bell panel, "Tümü" page) + email; **email on by default for all types except** "Aradığın ürün ucuzladı" (`SEARCHED_PRODUCT_DROP`), whose e-mail is **off by default** [DECIDED 2026-11-13]; per-type on/off. Push in the mobile phase. Telegram bot [RECOMMENDED] for the web phase.
 - **Legal nature of email [DECIDE LATER]:** service message vs commercial message (ETK/İYS); legal opinion before launch.
 - **Daily cap [DECIDED]:** default 5 (parameter); return ≤ 2 days not capped.
 - **Digest [DECIDED]:** optional daily digest; urgent items never wait.
@@ -467,7 +467,7 @@ Max 3 steps; auto-fill from link/screenshot; max 1–2 tappable questions; typo-
 - **Histories [DECIDED]:** activity, search, product, price/stock and audit histories kept indefinitely; anonymised on account deletion; users can hide own search entries. **[OPEN — legal]** indefinite retention and hide-only search history vs the KVKK right to erasure → legal opinion before launch.
 - **Fraud monitoring [DECIDED]:** user actions logged and scored (rules → signals → scores → cases → restrictions); the Application Manager is notified of high-risk cases; restrictions have reasons and are reversible. Rule list and automatic-action limit [RECOMMENDED → confirm].
 - **Personal data [DECIDED]:** email/phone encrypted with a blind index; passwords Argon2id; masked on every screen; never logged; Application Manager full-value view with reason, 10 minutes, audited.
-- **Images [DECIDED]:** no binary in the database; metadata stripped; original not kept; user uploads private and deleted after 24 hours; no personal data taken from images.
+- **Images [DECIDED]:** no binary in the database; metadata stripped; original not kept; user uploads private; order screenshots and identification photos deleted after 24 hours, support-request screenshots after 30 days; no personal data taken from images.
 - **Affiliate disclosure** (Advertising Board sensitivity); legal pages versioned with re-consent.
 - **Store terms of use** for page checks; brand names as text only.
 - **Wrong-price liability** disclaimer in terms.
@@ -531,7 +531,7 @@ Closed since rev. 5: follow model (one-way + private), want-mode hiding (all hid
 8. Deal-frequency validation test (2 weeks, 50–100 products).
 8a. **Data-availability test [DECIDED 2026-11-13, after the Product Detail drawing]:** for ~20 products in 5 stores, check which source actually gives seller, seller name, seller rating, review counts, stock, campaign and installment data, and how reliably.
 9. Benchmark of cheaper SERP providers.
-10. **[ASSUMPTION → confirm]** First vertical slice (A2).
+10. ~~First vertical slice (A2)~~ → closed [DECIDED 2026-11-13]: approved; build order in `modules.md` Appendix A.
 11. Screen designs — status and order in `screen_status.md`; built per `pagedesign.md`.
 12. **[OPEN]** Mobile technology, requirements and infrastructure.
 13. **[DECIDE LATER — with the mobile app designs]** Which five items go in the phone bottom tab bar now that Keşfet is in the main navigation.

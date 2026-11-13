@@ -24,8 +24,10 @@
 - **Mobile technology and infrastructure.** Shared business rules stay on the server / platform-independent.
 - Naming of more expensive sellers; legal nature of default-on email; Premium/token prices and payment provider; items marked [RECOMMENDED] in `modules.md` Appendix C (critical settings list, fraud rule list and automatic-action limit, view-as-user, re-authentication for own personal data).
 
+**Decided**
+- **[A2] First vertical slice [DECIDED 2026-11-13]:** search → mark → confirm → product tracked → scheduled price check → cheaper offer shown with hidden seller → reveal; permission checks and activity capture from day one. Build order in `modules.md` Appendix A; detailed plan in `implementation_plan.md`.
+
 **Assumptions to confirm**
-- **[A2] First vertical slice:** search → mark → confirm → product tracked → scheduled price check → cheaper offer shown with hidden seller → reveal; permission checks and activity capture from day one. Planned in detail in the development environment.
 
 ---
 
@@ -75,7 +77,7 @@
 ### Images
 - [ ] **No image binary in the database**; objects in S3-compatible storage, content-addressed by SHA-256 (duplicates stored once)
 - [ ] All metadata (EXIF, GPS) stripped; the original is not kept; variants 160/480/1080/1200 in AVIF/WebP/JPEG; pHash computed for similarity
-- [ ] User uploads (order screenshots, identification photos) in a **private bucket**, visible only to the owner via signed, expiring links; **deleted after 24 hours** by a scheduled job
+- [ ] User uploads (order screenshots, identification photos) in a **private bucket**, visible only to the owner via signed, expiring links; **deleted after 24 hours** by a scheduled job. Support-request screenshots (`SUPPORT_ATTACHMENT`) follow `support.attachment_retention_days` (30 days) [DECIDED 2026-11-13]
 - [ ] Up to 5 images per request (parameter); per-file validation (type JPEG/PNG/WebP/HEIC, size ≤ 10 MB, pixel limit); one rejected file does not stop the others
 - [ ] No personal data (name, address, phone, order number) is extracted or stored from images
 - [ ] Image privacy note shown next to every upload control
@@ -173,7 +175,7 @@
 
 ### Notifications
 - [ ] Web: bell **panel** (last 10, unread first) + "Tümü" page with filters; logic channel-agnostic (push added with mobile)
-- [ ] Email **on by default for all types**, per-type opt-out (legal nature [DECIDE LATER] — legal opinion before launch)
+- [ ] Email **on by default for all types except** "Aradığın ürün ucuzladı" (`SEARCHED_PRODUCT_DROP`), whose e-mail is **off by default** [DECIDED 2026-11-13]; per-type on/off (legal nature [DECIDE LATER] — legal opinion before launch)
 - [ ] Daily cap `notifications.daily_cap` (default 5); return ≤ 2 days not capped
 - [ ] Optional daily digest; urgent items (deal + return ≤ 2 days, delivery question) never wait
 - [ ] **Mandatory account and security notifications** (welcome, verification, new device sign-in, password change/reset, sign-in method added, account deletion started/restored/completed, suspension, data export ready, package request outcome, support reply, re-consent required): in-app + email always, not capped, not digested, cannot be turned off
@@ -429,7 +431,7 @@ Before any deployment:
 - [ ] Permission-matrix test passes for Guest, User and Application Manager on every endpoint, web and mobile routes
 - [ ] Hidden-seller leak test passes over all endpoints, SEO pages and notification payloads
 - [ ] Personal-data leak test passes (responses, logs, notification payloads); log redaction verified
-- [ ] Uploaded images: metadata stripped, private, deleted after 24 hours (job verified)
+- [ ] Uploaded images: metadata stripped, private; order screenshots and identification photos deleted after 24 hours, support-request screenshots after 30 days (job verified)
 - [ ] Reveal, check-now and report endpoints rate-limited; limits enforced server-side
 - [ ] Critical-setting changes and personal-data views appear in the Audit Log
 - [ ] No secret in client bundles

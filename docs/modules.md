@@ -73,11 +73,11 @@ Modules are referred to **by name only** (no short codes). Turkish UI strings ar
 ### Roles [DECIDED]
 | Role | Who | What they can do |
 |---|---|---|
-| **Guest** (not a role, an access level) | Signed-out visitor | Landing Page, SEO product pages, legal pages, help; search and mark (sign-in at confirmation) |
+| **Guest** (not a role; no data representation — an explicit **public allow-list** of endpoints in the API [DECIDED 2026-11-13]) | Signed-out visitor | Landing Page, SEO product pages, legal pages, help; search and mark (sign-in at confirmation) |
 | **User** | Everyone who signs up | All user modules, **own data only** |
 | **Application Manager** | Authorised administrator | **Sees and manages everything, everywhere — web and mobile.** All users' data, hidden seller identities, all histories, all admin modules. Applies critical settings **alone** (no second approval; audit log + one-click rollback). |
 
-- Authorisation is **data**: every screen and every action is bound to a **permission key** (e.g. `tracking.own.write`, `admin.users.view`, `admin.offers.view_hidden_seller`). The Application Manager role holds every permission; a future role (support, moderator…) is added by selecting permissions, with no code change.
+- Authorisation is **data**: every screen and every action is bound to a **permission key** (e.g. `tracking.own.write`, `admin.users.view`, `admin.offers.view_hidden_seller`). The full **permission catalogue** is in `database.md` §4 [DECIDED 2026-11-13]. The Application Manager role holds every permission; a future role (support, moderator…) is added by selecting permissions, with no code change.
 - The Application Manager role cannot be deleted and there is always **at least one** Application Manager.
 - Every Application Manager view and action is written to the **Audit Log** (especially personal data and hidden seller identities).
 - Mobile **technology, infrastructure and decisions** are [OPEN]; the matrix below only defines **which screens exist on mobile** and their permissions. Mobile uses the same API and the same permission checks.
@@ -546,7 +546,7 @@ Search → mark → **Almadım, sadece takip et** → target price (optional) + 
 **Admin notifications [DECIDED]** — to the Application Manager, in-app + email: high-risk fraud case · source alert · budget threshold · daily digest of pending package/support requests.
 
 ### Rules
-- **Channels [DECIDED]:** on the web, in-app centre + email; push in the mobile phase. **Email is on by default for all types**; the user can turn it off per type.
+- **Channels [DECIDED]:** on the web, in-app centre + email; push in the mobile phase. **Email is on by default for all types except** "Aradığın ürün ucuzladı" (`SEARCHED_PRODUCT_DROP`), whose e-mail is **off by default** [DECIDED 2026-11-13]; the user can turn each type on or off.
 - **Daily digest [DECIDED]:** optional. Default is one-by-one; users who choose the digest get one combined notification per day (in their chosen time slot). Urgent ones (deal + return ≤ 2 days, delivery question) never wait for the digest.
 - **Daily cap [DECIDED]:** default **5**, editable in the admin panel (System Settings). Return ≤ 2 days notifications are not capped.
 - **Account and security notifications cannot be turned off [DECIDED]:** not capped, never wait for the digest, email always sent (legal and security requirement).
@@ -843,7 +843,7 @@ Canvas "FırsatGeldi — 10 Tanıtım Sayfası": landing (hero, figures, how it 
 - **Platform return guides:** step-by-step return and cancellation per store; the "Süre ve kurallar" box comes from the return rule table (read from the store's site, with its age, or "Varsayılan"); never typed into the text.
 - **How to request a price difference:** using the ready message, where to send it per platform.
 - **How FırsatGeldi works (FAQ):** why the seller is hidden, Göster and tokens, check frequency and allowances, how data is used.
-- **Contact form:** topic (Question · Bug · Suggestion · Account) + message (10–2000 characters) + optional related product (with image) + up to 3 screenshots (deleted after 30 days [ASSUMPTION]); contact details filled automatically for signed-in users; **guests give an email address** (stored encrypted). Requests go to Support Requests; the user gets a request number and the reply ("genelde 1 iş günü içinde" [ASSUMPTION]).
+- **Contact form:** topic (Question · Bug · Suggestion · Account) + message (10–2000 characters) + optional related product (with image) + up to 3 screenshots [ASSUMPTION] (deleted after **30 days** [DECIDED 2026-11-13]; the 24-hour rule applies only to order screenshots and identification photos); contact details filled automatically for signed-in users; **guests give an email address** (stored encrypted). Requests go to Support Requests; the user gets a request number and the reply ("genelde 1 iş günü içinde" [ASSUMPTION]).
 - **Taleplerim (signed in):** own requests with search (number, subject, product) and status filter (Yanıt bekliyor · Yanıtlandı · Kapandı); request detail as a message thread with reply.
 
 ### Rules
@@ -1145,7 +1145,7 @@ Each rule can be turned on/off; threshold and weight are editable.
 
 **Route:** `/[locale]/admin/roller` · web + mobile · Application Manager only.
 
-**Content:** role list (Application Manager, User) · permission matrix (screen × action, web/mobile) · assign/revoke roles for users.
+**Content:** role list (Application Manager, User) · permission matrix (screen × action, web/mobile) over the permission catalogue (`database.md` §4) · assign/revoke roles for users. Guest access is not editable here: it is the API's public allow-list.
 
 **Rules:**
 - The Application Manager role holds every permission, cannot be edited or deleted; at least one Application Manager always remains.
@@ -1156,18 +1156,23 @@ Each rule can be turned on/off; threshold and weight are editable.
 
 ## Appendix A — Build order
 
-[RECOMMENDED, consistent with architecture §25 / A2]
+[DECIDED 2026-11-13] Same order as `CLAUDE.md` › Stages (4) and `architecture.md` §25. The first vertical slice (A2) is approved. One module group = one screen step; each step stops for approval.
 
 | Order | Modules | Why |
 |---|---|---|
 | 1 | Search and Add + Hidden Seller + (background: price engine, scheduling) + **permission checks and activity capture** | First vertical slice: add → check → hidden deal → Göster; history recorded from day one |
-| 2 | Product Detail + Price and Stock History + Return Window + Check Now | Makes the deal usable |
-| 3 | Home + Tracked Items | Daily-use screens |
-| 4 | Notifications and Preferences + My Savings + Trust and Accuracy | Modules that bring users back and build trust |
-| 5 | Want to Buy + Packages and Premium + all admin modules | Want mode + packages + operations (incl. History Explorer, Fraud Monitoring, Roles and Permissions) |
-| 6 | Landing Page + Legal Pages + Help and FAQ | Public surfaces before launch |
-| 7 | Settings and Account + Sign-in and Sign-up | Account and sign-in (last) |
-| 8 | Discover and Community + Profile and Following | Social layer |
+| 2 | Product Detail + **Want to Buy (a mode of Product Detail)** + Price and Stock History + Return Window + Check Now + Trust and Accuracy (user side: reports) | Makes the deal usable; Want to Buy has no screen of its own |
+| 3 | Tracked Items | Daily-use list |
+| 4 | Notifications and Preferences (incl. account/security) | Brings users back |
+| 5 | Home | Daily-use summary, built on the modules above |
+| 6 | My Savings | Builds trust |
+| 7 | Packages and Premium | Allowances and `EntitlementGate` |
+| 8 | Landing Page (+ SEO product page) | Public surface before launch |
+| 9 | Legal Pages + Help and FAQ | Public surfaces before launch |
+| 10 | Settings and Account | Account |
+| 11 | Sign-in and Sign-up | Real sign-in (development login until then) |
+| 12 | Discover and Community + Profile and Following | Social layer |
+| 13 | All admin modules (Application Manager screens) | Operations (incl. History Explorer, Fraud Monitoring, Roles and Permissions, Trust and Accuracy resolution) |
 
 ---
 

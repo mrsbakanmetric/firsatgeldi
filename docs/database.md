@@ -228,7 +228,7 @@ id · user_id · purpose CHECK (`VERIFY_EMAIL`,`RESET_PASSWORD`,`CHANGE_EMAIL`) 
 | updated_at | timestamptz | | |
 
 ### `notification_type_preferences`
-user_id · type · channel CHECK (`IN_APP`,`EMAIL`,`PUSH`) · enabled boolean. PK `(user_id, type, channel)`. **No row = enabled by default** [DECIDED: email on by default for all types]. Mandatory account/security types ignore this table. When the legal question [OPEN — decide later] is settled, the default can change per type via `system_settings`; the schema does not change.
+user_id · type · channel CHECK (`IN_APP`,`EMAIL`,`PUSH`) · enabled boolean. PK `(user_id, type, channel)`. **No row = the type's default**: enabled for every type and channel [DECIDED], except `SEARCHED_PRODUCT_DROP` × `EMAIL`, which is **disabled by default** [DECIDED 2026-11-13]. Mandatory account/security types ignore this table. When the legal question [OPEN — decide later] is settled, the default can change per type via `system_settings`; the schema does not change.
 
 ### `cookie_consents`
 id · user_id (N, null for guests) · anon_id (N) · analytics boolean · marketing boolean · version_id (FK content_versions) · created_at. Latest row wins.
@@ -237,7 +237,7 @@ id · user_id (N, null for guests) · anon_id (N) · analytics boolean · market
 
 ## 4. Authorisation (roles as data)
 
-**Roles [DECIDED]:** `APP_MANAGER` (Application Manager) and `USER`. Guest is not a role. Code checks **permission keys**, not role names; new roles are added as data only.
+**Roles [DECIDED]:** `APP_MANAGER` (Application Manager) and `USER`. Guest is not a role and has no data representation (public allow-list in the API, below). Code checks **permission keys**, not role names; new roles are added as data only.
 
 | Table | Columns |
 |---|---|
@@ -246,7 +246,65 @@ id · user_id (N, null for guests) · anon_id (N) · analytics boolean · market
 | `role_permissions` | role_id · permission_key — PK both. `APP_MANAGER` holds every permission (seed + automatically when a permission is added) |
 | `user_roles` | user_id · role_id · granted_by · granted_at · revoked_at N — partial U `(user_id, role_id) WHERE revoked_at IS NULL` |
 
-Permission key examples: `home.own.view` · `tracking.own.write` · `reveal.own.use` · `checknow.own.use` · `admin.users.view` · `admin.users.view_as` · `admin.users.view_pii` · `admin.users.suspend` · `admin.offers.view_hidden_seller` · `admin.history.view` · `admin.fraud.manage` · `admin.settings.apply_critical` · `admin.roles.manage` · `admin.content.publish`.
+### Permission catalogue [DECIDED 2026-11-13]
+
+Keys follow `<area>.<scope>.<action>` (`own` = the user's own data). All keys have `platform = BOTH` (web and mobile share the API). Seed: `USER` holds every non-`admin.*` key; `APP_MANAGER` holds every key. Endpoint ↔ key mapping per screen: `implementation_plan.md` §3.
+
+**Guest access [DECIDED 2026-11-13]:** there is **no `GUEST` role and no guest access level in data**. Guest-reachable endpoints are an **explicit public allow-list in the API** (one list in code, reviewed like any other change; covered by the permission-matrix test). An endpoint not on the list requires a session. For signed-in callers, allow-listed endpoints still check their key. The "Public" column marks keys whose endpoints are on the allow-list.
+
+| Group | Key | Public | Note |
+|---|---|---|---|
+| Public | `public.view` | ✓ | Landing Page figures and showcase, SEO product page |
+| Public | `content.view` | ✓ | Legal pages, help articles, help search, store tiles |
+| Catalogue | `catalog.view` | ✓ | Products, similar products, images |
+| Search and Add | `search.use` | ✓ | Autocomplete |
+| Search and Add | `identify.use` | ✓ | Identify text / link / image, answer questions |
+| Search and Add | `upload.own.create` | ✓ | Presign + complete uploads |
+| Auth | `auth.use` | ✓ | Sign-in, sign-up, password reset (signed-out flows) |
+| Support | `support.own.create` | ✓ | Contact form (guests give an e-mail address) |
+| Consent | `consent.own.write` | ◐ | Guests: cookie consent only (via `anon_id`); users: legal re-consent |
+| Home | `home.own.view` | — | |
+| Tracking | `tracking.own.view` | — | Tracked Items, Product Detail |
+| Tracking | `tracking.own.write` | — | Confirm, edit, steps, request, end, extend, bought (incl. Want to Buy) |
+| Hidden Seller | `reveal.own.use` | — | Göster / Gizle |
+| Hidden Seller | `offer.own.go` | — | Outbound link |
+| Check Now | `checknow.own.use` | — | Single and bulk |
+| Trust and Accuracy | `report.own.create` | — | Reports (offer, profile) |
+| My Savings | `savings.own.view` | — | |
+| My Savings | `savings.own.write` | — | Record correction, end tracking |
+| My Savings | `feedback.own.write` | — | Buyer questions |
+| Notifications | `notifications.own.view` | — | |
+| Notifications | `notifications.own.write` | — | Read state |
+| Notifications | `notification_prefs.own.write` | — | Preferences (Settings › Bildirimler) |
+| Packages | `packages.own.view` | — | Entitlements, plans, reveal and token history |
+| Packages | `packages.own.request` | — | Package request |
+| Support | `support.own.view` | — | Own requests and messages |
+| Account | `account.own.view` · `account.own.write` · `account.own.view_pii` · `account.own.export` · `account.own.delete` | — | Settings and Account |
+| Account | `search_history.own.hide` | — | |
+| Community | `community.view` · `community.own.write` · `follows.own.write` · `blocks.own.write` · `link.own.submit` | — | Discover and Community, Profile and Following |
+| Admin — self | `admin.self.activity.view` · `admin.self.permissions.view` | — | Settings › Yönetim etkinliğim, Yetkilerim |
+| Admin — user data | `admin.tracking.view` · `admin.savings.view` · `admin.notifications.receive` | — | |
+| Admin — users | `admin.users.view` · `admin.users.view_pii` · `admin.users.suspend` · `admin.users.restrict` · `admin.users.view_as` | — | `view_as`: the key exists; the feature stays [RECOMMENDED] |
+| Admin — hidden seller | `admin.offers.view_hidden_seller` · `admin.offers.suspend` | — | Every view audited |
+| Admin — overview | `admin.overview.view` | — | |
+| Admin — return rules | `admin.return_rules.view` · `admin.return_rules.manage` | — | |
+| Admin — platforms | `admin.platforms.view` · `admin.platforms.manage` | — | |
+| Admin — roles | `admin.roles.view` · `admin.roles.manage` | — | |
+| Admin — audit | `admin.audit.view` · `admin.audit.export` | — | |
+| Admin — catalogue | `admin.catalog.view` · `admin.catalog.manage` · `admin.category_templates.manage` | — | |
+| Admin — reports | `admin.reports.manage` | — | |
+| Admin — campaigns | `admin.campaigns.manage` | — | |
+| Admin — packages | `admin.packages.view` · `admin.packages.manage` · `admin.packages.grant` | — | |
+| Admin — support | `admin.support.manage` | — | |
+| Admin — content | `admin.content.edit` · `admin.content.publish` | — | |
+| Admin — templates | `admin.notification_templates.manage` | — | |
+| Admin — settings | `admin.settings.view` · `admin.settings.apply` · `admin.settings.apply_critical` | — | |
+| Admin — usage | `admin.usage.view` · `admin.budgets.manage` | — | |
+| Admin — history | `admin.history.view` · `admin.history.export` | — | |
+| Admin — fraud | `admin.fraud.view` · `admin.fraud.manage` | — | |
+| Admin — community | `admin.community.moderate` | — | |
+
+A new key is added only through a `spec` PR that updates this table.
 
 Rules: everyone who signs up gets `USER`. At least one active `APP_MANAGER` always remains (service check + locked transaction on assign/revoke). Holders of `APP_MANAGER` apply critical settings alone [DECIDED] (§14).
 
@@ -781,7 +839,7 @@ asset_id · variant CHECK (`THUMB_160`,`CARD_480`,`DETAIL_1080`,`OG_1200`) · fo
 | declared_mime / declared_bytes | | | Declared by the client; verified by the server |
 | extracted | jsonb | ✓ | **Only the needed fields** from the image (product, seller, price, date) — name, address, phone, order number **stripped** [DECIDED] |
 | expires_at | timestamptz | | Presigned URL lifetime |
-| purge_at | timestamptz | ✓ | Order screenshot / identification photo: deleted after `media.private_retention_hours` |
+| purge_at | timestamptz | ✓ | Order screenshot / identification photo: deleted after `media.private_retention_hours`; support attachment: after `support.attachment_retention_days` [DECIDED 2026-11-13] |
 | created_at | timestamptz | | |
 
 Indexes `(user_id, created_at)`, `(purge_at) WHERE status <> 'DELETED'`.
@@ -789,7 +847,7 @@ Indexes `(user_id, created_at)`, `(purge_at) WHERE status <> 'DELETED'`.
 **Rules:**
 - Upload limits are parameters: per-file size (`media.max_bytes`, def. 10 MB), images per request (`media.max_images_per_request`, def. 5), daily count per user (`media.daily_upload_limit`), maximum pixels (`media.max_pixels`, decompression-bomb protection). Accepted types JPEG, PNG, WebP, HEIC (HEIC converted).
 - **EXIF/GPS and all other metadata are stripped** from every image; the master is re-encoded, **the original file is not kept**.
-- User uploads (order screenshot, identification photo) are deleted **after a short time** (def. 24 hours); avatars until changed / account deleted.
+- User uploads (order screenshot, identification photo) are deleted **after a short time** (def. 24 hours, `media.private_retention_hours`); support-request screenshots (`SUPPORT_ATTACHMENT`) after `support.attachment_retention_days` (30 days) [DECIDED 2026-11-13]; avatars until changed / account deleted.
 - Store images are copied to our storage and served at `/img/{sha256}/{variant}`; the URL does not reveal the platform.
 - Deleting a link decrements ref_count; assets at 0 are removed by the cleanup job.
 
@@ -859,6 +917,7 @@ Pure functions in `packages/core`; tests mandatory.
 | `api_usage` | Indefinite (summarised) | Cost |
 | `notifications`, `notification_deliveries` | Indefinite | Delivery evidence |
 | `uploads` + private images (identification, order screenshot) | **24 hours** (`media.private_retention_hours`) [DECIDED] | Image deleted; the extraction with personal data stripped remains |
+| `uploads` with purpose `SUPPORT_ATTACHMENT` (support-request screenshots) | **30 days** (`support.attachment_retention_days`) [DECIDED 2026-11-13] | Image deleted; the support request and its messages remain |
 | Catalogue images | While linked to a product; ref_count 0 → cleanup | Single copy |
 
 **Account deletion [DECIDED]:** `status='PENDING_DELETION'`, `purge_after = +30 days` (setting). During this period tracking, checks and notifications stop and the profile is hidden; signing in restores the account. When the period ends the **purge job** removes personal fields (encrypted email/phone and their blind indexes, name, username, avatar image, sessions, sign-in identities, uploads, preferences, support message contents); the `users` row stays `DELETED` with personal fields empty. **All histories** (search, activity, tracking, savings, reveals, tokens, audit, risk) remain linked to the same `user_id` — now an identity-less (anonymous) user [DECIDED]. Device/IP digests are re-hashed with a new salt to cut the link.
@@ -904,7 +963,8 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `return.read_interval_hours` | 24 [ASSUMPTION] | Store return-page read frequency |
 | `return.read_fail_task_hours` | 24 | Failures longer than this raise an admin task |
 | `return.plausible_min_days` / `.plausible_max_days` | 7 / 90 | Reads outside wait for approval |
-| `support.attachment_retention_days` / `.max_attachments` / `.message_max` | 30 / 3 / 2000 [ASSUMPTION] | Contact form |
+| `support.attachment_retention_days` | 30 [DECIDED 2026-11-13] | Support-request screenshots; the 24 h rule (`media.private_retention_hours`) covers only order screenshots and identification photos |
+| `support.max_attachments` / `.message_max` | 3 / 2000 [ASSUMPTION] | Contact form |
 | `return.frequent_window_days` / `.frequent_threshold` | 90 / 4 | |
 | `landing.anonymity_min_users` | — | |
 | `landing.figures_min` | — | Each landing figure's minimum; one below → all three tiles show value statements |
