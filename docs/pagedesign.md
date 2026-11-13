@@ -162,6 +162,16 @@ Rules: dimmed page (`color.overlay`), page state kept, focus moved in and trappe
 | `StepIndicator` | §5.24 | Flow template, dialogs |
 | `SkeletonBlock` | §5.23 | loading state of every page |
 | `StatusBanner` (info / warning / danger) | §6 | stale, limit, error states |
+| `EmptyState` (title · one sentence · one primary action) | §6 | empty state of every list and page |
+| `MoneyDisplay` | §5.9 | every price, saving and amount |
+| `FreshnessLine` ("N dk önce kontrol edildi", "en az", "tahmini") | §5.5, §5.13 | next to every price and stock value |
+| `PriceHistory` (full chart) | §5.6, §5.12 | Product Detail, bell preview (14-day) |
+| `StockHistory` (full, 14 days + 1 month, change log) | §5.7 | Product Detail |
+| `ConfirmPanel` (mark → confirm, typed seller and price) | §5.1 | Search and Add, Add product dialog step 2, Want to Buy "Aldım, kaydet" |
+| `SegmentedChoice` | §4.3 | order status, ranges, durations, tabs |
+| `MultiImageUpload` + `ImagePrivacyNote` | §5.19, §5.20 | Search and Add, Add product dialog, Bize yaz |
+
+**This table is the canonical component list [DECIDED 2026-11-13].** `packages/ui` uses exactly these names. Former names in other documents map as follows: `StatusFlag` → `Flag` · `RevealGate` (UI) → `HiddenOfferCard` (the server-side `RevealGate` interface in `architecture.md` §6.3 keeps its name) · `AllowanceIndicator` → `AllowanceMeter` · `DealHero` → `HeroBlock` · `ErrorState` → `StatusBanner` (danger) · `MarkConfirm` → `ConfirmPanel` · compact `PriceHistory` → `PriceSparkline` · compact `StockHistory` → `StockStrip`. A new component is added to this table and to `product_design_pattern.md` first, then used.
 
 ---
 
@@ -247,7 +257,7 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 - **Regions:** title + plan badge + "Jeton iste" / "Premium iste" → 4 `AllowanceMeter`s (Göster · Takip · Günlük kontrol · Jeton) → Free vs Premium table (aligned rows, Premium column outlined, "Fiyat henüz belli değil") → reveal order (4 steps, current highlighted) → **"Nereye harcadın?"** (period · search · category · totals; tab "Ürün bazında": image, reveals, monthly, tokens, refunded, last use, expandable events with date-time, seller rank, price at that moment, source · tab "Tüm hareketler": filter by type).
 - **Overlays:** **request dialog** (Premium / N tokens, note, summary panel, sent state).
 - **States:** Göster allowance used up (on Product Detail) · tracking limit full · request pending · request rejected (admin note) · Premium active (end date) · error · loading.
-- **API:** `/me/entitlements`, `/plans`, `/me/reveals?period=&q=&category=&group=product`, `/me/token-ledger`, `/package-requests`.
+- **API:** `/me/entitlements`, `/plans`, `/me/reveals?period=&q=&category=&group=product`, `/me/token-ledger`, `POST /package-requests`, `GET /package-requests/mine`.
 
 ### 8.8 Sign-in and Sign-up — `/[locale]/giris`
 - **Shell/template:** AuthShell · Flow.
@@ -274,7 +284,7 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 - **Shell/template:** AppShell (guest header for visitors) · Help home = Summary; article = Detail; Bize yaz + Taleplerim = Flow (form) | List; legal = Detail with a document menu.
 - **Help home regions:** `primary-subtle` band (h1 `display`, search 720 px, frequent-search shortcuts) → main | aside 360: **Mağaza iade rehberleri** (store search, 8 logo tiles, selected store's rule card — design §5.33) → **Tüm yazılar** (topic chips with counts, rows: icon · title · topic · reading time · updated) | Bize yaz card + Taleplerim, Sık sorulanlar, legal links.
 - **Article regions:** breadcrumb → "Bu sayfada" (220) | article (title, updated, **Süre ve kurallar** box from the rule table with read time or "Varsayılan", numbered steps, cancel, price difference with info note, "İşine yaradı mı?") | aside 300 (sign-up prompt, other store guides with logo tiles, related).
-- **Bize yaz + Taleplerim:** form (topic radio cards, related product with image, message 10–2000, up to 3 screenshots, reply-to email note; guests enter an email) | Taleplerim (search, status chips with counts, rows with product image or topic icon, status pill).
+- **Bize yaz + Taleplerim:** form (topic radio cards, related product with image, message 10–2000, up to 3 screenshots with the note "Ekran görüntülerin talebin için 30 gün saklanır, sonra silinir" (`support.attachment_retention_days`), reply-to email note; guests enter an email) | Taleplerim (search, status chips with counts, rows with product image or topic icon, status pill).
 - **Legal:** document menu (260) | title, version + effective date + "Türkçe metin bağlayıcıdır", lead, "Bu sürümde ne değişti?", contents, numbered sections, action box.
 - **Overlays:** cookie bar (equal-weight choices) · cookie preferences dialog · re-consent dialog · contextual help side panel (400 px, "Yardım merkezinde aç").
 - **States:** store page unreadable (last value + age) / default rule · article not found · request sent (number) · send failed (text kept) · request thread · Taleplerim empty · previous versions · loading.

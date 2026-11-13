@@ -149,7 +149,7 @@ Use this pattern whenever the system has guessed something the user must own (pr
 - If several sellers are cheaper, state the count and the **maximum** saving; list every cheaper offer, cheapest first (by net price).
 - The item with a deal is ordered first and visually marked as the priority item (stronger border).
 - Never use coral for anything that is not a deal.
-- **Coral once per surface [DECIDED]:** when a surface has both the "Fırsat geldi" flag and the "Fırsatı gör" action, the action is coral and the flag uses the neutral flag style (bolt icon + text). On a surface without the action (e.g. `DealHero` with a secondary action), the flag is the coral element.
+- **Coral once per surface [DECIDED]:** when a surface has both the "Fırsat geldi" flag and the "Fırsatı gör" action, the action is coral and the flag uses the neutral flag style (bolt icon + text). On a surface without the action (e.g. `HeroBlock` with a secondary action), the flag is the coral element.
 
 ### 5.4 Urgency and deadlines
 - Return deadline: amber flag with clock icon and the number of days (≤ 3 days); the last day is written as a date. When more than 3 days remain, use the neutral info style. When expired, red flag with a cross icon and tracking stops.
@@ -237,7 +237,10 @@ Small pill with icon + short text. Vocabulary is fixed: deal found (coral, bolt)
 - Accepted types and size limit are stated near the control.
 
 ### 5.20 Image privacy note
-- Shown next to every image upload control: "Görselin yalnız ürünü tanımak için kullanılır, 24 saat sonra silinir; ad, adres gibi bilgilerin kaydedilmez."
+- Shown next to every image upload control. The text depends on the purpose [DECIDED 2026-11-13]:
+  - Identification photo / order screenshot (Search and Add, Add product dialog): "Görselin yalnız ürünü tanımak için kullanılır, 24 saat sonra silinir; ad, adres gibi bilgilerin kaydedilmez."
+  - Support screenshot (Bize yaz): "Ekran görüntülerin talebin için 30 gün saklanır, sonra silinir; yalnız destek ekibi görür."
+- Retention values come from settings (`media.private_retention_hours`, `support.attachment_retention_days`), never typed into the text.
 - Info style with a lock or shield icon; always visible, not hidden in a tooltip.
 
 ### 5.21 App shell (`AppShell`)

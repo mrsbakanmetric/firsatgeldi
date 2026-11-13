@@ -146,7 +146,7 @@ These rules apply to every screen and are not repeated in each module.
 | 21 | Email and phone are **masked by default on every screen** (`m***@g***.com`, `+90 5** *** ** 67`); passwords are never shown or logged [DECIDED] | database §14c |
 | 22 | Images uploaded by a user (order screenshot, identification photo) are visible only to them and **deleted after 24 hours**; no personal data (name, address, phone, order number) is taken from images [DECIDED] | architecture §11a |
 
-**Shared components** (every module is built from these; a new one is added to the design pattern document first): `StatusFlag` · `MoneyDisplay` · `PriceHistory` (compact/full) · `StockHistory` · `RevealGate` · `MarkConfirm` · `SegmentedChoice` · `FreshnessLine` · `DealHero` · `EmptyState` · `ErrorState` · `AppShell` · `PageTemplate` · `MultiImageUpload` · `ImagePrivacyNote` · `AllowanceIndicator` · `SkeletonBlock` · `StepIndicator` · `Sheet`.
+**Shared components:** every module is built from the canonical component list in `pagedesign.md` §5 [DECIDED 2026-11-13] (e.g. `Flag`, `MoneyDisplay`, `PriceHistory` / `PriceSparkline`, `StockHistory` / `StockStrip`, `HiddenOfferCard`, `ConfirmPanel`, `HeroBlock`, `AllowanceMeter`, `EmptyState`, `StatusBanner`). A new one is added there and to the design pattern document first.
 
 ---
 
@@ -291,8 +291,8 @@ These rules apply to every screen and are not repeated in each module.
 
 ### Sections (in order)
 1. **Header:** product name · seller + platform bought from · purchase line · order status · return countdown + last day (or expired / no withdrawal right).
-2. **Deal summary** (when a deal exists, `DealHero`; its action is the secondary "Satıcıları gör", which scrolls to the offers — no coral button on this screen [ASSUMPTION]): number of cheaper sellers · best price · when it dropped · when price/stock were last verified on the page · maximum saving · jump to offers.
-3. **Price history** (full): ranges per Price and Stock History · two series + "Aldın" point + deal point (emerald, because the DealHero flag is the surface's one coral element [ASSUMPTION]) · summary values (paid, cheapest now, 7- and 30-day low/high, average).
+2. **Deal summary** (when a deal exists, `HeroBlock`; its action is the secondary "Satıcıları gör", which scrolls to the offers — no coral button on this screen [ASSUMPTION]): number of cheaper sellers · best price · when it dropped · when price/stock were last verified on the page · maximum saving · jump to offers.
+3. **Price history** (full): ranges per Price and Stock History · two series + "Aldın" point + deal point (emerald, because the `HeroBlock` flag is the surface's one coral element [ASSUMPTION]) · summary values (paid, cheapest now, 7- and 30-day low/high, average).
 4. **N cheaper sellers:** full content width, a grid of **at most 2 columns** (2 offers side by side; an odd last offer spans the full width) [DECIDED]; cheapest first; each row shows price, previous price, saving, warranty, stock + duration, price duration, shipping cost, delivery time, last check, Göster. After reveal: seller, rating, platform, **Mağazaya git**, Gizle.
    Reference row: the seller bought from (price, stock, "fark yok").
 5. **Stock history:** full content width; **last 14 days and last 1 month side by side** in the same block [DECIDED], per seller (by rank + seller bought from), key (incl. "no data"), "at least" durations, dated change log.

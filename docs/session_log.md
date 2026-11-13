@@ -4,6 +4,13 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-13 (evening) · claude.ai
+- **Done:** core rules 1–10 (#5); Stage 0 plan (#4); decisions + contradiction fixes (#6–#11, by Claude Code); design-side fixes (this PR): canonical component list in `pagedesign.md` §5, purpose-specific image privacy note (24 h vs 30 days), Packages API names, History Explorer setting key, "no short codes in chat" in core rule 2.
+- **Open:** `design/` PNG exports (before Stage 4) · Stage 2 questions: does a deal that ends because the price rose count as a missed deal? · threshold and recency window for "Aradığın ürün ucuzladı" · `implementation_plan.md` still uses old component names (Claude Code to align).
+- **Next:** refresh claude.ai project mirrors → SerpApi key in local `.env` → Stage 1 data test (needs the user's explicit "başla").
+
+---
+
 ## 2026-11-13 · claude.ai
 - **Done:** repository set up as the single source; `docs/` (10 specs), `CLAUDE.md`, PR template imported (PR #1, `141dd66`). Project docs in claude.ai are now read-only mirrors of `main`.
 - **Done:** `screen_status.md` gained "Design version" (all v1) and "Change note" columns; `build_status.md` added (owned by Claude Code).
