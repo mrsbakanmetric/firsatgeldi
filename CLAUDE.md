@@ -8,6 +8,13 @@ On conflict, `docs/` wins; precedence is in `docs/architecture.md`.
 - `design/<NN-screen>/` — approved screens (PNG boards, light and dark).
 - `docs/screen_status.md` — design status + design version per screen (design side owns it).
 - `docs/build_status.md` — implementation status + implemented design version (you own it).
+- `docs/session_log.md` — shared memory across sessions (Claude Code and claude.ai).
+
+## Session memory
+- **Start of every session:** read `docs/session_log.md` (latest entries first) before anything else.
+- **End of every session:** add one entry at the top of `docs/session_log.md` — date, side (Claude Code / claude.ai), what was done, PRs, open questions, next step. Put it in that session's PR; if the session made no PR, open a `chore/session-log-<date>` PR for it.
+- Keep entries short (≤ 10 lines). Decisions never live only here: they go into the relevant doc in `docs/`.
+- Auto memory (`~/.claude/projects/…/memory/`) is machine-local and may hold small learned notes; anything the other side must know goes into `docs/session_log.md`.
 
 ## Read first
 | Need | Doc |
