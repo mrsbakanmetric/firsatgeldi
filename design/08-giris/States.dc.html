@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Giriş durumlar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes fgspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.fg-spin{animation:none!important}}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1800px; box-sizing: border-box; padding: var(--s8) 40px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6); align-content: start; background: var(--background); color: var(--text); font-family: var(--font)">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="8">
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">{{c.label}}</span>
+<div style="display: flex; flex-direction: column; gap: var(--s4); min-height: 340px; padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-xl); background: var(--surface); box-shadow: var(--sh-md)">
+<div role="alert" style="{{c.bannerStyle}}"><span style="display: flex; padding-top: 2px; flex: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{c.icon}}"/></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 700">{{c.title}}</strong><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)">{{c.body}}</span></span></div>
+<sc-if value="{{c.form}}" hint-placeholder-val="{{ true }}">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">E-posta<input type="email" value="serkan@ornek.com" disabled="{{c.lock}}" style="{{c.inputStyle}}"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Şifre<input type="password" value="••••••••" disabled="{{c.lock}}" aria-invalid="{{c.invalid}}" style="{{c.pwStyle}}"></label>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: var(--s2); margin-top: auto">
+<button type="button" aria-disabled="{{c.primaryDisabled}}" style="{{c.primaryStyle}}"><sc-if value="{{c.spin}}" hint-placeholder-val="{{ false }}"><span class="fg-spin" aria-hidden="true" style="width: 18px; height: 18px; box-sizing: border-box; border-radius: var(--r-pill); border: 2px solid currentColor; border-right-color: transparent; animation: fgspin .8s linear infinite"></span></sc-if>{{c.primary}}</button>
+<sc-if value="{{c.hasSecondary}}" hint-placeholder-val="{{ true }}"><a href="#" style="display: flex; align-items: center; justify-content: center; height: 44px; border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">{{c.secondary}}</a></sc-if>
+</div>
+</div>
+</section>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1800}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","danger-subtle":"#FEE2E2","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","danger-subtle":"#3B1416","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-md":"0 4px 12px rgba(11,31,51,0.08)","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const I = { err: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8v5M12 16h.01', clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2', mail: 'M4 4h16v16H4zM4 6l8 7 8-7', info: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 11v5M12 8h.01', lock: 'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4', link: 'M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7' };
+    const tone = { d: 'background:var(--danger-subtle);color:var(--text)', w: 'background:var(--warning-subtle);color:var(--on-warning-subtle)', i: 'background:var(--info-subtle);color:var(--text)', n: 'background:var(--surface-alt);color:var(--text)' };
+    const btn = (on) => 'display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border:0;border-radius:10px;font:inherit;font-size:16px;font-weight:600;' + (on ? 'background:var(--primary);color:var(--on-primary)' : 'background:var(--border);color:var(--text-muted)');
+    const inp = (bad, lock) => 'height:48px;padding:0 12px;box-sizing:border-box;border-radius:10px;font:inherit;font-size:16px;font-weight:500;color:var(--text);' + (lock ? 'background:var(--surface-alt);' : 'background:var(--surface);') + (bad ? 'border:2px solid var(--danger)' : 'border:1px solid var(--border)');
+    const list = [
+      { label: '1 · YANLIŞ E-POSTA YA DA ŞİFRE', t: 'd', icon: 'err', title: 'E-posta ya da şifre hatalı', body: 'Hangisinin yanlış olduğunu güvenliğin için söylemiyoruz. 4 deneme hakkın kaldı.', form: true, invalid: true, primary: 'Giriş yap', on: true, secondary: 'Şifremi unuttum' },
+      { label: '2 · ÇOK DENEME · giriş geçici olarak durdu', t: 'w', icon: 'clock', title: 'Girişi 15 dakika durdurduk', body: 'Bu hesap için çok fazla hatalı deneme oldu. 14:32 sonra yeniden deneyebilir ya da şifreni sıfırlayabilirsin.', form: true, lock: true, primary: 'Tekrar dene · 14:32', on: false, secondary: 'Şifremi sıfırla' },
+      { label: '3 · E-POSTA DOĞRULANMADI', t: 'i', icon: 'mail', title: 'Önce e-postanı doğrula', body: 's***@o***.com adresine gönderdiğimiz bağlantıya tıkla. Doğrulayınca kaldığın yerden devam edersin.', form: false, primary: 'Bağlantıyı tekrar gönder', on: true, secondary: 'Başka bir e-posta kullan' },
+      { label: '4 · BU E-POSTA GOOGLE İLE KAYITLI', t: 'n', icon: 'link', title: 'Bu hesap Google ile açılmış', body: 'Bu e-postanın şifresi yok. Google ile devam et; istersen sonra Ayarlar › Güvenlik\'ten şifre ekleyebilirsin.', form: false, primary: 'Google ile devam et', on: true, secondary: 'Girişe dön' },
+      { label: '5 · HESAP SİLİNMEK ÜZERE · 30 gün içinde', t: 'w', icon: 'info', title: 'Hesabın 3 Aralık\'ta kalıcı olarak silinecek', body: 'Silme isteğini 3 Kasım\'da verdin. Giriş yaparsan hesabın, takiplerin ve kazanç kayıtların geri gelir.', form: false, primary: 'Hesabımı geri aç', on: true, secondary: 'Vazgeç, silinsin' },
+      { label: '6 · HESAP ASKIDA', t: 'd', icon: 'lock', title: 'Hesabın askıya alındı', body: 'Neden: kullanım koşullarına aykırı çoklu hesap. Bunun bir hata olduğunu düşünüyorsan bize yaz.', form: false, primary: 'Destek talebi aç', on: true, secondary: 'Kullanım koşullarını oku' },
+      { label: '7 · HATA · servis yanıt vermiyor', t: 'd', icon: 'err', title: 'Şu an giriş yapılamıyor', body: 'Bizden kaynaklı bir sorun var; bilgilerin güvende. Birkaç dakika sonra tekrar dene.', form: true, primary: 'Tekrar dene', on: true, secondary: '' },
+      { label: '8 · YÜKLENİYOR · giriş yapılıyor', t: 'n', icon: 'clock', title: 'Giriş yapılıyor', body: 'Birkaç saniye sürebilir; sayfadan çıkma.', form: true, lock: true, primary: 'Giriş yapılıyor', on: false, spin: true, secondary: '' }
+    ];
+    const cards = list.map(x => ({ label: x.label, title: x.title, body: x.body, icon: I[x.icon], form: !!x.form, lock: !!x.lock, invalid: x.invalid ? 'true' : 'false',
+      bannerStyle: 'display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-radius:10px;' + tone[x.t],
+      inputStyle: inp(false, x.lock), pwStyle: inp(!!x.invalid, x.lock),
+      primary: x.primary, primaryStyle: btn(x.on), primaryDisabled: x.on ? 'false' : 'true', spin: !!x.spin,
+      secondary: x.secondary, hasSecondary: !!x.secondary }));
+    return { rootStyle: s, cards };
+  }
+}
+</script>
+</body>
+</html>
