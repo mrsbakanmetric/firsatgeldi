@@ -514,6 +514,9 @@ Client ──(3) POST /uploads/complete {batchId}──▶ API ──▶ queue: 
 | Tracking ending | `TRACKING_EXPIRING` |
 | Saving recorded | `SAVING_RECORDED` |
 | Price rose after reveal | `REVEAL_PRICE_UP` |
+| Open deal ends: no cheaper offer remains (seller raised the price); the earlier deal notification is dimmed | `DEAL_ENDED` |
+| Cheapest price of a recent search dropped (search not hidden, product not tracked; lowest priority, counts toward the daily cap) | `SEARCHED_PRODUCT_DROP` |
+| Digest time slot reached for a user on the daily digest (job `digest`) | `DIGEST` |
 | Report resolved | `REPORT_RESOLVED` |
 | Package request outcome | `PACKAGE_REQUEST_RESULT` |
 | Support reply | `SUPPORT_REPLY` |
@@ -658,7 +661,7 @@ POST  /tracked-items/:id/end           # { method, refundForm?, reboughtPrice? }
 POST  /tracked-items/:id/extend
 POST  /tracked-items/:id/bought
 GET   /tracked-items/:id/offers
-GET   /tracked-items/:id/price-history?range=14d|1m|3m|6m|1y
+GET   /tracked-items/:id/price-history?range=14d|1m|3m|6m|1y|2y|all
 GET   /tracked-items/:id/stock-history?range=
 GET   /tracked-items/:id/calendar.ics
 GET   /tracked-items/:id/price-difference-message?locale=
@@ -715,8 +718,6 @@ POST|DELETE /blocks/:userId
 GET  /users/:username · GET /discover?tab=&q=&category=
 POST /link-submissions · GET /me/link-submissions
 PUT  /me/community-consents
-PUT  /me/community-consent
-POST /link-submissions
 ```
 
 ### ADMIN (permission-keyed; Application Manager holds all)

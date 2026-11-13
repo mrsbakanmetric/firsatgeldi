@@ -246,7 +246,7 @@ These rules apply to every screen and are not repeated in each module.
 - [OPEN] Should more expensive sellers be shown by name? (spec §17-7)
 
 ### API
-`GET /search/autocomplete` · `POST /uploads` · `POST /identify` · `POST /identify/:requestId/answer` · `GET /products/:id` · `GET /products/:id/similar` · `GET /products/:id/confirm-context` · `POST /products/:id/seller-lookup` · `POST /products/:id/teaser` · `POST /tracked-items`
+`GET /search/autocomplete` · `POST /uploads/presign` · `POST /uploads/complete` · `GET /uploads/:id` · `POST /identify` · `POST /identify/:requestId/answer` · `GET /products/:id` · `GET /products/:id/similar` · `GET /products/:id/confirm-context` · `POST /products/:id/seller-lookup` · `POST /products/:id/teaser` · `POST /tracked-items`
 
 ---
 
@@ -447,7 +447,7 @@ These rules apply to every screen and are not repeated in each module.
 - **Return rule table [DECIDED 2026-11-12]:** filled automatically from each platform's return-policy page (Return Rules); unreadable platforms use the labelled default (14 days from delivery).
 
 ### API
-`GET /platforms/:id/return-policy` · `PATCH /tracked-items/:id`
+`GET /products/:id/confirm-context` (return suggestion at confirm) · `GET /tracked-items/:id` (rule, last day, source and read time) · `PATCH /tracked-items/:id` · `POST /tracked-items/:id/delivered` · `PATCH /tracked-items/:id/request` · `GET /tracked-items/:id/calendar.ics` · `GET /help/stores` (store rules, public)
 
 ---
 
@@ -768,7 +768,7 @@ All editable from a **dedicated admin screen** (Package Settings and Requests).
 - **Monthly allowance [ASSUMPTION]:** the free Göster allowance resets at the start of each month and does not roll over; **tokens do not expire [ASSUMPTION]**.
 
 ### API
-`GET /me/plan` · `GET /me/reveals?period=&q=&category=&group=product` · `GET /me/token-ledger` · `POST /package-requests` · `GET /package-requests`
+`GET /me/entitlements` · `GET /plans` · `GET /me/reveals?period=&q=&category=&group=product|event` · `GET /me/token-ledger` · `POST /package-requests` · `GET /package-requests/mine`
 
 ### Open questions
 - [DECIDE LATER] Premium and token prices (with no price set, the request screen shows no price); tiered token pricing; online payment provider.
