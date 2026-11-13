@@ -30,7 +30,7 @@ The user opens and closes sessions with "session aç" and "session kapat" on **b
 
 **claude.ai — "session kapat":**
 1. List what was done in this session (design changes, PRs, decisions taken by the user, open questions).
-2. Design changes → `design-change` PR (PNGs + design version + change note in `screen_status.md`); decisions → `spec` PR updating all affected docs together.
+2. Design changes → `design-change` PR (updated canvas HTML in `design/`, PNG optional, + design version + change note in `screen_status.md`); decisions → `spec` PR updating all affected docs together.
 3. Add one entry at the top of `session_log.md` (side: claude.ai) in that PR, or in `chore/session-log-<date>`.
 4. Refresh the claude.ai project mirrors after the user merges.
 5. Reply with the three-table report (PRs to merge with links); stop.

@@ -17,7 +17,7 @@ On conflict, `docs/` wins; precedence is in `docs/architecture.md`.
 
 ## Source of truth
 - `docs/` — specs (English). Read the relevant doc before any work; never work from memory.
-- `design/<NN-screen>/` — approved screens (PNG boards, light and dark).
+- `design/<NN-screen>/` — approved screens as the exported HTML of their claude.ai canvases (PNG images optional) [DECIDED 2026-11-13]. Design reference only: build from tokens and canonical components; never copy its markup or styles into code.
 - `docs/screen_status.md` — design status + design version per screen (design side owns it).
 - `docs/build_status.md` — implementation status + implemented design version (you own it).
 - `docs/session_log.md` — shared memory across sessions (Claude Code and claude.ai).
@@ -46,7 +46,7 @@ Three sections, each a table, separated by a horizontal rule (`---`). Rows newes
 ## 🟡 Açık işler
 | Tarih | Konu | Ne bekleniyor | Kimden | PR |
 |---|---|---|---|---|
-| 2026-11-13 | … | Karar / PNG / inceleme | Kullanıcı / Claude Code | — |
+| 2026-11-13 | … | Karar / tasarım / inceleme | Kullanıcı / Claude Code | — |
 
 ---
 
@@ -126,7 +126,7 @@ Three phases; steps, done-when conditions, PR names and the reason for each phas
 
 **Phase 1 — system setup + approved screens with sample data (current):** screens run in the browser, built with real, permanent code; **no database, no real API, no live data**.
 - Steps: plan update (no code) → monorepo skeleton (one-command start) → basic CI (lint, typecheck, unit) → tokens → theme (CSS variables / Tailwind, light/dark) → i18n (tr/en) → app shell (`AppShell`, `AuthShell`, `AdminShell`, page templates, base components) → mock API + fixtures → every approved (✅) screen, one by one, in the screen order below → Phase 1 closing check.
-- **Screen PNGs arrive screen by screen:** before each screen step, that screen's PNGs are in `design/` and its row is ✅ in `docs/screen_status.md`; before the app shell, the "0 İskelet ve Bileşenler" PNGs (core rule 8). Without them the step waits.
+- **Screen designs arrive screen by screen (as HTML):** before each screen step, that screen's canvas HTML is in `design/` and its row is ✅ in `docs/screen_status.md`; before the app shell, the "0 İskelet ve Bileşenler" canvas HTML (core rule 8). Without it the step waits.
 - **App shell precondition:** the base primitives (Button, TextField, Switch, Select, Menu, Avatar …) are added to the canonical component list (`docs/pagedesign.md` §5 + `docs/product_design_pattern.md`) by the design side (claude.ai) before the shell step.
 - **Mock API:** runs in the browser (dev and test only), request/response shapes exactly as the API contract in `docs/architecture.md` §16 and the Zod schemas in `packages/contracts`; screens call it through the same typed client the real API will use. Switching to the real API turns the mock off; screen code does not change.
 - **Fixtures:** match the data drawn in the approved designs; **the hidden-seller rule applies** (no seller or platform identity in any response before "Göster"); tr/en, light/dark, phone/desktop; personal data masked.

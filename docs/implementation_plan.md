@@ -39,7 +39,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | # | Step | Delivers | Status | PR | Date |
 |---|---|---|---|---|---|
 | 1 | Plan update | This three-phase plan (no code) | ✅ | #16 | 2026-11-13 |
-| 2 | Screen PNGs before each screen | Rule step: before each screen step, that screen's PNGs are in `design/`; before step 8, the "0 İskelet ve Bileşenler" PNGs | ⬜ (recurring) | — | — |
+| 2 | Screen designs before each screen | Rule step: before each screen step, that screen's canvas HTML is in `design/`; before step 8, the "0 İskelet ve Bileşenler" canvas HTML | ⬜ (recurring) | — | — |
 | 3 | Monorepo skeleton | Building empty workspace; one command starts the web app | ✅ | #20 | 2026-11-13 |
 | 4 | Basic CI | Lint, typecheck and unit tests on every PR | ✅ | #21 | 2026-11-13 |
 | 5 | Tokens | `design-tokens.json` in code + platform-neutral JSON; contrast test | ✅ | #22 | 2026-11-13 |
@@ -124,9 +124,9 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 - **Done when:** the user merges it.
 - **PR:** `spec/phase-a-plan`.
 
-### Step 2 — Screen PNGs before each screen (recurring rule)
-- **Content:** PNGs arrive **screen by screen**, from the design side (claude.ai / the user) in a `design-change` PR into `design/<NN-screen>/png/` (light and dark). Before step 8: `design/00-iskelet/`. Before each screen step: that screen's folder.
-- **Done when:** for the next step, its PNGs are on `main` and its row in `screen_status.md` is ✅. Otherwise the step is ⏸ and work stops (core rule 8).
+### Step 2 — Screen designs before each screen (recurring rule)
+- **Content:** designs arrive **screen by screen** as the exported HTML of the claude.ai canvas (PNG optional), from the design side (claude.ai) in a `design-change` PR into `design/<NN-screen>/` (see `design/README.md`). Before step 8: `design/00-iskelet/`. Before each screen step: that screen's folder.
+- **Done when:** for the next step, its canvas HTML is on `main` and its row in `screen_status.md` is ✅. Otherwise the step is ⏸ and work stops (core rule 8).
 - **PR:** design side, not Claude Code.
 
 ### Step 3 — Monorepo skeleton
@@ -156,10 +156,10 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 
 ### Step 8 — App shell
 - **Preconditions (both required):**
-  1. "0 İskelet ve Bileşenler" PNGs in `design/00-iskelet/` (step 2).
+  1. "0 İskelet ve Bileşenler" canvas HTML in `design/00-iskelet/` (step 2).
   2. **Base primitives** (Button, TextField, Switch, Select, Checkbox, Menu, Tooltip, Avatar, Icon …) added to the canonical component list (`pagedesign.md` §5) and `product_design_pattern.md` **by the design side (claude.ai)**, merged on `main`.
 - **Content:** `AppShell` (signed-in and guest, bell and profile menu, footer, bottom tab bar below the breakpoint), `AuthShell`, `AdminShell` (header only; the sub-navigation is [RECOMMENDED] and waits for the Application Manager review), the five page templates (List, Detail, Flow, Summary, Settings), `Dialog`, `Sheet`, `SkeletonBlock`, `StatusBanner`, `EmptyState`, `StepIndicator`, `SegmentedChoice`, and the base primitives from precondition 2. Main navigation routes render the shell with an empty template. A development-only shell preview page [PROPOSAL] shows templates and components; excluded from production builds.
-- **Done when:** matches the PNGs; works in tr/en, light/dark, 390 and 1280 width; keyboard navigation and focus handling work; automated accessibility check finds no violation; no hard-coded value.
+- **Done when:** matches the approved design; works in tr/en, light/dark, 390 and 1280 width; keyboard navigation and focus handling work; automated accessibility check finds no violation; no hard-coded value.
 - **PR:** `feat/web-shell`.
 
 ### Step 9 — Mock API and fixtures
@@ -168,7 +168,7 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 - **PR:** `feat/mock-api`.
 
 ### Steps 10–21 — Screens
-- **Precondition:** the screen's PNGs in `design/<NN-screen>/` and ✅ in `screen_status.md` (step 2).
+- **Precondition:** the screen's canvas HTML in `design/<NN-screen>/` and ✅ in `screen_status.md` (step 2).
 - **Content:** the screen exactly as designed, built only from canonical components (§8), on mock data, through the same typed client the real API will use. Want to Buy mode is built with Product Detail.
 - **Done when (Phase 1 definition of done):**
   - Every string from the i18n catalogue; tests in `tr` and `en`, long strings included.
@@ -210,7 +210,7 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 
 ## 5. Sample data (fixtures) rules
 
-1. **From the designs:** products, prices, dates and texts as drawn in the approved PNGs.
+1. **From the designs:** products, prices, dates and texts as drawn in the approved designs.
 2. **Hidden-seller rule:** no seller name, rating, platform or link of a cheaper seller before "Göster" — in any response, list, preview or notification. Sellers are referred to by rank ("en ucuz satıcı", "2. ucuz satıcı"). The user's own seller is shown.
 3. **Turkish and English:** every fixture text exists in both; long strings included to test layout.
 4. **Light and dark, phone and desktop:** fixtures are checked in all four combinations.
@@ -224,7 +224,7 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 
 **The app shell opening on `localhost`:** steps 3 → 8, each its own PR, with a stop for approval after each.
 
-Step 8 needs its two preconditions (shell PNGs, base primitives in the component list). If they are not on `main` yet, the day ends at step 7: a bilingual, themed, empty app on `localhost`.
+Step 8 needs its two preconditions (shell design HTML, base primitives in the component list). If they are not on `main` yet, the day ends at step 7: a bilingual, themed, empty app on `localhost`.
 
 ---
 
@@ -241,7 +241,7 @@ Build order and scope follow `modules.md` Appendix A and `architecture.md` §25,
 | 27 | Worker jobs | `apps/worker`: queues, idempotent job base, schedule tick, price engine (discovery, site search, merge, verify, deal evaluation), notifications (console e-mail sink), activity ingest | Jobs retried without duplicate rows | `feat/worker-core` |
 | 28 | Security tests in CI | Integration services in CI; hidden-seller leak test (endpoints, SEO pages, notifications), personal-data leak test, data-isolation test, permission-matrix test (`architecture.md` §24) | All required on `main` | `chore/ci-security` |
 | 29–39 | Connect each screen | Per screen: its endpoints and worker jobs (Appendix B), logging of every action, mock switched off for the screen; same order as Phase 1, Sign-in and Sign-up last | `engineering_checklist.md` passes in full; `build_status.md` row ✅ | `feat/<module>-api` |
-| 40 | Application Manager screens | 18 modules on mock data, after the design review is approved and PNGs are in `design/12a…12e` | Same as Phase 1 screens | `feat/admin-<group>` |
+| 40 | Application Manager screens | 18 modules on mock data, after the design review is approved and the canvas HTML is in `design/12a…12e` | Same as Phase 1 screens | `feat/admin-<group>` |
 | 41 | Connect Application Manager screens | Admin endpoints, audit of every view and action | `engineering_checklist.md` › Admin Panel passes | `feat/admin-<group>-api` |
 | 42 | Connect Discover and Profile | Community endpoints and jobs (Appendix B) | `engineering_checklist.md` passes | `feat/discover-profile-api` |
 | 43 | Deploy pipeline | Environments `dev` → `staging` → `prod`, backups and tested restore (`architecture.md` §24) | After the hosting provider is chosen | `chore/deploy` |
