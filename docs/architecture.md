@@ -774,7 +774,7 @@ GET|POST       /admin/link-submissions (later slice)
 - **Two roles:** `APP_MANAGER` (Application Manager) and `USER`. Guest is not a role and has no data representation: guest-reachable endpoints are an **explicit public allow-list in the API** [DECIDED 2026-11-13].
 - Built as data: `roles`, `permissions`, `role_permissions`, `user_roles`. Code checks **permission keys**; new roles (support, moderator…) are added as data only.
 - The **Application Manager** holds every permission and **sees and manages everything on web and mobile**; the role cannot be deleted; at least one always remains.
-- **Page and action authorisation:** every screen and endpoint is bound to a permission key (`modules.md` access matrix; catalogue in `database.md` §4 [DECIDED 2026-11-13]). Web: Next.js middleware + server component checks; mobile calls the same API; **the final decision is always in the API**.
+- **Page and action authorisation:** every screen and endpoint is bound to a permission key (`modules.md` access matrix; catalogue in `database.md` §4 [DECIDED 2026-11-13]). Web: Next.js proxy (middleware) + server component checks; mobile calls the same API; **the final decision is always in the API**.
 - **User data:** service ownership check + PostgreSQL RLS (`app.user_id`); the Application Manager reads through a separate DB role (`app_admin`), every access audited.
 - **View-as-user** [RECOMMENDED]: read-only via `admin_view_sessions`; write endpoints closed in that session.
 
@@ -819,14 +819,30 @@ activity_events / reports / link_submissions / package_requests / uploads
 
 ## 19. Internationalisation (i18n)
 
-- `tr` (default), `en` [DECIDED]. URLs `/tr/...`, `/en/...`; path segments translated (`/tr/takip` ↔ `/en/tracking`).
-- **Locale resolution [DECIDED]**, first match wins: (1) locale in the URL → (2) signed-in user's `users.locale` → (3) `fg_locale` cookie (guests) → (4) `Accept-Language` (`tr*` → `tr`, `en*` → `en`, anything else → `tr`) → (5) `i18n.default_locale` (`tr`). The root `/` redirects to the resolved locale. A guest's choice is stored in `fg_locale` and copied to `users.locale` at sign-up; changing the language in Settings updates both. Implemented in Next.js middleware; the API reads the same order from `Accept-Language` + session.
+- `tr` (default), `en` [DECIDED]. URLs `/tr/...`, `/en/...`; path segments translated (`/tr/takip` ↔ `/en/tracking`). Pages live under the Turkish folder names (§21.1); dynamic parts (`[id]`, `[slug]`, `[username]`) are never translated. A segment written in another language's form redirects permanently to the current language's form (`/en/takip` → `/en/tracking`).
+- **English path segments [DECIDED 2026-11-13]** (source in code: `packages/i18n` › `PATH_SEGMENTS`):
+
+  | tr | en | tr | en | tr | en |
+  |---|---|---|---|---|---|
+  | `ara` | `search` | `profil` | `profile` | `cerezler` | `cookies` |
+  | `takip` | `tracking` | `u` | `u` | `komisyon` | `commission` |
+  | `bildirimler` | `notifications` | `urun` | `product` | `giris` | `sign-in` |
+  | `kazancim` | `savings` | `yardim` | `help` | `sifre-sifirla` | `reset-password` |
+  | `paketim` | `plan` | `iletisim` | `contact` | `dogrula` | `verify` |
+  | `ayarlar` | `settings` | `kvkk` | `privacy` | `admin` | `admin` |
+  | `kesfet` | `discover` | `kosullar` | `terms` | `gecmis` · `suistimal` · `roller` | `history` · `fraud` · `roles` |
+
+  Settings section names (`/ayarlar/{section}`) and the other Application Manager routes are added with their screens.
+- **Locale resolution [DECIDED]**, first match wins: (1) locale in the URL → (2) signed-in user's `users.locale` → (3) `fg_locale` cookie (guests) → (4) `Accept-Language` **in q-value order: the first entry whose primary language is supported wins** (`tr*` → `tr`, `en*` → `en`; e.g. `de, en;q=0.8` → `en`); no supported entry → `tr` [DECIDED 2026-11-13] → (5) `i18n.default_locale` (`tr`). The root `/` redirects to the resolved locale. A guest's choice is stored in `fg_locale` (only an explicit choice writes it; opening an `/en` link does not) and copied to `users.locale` at sign-up; changing the language in Settings updates both. Implemented in the Next.js proxy (Next 16's name for middleware) with the pure `resolveLocale()` in `packages/core`; the API reads the same order from `Accept-Language` + session.
 - **Supported locales are data:** `i18n.locales` / `i18n.default_locale` (`database.md` §18). Translatable admin data is stored as locale-keyed `jsonb` (`tr` and `en` required); adding a language needs a setting change, translation files and translations of admin data — no schema change.
 - Notifications and searches record the `locale` used (`notifications.locale`, `search_events.locale`).
 - **UI texts:** file-based catalogue (`packages/i18n`), typed keys, a missing key breaks the build; shared by web and mobile.
 - **Exception [DECIDED]:** **notification/email templates and legal/help content live in the DB, versioned**, edited in the panel; TR and EN required for each. TR is legally binding for legal texts.
 - Store data is not translated; category/attribute names via template translations.
-- Formats via `Intl`; LLM output in the user's language.
+- Formats via `Intl` (`packages/core`); LLM output in the user's language.
+- **Money format [DECIDED 2026-11-13]:** Turkish `25.997 TL`, English `TL 25,997`; decimals only when the amount has a fraction (`25.997,50 TL` / `TL 25,997.50`); the label is "TL", never "₺".
+- **Time zone [DECIDED 2026-11-13]:** dates and times are shown in `Europe/Istanbul` by default (server and browser render the same value); a caller may pass another zone.
+- **Relative times [DECIDED 2026-11-13]** ("2 dk önce kontrol edildi") come from catalogue plural messages, worded as in the design, not from `Intl.RelativeTimeFormat`.
 
 ---
 

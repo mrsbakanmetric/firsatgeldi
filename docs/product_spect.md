@@ -127,9 +127,9 @@ Rules:
 
 ### 3.2 Multi-language (i18n) [DECIDED]
 - Languages: **Turkish (default)** and **English**; a new language is added through translation files, the supported-locales setting and translations of admin data — no database schema change.
-- **Automatic detection [DECIDED]:** URL locale → signed-in user's saved language → guest cookie → browser language (`tr*` → TR, `en*` → EN, anything else → TR) → TR. Changeable in settings; saved to the account; a guest's choice carries over at sign-up.
+- **Automatic detection [DECIDED]:** URL locale → signed-in user's saved language → guest cookie → browser language in its order of preference (first supported language wins; none supported → TR) → TR. Changeable in settings; saved to the account; a guest's choice carries over at sign-up.
 - **Everything the user reads switches:** screens, errors, empty states, notifications, emails, onboarding, legal texts, help and return-guide texts.
-- Locale formats switch: dates, times, numbers, currency (`25.999,00 TL` vs `TL 25,999.00`), relative times.
+- Locale formats switch: dates, times, numbers, currency (`25.997 TL` vs `TL 25,997`; decimals only when the amount has a fraction), relative times. Times are shown in Türkiye time (`Europe/Istanbul`) by default (`architecture.md` §19).
 - **Store data is not translated** (product titles, seller names); category and attribute labels translated through templates.
 - LLM outputs in the user's language. Layouts tolerate longer strings. Language-aware URLs (`/tr/…`, `/en/…`).
 
