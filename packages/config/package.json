@@ -8,19 +8,25 @@
     "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
     "./eslint/base": "./eslint/base.mjs",
     "./eslint/framework-free": "./eslint/framework-free.mjs",
-    "./eslint/next": "./eslint/next.mjs"
+    "./eslint/next": "./eslint/next.mjs",
+    "./eslint/hard-coded-values": "./eslint/hard-coded-values.mjs",
+    "./stylelint": "./stylelint/config.mjs"
   },
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run"
   },
   "dependencies": {
     "@eslint/js": "catalog:",
     "eslint-config-next": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
     "typescript-eslint": "catalog:"
   },
   "devDependencies": {
     "eslint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "tailwindcss": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "eslint": "*",
