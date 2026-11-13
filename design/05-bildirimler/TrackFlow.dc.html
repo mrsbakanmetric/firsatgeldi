@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Takip et penceresi 2. adım</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+input::placeholder{color:var(--text-muted)}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="position: relative; width: 1280px; height: 1100px; overflow: hidden; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<div aria-hidden="true" style="height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border)"></div>
+<div aria-hidden="true" style="max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--s6)">
+<div style="display: flex; flex-direction: column; gap: var(--s4)"><span style="font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Bildirimler</span><div style="height: 120px; border-radius: var(--r-lg); background: var(--surface)"></div><div style="height: 360px; border-radius: var(--r-lg); background: var(--surface)"></div></div>
+<div style="height: 520px; border-radius: var(--r-lg); background: var(--surface)"></div>
+</div>
+<div style="position: absolute; inset: 0; background: var(--overlay)"></div>
+
+<div role="dialog" aria-modal="true" aria-labelledby="tk-baslik" style="position: absolute; top: 48px; left: 50%; transform: translateX(-50%); width: var(--modal-w); height: 1000px; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) var(--modal-aside-w); border-radius: var(--r-xl); background: var(--surface); box-shadow: var(--sh-lg); overflow: hidden">
+
+<div style="display: flex; flex-direction: column; min-height: 0">
+<div style="display: flex; align-items: center; gap: var(--s4); padding: var(--s6) var(--s6) var(--s4)">
+<span style="width: 48px; height: 48px; flex: none; border-radius: var(--r-lg); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<h2 id="tk-baslik" style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700">Takip et</h2>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Bildirimden geldin; ürün seçili. Durumunu söyle, gerisini biz izleyelim.</span>
+</div>
+<ol aria-label="Adımlar" style="display: flex; align-items: center; gap: var(--s2); margin: 0; padding: 0; list-style: none; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600">
+<li style="display: flex; align-items: center; gap: 6px; color: var(--text-muted)"><span style="width: 22px; height: 22px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>Ürün</li>
+<li aria-hidden="true" style="width: 20px; height: 1px; background: var(--border)"></li>
+<li aria-current="step" style="display: flex; align-items: center; gap: 6px; color: var(--text)"><span style="width: 22px; height: 22px; border-radius: var(--r-pill); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center">2</span>Durumun</li>
+</ol>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(--s6) var(--s6); display: flex; flex-direction: column; gap: var(--s5)">
+
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: var(--s3)">
+<legend style="padding: 0; margin-bottom: var(--s3); font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Bu ürünle durumun ne?</legend>
+<div role="radiogroup" aria-label="Takip türü" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4)">
+<sc-for list="{{modes}}" as="m" hint-placeholder-count="2">
+<button type="button" role="radio" aria-checked="{{m.checked}}" onClick="{{m.pick}}" style="{{m.style}}">
+<span style="{{m.iconStyle}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.icon}}"/></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px; text-align: left"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 700">{{m.title}}</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{m.desc}}</span></span>
+</button>
+</sc-for>
+</div>
+</fieldset>
+
+<sc-if value="{{isBought}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: var(--s4)">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4)">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Nereden aldın?<select style="height: 48px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body); font-weight: 500"><option>Hepsiburada</option><option>Trendyol</option><option>Amazon</option><option>n11</option><option>Diğer</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Satıcının adı<input value="{{seller}}" onInput="{{onSeller}}" placeholder="Siparişinde yazan satıcı" style="{{sellerStyle}}"><span style="{{sellerHintStyle}}">{{sellerHint}}</span></label>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4)">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Ödediğin fiyat<span style="display: flex; align-items: center; height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 2px solid var(--primary); border-radius: var(--r-md); background: var(--surface)"><input inputmode="decimal" value="{{price}}" onInput="{{onPrice}}" placeholder="Örn. 19.999" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-body); font-weight: 600; color: var(--text); outline: none"><span style="color: var(--text-muted); font-weight: 600">TL</span></span><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Kupon ve sepet indirimi sonrası ödediğin tutar</span></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Sipariş tarihi<input type="date" value="2026-11-10" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body)"></label>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: var(--fs-bsm); font-weight: 600">Sipariş durumu</span>
+<div role="radiogroup" aria-label="Sipariş durumu" style="display: flex; gap: var(--s2)"><sc-for list="{{statuses}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.v}}</button></sc-for></div>
+<span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Önerilen son iade günü: teslimden 14 gün sonra · değiştirebilirsin</span>
+</div>
+<sc-if value="{{hasTeaser}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: center; gap: var(--s4); padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface-alt)">
+<span style="display: inline-flex; align-items: center; height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); font-size: var(--fs-cap); font-weight: 700; white-space: nowrap">Fırsat geldi</span>
+<span style="flex: 1; font-size: var(--fs-bsm); line-height: var(--lh-bsm)"><strong style="font-weight: 700">{{teaser}}</strong><br><span style="color: var(--text-muted)">Satıcı gizli · fiyat 12.10'da kontrol edildi</span></span>
+<button type="button" style="display: inline-flex; align-items: center; gap: 6px; height: var(--touch); padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"/></svg>Göster</button>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isWant}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: var(--s4)">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Hedef fiyat <span style="font-weight: 500; color: var(--text-muted)">(isteğe bağlı)</span><span style="display: flex; align-items: center; height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 2px solid var(--primary); border-radius: var(--r-md); background: var(--surface)"><input inputmode="decimal" value="{{target}}" onInput="{{onTarget}}" placeholder="Bu fiyata düşünce haber ver" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-body); font-weight: 600; color: var(--text); outline: none"><span style="color: var(--text-muted); font-weight: 600">TL</span></span></label>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2)"><sc-for list="{{chips}}" as="ch" hint-placeholder-count="2"><button type="button" onClick="{{ch.pick}}" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-cap); font-weight: 600; cursor: pointer">{{ch.t}}</button></sc-for></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: var(--fs-bsm); font-weight: 600">Ne kadar takip edelim?</span>
+<div role="radiogroup" aria-label="Takip süresi" style="display: flex; gap: var(--s2)"><sc-for list="{{durations}}" as="o" hint-placeholder-count="4"><button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.v}}</button></sc-for></div>
+<span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Süre bitmeden 3 gün önce uzatmak isteyip istemediğini sorarız.</span>
+</div>
+<span style="padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--surface-alt); font-size: var(--fs-bsm); line-height: var(--lh-bsm)">{{wantNote}}</span>
+</div>
+</sc-if>
+
+</div>
+
+<div style="display: flex; align-items: center; padding: var(--s4) var(--s6); border-top: 1px solid var(--divider)">
+<a href="#" style="display: inline-flex; align-items: center; gap: 6px; min-height: var(--touch); font-size: var(--fs-bsm); font-weight: 600; color: var(--primary); text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Başka bir ürün seç</a>
+</div>
+</div>
+
+<aside aria-label="Takip edilecek ürün" style="position: relative; display: flex; flex-direction: column; min-height: 0; background: var(--surface-alt); border-left: 1px solid var(--border)">
+<button type="button" aria-label="Kapat" style="position: absolute; top: 16px; right: 16px; z-index: 1; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+<div style="flex: 1; min-height: 0; overflow-y: auto; padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4)">
+<span role="img" aria-label="DJI Osmo Action 5 Pro görseli" style="margin-top: var(--s8); height: 184px; border-radius: var(--r-lg); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; color: var(--on-primary-subtle); box-shadow: var(--sh-md)"><svg width="150" height="150" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M8 16h9v4H8z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<span style="{{badgeStyle}}">{{badge}}</span>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">DJI Osmo Action 5 Pro</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Aksiyon kamerası · Standart · Siyah</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s3)">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: var(--s3); border-radius: var(--r-md); background: var(--surface)"><span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">En ucuz şimdi</span><span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">18.999 TL</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: var(--s3); border-radius: var(--r-md); background: var(--surface)"><span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">Son 7 gün</span><span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700; color: var(--savings)">↓ 1.200 TL</span></div>
+</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">9 mağazada · fiyat 12.10'da kontrol edildi</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s4) var(--s6) var(--s5); border-top: 1px solid var(--border); background: var(--surface)">
+<button type="button" aria-disabled="{{ctaDisabled}}" style="{{ctaStyle}}">{{cta}}</button>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: center">{{ctaHint}}</span>
+</div>
+</aside>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { mode: 'bought', seller: 'Kamera Dünyası', price: '20.499', status: 1, target: '', dur: 1 }; }
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","accent":"#FF5A36","on-accent":"#1A0A05","danger":"#B91C1C","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","overlay":"rgba(11,31,51,0.48)"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","accent":"#FF7A5C","on-accent":"#1A0A05","danger":"#F87171","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4","overlay":"rgba(0,0,0,0.6)"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-md":"0 4px 12px rgba(11,31,51,0.08)","sh-lg":"0 12px 32px rgba(11,31,51,0.12)","fs-h1":"28px","lh-h1":"36px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px","modal-w":"1120px","modal-aside-w":"360px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const st = this.state, bought = st.mode === 'bought';
+    const CHEAP = 18999;
+    const num = (v) => { const n = parseInt(String(v).replace(/\./g, '').replace(/[^0-9]/g, ''), 10); return isNaN(n) ? 0 : n; };
+    const fmt = (n) => n.toLocaleString('tr-TR');
+    const seg = (on) => 'min-height:44px;padding:0 16px;border-radius:10px;font:inherit;font-size:14px;cursor:pointer;background:var(--surface);color:var(--text);' + (on ? 'border:2px solid var(--primary);font-weight:700' : 'border:1px solid var(--border);margin:1px;font-weight:500');
+    const modes = [
+      { id: 'bought', title: 'Aldım', desc: 'İade süren boyunca daha ucuzu çıkarsa haber veririz.', icon: 'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0' },
+      { id: 'want', title: 'Almak istiyorum', desc: 'Fiyat hedefine ya da belirgin şekilde düşünce haber veririz.', icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 12h.01' }
+    ].map(m => { const on = st.mode === m.id; return Object.assign(m, { checked: on ? 'true' : 'false',
+      style: 'display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;padding:16px;border-radius:14px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer;' + (on ? 'border:2px solid var(--primary);box-shadow:var(--sh-md)' : 'border:1px solid var(--border);margin:1px'),
+      iconStyle: 'width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;' + (on ? 'background:var(--primary);color:var(--on-primary)' : 'background:var(--surface-alt);color:var(--text)'),
+      pick: () => this.setState({ mode: m.id }) }); });
+    const known = ['kamera dünyası', 'foto market', 'teknoloji evi'];
+    const sv = st.seller.trim().toLocaleLowerCase('tr').replace(/ı/g, 'i'), sOk = known.indexOf(sv) >= 0;
+    const statuses = ['Sipariş verildi', 'Kargoda', 'Teslim alındı'].map((v, i) => ({ v, checked: st.status === i ? 'true' : 'false', style: seg(st.status === i), pick: () => this.setState({ status: i }) }));
+    const durations = ['1 hafta', '1 ay', '3 ay', 'Sınırsız'].map((v, i) => ({ v, checked: st.dur === i ? 'true' : 'false', style: seg(st.dur === i), pick: () => this.setState({ dur: i }) }));
+    const chips = [['Son 30 günün en düşüğü · 18.999 TL', '18.999'], ['Son 6 ayın en düşüğü · 17.499 TL', '17.499']].map(x => ({ t: x[0], pick: () => this.setState({ target: x[1] }) }));
+    const p = num(st.price), t = num(st.target);
+    const hasTeaser = bought && p > CHEAP;
+    const priceOk = p > 0;
+    const ready = bought ? (sOk && priceOk) : true;
+    return {
+      rootStyle: s, modes, isBought: bought, isWant: !bought,
+      seller: st.seller, onSeller: (e) => this.setState({ seller: e.target.value }),
+      sellerStyle: 'height:48px;padding:0 12px;box-sizing:border-box;border-radius:10px;background:var(--surface);color:var(--text);font:inherit;font-size:16px;font-weight:500;outline:none;border:' + (st.seller && !sOk ? '2px solid var(--danger)' : sOk ? '2px solid var(--primary)' : '1px solid var(--border)'),
+      sellerHint: !st.seller ? 'Tam adını yaz; listeden seçtirmeyiz' : sOk ? '✓ Bu satıcı Hepsiburada\'da bulundu' : 'Bu adla bir satıcı bulamadık; siparişindeki adı aynen yaz',
+      sellerHintStyle: 'font-size:12px;font-weight:600;color:' + (sOk ? 'var(--savings)' : st.seller ? 'var(--danger)' : 'var(--text-muted)'),
+      price: st.price, onPrice: (e) => this.setState({ price: e.target.value }),
+      statuses, durations, chips,
+      target: st.target, onTarget: (e) => this.setState({ target: e.target.value }),
+      hasTeaser, teaser: hasTeaser ? '3 satıcıda daha ucuz · en çok ' + fmt(p - CHEAP) + ' TL kazanç' : '',
+      wantNote: t ? 'En ucuz fiyat ' + fmt(t) + ' TL ya da altına inince haber veririz. Şu an ' + (CHEAP > t ? fmt(CHEAP - t) + ' TL kaldı.' : 'hedefinde ya da altında; hemen bildiririz.') : 'Hedef yazmazsan, fiyat takibe başladığın andaki en ucuz fiyattan belirgin şekilde düşünce haber veririz.',
+      badge: bought ? 'Aldım' : 'Almak istiyorum',
+      badgeStyle: 'align-self:flex-start;display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600;' + (bought ? 'background:var(--primary-subtle);color:var(--on-primary-subtle)' : 'background:var(--surface);color:var(--text)'),
+      cta: bought ? 'Evet, bunu aldım' : 'Takibe başla',
+      ctaHint: bought ? (ready ? 'Takipte 4/10 · iade süren boyunca izleriz' : 'Satıcıyı ve ödediğin fiyatı yaz') : 'Takipte 4/10 · ' + ['1 hafta', '1 ay', '3 ay', 'süresiz'][st.dur] + ' izleriz',
+      ctaDisabled: ready ? 'false' : 'true',
+      ctaStyle: 'height:52px;border:0;border-radius:10px;font:inherit;font-size:16px;font-weight:600;' + (ready ? 'background:var(--primary);color:var(--on-primary);cursor:pointer' : 'background:var(--border);color:var(--text-muted);cursor:not-allowed')
+    };
+  }
+}
+</script>
+</body>
+</html>

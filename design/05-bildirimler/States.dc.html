@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Bildirimler durumlar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes fgpulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion: reduce){.fg-sk{animation:none!important}}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1900px; box-sizing: border-box; padding: var(--s8) 40px; display: flex; flex-direction: column; gap: var(--s8); background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">1 · BOŞ · henüz bildirim yok</span>
+<div style="display: flex; flex-direction: column; align-items: center; gap: var(--s3); padding: var(--s8) var(--s6); border: 1px dashed var(--border); border-radius: var(--r-lg); background: var(--surface); text-align: center">
+<span style="width: 56px; height: 56px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">Henüz bildirim yok</h2>
+<p style="margin: 0; max-width: 540px; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Takip ettiğin bir ürün daha ucuza düştüğünde, iade süresi yaklaştığında ya da hedef fiyatına ulaştığında burada ve e-postanda haber veririz.</p>
+<div style="display: flex; gap: var(--s2)"><a href="#" style="display: inline-flex; align-items: center; height: 48px; padding: 0 var(--s5); border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-btn); font-weight: 600; text-decoration: none">Ürün ekle</a><a href="#" style="display: inline-flex; align-items: center; height: 48px; padding: 0 var(--s5); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text); font-size: var(--fs-btn); font-weight: 600; text-decoration: none">Tercihleri düzenle</a></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">2 · BOŞ FİLTRE · "Fırsat" seçili, son 30 günde fırsat bildirimi yok</span>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="4"><button type="button" aria-pressed="{{f.pressed}}" style="{{f.style}}">{{f.label}}</button></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Şu an fırsat bildirimi yok</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">4 ürünün 5 dk önce kontrol edildi · daha ucuzu çıkınca ilk sen öğrenirsin</span></div>
+<button type="button" style="height: var(--touch); padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tümünü göster</button>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">3 · GÜNLÜK ÖZET VE SINIR · özet açıkken ve sınır dolunca</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6)">
+<div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div role="status" style="display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--info-subtle); color: var(--text); font-size: var(--fs-bsm); line-height: var(--lh-bsm)"><span style="color: var(--info); display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><strong style="font-weight: 600">Günlük özet açık.</strong> Bugünkü özetin 19.00'da gelir; 4 bildirim bekliyor. Acil olanlar beklemez.</span></div>
+<div style="display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: var(--s3); align-items: start; min-height: 112px">
+<span style="width: 44px; height: 44px; border-radius: 12px; background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">Günlük özet · dün 19.00</span><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Dün 4 ürününde 3 değişiklik</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)">AirPods Pro 2 fiyatı %4 düştü · Ace Pro 2'de en ucuz satıcı yeniden stokta · 650 TL kazancın kaydedildi.</span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div role="status" style="display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-bsm); line-height: var(--lh-bsm)"><span style="display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><span><strong style="font-weight: 600">Bugünkü 5 bildirim sınırına ulaştın.</strong> 2 bildirim yarın sabah gelir. İadesi 2 gün içinde bitenler ve hesap güvenliği yine de hemen gelir.</span></div>
+<div style="display: flex; flex-direction: column; gap: var(--s2); min-height: 112px; justify-content: center">
+<div style="display: flex; justify-content: space-between; font-size: var(--fs-bsm)"><span style="color: var(--text-muted); font-weight: 500">Bugünkü bildirim</span><span style="font-weight: 600">5 / 5</span></div>
+<div role="progressbar" aria-label="Bugünkü bildirim sınırı" aria-valuemin="0" aria-valuemax="5" aria-valuenow="5" style="height: var(--progress-h); border-radius: var(--r-pill); background: var(--surface-alt); overflow: hidden"><div style="width: 100%; height: 100%; background: var(--primary)"></div></div>
+<a href="#" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: var(--touch); font-size: var(--fs-bsm); font-weight: 600; color: var(--primary)">Günlük özete geç</a>
+</div>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">4 · ESKİ VERİ · canlı bağlantı koptu</span>
+<div role="status" style="display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 4-2.5M22 8.8a15 15 0 0 0-9-3.4M5 12.9a10 10 0 0 1 4-2.2M19 12.9a10 10 0 0 0-3-1.9M8.5 16.4a5 5 0 0 1 7 0M12 20h.01M2 2l20 20"/></svg><span style="flex: 1">Yeni bildirimler şu an gelmiyor. Liste en az 3 dk önceki haliyle duruyor; yeniden bağlanılıyor.</span><button type="button" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: inherit; font: inherit; font-size: var(--fs-bsm); font-weight: 700; text-decoration: underline">Yenile</button></div>
+<div style="display: grid; grid-template-columns: 8px 44px minmax(0, 1fr) 64px 168px; gap: var(--s4); align-items: center; padding: var(--s4) var(--s5) var(--s4) var(--s3); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<span style="width: 8px; height: 8px; border-radius: var(--r-pill); background: var(--primary)"></span>
+<span style="width: 44px; height: 44px; border-radius: 12px; background: var(--warning-subtle); color: var(--on-warning-subtle); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></span>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">İade süresi · 09.00</span><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 700">Dyson V15 Detect Absolute</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)">İade için 2 gün kaldı. Son gün 14 Kasım.</span></div>
+<span role="img" aria-label="Dyson V15 Detect Absolute görseli" style="width: 64px; height: 64px; flex: none; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="49" height="49" viewBox="0 0 48 48" aria-hidden="true"><path d="M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M27 6h10v3H27z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M30 16h4v20h-4z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: var(--touch); border: 1px solid var(--primary); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">İade adımları</a>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">5 · HATA · liste yüklenemedi</span>
+<div role="alert" style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; gap: var(--s3); align-items: flex-start"><span style="color: var(--danger); display: flex; padding-top: 2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Bildirimlerin şu an yüklenemedi</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Önemli bildirimler e-postana gitmeye devam ediyor. Biraz sonra tekrar dene.</span></div></div>
+<button type="button" style="flex: none; height: var(--touch); padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tekrar dene</button>
+</div>
+</section>
+
+<section aria-busy="true" style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">6 · YÜKLENİYOR · iskelet, gerçek satırla aynı ölçüler</span>
+<div style="display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden">
+<sc-for list="{{four}}" as="x" hint-placeholder-count="4">
+<div style="{{x.row}}">
+<span></span>
+<div class="fg-sk" style="width: 44px; height: 44px; border-radius: 12px; background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div>
+<div style="display: flex; flex-direction: column; gap: var(--s2)"><div class="fg-sk" style="width: 140px; height: 12px; border-radius: var(--r-sm); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div><div class="fg-sk" style="width: 55%; height: 18px; border-radius: var(--r-sm); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div><div class="fg-sk" style="width: 80%; height: 14px; border-radius: var(--r-sm); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div></div>
+<div class="fg-sk" style="width: 64px; height: 64px; border-radius: var(--r-md); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div>
+<div class="fg-sk" style="height: 44px; border-radius: var(--r-md); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div>
+</div>
+</sc-for>
+</div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1900}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-pill":"999px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","progress-h":"4px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const filters = ['Tümü 7', 'Fırsat 0', 'İade 2', 'Diğer 5'].map((l, i) => ({ label: l, pressed: i === 1 ? 'true' : 'false',
+      style: 'height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;' + (i === 1 ? 'border:1px solid var(--primary);background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:600' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500') }));
+    const four = [0, 1, 2, 3].map(i => ({ row: 'display:grid;grid-template-columns:8px 44px minmax(0,1fr) 64px 168px;gap:16px;align-items:center;padding:16px 20px 16px 12px;' + (i ? 'border-top:1px solid var(--divider)' : '') }));
+    return { rootStyle: s, filters, four };
+  }
+}
+</script>
+</body>
+</html>
