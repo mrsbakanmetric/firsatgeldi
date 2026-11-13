@@ -274,7 +274,7 @@ These rules apply to every screen and are not repeated in each module.
 - Empty: "Henüz takip ettiğin ürün yok" + add product + slot allowance.
 - Empty filter: "Fırsatı olan ürün yok · son kontrol 5 dk önce" + "Tümünü göster".
 - Bulk check: allowance not enough → "Bugün 3 hakkın kaldı · ilk 3 ürün öncelik sırasıyla kontrol edilir"; then progress (N/M) per item; the user may leave the page.
-- Stale: a row whose source could not be checked shows "Güncel değil", the last known price and its age; the deal is shown as "doğrulanamadı". Threshold [ASSUMPTION]: at least 6 hours.
+- Stale: a row whose source could not be checked shows "Güncel değil", the last known price and its age; the deal is shown as "doğrulanamadı". Threshold `tracking.stale_hours` [ASSUMPTION]: at least 6 hours.
 - Error: "Takip listen şu an yüklenemedi" + "Tekrar dene"; tracking itself continues.
 - Loading: skeleton with the same column sizes.
 
@@ -510,7 +510,7 @@ Search → mark → **Almadım, sadece takip et** → target price (optional) + 
 - **Bell panel + preview:** clicking an item in the panel marks it read and opens a **preview to the left of the panel**: product image, mode, message, three key values for that type (e.g. paid · cheapest now · saving; delivered · last return day · days left; target · cheapest now · left to target), 14-day cheapest-price chart where relevant, check time, and the item's actions ("Fırsatı gör" / "Ürün detayı" / "Takip et" / "İade adımları"…).
 - **"Takip et" from a notification or recent search:** opens the Add product dialog (Tracked Items) at step 2 with the product selected: "Aldım" (platform, typed seller with exact-match check, price paid, order date, order status; cheaper-price teaser after the price) or "Almak istiyorum" (optional target with suggestion chips, tracking duration). Same rules as Search and Add / Want to Buy.
 - **Delivery question** is answered inside the notification ("Evet, aldım" / "Henüz değil").
-- **Retention:** notifications older than 30 days no longer appear in the list; the records themselves are kept indefinitely as delivery evidence (`database.md` §16) [DECIDED 2026-11-13: list window only, rows not deleted]; savings and tracking records stay on their pages.
+- **Retention:** notifications older than 30 days (`notify.list_days`) no longer appear in the list; the records themselves are kept indefinitely as delivery evidence (`database.md` §16) [DECIDED 2026-11-13: list window only, rows not deleted]; savings and tracking records stay on their pages.
 
 ### Notification types
 | Type | Example text (no seller name) |
@@ -1099,7 +1099,7 @@ Canvas "FırsatGeldi — 11 Yasal Sayfalar ve Yardım": Help home, return guide 
 - **Retention [DECIDED]:** indefinite. When an account is deleted the personal link is cut (personal fields removed) and records stay linked to an **anonymous** user.
 - Export: CSV (personal data masked).
 - Viewing any tab is written to the Audit Log.
-- Volume: histories are time series, older data compressed; queries require a date range.
+- Volume: histories are time series, older data compressed; queries require a date range (maximum `history.max_range_months`, 12 [ASSUMPTION]).
 
 ---
 

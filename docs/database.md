@@ -73,8 +73,9 @@ sessions              role_permissions  products                   sellers      
 email_tokens          user_roles        product_attributes         offers                         checks
 notification_prefs                      product_aliases            campaigns                      check_schedules
 notification_type_                      product_images             mass_drop_events
-  prefs                                 product_merge_log
+  prefs                                 product_merge_log          seller_trust
 cookie_consents
+user_backup_codes
 
 Tracking/savings      Reveal/packages   Notifications              Search                         Community
 ────────────────      ───────────────   ─────────────              ──────                         ─────────
@@ -82,6 +83,7 @@ tracked_items         plans             notification_templates     search_events
 tracked_item_events   user_subscript.   notifications              identify_requests              community_consents
 deals                 token_ledger      notification_deliveries    affiliate_clicks               link_submissions
 savings_records       package_requests  notification_digests                                      user_badges
+buyer_feedback                                                                                      blocks
                       offer_reveals
                       check_now_usage
 
@@ -92,6 +94,7 @@ support_requests      setting_changes          provider_budgets     admin_kpi_ho
 support_messages      alerts                   platform_health_hourly (cagg)
 content_documents
 content_versions
+content_feedback
 user_consents
 
 Histories and fraud (indefinite)
@@ -194,6 +197,8 @@ erDiagram
 | token_balance | integer | | 0 | **Cache**; source of truth is `token_ledger` (updated in the same transaction) |
 | welcome_gift_granted_at | timestamptz | ✓ | | Welcome tokens once |
 | last_sign_in_at | timestamptz | ✓ | | |
+| totp_secret_enc | bytea | ✓ | | Authenticator secret, **encrypted** (same envelope encryption as e-mail); Application Manager accounts [DECIDED] |
+| totp_enabled_at | timestamptz | ✓ | | Two-step verification verified; an Application Manager without it cannot sign in [DECIDED] |
 | created_at / updated_at / deleted_at | timestamptz | | | |
 
 Indexes: `(status)`, `(purge_after) WHERE status='PENDING_DELETION'`, `(created_at)`.
@@ -213,6 +218,9 @@ U: `(provider, provider_subject_bidx)`. The same verified email arriving through
 
 ### `sessions`
 id · user_id (FK) · refresh_hash · user_agent_family (browser/OS family, not the raw UA) · ip_hash · device_hash · created_at · expires_at · revoked_at (N). Index `(user_id) WHERE revoked_at IS NULL`. "Sign out from all devices" = set `revoked_at` on all.
+
+### `user_backup_codes`
+id · user_id (FK) · code_hash (hashed, never stored in clear) · used_at (N; single use) · created_at. Index `(user_id) WHERE used_at IS NULL`. Regenerating codes replaces all unused rows [DECIDED: hashed, single use — §9].
 
 ### `email_tokens`
 id · user_id · purpose CHECK (`VERIFY_EMAIL`,`RESET_PASSWORD`,`CHANGE_EMAIL`) · token_hash (U) · expires_at · used_at (N) · created_at.
@@ -517,6 +525,7 @@ id · tracked_item_id · type (`CREATED`,`PRICE_EDITED`,`DEADLINE_EDITED`,`DELIV
 | cheaper_seller_count | smallint | | |
 | status | text | | CHECK (`OPEN`,`USED`,`EXPIRED`,`GONE`) |
 | closed_at | timestamptz | ✓ | |
+| close_reason | text | ✓ | CHECK (`NOT_USED`) — set when the user corrects a record to "Fırsatı kullanmadım" (§8 note); other values only when defined in a spec |
 | notified_at | timestamptz | ✓ | |
 
 Partial U `(tracked_item_id) WHERE status='OPEN'`. **Missed deals** = `EXPIRED` [DECIDED]; Admin Overview deal/action rates come from here.
@@ -543,7 +552,7 @@ seller_id (PK) · signals jsonb (store rating, stock consistency, delivery accur
 ### `tracked_items` additions [DECIDED 2026-11-12]
 request_kind CHECK (`PRICE_DIFFERENCE`,`RETURN`) N · request_at N · request_outcome CHECK (`GIVEN`,`REFUSED`,`COUPON`,`NO_REPLY`) N · request_outcome_at N · cargo_tracking_no_enc N · carrier_code N (next phase).
 
-Corrections are written to `tracked_item_events` + `audit_logs`. Correcting a record to "Fırsatı kullanmadım" (`NOT_USED`, API value) deletes the saving (soft: `voided_at` set) and marks the related deal as missed (`deals.status='EXPIRED'`, reason `NOT_USED`) [DECIDED]. After `editable_until` only an Application Manager can correct a record, from a support request.
+Corrections are written to `tracked_item_events` + `audit_logs`. Correcting a record to "Fırsatı kullanmadım" (`NOT_USED`, API value) deletes the saving (soft: `voided_at` set) and marks the related deal as missed (`deals.status='EXPIRED'`, `deals.close_reason='NOT_USED'`) [DECIDED]. After `editable_until` only an Application Manager can correct a record, from a support request.
 
 ---
 
@@ -560,7 +569,7 @@ Corrections are written to `tracked_item_events` + `audit_logs`. Correcting a re
 | price_minor | bigint | ✓ | null [OPEN — price later] |
 | updated_by / updated_at | | | Changes go through `setting_changes` (critical) |
 
-Settings values [ASSUMPTION]: `notifications.digest_time` (19:00), `export.link_days` (7). Application Manager accounts: `users.totp_secret_enc` (encrypted), `users.totp_enabled_at`, `user_backup_codes` (hashed, single use); sign-in of an Application Manager without verified 2FA is refused [DECIDED].
+Settings values [ASSUMPTION]: `notifications.digest_time` (19:00), `export.link_days` (7). Application Manager accounts: `users.totp_secret_enc` (encrypted), `users.totp_enabled_at`, `user_backup_codes` (hashed, single use) — columns and table defined in §3; sign-in of an Application Manager without verified 2FA is refused [DECIDED].
 
 Auth values in `system_settings` [ASSUMPTION]: `auth.password_min_length` (8), `auth.lockout_attempts` (5), `auth.lockout_minutes` (15), `auth.resend_cooldown_seconds` (60).
 
@@ -955,6 +964,9 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `report.suspend_threshold` | 3 | |
 | `notify.daily_cap` | 5 | |
 | `notify.urgent_return_days` | 2 | |
+| `notify.list_days` | 30 [DECIDED 2026-11-13] | Notification list shows the last N days; rows are kept (§16) |
+| `tracking.stale_hours` | 6 [ASSUMPTION] | Tracked Items: a row not checked for this long shows "Güncel değil" |
+| `history.max_range_months` | 12 [ASSUMPTION] | History Explorer: maximum date range per query |
 | `want.default_duration` | `1M` | |
 | `want.notable_drop_pct` / `.notable_drop_minor` | — | |
 | `savings.edit_days` | 7 | |
