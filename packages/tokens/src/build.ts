@@ -182,6 +182,19 @@ function buildBreakpoints(root: JsonObject): Record<string, number> {
   return mapValues(child(root, "breakpoint", ""), "breakpoint.", parsePx, true);
 }
 
+/** Stacking layers, bottom to top (product_design_pattern.md §5.37). */
+function buildZIndex(root: JsonObject): Record<string, number> {
+  return mapValues(
+    child(root, "z-index", ""),
+    "z-index.",
+    (value, path) => {
+      if (typeof value !== "number" || !Number.isInteger(value)) throw new TokenError(`Expected an integer layer at "${path}"`);
+      return value;
+    },
+    true,
+  );
+}
+
 export function buildTokens(root: JsonObject) {
   const meta = child(root, "$meta", "");
   const { name, themes } = buildThemes(root);
@@ -214,6 +227,7 @@ export function buildTokens(root: JsonObject) {
     },
     size: mapValues(child(root, "size", ""), "size.", parsePx),
     breakpoint: buildBreakpoints(root),
+    "z-index": buildZIndex(root),
     components: buildComponents(root),
   };
 }

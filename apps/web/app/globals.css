@@ -3,3 +3,14 @@
 @import "@firsatgeldi/tokens/theme.css";
 
 @source "../../../packages/ui/src";
+
+/* Progress indicator of a loading Button (product_design_pattern.md §4.2); stops under reduced motion (motion-safe:). */
+@theme {
+  --animate-spin: spin calc(var(--duration-slow) * 2) linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+}

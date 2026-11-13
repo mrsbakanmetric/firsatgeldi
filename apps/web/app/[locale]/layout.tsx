@@ -1,6 +1,7 @@
 import { createTranslator, isLocale, LOCALES } from "@firsatgeldi/i18n";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Providers } from "../../components/providers";
 import { themeInitScript } from "../../lib/theme/theme-dom";
 import "../globals.css";
 
@@ -26,7 +27,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="bg-background font-base text-body text-text antialiased">{children}</body>
+      <body className="bg-background font-base text-body text-text antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

@@ -25,6 +25,25 @@ function colorDeclarations(colors: ColorMap): string[] {
   );
 }
 
+/** Unitless component values; every other number is a px dimension. */
+const UNITLESS_COMPONENT_KEY = /(?:^|-)(?:opacity|stroke-width)$/;
+const DURATION = /^\d+(?:\.\d+)?ms$/;
+
+/**
+ * Numeric component settings as plain variables: components.switch["track-width"] = 48
+ * → `--component-switch-track-width: 48px;`. Role references ("color.primary")
+ * are not emitted: components use the matching theme variable directly.
+ */
+function componentDeclarations(components: object, prefix = "--component"): string[] {
+  return Object.entries(components).flatMap(([key, value]): string[] => {
+    const name = `${prefix}-${key}`;
+    if (typeof value === "number") return [`${name}: ${UNITLESS_COMPONENT_KEY.test(key) ? value : px(value)};`];
+    if (typeof value === "string" && DURATION.test(value)) return [`${name}: ${value};`];
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) return componentDeclarations(value, name);
+    return [];
+  });
+}
+
 function block(selector: string, declarations: readonly string[], indent = ""): string {
   return [`${indent}${selector} {`, ...declarations.map((line) => `${indent}  ${line}`), `${indent}}`].join("\n");
 }
@@ -56,12 +75,15 @@ export function toThemeCss(tokens: BuiltTokens): string {
     `--ease-standard: cubic-bezier(${motion.easing.join(", ")});`,
   ];
 
-  // Values with no Tailwind namespace: used as `h-(--size-header-height)`, `duration-(--duration-fast)`.
+  // Values with no Tailwind namespace: used as `h-(--size-header-height)`, `duration-(--duration-fast)`,
+  // `z-(--z-index-modal)`, `w-(--component-switch-track-width)`.
   const plain = [
     "color-scheme: light;",
     ...Object.entries(motion.duration).map(([key, value]) => `--duration-${key}: ${value}ms;`),
     ...Object.entries(tokens["border-width"]).map(([key, value]) => `--border-width-${key}: ${px(value)};`),
     ...Object.entries(tokens.size).map(([key, value]) => `--size-${key}: ${px(value)};`),
+    ...Object.entries(tokens["z-index"]).map(([key, value]) => `--z-index-${key}: ${value};`),
+    ...componentDeclarations(tokens.components),
   ];
 
   const darkDeclarations = ["color-scheme: dark;", ...colorDeclarations(dark)];
