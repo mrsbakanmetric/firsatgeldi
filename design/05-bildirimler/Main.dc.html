@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Bildirimler</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1600px; display: flex; flex-direction: column; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+<header style="height: var(--header-h); flex: none; background: var(--surface); border-bottom: 1px solid var(--border)">
+<div style="max-width: var(--content-max); height: 100%; margin: 0 auto; padding: 0 var(--s6); box-sizing: border-box; display: flex; align-items: center; gap: var(--s6)">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); text-decoration: none; color: var(--text)"><span style="width: 32px; height: 32px; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span><span style="font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 700">FırsatGeldi</span></a>
+<nav aria-label="Ana menü" style="display: flex; align-items: stretch; height: 100%; gap: var(--s1)">
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Ana Sayfa</a>
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Takip</a>
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Ara ve Ekle</a>
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/></svg>Kazancım</a>
+</nav>
+<div style="flex: 1"></div>
+<button type="button" aria-label="Bildirimler, 4 okunmamış" aria-current="page" style="position: relative; width: var(--touch); height: var(--touch); border: 0; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><span aria-hidden="true" style="position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: var(--r-pill); background: var(--text); color: var(--surface); font-size: var(--fs-cap); line-height: 18px; font-weight: 700; text-align: center">4</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
+<button type="button" aria-label="Profil menüsü" style="display: flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s2) 0 var(--s1); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><span style="width: 34px; height: 34px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">SB</span>Profil</button>
+</div>
+</header>
+<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--s6); align-items: start">
+
+<div style="display: flex; flex-direction: column; gap: var(--s5); min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: var(--s4)">
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Bildirimler</h1><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">4 okunmamış · son 30 gün · canlı güncelleniyor</span></div>
+<div style="display: flex; align-items: center; gap: var(--s1)">
+<button type="button" style="display: inline-flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 12 5 5L18 6M12 17l1 1L22 9"/></svg>Tümünü okundu yap</button>
+<a href="#" title="Profil › Ayarlar › Bildirimler" style="display: inline-flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s3); border-radius: var(--r-md); color: var(--text-muted); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Bildirim ayarları</a>
+</div>
+</div>
+
+<div style="display: flex; gap: var(--s3); align-items: center">
+<label style="flex: 1; display: flex; align-items: center; gap: var(--s2); height: 48px; padding: 0 var(--s4); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted); flex: none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Bildirimlerde ara</span><input type="search" placeholder="Bildirimlerde ara: ürün adı" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-bsm); color: var(--text); outline: none"></label>
+<label style="display: flex; align-items: center; gap: var(--s2); font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted)">Kategori<select style="height: 48px; min-width: 190px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><option>Tümü (10)</option><option>Elektronik (6)</option><option>Ev aletleri (1)</option><option>Giyim ve ayakkabı (2)</option></select></label>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); flex-wrap: wrap">
+<div role="group" aria-label="Filtre" style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="5"><button type="button" aria-pressed="{{f.pressed}}" style="{{f.style}}">{{f.label}}</button></sc-for>
+</div>
+<label style="display: flex; align-items: center; gap: var(--s2); min-height: var(--touch); font-size: var(--fs-bsm); font-weight: 500; cursor: pointer"><input type="checkbox" style="width: 20px; height: 20px; margin: 0; accent-color: var(--primary)">Yalnızca okunmamışlar</label>
+</div>
+
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+<section aria-label="{{g.label}}" style="display: flex; flex-direction: column; gap: var(--s2)">
+<h2 style="margin: 0; padding: 0 var(--s2); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">{{g.label}}</h2>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden">
+<sc-for list="{{g.items}}" as="n" hint-placeholder-count="3">
+<li style="{{n.rowStyle}}">
+<span aria-hidden="true" style="{{n.dotStyle}}"></span>
+<span style="position: relative; width: 80px; height: 80px">
+<span role="img" aria-label="{{n.imgLabel}}" style="{{n.imgStyle}}"><sc-if value="{{n.isLock}}" hint-placeholder-val="{{ false }}"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"/></svg></sc-if><sc-if value="{{n.isProd}}" hint-placeholder-val="{{ true }}"><svg width="64" height="64" viewBox="0 0 48 48" aria-hidden="true"><path d="{{n.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{n.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{n.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></sc-if></span>
+<span aria-hidden="true" style="{{n.badgeStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.icon}}"/></svg></span>
+</span>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<div style="display: flex; align-items: center; gap: var(--s2); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)"><span>{{n.type}}</span><span aria-hidden="true">·</span><time>{{n.time}}</time><sc-if value="{{n.unread}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">okunmadı</span></sc-if></div>
+<a href="#" style="{{n.titleStyle}}">{{n.title}}</a>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text)">{{n.body}}</span>
+<div style="display: flex; align-items: center; gap: var(--s2); margin-top: 2px; min-width: 0">
+<sc-if value="{{n.hasMode}}" hint-placeholder-val="{{ true }}"><span style="{{n.modeStyle}}">{{n.mode}}</span></sc-if>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{n.meta}}</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: stretch; gap: var(--s1)">
+<sc-if value="{{n.hasA}}" hint-placeholder-val="{{ true }}"><a href="#" style="{{n.aStyle}}">{{n.a}}</a></sc-if>
+<sc-if value="{{n.hasB}}" hint-placeholder-val="{{ false }}"><a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: var(--touch); padding: 0 var(--s3); box-sizing: border-box; border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">{{n.b}}</a></sc-if>
+</div>
+</li>
+</sc-for>
+</ul>
+</section>
+</sc-for>
+
+<span style="padding: 0 var(--s2); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Bildirimlerde daha ucuz satıcının adı yazmaz; ürünün sayfasında "Göster" ile açarsın. 30 günden eski bildirimler silinir.</span>
+</div>
+
+<aside aria-label="Senin için" style="display: flex; flex-direction: column; gap: var(--s4)">
+
+<section aria-labelledby="ap-dusus" style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="ap-dusus" style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 700">Takip listende son düşüşler</h2><a href="#" style="font-size: var(--fs-cap); font-weight: 600; color: var(--primary)">Takip</a></div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--s1)">
+<sc-for list="{{drops}}" as="d" hint-placeholder-count="3">
+<li><a href="#" style="display: grid; grid-template-columns: 52px minmax(0, 1fr) 76px; gap: var(--s3); align-items: center; min-height: 64px; padding: var(--s1) 0; color: var(--text); text-decoration: none">
+<span role="img" aria-label="{{d.imgLabel}}" style="width: 52px; height: 52px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="42" height="42" viewBox="0 0 48 48" aria-hidden="true"><path d="{{d.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{d.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{d.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.name}}</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">{{d.mode}} · {{d.when}}</span></span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 700; color: var(--savings); white-space: nowrap">↓ {{d.drop}}</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); white-space: nowrap">{{d.price}}</span></span>
+</a></li>
+</sc-for>
+</ul>
+</section>
+
+<section aria-labelledby="ap-arama" style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="ap-arama" style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 700">Son aramaların</h2><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">takipte değil</span></div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<sc-for list="{{searches}}" as="r" hint-placeholder-count="4">
+<li style="{{r.li}}">
+<span role="img" aria-label="{{r.imgLabel}}" style="width: 44px; height: 44px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><path d="{{r.art.a}}" fill-rule="evenodd" style="fill: var(--text)"/><path d="{{r.art.c}}" fill-rule="evenodd" style="fill: var(--surface)"/><path d="{{r.art.b}}" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><a href="#" style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600; color: var(--text); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</a><span style="{{r.subStyle}}">{{r.sub}}</span></span>
+<a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 var(--s3); border: 1px solid var(--primary); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-cap); font-weight: 700; text-decoration: none; white-space: nowrap">Takip et</a>
+</li>
+</sc-for>
+</ul>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Fiyatlar en ucuz teklifin; satıcı ürün sayfasında. Arama geçmişini Profil › Ayarlar'dan gizleyebilirsin.</span>
+</section>
+
+<section aria-labelledby="ap-sik" style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<h2 id="ap-sik" style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 700">Sık aradıkların</h2>
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2)">
+<sc-for list="{{frequent}}" as="q" hint-placeholder-count="5"><a href="#" style="display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); color: var(--text); font-size: var(--fs-cap); font-weight: 600; text-decoration: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>{{q.t}}</a></sc-for>
+</div>
+</section>
+
+</aside>
+
+</main>
+<footer style="flex: none; background: var(--surface); border-top: 1px solid var(--border)">
+<div style="max-width: var(--content-max); margin: 0 auto; padding: var(--s6); box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); font-size: var(--fs-bsm); line-height: var(--lh-bsm)">
+<nav aria-label="Yasal ve yardım" style="display: flex; flex-wrap: wrap; gap: var(--s5)"><a href="#" style="color: var(--text-muted)">KVKK aydınlatma metni</a><a href="#" style="color: var(--text-muted)">Kullanım koşulları</a><a href="#" style="color: var(--text-muted)">Çerez politikası</a><a href="#" style="color: var(--text-muted)">Komisyon açıklaması</a><a href="#" style="color: var(--text-muted)">Yardım ve SSS</a></nav>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Türkçe · English</span>
+</div>
+</footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1600}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","accent":"#FF5A36","on-accent":"#1A0A05","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","accent":"#FF7A5C","on-accent":"#1A0A05","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-pill":"999px","fs-h1":"28px","lh-h1":"36px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px","header-h":"64px","content-max":"1200px"};
+  }
+  prod() {
+    return { cam: 'M5.5 6h13A2.5 2.5 0 0 1 21 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5v-8A2.5 2.5 0 0 1 5.5 6zM12 9a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM7 6V4.5h4V6',
+      audio: 'M7 4a3 3 0 0 0-3 3v5a2 2 0 0 0 2 2h1.5V8H6M17 4a3 3 0 0 1 3 3v5a2 2 0 0 1-2 2h-1.5V8H18M7.5 14v5M16.5 14v5',
+      wear: 'M9 3h6l5 4-2 4-2-1v11H8V10l-2 1-2-4z',
+      vac: 'M14 3l-4 12M10 15a3 3 0 1 0 0 6h6a2 2 0 0 0 0-4h-3M14 3h3',
+      mouse: 'M12 3a6 6 0 0 0-6 6v6a6 6 0 0 0 12 0V9a6 6 0 0 0-6-6zM12 7v3',
+      lock: 'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4' };
+  }
+  data() {
+    return [
+      { label: 'BUGÜN', items: [
+        { k: 'deal', p: 'cam', u: true, coral: true, mode: 'Aldım', type: 'Fırsat geldi', time: '14.32', title: 'Insta360 Ace Pro 2 · Flash Print Bundle', body: 'Bu kamerayı 28.999 TL\'ye aldın; başka bir satıcıda 25.997 TL. 3.002 TL kazanç · iade için 4 gün.', meta: 'Fiyat 2 dk önce yeniden kontrol edildi · hâlâ geçerli', a: 'Fırsatı gör' },
+        { k: 'search', p: 'cam', u: true, mode: 'Takipte değil', type: 'Aradığın ürün ucuzladı', time: '12.10', title: 'DJI Osmo Action 5 Pro', body: 'Geçen hafta aradın; en ucuz fiyat 1.200 TL düştü: 18.999 TL.', meta: 'Fiyat 12.10\'da kontrol edildi · 9 mağazada', a: 'Takip et' },
+        { k: 'return', p: 'vac', u: true, mode: 'Aldım', type: 'İade süresi', time: '09.00', title: 'Dyson V15 Detect Absolute', body: 'İade için 2 gün kaldı. Son gün 14 Kasım.', meta: 'Teslim 3 Kasım · iade süresi 14 gün', a: 'İade adımları' },
+        { k: 'delivery', p: 'wear', u: true, mode: 'Aldım', type: 'Teslimat', time: '08.15', title: 'Kışlık mont · erkek · lacivert', body: 'Siparişini teslim aldın mı? İade süren teslimden başlıyor.', meta: 'Sipariş 9 Kasım · kargoda görünüyor', a: 'Evet, aldım', b: 'Henüz değil' }
+      ] },
+      { label: 'DÜN', items: [
+        { k: 'expired', p: 'wear', u: false, mode: 'Aldım', type: 'Fırsat bitti', time: '21.40', title: 'Kışlık mont · erkek · lacivert', body: 'Daha ucuz fiyat artık yok; satıcı fiyatı geri yükseltti.', meta: 'Fiyat 1 sa önce kontrol edildi', a: 'Ürüne git' },
+        { k: 'target', p: 'audio', u: false, mode: 'Almak istiyorum', type: 'Fiyat düştü', time: '18.05', title: 'Apple AirPods Pro 2', body: 'Fiyat %4 düştü: 8.150 TL. Hedefin 7.500 TL, 650 TL kaldı.', meta: 'Fiyat 18.05\'te kontrol edildi', a: 'Ürüne git' },
+        { k: 'stock', p: 'cam', u: false, mode: 'Aldım', type: 'Yeniden stokta', time: '11.20', title: 'Insta360 Ace Pro 2 · Flash Print Bundle', body: 'En ucuz satıcı yeniden stokta.', meta: 'Stok 11.20\'de kontrol edildi · en az 3 gün yoktu', a: 'Ürüne git' }
+      ] },
+      { label: 'BU HAFTA', items: [
+        { k: 'account', p: 'lock', u: false, type: 'Hesap güvenliği', time: '10 Kas', title: 'Yeni bir cihazdan giriş yapıldı', body: 'Chrome · Windows · İstanbul civarı. Sen değilsen şifreni hemen değiştir.', meta: 'Bu bildirim kapatılamaz', a: 'Ben değilim' },
+        { k: 'saving', p: 'mouse', u: false, mode: 'Aldım', type: 'Kazanç kaydedildi', time: '9 Kas', title: 'Logitech MX Master 3S', body: '650 TL kazancın kaydedildi.', meta: 'İade edip daha ucuza yeniden aldın', a: 'Kazancım' },
+        { k: 'ending', p: 'audio', u: false, mode: 'Almak istiyorum', type: 'Takip bitiyor', time: '8 Kas', title: 'Sony WH-1000XM5', art: 'phones', body: 'Takip 3 gün sonra bitiyor, uzatmak ister misin?', meta: 'Hedef 9.000 TL', a: 'Takibi uzat' }
+      ] }
+    ];
+  }
+  art() {
+    return {
+      cam: ['M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z', 'M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M8 16h9v4H8z'],
+      watch: ['M13 12h22a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z', 'M18 3h12l2 9H16zM16 36h16l-2 9H18z', 'M15 16h18v16H15z'],
+      robot: ['M24 5a19 19 0 1 0 0 38 19 19 0 0 0 0-38z', 'M24 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24zM24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z', 'M24 19a5 5 0 1 0 0 10 5 5 0 0 0 0-10z'],
+      mouse: ['M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z', 'M22.5 9h3v7h-3z', 'M23.5 4h1v14h-1z'],
+      ssd: ['M11 5h26a3 3 0 0 1 3 3v32a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z', 'M12 10h24v5H12z', 'M20 33h8v4h-8z'],
+      fryer: ['M12 11h24l3 32H9z', 'M19 4h10v7H19z', 'M15 17h18v11H15z'],
+      shoe: ['M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', 'M3 33h42v5H3z', 'M20 22h3v2h-3zM25 24h3v2h-3z'],
+      phones: ['M6 27h8v15H9a3 3 0 0 1-3-3zM34 27h8v12a3 3 0 0 1-3 3h-5z', 'M8 27a16 16 0 0 1 32 0v3h-4v-3a12 12 0 0 0-24 0v3H8z', 'M9 31h3v7H9zM36 31h3v7h-3z'],
+      buds: ['M14 16h20a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V22a6 6 0 0 1 6-6z', 'M8 25h32v2H8z', 'M22.5 31h3v4h-3z'],
+      jacket: ['M17 5h14l9 7-3 10-3-2v23H14V20l-3 2-3-10z', 'M23 5h2v38h-2z', 'M18 5h12l-6 6z'],
+      stick: ['M26 3h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM19 36h24a2 2 0 0 1 2 2v5H17v-5a2 2 0 0 1 2-2z', 'M30 16h4v20h-4z', 'M27 6h10v3H27z'],
+      speaker: ['M10 13h28a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6z', 'M15 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM33 17a7 7 0 1 0 0 14 7 7 0 0 0 0-14z', 'M22 22h4v4h-4z'],
+      reader: ['M12 3h24a3 3 0 0 1 3 3v36a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', 'M16 12h16v2H16zM16 17h16v2H16zM16 22h11v2H16z', 'M13 8h22v30H13z']
+    };
+  }
+  A(k) { const x = this.art()[k] || this.art().cam; return { a: x[0], b: x[1], c: x[2] }; }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    const P = this.prod();
+    const ICON = { deal: 'M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM7.5 7.5h.01', expired: 'M18 6 6 18M6 6l12 12', search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm9 16-3.5-3.5', return: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5', delivery: 'M21 8 12 3 3 8v8l9 5 9-5zM3 8l9 5 9-5M12 13v8', target: 'M12 5v14M19 12l-7 7-7-7', stock: 'm5 12 5 5 9-10', account: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z', saving: 'M12 5v14M5 12h14', ending: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2' };
+    const BADGE = { deal: ['text', 'surface'], expired: ['surface-alt', 'text-muted'], search: ['info', 'surface'], return: ['warning-subtle', 'on-warning-subtle'], delivery: ['info-subtle', 'info'], target: ['primary', 'on-primary'], stock: ['primary', 'on-primary'], account: ['info', 'surface'], saving: ['primary', 'on-primary'], ending: ['surface-alt', 'text'] };
+    const modeStyle = (m) => 'display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;' + (m === 'Aldım' ? 'background:var(--primary-subtle);color:var(--on-primary-subtle)' : m === 'Almak istiyorum' ? 'background:var(--surface-alt);color:var(--text)' : 'background:transparent;color:var(--text-muted);border:1px dashed var(--border)');
+    const groups = this.data().map(g => ({ label: g.label, items: g.items.map((n, i) => ({
+      type: n.type, time: n.time, title: n.title, body: n.body, meta: n.meta, unread: n.u, icon: ICON[n.k], prodIcon: P[n.p], imgLabel: n.p === 'lock' ? 'Hesap güvenliği' : n.title + ' görseli',
+      mode: n.mode || '', hasMode: !!n.mode, modeStyle: modeStyle(n.mode),
+      a: n.a, b: n.b || '', hasA: !!n.a, hasB: !!n.b,
+      rowStyle: 'display:grid;grid-template-columns:8px 80px minmax(0,1fr) 160px;gap:16px;align-items:center;padding:16px 20px 16px 12px;background:var(--surface);' + (i ? 'border-top:1px solid var(--divider);' : '') + (n.k === 'expired' ? 'opacity:0.75' : ''),
+      dotStyle: 'width:8px;height:8px;border-radius:999px;' + (n.u ? 'background:var(--primary)' : 'background:transparent'),
+      imgStyle: 'width:80px;height:80px;border-radius:12px;display:flex;align-items:center;justify-content:center;' + (n.p === 'lock' ? 'background:var(--info-subtle);color:var(--info)' : 'background:var(--surface-alt)'), isLock: n.p === 'lock', isProd: n.p !== 'lock', art: this.A(n.art || ({ cam: 'cam', wear: 'jacket', vac: 'stick', audio: 'buds', mouse: 'mouse', lock: 'cam' })[n.p]),
+      badgeStyle: 'position:absolute;right:-6px;bottom:-6px;width:28px;height:28px;box-sizing:border-box;border-radius:999px;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;background:var(--' + BADGE[n.k][0] + ');color:var(--' + BADGE[n.k][1] + ')',
+      titleStyle: 'font-size:16px;line-height:24px;color:var(--text);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:' + (n.u ? '700' : '600'),
+      aStyle: 'display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 12px;box-sizing:border-box;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;' + (n.coral ? 'background:var(--accent);color:var(--on-accent)' : n.k === 'search' ? 'background:var(--primary);color:var(--on-primary)' : 'border:1px solid var(--primary);color:var(--primary)')
+    })) }));
+    const filters = ['Tümü 10', 'Fırsat 2', 'İade 2', 'Aramalarım 1', 'Diğer 5'].map((l, i) => ({ label: l, pressed: i === 0 ? 'true' : 'false',
+      style: 'height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;' + (i === 0 ? 'border:1px solid var(--primary);background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:600' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500') }));
+    const drops = [
+      { name: 'Insta360 Ace Pro 2', art: this.A('cam'), icon: P.cam, mode: 'Aldım', when: '3 sa önce', drop: '3.002 TL', price: '25.997 TL' },
+      { name: 'Kışlık mont · lacivert', art: this.A('jacket'), icon: P.wear, mode: 'Aldım', when: 'dün', drop: '300 TL', price: '2.999 TL' },
+      { name: 'Apple AirPods Pro 2', art: this.A('buds'), icon: P.audio, mode: 'Almak istiyorum', when: 'dün', drop: '%4', price: '8.150 TL' }
+    ].map(d => Object.assign(d, { imgLabel: d.name + ' görseli' }));
+    const sr = [
+      { name: 'DJI Osmo Action 5 Pro', art: 'cam', icon: P.cam, sub: '↓ 1.200 TL · 18.999 TL · 12.10', down: true },
+      { name: 'Sony ZV-E10 II', art: 'cam', icon: P.cam, sub: '↓ %5 · 32.499 TL · 10 dk önce', down: true },
+      { name: 'GoPro Hero 13 Black', art: 'cam', icon: P.cam, sub: 'Değişiklik yok · 21.999 TL · 1 sa önce', down: false },
+      { name: 'Dyson V12 Detect Slim', art: 'stick', icon: P.vac, sub: 'Değişiklik yok · 24.999 TL · 2 sa önce', down: false }
+    ];
+    const searches = sr.map((r, i) => ({ art: this.A(r.art), name: r.name, icon: r.icon, sub: r.sub, imgLabel: r.name + ' görseli',
+      li: 'display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;' + (i ? 'border-top:1px solid var(--divider)' : ''),
+      subStyle: 'font-size:12px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' + (r.down ? 'font-weight:700;color:var(--savings)' : 'font-weight:500;color:var(--text-muted)') }));
+    const frequent = ['aksiyon kamerası', 'insta360', 'airpods', 'kışlık mont', 'dyson'].map(t => ({ t }));
+    return { rootStyle: s, groups, filters, drops, searches, frequent };
+  }
+}
+</script>
+</body>
+</html>
