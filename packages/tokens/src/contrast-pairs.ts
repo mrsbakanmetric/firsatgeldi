@@ -61,9 +61,9 @@ export const SEMANTIC_PAIRS: readonly ContrastPair[] = [
   ui("chart-best", "surface", "price history: cheapest line"),
   ui("chart-deal", "surface", "price history: deal point"),
   ui("stock-in", "surface", "stock history: in-stock box"),
-  // Fails in light (1.67:1). The design side adds a light-theme "stock-low-border"
-  // token; once that spec PR is merged this pair checks stock-low-border instead.
-  ui("stock-low", "surface", "stock history: low-stock box"),
+  // The low-stock box is identified by its border; the amber fill alone is too
+  // light on a light surface (design-tokens.json stock-low-border, spec PR #23).
+  ui("stock-low-border", "surface", "stock history: low-stock box border"),
   ui("stock-out-border", "surface", "stock history: out-of-stock box border"),
 ];
 

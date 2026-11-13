@@ -8,7 +8,7 @@ Owned by the implementation side (Claude Code). One row per screen; updated in t
 |---|---|---|---|
 | Monorepo skeleton | ✅ | #20 | pnpm + Turborepo; `apps/web` (Next.js, empty page); packages `core`, `contracts`, `tokens`, `i18n`, `ui`, `config` (empty); dependency-boundary lint. `packages/mocks` comes with the mock API step. |
 | Basic CI | ✅ | #21 | GitHub Actions `CI` / job `ci`: install → lint → typecheck → unit tests → build on every PR to `main` and every push to `main`; read-only, no secrets; actions pinned by commit SHA. |
-| Tokens | 🛠 | #22 | `packages/tokens` generates typed TypeScript values + platform-neutral `tokens.json` from `docs/design-tokens.json` on every build; WCAG AA contrast test (light and dark). Blocked: light `stock-low` on `surface` is 1.67:1 (needs 3:1); waits for the design side's `stock-low-border` token. |
+| Tokens | 🛠 | #22 | `packages/tokens` generates typed TypeScript values + platform-neutral `tokens.json` from `docs/design-tokens.json` on every build; WCAG AA contrast test (light and dark); the low-stock box is checked by its `stock-low-border` (#23). |
 
 ## Screens
 

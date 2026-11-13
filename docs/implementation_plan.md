@@ -1,6 +1,6 @@
 # FırsatGeldi — Implementation Plan
 
-> **Status:** Phase 1 — steps 1, 3 and 4 done (#16, #20, #21); step 5 (tokens) in progress (#22, waiting for the `stock-low-border` token); next: step 6 (theme) · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
+> **Status:** Phase 1 — steps 1, 3 and 4 done (#16, #20, #21); step 5 (tokens) in progress (#22); next: step 6 (theme) · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
 > **Sources:** `CLAUDE.md` (The plan and the daily flow, Phases), `architecture.md` (§2, §3, §6, §15, §16, §19–§21, §24, §25), `pagedesign.md` (§2–§5, §7, §8), `product_design_pattern.md`, `engineering_checklist.md`, `screen_status.md`, `modules.md` Appendix A.
 
 **This is the single project plan.** Every working day follows it, one step at a time (`CLAUDE.md` › The plan and the daily flow):
