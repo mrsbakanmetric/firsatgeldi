@@ -53,7 +53,12 @@ export interface ApiResponse<T> {
   readonly meta: Meta | undefined;
 }
 
-type OptionalIfUndefined<K extends string, V> = undefined extends V ? { readonly [P in K]?: V } : { readonly [P in K]: V };
+/** Optional when there is nothing to send or every field is optional (e.g. a query with only a cursor). */
+type OptionalIfUndefined<K extends string, V> = undefined extends V
+  ? { readonly [P in K]?: V }
+  : Record<string, never> extends V
+    ? { readonly [P in K]?: V }
+    : { readonly [P in K]: V };
 
 export type CallInput<N extends JsonEndpointName> = OptionalIfUndefined<"params", EndpointParams<N>> &
   OptionalIfUndefined<"query", EndpointQuery<N>> &
