@@ -1,0 +1,33 @@
+{
+  "name": "@firsatgeldi/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@firsatgeldi/contracts": "workspace:*",
+    "@firsatgeldi/core": "workspace:*",
+    "@firsatgeldi/i18n": "workspace:*",
+    "@firsatgeldi/tokens": "workspace:*",
+    "@firsatgeldi/ui": "workspace:*",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@firsatgeldi/config": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
