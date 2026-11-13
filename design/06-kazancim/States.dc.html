@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Kazancım durumlar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes fgpulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion: reduce){.fg-sk{animation:none!important}}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 1700px; box-sizing: border-box; padding: var(--s8) 40px; display: flex; flex-direction: column; gap: var(--s8); background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">1 · BOŞ · henüz kazanç kaydı yok</span>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--s6); padding: var(--s8); border: 1px dashed var(--border); border-radius: var(--r-xl); background: var(--surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s3)">
+<h2 style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700">İlk kazancın burada görünecek</h2>
+<p style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Takip ettiğin bir ürün daha ucuza düşünce iade edip yeniden alırsın, iptal edip yeniden alırsın ya da satıcıdan fiyat farkını alırsın. Takibi bitirirken hangisini yaptığını seçersin; kazancın buraya yazılır.</p>
+<ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s3)">
+<sc-for list="{{steps}}" as="st" hint-placeholder-count="3"><li style="display: flex; flex-direction: column; gap: var(--s1); padding: var(--s3); border-radius: var(--r-md); background: var(--surface-alt)"><span style="width: 24px; height: 24px; border-radius: var(--r-pill); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">{{st.n}}</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{st.t}}</span></li></sc-for>
+</ol>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 2px solid var(--primary); border-radius: var(--r-lg)">
+<span style="font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)">ŞU AN KAZANABİLECEĞİN</span>
+<span style="font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700; color: var(--savings)">en çok 3.302 TL</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm)">2 üründe açık fırsat var · fiyatlar 4 dk önce kontrol edildi</span>
+<a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 48px; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font-size: var(--fs-btn); font-weight: 600; text-decoration: none">Açık fırsatlarına git</a>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">2 · YALNIZCA KAÇAN FIRSAT · kazanç yok, bir fırsat kullanılmadı</span>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Henüz kazanç kaydın yok</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Bu yıl 1 fırsatı kullanamadın (600 TL). Bir dahaki sefere iade süresi bitmeden 2 gün kala ayrıca hatırlatırız.</span></div>
+<a href="#" style="flex: none; display: inline-flex; align-items: center; height: var(--touch); padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); color: var(--primary); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Kaçan fırsatı gör</a>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">3 · KESİNLEŞMİŞ KAYIT · 7 gün geçti, düzeltme kapalı</span>
+<div style="display: grid; grid-template-columns: 56px minmax(0, 1fr) 104px 112px 104px 220px; gap: var(--s3); align-items: center; padding: var(--s3) var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<span role="img" aria-label="Logitech MX Master 3S görseli" style="width: 56px; height: 56px; flex: none; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="43" height="43" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4c-8 0-12 6-12 14v12c0 8 5 14 12 14s12-6 12-14V18c0-8-4-14-12-14z" fill-rule="evenodd" style="fill: var(--text)"/><path d="M23.5 4h1v14h-1z" fill-rule="evenodd" style="fill: var(--surface)"/><path d="M22.5 9h3v7h-3z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 600">Logitech MX Master 3S</span><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">İade + yeniden alım · 2 Kasım 2026</span></div>
+<span style="font-size: var(--fs-bsm); text-align: right; color: var(--text-muted)">4.299 TL</span>
+<span style="font-size: var(--fs-bsm); text-align: right">3.649 TL</span>
+<span style="font-size: var(--fs-body); text-align: right; font-weight: 700; color: var(--savings)">+650 TL</span>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right"><span style="display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-cap); font-weight: 600; color: var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"/></svg>9 Kasım'da kesinleşti</span><a href="#" style="font-size: var(--fs-cap); font-weight: 600; color: var(--primary)">Yanlışlık mı var? Destek talebi aç</a></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">4 · ESKİ VERİ · son kayıtlar henüz eklenmedi</span>
+<div role="status" style="display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--warning-subtle); color: var(--on-warning-subtle); font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span style="flex: 1">Rakamlar en az 15 dk önceki kayıtlarına göre. Son bitirdiğin takip birazdan eklenecek.</span><button type="button" style="height: 36px; padding: 0 var(--s3); border: 0; background: transparent; color: inherit; font: inherit; font-size: var(--fs-bsm); font-weight: 700; text-decoration: underline">Yenile</button></div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">5 · HATA · kazanç bilgisi yüklenemedi</span>
+<div role="alert" style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<div style="display: flex; gap: var(--s3); align-items: flex-start"><span style="color: var(--danger); display: flex; padding-top: 2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div style="display: flex; flex-direction: column; gap: var(--s1)"><span style="font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600">Kazanç bilgin şu an yüklenemedi</span><span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Kayıtların güvende; hiçbiri silinmedi. Biraz sonra tekrar dene.</span></div></div>
+<button type="button" style="flex: none; height: var(--touch); padding: 0 var(--s5); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tekrar dene</button>
+</div>
+</section>
+
+<section aria-busy="true" style="display: flex; flex-direction: column; gap: var(--s3)">
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">6 · YÜKLENİYOR · iskelet, gerçek düzenle aynı ölçüler</span>
+<div class="fg-sk" style="height: 240px; border-radius: var(--r-xl); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4)"><sc-for list="{{three}}" as="x" hint-placeholder-count="3"><div class="fg-sk" style="height: 120px; border-radius: var(--r-lg); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div></sc-for></div>
+<sc-for list="{{three}}" as="x" hint-placeholder-count="3"><div class="fg-sk" style="height: 80px; border-radius: var(--r-md); background: var(--surface-alt); animation: fgpulse 1.4s ease-in-out infinite"></div></sc-for>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1700}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s8":"32px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","fs-h2":"22px","lh-h2":"30px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-btn":"16px","touch":"44px"};
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    return { rootStyle: s, three: [1, 2, 3], steps: [{ n: 1, t: 'Daha ucuzu çıkınca haber alırsın' }, { n: 2, t: 'İade, iptal ya da fiyat farkı ile alırsın' }, { n: 3, t: 'Takibi bitirirken yöntemi seçersin' }] };
+  }
+}
+</script>
+</body>
+</html>
