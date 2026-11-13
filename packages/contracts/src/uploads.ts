@@ -1,0 +1,65 @@
+// User uploads (architecture.md §11a flow; database.md §14b `uploads`, `media_assets`).
+import { z } from "zod";
+import { CalendarDay, Id, Money, Timestamp } from "./common";
+
+export const UploadPurpose = z.enum(["IDENTIFY", "ORDER_SCREENSHOT", "AVATAR", "SUPPORT_ATTACHMENT"]);
+/** Accepted types: JPEG, PNG, WebP, HEIC (database.md §14b rules). */
+export const UploadMime = z.enum(["image/jpeg", "image/png", "image/webp", "image/heic"]);
+export const UploadStatus = z.enum(["PRESIGNED", "UPLOADED", "PROCESSING", "READY", "REJECTED", "EXPIRED", "DELETED"]);
+export const UploadRejectReason = z.enum(["TYPE", "SIZE", "DIMENSIONS", "DECODE", "UNSAFE"]);
+
+/** `POST /uploads/presign` { purpose, files: [{ mime, bytes }] }; count and size limits are settings, checked by the server. */
+export const PresignRequest = z.object({
+  purpose: UploadPurpose,
+  files: z.array(z.object({ mime: UploadMime, bytes: z.number().int().positive() })).min(1),
+});
+export type PresignRequest = z.infer<typeof PresignRequest>;
+
+/** → batchId + presigned URLs (quarantine bucket, short-lived, size/type locked). */
+export const PresignResult = z.object({
+  batchId: Id,
+  uploads: z.array(
+    z.object({
+      uploadId: Id,
+      position: z.number().int().nonnegative(),
+      uploadUrl: z.url(),
+      method: z.literal("PUT"),
+      headers: z.record(z.string(), z.string()),
+      expiresAt: Timestamp,
+    }),
+  ),
+});
+export type PresignResult = z.infer<typeof PresignResult>;
+
+/** `POST /uploads/complete` { batchId } → processing queue; result via SSE `upload.ready` / `upload.rejected`. */
+export const CompleteUploadRequest = z.object({ batchId: Id });
+export const CompleteUploadResult = z.object({
+  batchId: Id,
+  uploads: z.array(z.object({ uploadId: Id, status: UploadStatus })),
+});
+
+/**
+ * Fields read from an order screenshot: product, seller, price, date only
+ * (database.md §14b `uploads.extracted`). Name, address, phone and order number
+ * are stripped. The seller here is the user's own seller, which is always visible.
+ */
+export const UploadExtraction = z.object({
+  productText: z.string().nullable(),
+  sellerName: z.string().nullable(),
+  platformName: z.string().nullable(),
+  pricePaid: Money.nullable(),
+  orderedOn: CalendarDay.nullable(),
+});
+
+/** `GET /uploads/:id` — status and extraction (personal data stripped). */
+export const UploadView = z.object({
+  id: Id,
+  batchId: Id.nullable(),
+  purpose: UploadPurpose,
+  position: z.number().int().nonnegative(),
+  status: UploadStatus,
+  rejectReason: UploadRejectReason.nullable(),
+  extracted: UploadExtraction.nullable(),
+  purgeAt: Timestamp.nullable(),
+});
+export type UploadView = z.infer<typeof UploadView>;

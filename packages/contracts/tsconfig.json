@@ -1,4 +1,8 @@
 {
   "extends": "@firsatgeldi/config/tsconfig/base.json",
+  "compilerOptions": {
+    // fetch, Response, URLSearchParams and crypto.randomUUID: available in browsers, Node and React Native.
+    "lib": ["ES2023", "DOM"]
+  },
   "include": ["src"]
 }
