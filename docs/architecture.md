@@ -850,6 +850,8 @@ apps/web/app/[locale]/
 │   ├── page.tsx                  # Landing Page (signed out) — Home when signed in
 │   ├── urun/[slug]/page.tsx      # SEO product page
 │   ├── yardim/page.tsx · yardim/[slug]/page.tsx
+│   ├── yardim/iletisim/page.tsx  # Bize yaz + Taleplerim (`pagedesign.md` §8.11)
+│   ├── u/[username]/page.tsx     # another user's profile — later slice
 │   └── kvkk · kosullar · cerezler · komisyon
 ├── (app)/
 │   ├── ara/page.tsx              # Search and Add (guests too)
@@ -858,10 +860,13 @@ apps/web/app/[locale]/
 │   ├── bildirimler/page.tsx
 │   ├── kazancim/page.tsx
 │   ├── paketim/page.tsx
-│   ├── ayarlar/page.tsx
+│   ├── ayarlar/[section]/page.tsx # Settings and Account — one URL per section (`/ayarlar/{section}`)
 │   ├── kesfet/page.tsx           # later slice
-│   └── profil/[username]/page.tsx # later slice
-├── (auth)/giris/page.tsx
+│   └── profil/page.tsx           # Profilim (own profile) — later slice
+├── (auth)/
+│   ├── giris/page.tsx            # sign-in / sign-up tabs
+│   ├── sifre-sifirla/page.tsx    # password reset
+│   └── dogrula/page.tsx          # e-mail verification [ASSUMPTION]
 └── admin/                        # permission-gated; Admin Overview + all admin screens (history, fraud, roles included)
 ```
 

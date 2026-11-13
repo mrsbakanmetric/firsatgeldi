@@ -837,7 +837,7 @@ Canvas "FırsatGeldi — 10 Tanıtım Sayfası": landing (hero, figures, how it 
 
 **Purpose:** Make it easy for users to exercise their rights and answer "why?" questions without leaving the screen.
 
-**Route:** `/[locale]/yardim` · `/[locale]/yardim/[slug]`
+**Route:** `/[locale]/yardim` · `/[locale]/yardim/[slug]` · `/[locale]/yardim/iletisim` (Bize yaz + Taleplerim, `pagedesign.md` §8.11)
 
 ### Content [DECIDED]
 - **Platform return guides:** step-by-step return and cancellation per store; the "Süre ve kurallar" box comes from the return rule table (read from the store's site, with its age, or "Varsayılan"); never typed into the text.
