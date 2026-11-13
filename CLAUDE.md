@@ -116,7 +116,7 @@ On a merged PR labelled `design-change`: read its diff (`design/` + `docs/screen
 0. Implementation plan, no code → `docs/implementation_plan.md`.
 1. Data test (SerpApi + stores: seller, name, rating, reviews, stock, campaign, installments).
 2. Open decisions + [ASSUMPTION] review — list only; the user decides.
-3. Infrastructure: skeleton, tokens → CSS variables, database, auth + permissions, CI.
+3. Infrastructure: skeleton, tokens → CSS variables, database, permission framework + development login, CI. Real sign-in is a screen (Sign-in and Sign-up), built in Stage 4.
 4. Screens in this order: Search and Add → Product Detail → Tracked Items → Notifications and Preferences → Home → My Savings → others → Application Manager screens. Each screen passes `docs/engineering_checklist.md`.
 
 ## Working rules
