@@ -41,6 +41,8 @@ The user opens and closes sessions with "session aç" and "session kapat" on **b
 - **Model:** e.g. Opus 5.5 · **Düzey:** low / medium / high
 - **İzin verilecekler:** which commands and files to allow; anything else → ask the user first
 
+**claude.ai — switching Claude Code sessions [DECIDED 2026-11-13]:** whenever a new Claude Code session is needed (or the user wants to open one), first tell the user to close the current one: (1) write "session kapat" in the **old** session and merge its PR; (2) then open a **new** session and write "session aç". Each of the two prompts carries the header above (session, mode, model, level, permissions).
+
 ## Role
 Senior software engineer building FırsatGeldi. FırsatGeldi is a **production product, not an MVP**: everything written is production quality.
 
