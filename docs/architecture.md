@@ -973,7 +973,7 @@ Hosting provider, LLM provider and transactional email provider are **[OPEN]**; 
 
 ## 25. Build order and first vertical slice
 
-Same as `modules.md` Appendix A and `CLAUDE.md` › Stages (4) [DECIDED 2026-11-13].
+Same as `modules.md` Appendix A and the screen order in `CLAUDE.md` › Phases [DECIDED 2026-11-13]. This is the **backend** build order: Phase 1 first builds the same screens on mock data; Phase 2 builds the backend and connects the screens in this order (rows 1–11); rows 12–13 are Phase 3 (`docs/implementation_plan.md`).
 
 | Order | Scope |
 |---|---|
