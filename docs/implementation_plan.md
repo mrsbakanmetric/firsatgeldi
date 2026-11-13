@@ -1,6 +1,6 @@
 # FırsatGeldi — Implementation Plan
 
-> **Status:** Phase 1 — step 1 done (#16); step 3 (monorepo skeleton) in progress (#20); next: step 4 (basic CI) · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
+> **Status:** Phase 1 — steps 1 and 3 done (#16, #20); step 4 (basic CI) in progress (#21); next: step 5 (tokens) · **Last updated:** 2026-11-13 · **Owner:** implementation side (Claude Code)
 > **Sources:** `CLAUDE.md` (The plan and the daily flow, Phases), `architecture.md` (§2, §3, §6, §15, §16, §19–§21, §24, §25), `pagedesign.md` (§2–§5, §7, §8), `product_design_pattern.md`, `engineering_checklist.md`, `screen_status.md`, `modules.md` Appendix A.
 
 **This is the single project plan.** Every working day follows it, one step at a time (`CLAUDE.md` › The plan and the daily flow):
@@ -40,8 +40,8 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 |---|---|---|---|---|---|
 | 1 | Plan update | This three-phase plan (no code) | ✅ | #16 | 2026-11-13 |
 | 2 | Screen PNGs before each screen | Rule step: before each screen step, that screen's PNGs are in `design/`; before step 8, the "0 İskelet ve Bileşenler" PNGs | ⬜ (recurring) | — | — |
-| 3 | Monorepo skeleton | Building empty workspace; one command starts the web app | 🛠 | #20 | 2026-11-13 |
-| 4 | Basic CI | Lint, typecheck and unit tests on every PR | ⬜ | — | — |
+| 3 | Monorepo skeleton | Building empty workspace; one command starts the web app | ✅ | #20 | 2026-11-13 |
+| 4 | Basic CI | Lint, typecheck and unit tests on every PR | 🛠 | #21 | 2026-11-13 |
 | 5 | Tokens | `design-tokens.json` in code + platform-neutral JSON; contrast test | ⬜ | — | — |
 | 6 | Theme | CSS variables, Tailwind preset, light/dark, hard-coded-value lint | ⬜ | — | — |
 | 7 | i18n | Turkish/English catalogues, `/tr` and `/en` routes, money/date formats | ⬜ | — | — |
