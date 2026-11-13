@@ -279,6 +279,9 @@ importers:
       '@firsatgeldi/core':
         specifier: workspace:*
         version: link:../core
+      '@firsatgeldi/tokens':
+        specifier: workspace:*
+        version: link:../tokens
       msw:
         specifier: 'catalog:'
         version: 3.0.5(@types/node@24.19.2)(typescript@6.0.3)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0))

@@ -16,6 +16,7 @@
   "dependencies": {
     "@firsatgeldi/contracts": "workspace:*",
     "@firsatgeldi/core": "workspace:*",
+    "@firsatgeldi/tokens": "workspace:*",
     "msw": "catalog:",
     "zod": "catalog:"
   },
