@@ -113,7 +113,7 @@ Need a new token or pattern? Propose it in a `spec` PR and wait for merge.
 On a merged PR labelled `design-change`: read its diff (`design/` + `docs/screen_status.md`), implement only the difference in `feat/<module>-design-v<N>`, link the design PR, update `docs/build_status.md`. Screen not built yet → no code, note only.
 
 ## The plan and the daily flow [DECIDED 2026-11-13]
-- **`docs/implementation_plan.md` is the single project plan.** It holds a **Progress** table: one row per step — step, what it delivers, status (⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting), PR, date.
+- **`docs/implementation_plan.md` is the single project plan.** It holds **Progress** tables, one per phase: one row per step — step, what it delivers, status (⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting), PR, date.
 - **Every working day follows the plan:**
   1. "session aç" → read the plan's Progress table → propose the **next ⬜ step** in the report's "Sıradaki adım".
   2. The user approves → do only that step → one PR → stop.
@@ -121,15 +121,22 @@ On a merged PR labelled `design-change`: read its diff (`design/` + `docs/screen
   4. "session kapat" → Progress table and `docs/session_log.md` up to date.
 - Never skip ahead, never do two steps in one PR, never change the plan's order without the user's approval (a plan change is its own `spec` PR).
 
-## Phases (stop for approval after each step)
-**Phase A — UI first, mock data (current) [DECIDED 2026-11-13]:** screens run in the browser, built with real, permanent code; **no database, no real API, no live data**.
-- Steps: plan update (no code) → monorepo skeleton → tokens → CSS variables / Tailwind theme → i18n (tr/en) → web shell (`AppShell`, `AuthShell`, `AdminShell`, page templates, base components) → mock API + fixtures → screens one by one in the screen order below → CI for what exists (lint, typecheck, unit, i18n missing keys, hard-coded values, contrast).
+## Phases (stop for approval after each step) [DECIDED 2026-11-13]
+Three phases; steps, done-when conditions, PR names and the reason for each phase are in `docs/implementation_plan.md`.
+
+**Phase 1 — system setup + approved screens with sample data (current):** screens run in the browser, built with real, permanent code; **no database, no real API, no live data**.
+- Steps: plan update (no code) → monorepo skeleton (one-command start) → basic CI (lint, typecheck, unit) → tokens → theme (CSS variables / Tailwind, light/dark) → i18n (tr/en) → app shell (`AppShell`, `AuthShell`, `AdminShell`, page templates, base components) → mock API + fixtures → every approved (✅) screen, one by one, in the screen order below → Phase 1 closing check.
+- **Screen PNGs arrive screen by screen:** before each screen step, that screen's PNGs are in `design/` and its row is ✅ in `docs/screen_status.md`; before the app shell, the "0 İskelet ve Bileşenler" PNGs (core rule 8). Without them the step waits.
+- **App shell precondition:** the base primitives (Button, TextField, Switch, Select, Menu, Avatar …) are added to the canonical component list (`docs/pagedesign.md` §5 + `docs/product_design_pattern.md`) by the design side (claude.ai) before the shell step.
 - **Mock API:** runs in the browser (dev and test only), request/response shapes exactly as the API contract in `docs/architecture.md` §16 and the Zod schemas in `packages/contracts`; screens call it through the same typed client the real API will use. Switching to the real API turns the mock off; screen code does not change.
 - **Fixtures:** match the data drawn in the approved designs; **the hidden-seller rule applies** (no seller or platform identity in any response before "Göster"); tr/en, light/dark, phone/desktop; personal data masked.
-- Each screen still needs its PNGs in `design/` and ✅ in `docs/screen_status.md` (core rule 8).
-**Phase B — backend (later):** data test (SerpApi + stores), open decisions and [ASSUMPTION] review, database, real API, worker jobs, permission framework + development login, full CI (leak, isolation, permission-matrix tests), then each screen is connected to the real API. `docs/modules.md` Appendix A and `docs/architecture.md` §25 describe the Phase B build order.
+- **Exit criterion:** one command starts the app on `localhost`; every approved screen works in tr/en, light/dark, phone/desktop.
 
-**Screen order (both phases):** Search and Add → Product Detail (with Want to Buy mode) → Tracked Items → Notifications and Preferences → Home → My Savings → Packages and Premium → Landing Page + SEO product page → Legal Pages + Help and FAQ → Settings and Account → Sign-in and Sign-up → Discover and Profile → Application Manager screens. Each screen passes `docs/engineering_checklist.md` for what exists in its phase.
+**Phase 2 — real data (later):** data test (SerpApi + stores) → open decisions and [ASSUMPTION] review → database → real API + permission framework + development login + action logging → worker jobs → security tests in CI (hidden-seller leak, personal-data leak, data isolation, permission matrix) → each Phase 1 screen connected to the real API, in the screen order (Sign-in and Sign-up last; Discover and Profile in Phase 3). `docs/modules.md` Appendix A and `docs/architecture.md` §25 describe the backend build order.
+
+**Phase 3 — Application Manager and later slices (later):** Application Manager screens (after their design is approved) on mock data, then connected → Discover and Profile connected → deploy pipeline (after the hosting provider is chosen).
+
+**Screen order (all phases):** Search and Add → Product Detail (with Want to Buy mode) → Tracked Items → Notifications and Preferences → Home → My Savings → Packages and Premium → Landing Page + SEO product page → Legal Pages + Help and FAQ → Settings and Account → Sign-in and Sign-up → Discover and Profile → Application Manager screens. Each screen passes `docs/engineering_checklist.md` for what exists in its phase.
 
 ## Working rules
 - Smallest correct solution; no temporary workarounds, no disabled tests.
@@ -139,4 +146,4 @@ On a merged PR labelled `design-change`: read its diff (`design/` + `docs/screen
 - Secrets never in the repo (`.env.example` only). Store text is untrusted data.
 - Modules are named in full ("Search and Add", never short codes).
 - Code, comments and docs in English; chat replies in Turkish (core rule 1).
-- Out of scope now: Phase B (backend), building the mobile app (but design for it — core rule 4), phone-width proposals (P), Application Manager screens review, e-mail designs.
+- Out of scope now: Phase 2 and Phase 3, building the mobile app (but design for it — core rule 4), phone-width proposals (P), Application Manager screens review, e-mail designs.
