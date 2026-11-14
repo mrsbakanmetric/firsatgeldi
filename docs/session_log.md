@@ -13,10 +13,10 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 ---
 
 ## 2026-11-14 → 15 · Claude Code
-- **Done:** Search and Add v3 (#68) and v4 (#79: first result pre-selected + "Evet, bu?", inline completion, any Trendyol/Hepsiburada link in the mock); Tracked Items v2 (#76), v3 (#85: shared `SearchBox` + `InputSourceHandler`, deal group, ⋯ "Takibi bitir" + 7-day "Geri al"), v4 (#88: ranked price list, status icon, "Aldım, kaydet" switches the same record, stale texts); unused texts removed with two-step approval (#81, in #85, #88).
+- **Done:** Search and Add v3 (#68) and v4 (#79: first result pre-selected + "Evet, bu?", inline completion, any Trendyol/Hepsiburada link in the mock); Tracked Items v2 (#76), v3 (#85: shared `SearchBox` + `InputSourceHandler`, deal group, ⋯ "Takibi bitir" + 7-day "Geri al"), v4 (#88: ranked price list, status icon, "Aldım, kaydet" switches the same record, stale texts), v5 (#92: two-column card grid); unused texts removed with two-step approval (#81, in #85, #88).
 - **Specs (user decisions):** "Diğer" fields (#69, #70) · Tracked Items before Product Detail in plan, CLAUDE.md, build order, Phase 2 (#73, #78, #80, #82) · list/summary/bulk fields in §16.1 (#77).
-- **Open:** #92 (Tracked Items v5 card grid) to merge · deletion request for #92 waits for the user's first approval (`ColumnHeads`, `ProductRow` "priceList" + `phoneFull`, 9 v4 texts, `size.list-name-min-width` usage) · v5 cards in one row leave a gap above the footer in the shorter card (design question) · end/restore/bought/ranked fields are [ASSUMPTION] until written into `architecture.md` §16.1 · the two optional end questions come with My Savings / Product Detail · performance budgets not measured.
-- **Next:** user checks #92 in the browser and merges → spec PR for the v3–v4 contract fields in §16.1 → plan step 11 (Product Detail), with approval.
+- **Open:** deletion request after v5 waits for the user's first approval (new chore PR, #92 is merged) (`ColumnHeads`, `ProductRow` "priceList" + `phoneFull`, 9 v4 texts, `size.list-name-min-width` usage) · v5 cards in one row leave a gap above the footer in the shorter card (design question) · end/restore/bought/ranked fields are [ASSUMPTION] until written into `architecture.md` §16.1 · the two optional end questions come with My Savings / Product Detail · performance budgets not measured.
+- **Next:** user checks Tracked Items v5 in the browser → spec PR for the v3–v4 contract fields in §16.1 → plan step 11 (Product Detail), with approval.
 
 ---
 

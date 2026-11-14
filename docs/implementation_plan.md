@@ -48,7 +48,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ✅ | #50 | 2026-11-14 |
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ✅ | #53 · #55 (guest upload status, seller-lookup limit) | 2026-11-14 |
 | 10 | Search and Add | Screen as designed, on mock data | 🛠 | #61 · #68 (v3) · #79 (v4) | 2026-11-14 |
-| 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | 🛠 | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5, open) | 2026-11-14 |
+| 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | 🛠 | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5) | 2026-11-14 |
 | 11 | Product Detail | Screen incl. Want to Buy mode | ⬜ | — | — |
 | 13 | Notifications and Preferences | Page, bell panel, notification preferences | ⬜ | — | — |
 | 14 | Home | Screen | ⬜ | — | — |
