@@ -46,7 +46,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 6 | Theme | CSS variables, Tailwind preset, light/dark, hard-coded-value lint | ✅ | #24 | 2026-11-13 |
 | 7 | i18n | Turkish/English catalogues, `/tr` and `/en` routes, money/date formats | ✅ | #25 | 2026-11-13 |
 | 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ✅ | #50 | 2026-11-14 |
-| 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ⬜ | — | — |
+| 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ✅ | #53 | 2026-11-14 |
 | 10 | Search and Add | Screen as designed, on mock data | ⬜ | — | — |
 | 11 | Product Detail | Screen incl. Want to Buy mode | ⬜ | — | — |
 | 12 | Tracked Items | List + Add product dialog | ⬜ | — | — |
@@ -295,11 +295,11 @@ Endpoints from `architecture.md` §16, tables from `database.md`, components fro
 ### B.1 Search and Add — `/[locale]/ara` (`pagedesign.md` §8.2)
 | | |
 |---|---|
-| **Endpoints** | `GET /search/autocomplete` *(guest)* · `POST /uploads/presign` *(guest)* · `POST /uploads/complete` *(guest)* · `GET /uploads/:id` · `GET /img/:sha256/:variant` *(guest)* · `POST /identify` *(guest)* · `POST /identify/:requestId/answer` *(guest)* · `GET /products/:id` *(guest)* · `GET /products/:id/similar` *(guest)* · `GET /products/:id/confirm-context` · `POST /products/:id/seller-lookup` · `POST /products/:id/teaser` · `POST /tracked-items` · `POST /offers/:ref/reveal` · `POST /offers/:ref/hide` · `POST /offers/:ref/go` · `GET /me/stream` (`upload.ready`, `upload.rejected`) |
+| **Endpoints** | `GET /search/autocomplete` *(guest)* · `POST /uploads/presign` *(guest)* · `POST /uploads/complete` *(guest)* · `GET /uploads/:id` *(guest: own uploads only, polling — `architecture.md` §11a)* · `GET /img/:sha256/:variant` *(guest)* · `POST /identify` *(guest)* · `POST /identify/:requestId/answer` *(guest)* · `GET /products/:id` *(guest)* · `GET /products/:id/similar` *(guest)* · `GET /products/:id/confirm-context` · `POST /products/:id/seller-lookup` · `POST /products/:id/teaser` · `POST /tracked-items` · `POST /offers/:ref/reveal` · `POST /offers/:ref/hide` · `POST /offers/:ref/go` · `GET /me/stream` (`upload.ready`, `upload.rejected`; signed-in only) · field-level contract: `architecture.md` §16.1 · [OPEN] "Katalogda yok → mağazalarda ara" has no endpoint (ask the user before step 10) |
 | **Worker jobs (Phase 2)** | `identify`, `link-resolve`, `media-process`, `media-cleanup`, `image-ingest`, `index`, `schedule-tick`, `discovery`, `site-search:{platform}`, `merge`, `verify`, `deal-evaluate`, `product-event`, `activity-ingest`, `reveal-expiry`, `reveal-watch`, `budget-guard` |
 | **Tables (Phase 2)** | `identify_requests`, `uploads`, `media_assets`, `media_variants`, `product_images`, `products`, `product_attributes`, `product_aliases`, `categories`, `category_templates`, `platforms`, `sellers`, `offers` (via `v_offer_public`), `platform_return_rules`, `tracked_items`, `tracked_item_events`, `check_schedules`, `checks`, `price_history`, `stock_history`, `product_cheapest_hourly`, `deals`, `offer_reveals`, `affiliate_clicks`, `search_events`, `activity_events`, `product_events`, `api_usage`, `provider_budgets`, `alerts`, `seller_trust` |
 | **Components** | `AppShell` · `PageTemplate` (Flow) · `SearchField` · `MultiImageUpload` + `ImagePrivacyNote` · `AttributeChip` · `ProductImage` · candidate card (not in list yet) · `StepIndicator` · `ConfirmPanel` · `FactTile` ×3 · `SegmentedChoice` (order status) · `MoneyDisplay` · `FreshnessLine` · `HiddenOfferCard` (teaser) · `Flag` · `StatusBanner` · `SkeletonBlock` · `EmptyState` |
-| **Permission keys** | `catalog.view` *(guest)* · `search.use` *(guest)* · `identify.use` *(guest)* · `upload.own.create` *(guest)* · `tracking.own.write` · `reveal.own.use` · `offer.own.go` · `admin.offers.view_hidden_seller` |
+| **Permission keys** | `catalog.view` *(guest)* · `search.use` *(guest)* · `identify.use` *(guest)* · `upload.own.create` *(guest)* · `upload.own.view` *(guest; own uploads only)* · `tracking.own.write` · `reveal.own.use` · `offer.own.go` · `admin.offers.view_hidden_seller` |
 
 ### B.2 Product Detail incl. Want to Buy mode — `/[locale]/takip/[id]` (`pagedesign.md` §8.3)
 | | |
