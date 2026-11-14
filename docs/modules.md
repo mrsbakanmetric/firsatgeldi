@@ -214,6 +214,8 @@ These rules apply to every screen and are not repeated in each module.
 - The list holds **products/variants only**: image, name, model/generation, bundle, colour, number of stores found.
 - **No store names and no prices.**
 - The user **marks** one (secondary button); reversible; nothing is saved.
+- **Pre-selection [DECIDED 2026-11-14]:** after a search the first result is selected automatically and the confirm panel opens. This is only our guess: the product must be verified with **"Evet, bu?"** in the panel before "Evet, bunu aldım" / "Sadece takip et" can save anything (verify first is kept). Choosing another result moves the selection and resets the verification.
+- **Inline completion [DECIDED 2026-11-14]:** the first suggestion completes the typed text (Tab / → accepts).
 - "Similar but different" (other generation, bundle, accessory) is separate and collapsed; opens on request.
 - If there is no exact match, say so + show the closest three.
 
