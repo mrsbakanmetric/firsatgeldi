@@ -229,6 +229,7 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 ### 8.2 Search and Add — `/[locale]/ara`
 - **Shell/template:** AppShell · Flow.
 - **Regions:** search box (text · link · photo) → autocomplete (3 image tiles + scrollable list + preview) → "Nasıl anladık" chips → "Hangisi seninki?" candidates (image 72, product/variant only, no price/store) → right **confirm panel** (platform, typed seller with exact match, price paid typed, order date/status, return day, fact tiles, teaser after price) → "Evet, bunu aldım" / "Almadım, sadece takip et".
+- **Layout (design v2):** before a product is marked the page is one full-width column; `MultiImageUpload` renders inline under the search box as file chips + limits line + `ImagePrivacyNote` (no separate photos panel). The right column is used only by the confirm panel after marking.
 - **States:** loading · empty (three ways to add) · error (keeps input) · stale · success ("Takibe eklendi" with image).
 - **API:** `/search/autocomplete`, `/identify`, `/products/:id/confirm-context`, `/products/:id/seller-lookup`, `/products/:id/teaser`, `POST /tracked-items`.
 

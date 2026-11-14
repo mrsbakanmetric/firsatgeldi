@@ -33,7 +33,7 @@ Three surfaces, kept apart in this document:
 | # | Screen (Turkish name) | Desktop | Phone width | Canvas | Design version | Change note |
 |---|---|---|---|---|---|---|
 | 0 | App shell and component set (İskelet ve Bileşenler) | ✅ | ✅ shell rules | [0 İskelet ve Bileşenler](https://claude.ai/artifact/UviFwo1Ftk2FrYFU3aeAr4) | v1 | Initial import |
-| 1 | Search and Add (Ara ve Ekle) | ✅ | ✅ in canvas 1 · 🟡 updated in check P | [1 Ara ve Ekle](https://claude.ai/artifact/HoAoJ78ugpSN9VUwg4RLiu) | v1 | Initial import |
+| 1 | Search and Add (Ara ve Ekle) | ✅ | ✅ in canvas 1 · 🟡 updated in check P | [1 Ara ve Ekle](https://claude.ai/artifact/HoAoJ78ugpSN9VUwg4RLiu) | v2 | Desktop input step: right "Fotoğraflar" panel removed; photo chips, limits line and privacy note under the search box; right column only for the confirm panel |
 | 2 | Product Detail (Ürün Detayı) | ✅ revision approved 2026-11-13 · want-to-buy mode ✅ approved 2026-11-13 | 🟡 check P | [2 Ürün Detayı](https://claude.ai/artifact/7rCf9eKdjfCuVuPWvqsqDA) | v1 | Initial import |
 | 3 | Home (Ana Sayfa) | ✅ revision approved 2026-11-13 | 🟡 check P | [3 Ana Sayfa](https://claude.ai/artifact/8ufA9dkjTMtKo1ixGGqykA) | v1 | Initial import |
 | 4 | Tracked Items + Add product dialog (Takip Ettiklerim) | ✅ | rules only | [4 Takip Ettiklerim](https://claude.ai/artifact/64fCN5dCFLKUCcPHnJaZRT) | v1 | Initial import |
@@ -58,6 +58,8 @@ Shell (desktop/phone, light/dark, guest), page templates, shared components, fiv
 
 **1 · Search and Add — ✅**
 Input (text · link · photo), 3 image tiles, "Nasıl anladık", mark, confirm panel, phone screens, five states. The rating tile now uses the seller trust indicator (documents updated; drawing unchanged).
+
+**v2 [DECIDED 2026-11-14]:** on desktop the input step is one full-width column. The separate "Fotoğraflar" panel on the right is removed; photos are added only from "Fotoğraf ekle" in the search box (and the "Sipariş ekranının fotoğrafını ekle" card in the empty state). Added photos appear as compact chips under the search box (thumbnail · file name · status · remove), followed by one limits line ("3 / 5 fotoğraf · … · dosya başına en çok 10 MB") and the image privacy note as a single line. The right column appears only once a product is marked (confirm panel). Phone layout unchanged.
 
 **2 · Product Detail — ✅ revision approved 2026-11-13 (interactive)**
 Approved: deal summary, price history, cheaper sellers, stock history, action steps, price-difference message, states. To add (already in the documents):
