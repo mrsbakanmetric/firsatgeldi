@@ -11,3 +11,5 @@ next-env.d.ts
 *.tsbuildinfo
 # Generated from docs/design-tokens.json on every build (packages/tokens).
 packages/tokens/generated/
+# Written by `next dev` (agent notes for Next.js); not part of the project.
+apps/web/AGENTS.md

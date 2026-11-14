@@ -199,11 +199,19 @@ export function identifyHandlers(controller: MockController) {
         }, MOCK_SETTINGS.processingMs);
       }
       note({ targetType: "upload_batch", targetId: body.batchId, metadata: { stage: "COMPLETE", count: batch.length } });
-      return { data: { batchId: body.batchId, uploads: batch.map((upload) => ({ uploadId: upload.id, status: upload.status })) } };
+      // Guests have no live updates: they poll with the values from system settings (architecture.md §11a).
+      const poll =
+        actor.kind === "guest"
+          ? { intervalSeconds: SYSTEM_SETTINGS["upload.guest_poll_interval_seconds"], maxSeconds: SYSTEM_SETTINGS["upload.guest_poll_max_seconds"] }
+          : null;
+      return { data: { batchId: body.batchId, uploads: batch.map((upload) => ({ uploadId: upload.id, status: upload.status })), poll } };
     }),
 
-    route(controller, "getUpload", ({ params, actor, locale, now }) => {
+    route(controller, "getUpload", ({ params, actor, locale, now, note }) => {
+      // The target is noted before the ownership check, so refused reads are logged with what was asked for.
+      note({ targetType: "upload", targetId: params.id });
       const upload = ownUpload(controller, params.id, actor);
+      note({ targetType: "upload", targetId: upload.id, metadata: { status: upload.status } });
       const extracted =
         upload.status === "READY" && upload.purpose === "ORDER_SCREENSHOT"
           ? (() => {

@@ -14,6 +14,9 @@ export const SYSTEM_SETTINGS = {
   "media.max_bytes": 10 * MEGABYTE,
   "media.max_images_per_request": 5,
   "media.private_retention_hours": 24,
+  "upload.guest_poll_interval_seconds": 2,
+  "upload.guest_poll_max_seconds": 60,
+  "seller_lookup.rate_limit_per_minute": 10,
   "tokens.welcome_gift": 3,
 } as const;
 

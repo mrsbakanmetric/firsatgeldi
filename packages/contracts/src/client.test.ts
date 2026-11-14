@@ -56,7 +56,7 @@ describe("typed API client", () => {
     server.use(
       http.post(`${BASE}${API_PREFIX}/uploads/complete`, ({ request }) => {
         key = request.headers.get("idempotency-key");
-        return HttpResponse.json({ data: { batchId: PRODUCT_ID, uploads: [] } });
+        return HttpResponse.json({ data: { batchId: PRODUCT_ID, uploads: [], poll: null } });
       }),
     );
     await client().call("completeUploads", { body: { batchId: PRODUCT_ID } });

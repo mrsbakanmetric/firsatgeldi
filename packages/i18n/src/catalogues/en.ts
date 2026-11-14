@@ -30,6 +30,10 @@ export const en = {
     internal: "Something went wrong. Try again; what you entered is kept.",
     network: "We couldn't connect. Check your internet connection and try again.",
   },
+  uploadStatus: {
+    timeoutTitle: "Search couldn't be completed",
+    timeoutBody: "Check your connection. What you typed and your photos are still here.",
+  },
   shell: {
     skipToContent: "Skip to content",
     logoHome: "FırsatGeldi home",

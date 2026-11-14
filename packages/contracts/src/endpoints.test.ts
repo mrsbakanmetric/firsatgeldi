@@ -24,7 +24,7 @@ describe("endpoint registry", () => {
   });
 
   it("only keys marked public in database.md §4 are on the guest allow-list", () => {
-    const publicKeys = new Set(["public.view", "content.view", "catalog.view", "search.use", "identify.use", "upload.own.create", "auth.use", "support.own.create", "consent.own.write"]);
+    const publicKeys = new Set(["public.view", "content.view", "catalog.view", "search.use", "identify.use", "upload.own.create", "upload.own.view", "auth.use", "support.own.create", "consent.own.write"]);
     for (const [, definition] of definitions) {
       if (definition.public) expect(publicKeys).toContain(definition.permission);
     }

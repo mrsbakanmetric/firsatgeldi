@@ -126,7 +126,8 @@ export interface StreamSubscriber {
 }
 
 export interface MockState {
-  readonly anonId: string;
+  /** Guest session id (`anon_id` cookie); a new value is a new guest session. */
+  anonId: string;
   readonly refs: Map<string, RefTarget>;
   readonly reveals: OfferRevealRow[];
   readonly trackedItems: TrackedItemRow[];
@@ -140,6 +141,8 @@ export interface MockState {
   readonly streamLog: { readonly actor: Actor; readonly event: StreamEvent }[];
   readonly subscribers: Set<StreamSubscriber>;
   readonly idempotency: Map<string, { readonly status: number; readonly body: unknown }>;
+  /** Accepted seller lookups per user (epoch ms), for `seller_lookup.rate_limit_per_minute`. */
+  readonly sellerLookups: Map<string, number[]>;
 }
 
 export function createMockState(): MockState {
@@ -157,7 +160,13 @@ export function createMockState(): MockState {
     streamLog: [],
     subscribers: new Set(),
     idempotency: new Map(),
+    sellerLookups: new Map(),
   };
+}
+
+/** Starts a new guest session (another browser, or cleared cookies): earlier guest rows belong to the old session. */
+export function startGuestSession(state: MockState): void {
+  state.anonId = newId();
 }
 
 export interface MockController {
