@@ -121,7 +121,6 @@ export const en = {
       hint: "Wrong? Fix it",
       undo: "Undo",
       /** Design v3: the small muted label in front of the attribute chips. */
-      label: "How we understood it:",
       /** Design v3: short notice after a change, next to "Undo". */
       changedShort: "{label} changed",
     },
@@ -131,9 +130,6 @@ export const en = {
         one: "{count} exact match · products and variants; no stores or prices in this list",
         other: "{count} exact matches · products and variants; no stores or prices in this list",
       },
-      mark: "Mark",
-      unmark: "Unmark",
-      marked: "Marked",
       similar: "Similar but different · {count}",
       similarNote: "Other generation, bundle or accessory · not compared",
       difference: {

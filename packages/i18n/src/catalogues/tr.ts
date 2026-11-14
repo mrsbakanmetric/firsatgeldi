@@ -123,7 +123,6 @@ export const tr = {
       hint: "Yanlışsa düzelt",
       undo: "Geri al",
       /** Design v3: the small muted label in front of the attribute chips. */
-      label: "Nasıl anladık:",
       /** Design v3: short notice after a change, next to "Geri al". */
       changedShort: "{label} değişti",
     },
@@ -133,9 +132,6 @@ export const tr = {
         one: "{count} tam eşleşme · ürün ve varyantlar; mağaza ve fiyat bu listede yok",
         other: "{count} tam eşleşme · ürün ve varyantlar; mağaza ve fiyat bu listede yok",
       },
-      mark: "İşaretle",
-      unmark: "İşareti kaldır",
-      marked: "İşaretlendi",
       similar: "Benzer ama farklı · {count}",
       similarNote: "Başka nesil, başka paket veya aksesuar · karşılaştırılmaz",
       difference: {

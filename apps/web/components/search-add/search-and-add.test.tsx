@@ -479,7 +479,6 @@ describe.each(LOCALES)("Search and Add — design v4 — %s", (locale) => {
     const radios = await screen.findAllByRole("radio");
     expect(radios.length).toBeGreaterThan(1);
     expect((radios[0] as HTMLInputElement).checked).toBe(true);
-    expect(screen.queryByText(t("searchAdd.candidates.marked"))).toBeNull();
     expect(screen.getByRole("complementary", { name: t("searchAdd.confirm.title") })).toBeDefined();
     await verify(locale);
     expect(screen.getByRole("button", { name: t("searchAdd.confirm.verified") })).toBeDefined();
