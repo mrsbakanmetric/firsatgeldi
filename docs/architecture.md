@@ -476,7 +476,7 @@ Client ──(3) POST /uploads/complete {batchId}──▶ API ──▶ queue: 
 | Serving | Catalogue: CDN, `Cache-Control: immutable` (the URL derives from content and never changes); `<picture>` with AVIF → WebP → JPEG; size-appropriate variant (`srcset`) |
 | Sending to the LLM | Only processed (metadata-stripped) images; provider must not retain data |
 | Avatar | Separate kind; signed link or CDN according to privacy level; deleted with the account |
-| Upload status for guests [DECIDED 2026-11-14] | A guest's upload is bound to the guest session (`anon_id`). `GET /uploads/:id` is on the public allow-list and returns only the caller's own uploads; another session's or user's upload answers `NOT_FOUND`. Guests get no live updates (§13): they poll every `upload.guest_poll_interval_seconds` (2) and stop after `upload.guest_poll_max_seconds` (60), then show the error state. Every status read writes an activity row (`upload.status`). |
+| Upload status for guests [DECIDED 2026-11-14] | A guest's upload is bound to the guest session (`anon_id`). `GET /uploads/:id` (key `upload.own.view`, separate from `upload.own.create`) is on the public allow-list and returns only the caller's own uploads; another session's or user's upload answers `NOT_FOUND`. Guests get no live updates (§13): they poll every `upload.guest_poll_interval_seconds` (2) and stop after `upload.guest_poll_max_seconds` (60), then show the error state. Every status read writes an activity row (`upload.status`). |
 | Fraud | Upload count and rejection ratio are risk-rule signals |
 | Admin | The Application Manager can view private uploads within their retention period (24 h, or 30 days for support screenshots) with a reason; every view audited |
 
@@ -783,11 +783,11 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | `GET /me` | `account.own.view` | — (guest → `UNAUTHENTICATED`) | | — |
 | `GET /me/entitlements` | `packages.own.view` | — | | — |
 | `GET /me/search-history` | `account.own.view` | — | | — |
-| `GET /me/stream` | `account.own.view` [ASSUMPTION] | — (§13) | | — |
+| `GET /me/stream` | `account.own.view` [DECIDED 2026-11-14] | — (§13) | | — |
 | `GET /search/autocomplete` | `search.use` | ✓ | | `search` |
 | `POST /uploads/presign` | `upload.own.create` | ✓ | | `upload` |
 | `POST /uploads/complete` | `upload.own.create` | ✓ | ✓ | `upload` |
-| `GET /uploads/:id` | `upload.own.create` [ASSUMPTION — key] | ✓ own only [DECIDED 2026-11-14] | | `upload.status` [DECIDED 2026-11-14 — logged; name ASSUMPTION] |
+| `GET /uploads/:id` | `upload.own.view` [DECIDED 2026-11-14] | ✓ own only [DECIDED 2026-11-14] | | `upload.status` [DECIDED 2026-11-14] |
 | `GET /img/:sha256/:variant` | `catalog.view` | ✓ | | — |
 | `POST /identify` · `POST /identify/:requestId/answer` | `identify.use` | ✓ | | `identify` |
 | `GET /products/:id` · `GET /products/:id/similar` | `catalog.view` | ✓ | | — |

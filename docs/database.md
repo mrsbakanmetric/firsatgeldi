@@ -267,7 +267,8 @@ Keys follow `<area>.<scope>.<action>` (`own` = the user's own data). All keys ha
 | Catalogue | `catalog.view` | ✓ | Products, similar products, images |
 | Search and Add | `search.use` | ✓ | Autocomplete |
 | Search and Add | `identify.use` | ✓ | Identify text / link / image, answer questions |
-| Search and Add | `upload.own.create` | ✓ | Presign + complete uploads; read the status of own uploads (guests: uploads of their own `anon_id` only) [DECIDED 2026-11-14] |
+| Search and Add | `upload.own.create` | ✓ | Presign + complete uploads |
+| Search and Add | `upload.own.view` | ✓ | Read the status of own uploads only — guests: uploads of their own session (`anon_id`); users: uploads of their own account (`user_id`) [DECIDED 2026-11-14] |
 | Auth | `auth.use` | ✓ | Sign-in, sign-up, password reset (signed-out flows) |
 | Support | `support.own.create` | ✓ | Contact form (guests give an e-mail address) |
 | Consent | `consent.own.write` | ◐ | Guests: cookie consent only (via `anon_id`); users: legal re-consent |
@@ -774,7 +775,7 @@ The application role has `INSERT` only; `UPDATE`/`DELETE` closed by database pri
 | session_id | uuid | ✓ | |
 | device_hash / ip_hash | text | ✓ | Salted hash; raw values never stored |
 | platform | text | | CHECK (`WEB`,`MOBILE`) |
-| action | text | | e.g. `auth.sign_in`, `search`, `identify`, `upload`, `upload.status` (upload status read, guests included [DECIDED 2026-11-14]; name [ASSUMPTION]), `seller_lookup` · `teaser` · `reveal.hide` [ASSUMPTION] (`architecture.md` §16.1), `tracking.confirm`, `tracking.end`, `reveal`, `offer.go`, `check_now`, `check_now_bulk`, `report.create`, `link.submit`, `package.request`, `savings.edit`, `settings.change`, `consent.accept` |
+| action | text | | e.g. `auth.sign_in`, `search`, `identify`, `upload`, `upload.status` (upload status read, guests included [DECIDED 2026-11-14]), `seller_lookup` · `teaser` · `reveal.hide` [ASSUMPTION] (`architecture.md` §16.1), `tracking.confirm`, `tracking.end`, `reveal`, `offer.go`, `check_now`, `check_now_bulk`, `report.create`, `link.submit`, `package.request`, `savings.edit`, `settings.change`, `consent.accept` |
 | target_type / target_id | text / uuid | ✓ | |
 | metadata | jsonb | ✓ | Action-specific summary (no full email/phone; `contains_hidden_seller=true` when a seller identity is present) |
 | contains_hidden_seller | boolean | | Readable only with `admin.offers.view_hidden_seller` |
@@ -853,7 +854,7 @@ asset_id · variant CHECK (`THUMB_160`,`CARD_480`,`DETAIL_1080`,`OG_1200`) · fo
 
 Indexes `(user_id, created_at)`, `(purge_at) WHERE status <> 'DELETED'`.
 
-**Ownership [DECIDED 2026-11-14]:** an upload belongs to `user_id`, or for a guest to `anon_id` (the guest session). Status reads (`GET /uploads/:id`) return only the caller's own uploads; any other upload answers `NOT_FOUND`. Guests poll for the status (`upload.guest_poll_interval_seconds`, `upload.guest_poll_max_seconds`; `architecture.md` §11a).
+**Ownership [DECIDED 2026-11-14]:** an upload belongs to `user_id`, or for a guest to `anon_id` (the guest session). Status reads (`GET /uploads/:id`, key `upload.own.view`) return only the caller's own uploads; any other upload answers `NOT_FOUND`. Guests poll for the status (`upload.guest_poll_interval_seconds`, `upload.guest_poll_max_seconds`; `architecture.md` §11a).
 
 **Rules:**
 - Upload limits are parameters: per-file size (`media.max_bytes`, def. 10 MB), images per request (`media.max_images_per_request`, def. 5), daily count per user (`media.daily_upload_limit`), maximum pixels (`media.max_pixels`, decompression-bomb protection). Accepted types JPEG, PNG, WebP, HEIC (HEIC converted).
