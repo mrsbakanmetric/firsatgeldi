@@ -6,8 +6,8 @@
 // link, so pressing them never opens the row. Columns keep the same share of the
 // row on every row, so values line up down the list; below breakpoint.md the data
 // columns wrap under the name. A row with a deal has a `savings` border (v4).
-// Layout "priceList" (Tracked Items Row v4): the name column keeps its share and
-// up to two lines; the price list ("fill") is what shrinks first on narrow screens.
+// Layout "priceList" (Tracked Items Row v4): the name column keeps
+// size.list-name-min-width and up to two lines; the price list ("fill") shrinks first.
 import type { ReactNode } from "react";
 import { cn } from "./cn";
 import { useLinkComponent } from "./link";
@@ -62,12 +62,13 @@ export function ProductRow({ href, image, flags, title, line, columns = [], acti
       <span
         className={cn(
           "flex min-w-0 gap-3",
-          priceList ? "items-start md:shrink-0 md:grow-0 md:basis-1/3" : "items-center md:flex-1",
+          priceList ? "items-start md:shrink-0 md:grow-0" : "items-center md:flex-1",
           dimmed && "opacity-(--component-button-disabled-opacity)",
         )}
       >
         {image}
-        <span className="flex min-w-0 flex-1 flex-col gap-1">
+        {/* Price list layout: the name keeps size.list-name-min-width (220 px) and two lines; the price list shrinks first. */}
+        <span className={cn("flex min-w-0 flex-1 flex-col gap-1", priceList && "md:w-(--size-list-name-min-width) md:flex-none")}>
           {flags && <span className="flex flex-wrap gap-1">{flags}</span>}
           {/* The stretched link: its ::after covers the whole row. */}
           <Link

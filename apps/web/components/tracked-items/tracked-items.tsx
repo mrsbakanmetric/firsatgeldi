@@ -446,7 +446,11 @@ function ColumnHeads({ t }: { t: Translator }) {
   return (
     <div aria-hidden="true" className="hidden gap-4 px-3 text-caption text-text-muted md:flex">
       {/* v4 columns: image + name · price list · outcome · ⋯ */}
-      <span className="shrink-0 grow-0 basis-1/3">{t("trackedItems.columns.product")}</span>
+      {/* Image (size.thumb-lg) + name (size.list-name-min-width), as in the rows. */}
+      <span className="flex shrink-0 gap-3">
+        <span className="w-(--size-thumb-lg)">{t("trackedItems.columns.product")}</span>
+        <span className="w-(--size-list-name-min-width)" />
+      </span>
       <span className="min-w-0 flex-1">{t("trackedItems.columns.price")}</span>
       <span className="w-1/5 shrink-0">{t("trackedItems.columns.state")}</span>
       {/* Same width as the row's ⋯ button (button.compact, icon only). */}
