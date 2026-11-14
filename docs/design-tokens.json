@@ -1,7 +1,7 @@
 {
   "$meta": {
     "name": "FırsatGeldi Design Tokens",
-    "version": "1.9.0",
+    "version": "1.10.0",
     "updated": "2026-11-14",
     "activeTheme": "firsatgeldi-default",
     "rule": "SINGLE SOURCE OF TRUTH for every visual value in web and mobile. Never hard-code colours, font sizes, spacing, radius, borders or shadows in code. Read this file before creating or changing ANY UI element (screen, button, text, heading, divider, card, badge, input, icon, chart, notification, email).",
@@ -376,6 +376,13 @@
         "text": "color.on-hero-surface",
         "border": "color.on-hero-muted",
         "height": "44px"
+      },
+      "compact": {
+        "height": "36px",
+        "font": "typography.scale.body-sm",
+        "radius": "radius.md",
+        "height-touch": "size.touch-target-min",
+        "rule": "Same colours as primary/secondary. 36px only from breakpoint.md with a fine pointer; otherwise the hit area is size.touch-target-min."
       }
     },
     "card": {
@@ -399,7 +406,13 @@
       "border": "color.border",
       "radius": "radius.xl",
       "shadow": "shadow.md",
-      "min-height": "56px"
+      "min-height": "48px",
+      "action": {
+        "height": "36px",
+        "font": "typography.scale.body-sm",
+        "hit-area": "size.touch-target-min",
+        "rule": "Inside the search box: the search action is a compact primary button labelled 'Ara' (never 'Yeniden ara'); photo and clear are icon-only buttons (icon.md) with the label as accessible name + Tooltip; clear shows only when the box has text."
+      }
     },
     "divider": {
       "color": "color.divider",
@@ -641,6 +654,21 @@
       "stroke-width": 2,
       "color": "currentColor",
       "library": "Lucide [DECIDED 2026-11-14]"
+    },
+    "chip": {
+      "height": "32px",
+      "hit-area": "size.touch-target-min",
+      "bg": "color.surface-alt",
+      "text": "color.text",
+      "label-text": "color.text-muted",
+      "border": "color.border",
+      "radius": "radius.pill",
+      "padding-x": "space.3",
+      "font": "typography.scale.caption",
+      "use": "Recent searches, 'Nasıl anladık' attributes and other quick-choice chips. Never primary-coloured borders or button-sized text."
+    },
+    "popover-dismiss": {
+      "rule": "Every dropdown, menu, autocomplete list and popover closes on a click/tap outside it and on Esc; no 'Kapat' button inside it. It overlays content and never pushes the layout."
     }
   },
   "semanticMeaning": {
