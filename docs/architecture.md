@@ -780,7 +780,7 @@ GET|PATCH      /admin/support-requests · POST /admin/support-requests/:id/reply
 GET|POST       /admin/link-submissions (later slice)
 ```
 
-### 16.1 Field-level contract — Search and Add and session reads
+### 16.1 Field-level contract — Search and Add, Tracked Items and session reads
 
 Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and served by the mock API in Phase 1. **[ASSUMPTION]** marks fields or names without an earlier counterpart in the docs; they stand until the user decides otherwise. Money is `{ amount, currency }` with `amount` in **minor units (kuruş)** [ASSUMPTION — follows `database.md` §1]. Times are ISO 8601 with offset; calendar days are `YYYY-MM-DD` (Europe/Istanbul).
 
@@ -803,6 +803,8 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | `POST /products/:id/seller-lookup` | `tracking.own.write` | — [DECIDED 2026-11-14] | | `seller_lookup` [ASSUMPTION] |
 | `POST /products/:id/teaser` | `tracking.own.write` | — | | `teaser` [ASSUMPTION] |
 | `POST /tracked-items` | `tracking.own.write` | — | ✓ | `tracking.confirm` |
+| `GET /tracked-items` · `GET /tracked-items/summary` | `tracking.own.view` | — | | — |
+| `POST /tracked-items/check-now-bulk` | `checknow.own.use` | — | ✓ [ASSUMPTION] (a repeated tap never spends the allowance twice) | `check_now_bulk` |
 | `POST /offers/:ref/reveal` | `reveal.own.use` | — | ✓ | `reveal` |
 | `POST /offers/:ref/hide` | `reveal.own.use` | — | | `reveal.hide` [ASSUMPTION] |
 | `POST /offers/:ref/go` | `offer.own.go` | — | | `offer.go` |
@@ -860,6 +862,26 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | Hide result | `{ offer: HiddenOfferView }` | [ASSUMPTION] |
 | Go result | `{ status: OK, url }` \| `{ status: GONE\|PRICE_CHANGED, next }` | §16; `status` discriminator [ASSUMPTION] |
 | Stream events | `upload.ready{ uploadId, batchId }`, `upload.rejected{ uploadId, batchId, reason }` | §13; payloads [ASSUMPTION] |
+| Stream events | `check.finished{ trackedItemId, checkedAt }` — refreshes the Tracked Items list and summary | §13; payload [ASSUMPTION] |
+
+**Tracked Items** (`modules.md` Tracked Items, Check Now; `pagedesign.md` §8.4). Cheaper sellers appear only as counts and amounts — no seller, platform, offer id or link of a cheaper offer (§6.1). The user's own seller and platform are visible.
+
+| Schema | Fields | Source |
+|---|---|---|
+| `TrackedItemListQuery` | `filter` ∈ `all`, `bought`, `want`, `deal`, `ended` (default `all`) · `sort` ∈ `priority`, `deadline`, `saving` (default `priority`) · `q` (≤ 80 characters; product, category, own seller and platform; Turkish case folding) · `category` (id) · `cursor` | §16; `modules.md` Tracked Items |
+| `TrackedItemList` | `items[]` (`TrackedItemListItem`); `facets.filters{ all, bought, want, deal, ended }` (counts after search and category) · `facets.categories[{ id, name, count }]` (counts after search and filter); `meta.total`, `meta.entitlements`, `meta.sourcesMissing` | [ASSUMPTION] (design "4 Takip Ettiklerim": chips and "Kategori" with counts) |
+| `TrackedItemList` order | active items by the chosen sort; ended/expired items always after them, newest end first. `priority` = Home priority order: open deal (bought) with the nearest return deadline → return ≤ 3 days → target reached → most recent change | `modules.md` Tracked Items, Home › Hemen Gözat |
+| `TrackedItemListItem` | `id`, `mode`, `state` (`ACTIVE`, `ENDED`, `EXPIRED`), `product{ id, name, imageSha256, category }`, `returnDeadline`, `returnDeadlineStatus` | `database.md` §8 |
+| `TrackedItemListItem.purchase` (BOUGHT, else null) | `pricePaid`, `platformName` (a known platform, or the name typed for "Diğer"), `sellerName` (own seller, nullable), `orderedOn`, `orderStatus` | `database.md` §8; shape [ASSUMPTION] |
+| `TrackedItemListItem.want` (WANT, else null) | `targetPrice` (nullable), `trackingDuration`, `trackingEndsAt` | `database.md` §8; shape [ASSUMPTION] |
+| `TrackedItemListItem` | `cheapest` (cheapest current price incl. shipping, seller unnamed) · `deal{ cheaperCount, maxSaving }` or null (BOUGHT: offers cheaper than the price paid, own offer excluded; WANT: offers at or below the target, saving against the target) | `database.md` §8 `deals`; shape [ASSUMPTION] |
+| `TrackedItemListItem.priceHistory` | `from` (first day) + `cheapest[]` — cheapest price per day in kuruş, oldest first, exactly 14 values (`COMPACT_HISTORY_DAYS`); `null` = no data that day (before tracking: nothing guessed) | `modules.md` Price and Stock History; shape [ASSUMPTION] |
+| `TrackedItemListItem.stockHistory` | `subject` ∈ `CHEAPEST` (when a deal exists), `OWN_SELLER` · `days[]` — 14 × `StockState` or `null` | `modules.md` Tracked Items › Each product; shape [ASSUMPTION] |
+| `TrackedItemListItem.conclusion` | one of `{ kind: DROPPED, at, price }` ("3 saat önce 25.997 TL'ye düştü") · `{ kind: NO_CHEAPER, days }` · `{ kind: LOWEST_IN_DAYS, days, price }` (buy-or-wait hint) · `null`; the client words it from the catalogue | `modules.md` Price history › conclusion, buy-or-wait hint; shape [ASSUMPTION] |
+| `TrackedItemListItem` | `lastCheckedAt` · `stale` (not checked for `tracking.stale_hours`: "Güncel değil", the deal "doğrulanamadı") · `ended{ at, reason (database.md §8 end_reason), savingRecorded }` or null | `database.md` §8, §18; shape [ASSUMPTION] |
+| `TrackedItemsSummary` | `tracking{ count, bought, want }` (active) · `deals{ count, maxSavingTotal }` · `returnsSoon{ count, nearest }` (return deadline within 3 days, `product_design_pattern.md` §5.4) · `lastCheckedAt`; allowances in `meta.entitlements` | `modules.md` Tracked Items › Summary; shape [ASSUMPTION] |
+| `CheckNowBulkRequest` / `CheckNowBulkResult` | `{ trackedItemIds[] }` (≥ 1; own active items only, otherwise `NOT_FOUND`) → `{ willCheck[], skippedCached[], remaining }`: `willCheck` in priority order, cut to the remaining daily allowance (one `check_now_usage` row, `consumed = true`, each); `skippedCached` were checked within `check_now.cache_minutes` (row with `consumed = false`); `remaining` after the call, `null` = unlimited (Application Manager). Nothing can be checked → `LIMIT_REACHED`. Each finished check sends `check.finished` | §16; `modules.md` Check Now; `database.md` §9 `check_now_usage`; result fields §16, empty case [ASSUMPTION] |
+| Activity `check_now_bulk` | `metadata{ requested, willCheck, skippedCached }`; outcome `LIMITED` on `LIMIT_REACHED` | `database.md` §14a |
 
 **"Katalogda yok → mağazalarda ara"** (design "1 Ara ve Ekle", autocomplete case C) [DECIDED 2026-11-14]: no endpoint of its own. The client calls `POST /identify` with `{ text }` (the typed text); the answer is a normal `IdentifyResult` — candidates found in the catalogue or through live sources and saved (§11), or no exact match + the closest three, or the "not yet supported" category state. Same key (`identify.use`), guest access, activity action (`identify`) and `search_events` row (`source = SEARCH_BOX`) as any identify call.
 
