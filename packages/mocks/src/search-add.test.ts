@@ -137,3 +137,24 @@ describe("catalogue miss → search stores (architecture.md §11)", () => {
     expect((await api.call("identify", { body: { text: "sony zv-e1" } })).data.candidates.length).toBeGreaterThan(0);
   });
 });
+
+describe("pasted links (development: any Trendyol or Hepsiburada link answers with a sample listing)", () => {
+  const t2 = createTestApi();
+  beforeAll(() => t2.server.listen({ onUnhandledFrame: "error" }));
+  afterAll(() => t2.server.close());
+
+  it.each([
+    ["https://www.hepsiburada.com/herhangi-bir-urun-p-HBC0000XYZ", "Hepsiburada", "Kamera Dünyası", PRODUCTS.acePro2FlashPrint.id],
+    ["https://trendyol.com/marka/baska-bir-urun-p-12345?boutiqueId=1", "Trendyol", "Süpürge Merkezi", PRODUCTS.dysonV15.id],
+  ])("%s → the store's sample listing: own platform, seller, price; the product as the result", async (link, platformName, sellerName, productId) => {
+    const { data } = await t2.api.call("identify", { body: { link } });
+    expect(data.link).toMatchObject({ platformName, sellerName });
+    expect(data.link?.pricePaid).not.toBeNull();
+    expect(data.candidates[0]?.product.id).toBe(productId);
+  });
+
+  it("another store's link is not recognised", async () => {
+    const { data } = await t2.api.call("identify", { body: { link: "https://www.example.com/urun" } });
+    expect(data.link).toBeNull();
+  });
+});

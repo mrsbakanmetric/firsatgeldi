@@ -117,7 +117,8 @@ export const en = {
         generation: "Generation",
         color: "Colours of this model",
       },
-      typeLabel: "Not listed? Type it",
+      typeLabel: "Search, or type it if not listed",
+      hint: "Wrong? Fix it",
       undo: "Undo",
       /** Design v3: the small muted label in front of the attribute chips. */
       label: "How we understood it:",
@@ -166,13 +167,15 @@ export const en = {
       seller: "Seller",
       sellerHelp: "Type the full name or paste the listing link.",
       /** Design v3: compact primary next to "Change"; same action as "Yes, I bought this". */
-      quickConfirm: "Yes, this one",
+      quickConfirm: "Yes, this one?",
+      verified: "Yes, this one",
       /** Last entry of the platform list (modules.md Search and Add step 4). */
       otherPlatform: "Other",
       otherPlatformName: "Platform name",
       otherSellerHelp: "Type the name as on the listing; we can't check sellers on this platform.",
       /** One line above the disabled actions: what is missing. */
       missing: {
+        verify: "First confirm the product: “Yes, this one?”",
         platformName: "Type the platform name",
         price: "Type the price you paid",
       },

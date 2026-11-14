@@ -22,10 +22,15 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
   trailing?: ReactNode;
   /** Content under the box inside the same frame (e.g. attached photo thumbnails). */
   below?: ReactNode;
+  /**
+   * Inline completion (pagedesign.md §8.2 v4): the rest of the first suggestion's name,
+   * drawn muted right after the typed text; the caller accepts it on Tab / →.
+   */
+  completion?: string;
 }
 
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
-  { label, hideLabel = false, size = "large", clearLabel, onClear, trailing, below, className, value, ...input },
+  { label, hideLabel = false, size = "large", clearLabel, onClear, trailing, below, completion, className, value, ...input },
   ref,
 ) {
   const id = useId();
@@ -43,17 +48,26 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       >
         <div className="flex min-h-(--size-touch-target-min) flex-1 items-center gap-2">
           <Icon icon={Search} className="text-text-muted" />
-          <input
-            ref={ref}
-            id={id}
-            type="text"
-            inputMode="search"
-            enterKeyHint="search"
-            autoComplete="off"
-            value={value}
-            className="h-(--size-touch-target-min) min-w-0 flex-1 bg-transparent text-body text-text outline-none placeholder:text-text-muted"
-            {...input}
-          />
+          <span className="relative flex min-w-0 flex-1">
+            {completion && hasText && (
+              // Same font as the input; the typed part is invisible so the completion starts at the caret.
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center overflow-hidden text-body whitespace-pre">
+                <span className="invisible">{value}</span>
+                <span className="text-text-muted">{completion}</span>
+              </span>
+            )}
+            <input
+              ref={ref}
+              id={id}
+              type="text"
+              inputMode="search"
+              enterKeyHint="search"
+              autoComplete="off"
+              value={value}
+              className="relative h-(--size-touch-target-min) w-full min-w-0 bg-transparent text-body text-text outline-none placeholder:text-text-muted"
+              {...input}
+            />
+          </span>
           {hasText && clearLabel && onClear && (
             <button
               type="button"

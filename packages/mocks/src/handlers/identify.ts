@@ -3,7 +3,7 @@ import { addCalendarDays, toCalendarDay } from "@firsatgeldi/core";
 import { http, HttpResponse } from "msw";
 import type { ApiLocale } from "@firsatgeldi/contracts";
 import { ATTRIBUTE_LABELS, BULK_SCREENSHOT, CATEGORIES, MATCH_CRITICAL_ATTRIBUTES, type ProductFixture, PRODUCT_LIST, PRODUCTS, SIMILAR } from "../fixtures/catalog";
-import { listingUrl, offerByListingUrl, OFFERS, PLATFORM_LIST, PLATFORMS, SELLERS } from "../fixtures/market";
+import { listingUrl, offerForLink, OFFERS, PLATFORM_LIST, PLATFORMS, SELLERS } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { ORDER_SCREENSHOT_EXTRACTION } from "../fixtures/users";
 import { newId } from "../ids";
@@ -162,7 +162,7 @@ function withCorrections(base: Resolution, row: IdentifyRequestRow, locale: ApiL
 
 function resolveFor(controller: MockController, row: IdentifyRequestRow, text: string, locale: ApiLocale): Resolution {
   if (row.link) {
-    const offer = offerByListingUrl(row.link);
+    const offer = offerForLink(row.link);
     if (offer) {
       const product = PRODUCTS[offer.product];
       return { lead: product, exact: [product], close: [] };
@@ -184,7 +184,7 @@ function detectLink(link: string | null) {
   const host = new URL(link).hostname.replace(/^www\./, "");
   const platform = PLATFORM_LIST.find((item) => host === item.domain);
   if (!platform) return null;
-  const offer = offerByListingUrl(link);
+  const offer = offerForLink(link);
   return {
     platformId: platform.id,
     platformName: platform.name,
