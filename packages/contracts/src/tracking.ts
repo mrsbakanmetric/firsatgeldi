@@ -105,8 +105,8 @@ const TYPED_NAME_MAX = 80;
 
 /**
  * `POST /tracked-items` — BOUGHT | WANT; pricePaid only from the user (database.md §8, R1).
- * "Diğer" platform (modules.md Search and Add step 4, decided 2026-11-14) [ASSUMPTION —
- * field names; to be written into architecture.md §16.1 by a spec PR]: `platformId` null +
+ * "Diğer" platform (modules.md Search and Add step 4; field names and rules in
+ * architecture.md §16.1, decided 2026-11-14, #69): `platformId` null +
  * `otherPlatformName` typed; the seller is saved as typed (`sellerName`, no exact-match
  * check, so no `sellerRef`); the return last day comes only from the user (null = unknown).
  */
