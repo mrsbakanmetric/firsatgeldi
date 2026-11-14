@@ -45,8 +45,8 @@ export type UploadPolling = z.infer<typeof UploadPolling>;
 /**
  * `POST /uploads/complete` { batchId } → processing queue. Signed-in users get the
  * result via SSE `upload.ready` / `upload.rejected` (`poll: null`); guests have no
- * stream and poll `GET /uploads/:id` with `poll` [ASSUMPTION — field; user decision
- * 2026-11-14, to be written into architecture.md §16.1 by a spec PR].
+ * stream and poll `GET /uploads/:id` with `poll` [DECIDED 2026-11-14]
+ * (architecture.md §16.1).
  */
 export const CompleteUploadRequest = z.object({ batchId: Id });
 export const CompleteUploadResult = z.object({
