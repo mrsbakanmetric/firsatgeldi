@@ -1,8 +1,8 @@
 {
   "$meta": {
     "name": "FırsatGeldi Design Tokens",
-    "version": "1.13.0",
-    "updated": "2026-11-14",
+    "version": "1.14.0",
+    "updated": "2026-11-15",
     "activeTheme": "firsatgeldi-default",
     "rule": "SINGLE SOURCE OF TRUTH for every visual value in web and mobile. Never hard-code colours, font sizes, spacing, radius, borders or shadows in code. Read this file before creating or changing ANY UI element (screen, button, text, heading, divider, card, badge, input, icon, chart, notification, email).",
     "contrastStandard": "WCAG 2.1 AA: 4.5:1 normal text, 3:1 large text (>=18.66px bold or >=24px) and UI parts"
@@ -308,7 +308,9 @@
     "step-indicator-max-width": "640px",
     "thumb-lg": "120px",
     "list-name-min-width": "220px",
-    "thumb-card": "84px"
+    "thumb-card": "84px",
+    "card-outcome-width": "150px",
+    "chart-summary-height": "180px"
   },
   "breakpoint": {
     "md": "768px",
