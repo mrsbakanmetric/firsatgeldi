@@ -275,6 +275,9 @@ These rules apply to every screen and are not repeated in each module.
 
 - **Layout [DECIDED]:** List template; summary tiles (4) → filters + sort + bulk check with the remaining allowance written under it → aligned rows (product · 14-day price sparkline: paid solid, cheapest dashed, target dotted · 14-day stock boxes · state + check time · "Detay"). No coral on this page.
 - **Ürün ekle [DECIDED 2026-11-14]:** "Ürün ekle" opens **Search and Add** (`/[locale]/ara`); there is no separate Add product dialog (it duplicated Search and Add). After confirming, the user returns to Tracked Items. Rows link to Product Detail as a whole (no "Detay" button); "Biten takipler" is collapsed by default.
+- **List v3 [DECIDED 2026-11-14]:** rows with a current deal are grouped first under "Fırsat geldi"; every row shows a status ("Takip ediyorsun" for bought, "Almak istiyorsun" for want-to-buy) instead of mode filter chips (filters: Tümü · Fırsat var · Biten); stock is described in plain words with "at least" durations; no seller name and no "Göster" in the list.
+- **End tracking from the list [DECIDED 2026-11-14]:** each row has a ⋯ menu with "Takibi bitir". Bought: short dialog (İade ettim · Fiyat farkı aldım · Vazgeçtim · optional new price paid) → My Savings record + the two optional end questions; want-to-buy: one confirm. The row moves to "Biten takipler"; "Geri al" restores it within 7 days. The action is logged (activity history, entity events).
+- **Search on this page [DECIDED 2026-11-14]:** the shared search box filters the user's own list; no match offers "Ara ve Ekle'de ara"; a photo or a pasted link opens Search and Add with that input.
 
 ### States
 - Empty: "Henüz takip ettiğin ürün yok" + add product + slot allowance.
