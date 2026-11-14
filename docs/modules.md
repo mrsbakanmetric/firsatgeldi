@@ -466,7 +466,7 @@ These rules apply to every screen and are not repeated in each module.
 **Purpose:** Buy a product not yet bought at the right price; switch to return protection after buying. (spec modules 11, 20; §5.7)
 
 ### Flow
-Search → mark → **Almadım, sadece takip et** → target price (optional) + tracking duration → alert when the target is reached / on a notable drop → Göster → go to store → **Aldım** → return tracking starts with the price paid (old record closes).
+Search → mark → **Almadım, sadece takip et** → target price (optional) + tracking duration → alert when the target is reached / on a notable drop → Göster → go to store → **Aldım** → return tracking starts with the price paid; **the same record switches to "Aldım"** (target removed, return window starts, price history continues; no second record) [DECIDED 2026-11-14].
 
 ### Rules
 - **Tracking duration [DECIDED]:** user chooses — 1 week · 1 month · 3 months · Unlimited; default 1 month (parameter, System Settings). Time-limited tracking asks "uzatmak ister misin?" 3 days before the end; without an answer it stops. Unlimited tracking runs until the user ends it.
