@@ -287,6 +287,14 @@ export const en = {
     },
   },
   trackedItems: {
+    v5: {
+      lowest: "{count}d low {price}",
+      highest: "{count}d high {price}",
+      change: "{count}d change",
+      maxGain: "Biggest saving",
+      toTarget: "{amount} to target",
+      notifyHint: "We'll tell you when it reaches your target",
+    },
     v4: {
       bought: "You paid",
       target: "Your target",

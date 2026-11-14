@@ -202,3 +202,31 @@ describe("SearchBox (canonical: one look everywhere, only the handler differs)",
     expect(onOverlayClose.mock.calls.length).toBeGreaterThanOrEqual(4);
   });
 });
+
+describe("ProductRow card layout (Tracked Items v5)", () => {
+  it("header with the title link stretched over the card, actions top-right above it, columns at full width, the footer last", () => {
+    render(
+      <ul>
+        <li>
+          <ProductRow
+            layout="card"
+            href="/tr/takip/1"
+            image={<ProductImage src={null} size="card" fallbackIcon={Package} />}
+            title="Insta360 X4"
+            columns={[{ key: "prices", width: "fill", content: <table aria-label="Fiyatlar" /> }]}
+            actions={<button type="button">⋯</button>}
+            footer={<div>alt şerit</div>}
+            tone="deal"
+          />
+        </li>
+      </ul>,
+    );
+    const link = screen.getByRole("link", { name: "Insta360 X4" });
+    const card = link.closest("div.h-full") as HTMLElement;
+    expect(card.className).toContain("border-savings");
+    expect(link.className).toContain("line-clamp-2");
+    expect(screen.getByRole("button", { name: "⋯" }).parentElement?.className).toContain("z-(--z-index-raised)");
+    expect(card.lastElementChild?.textContent).toBe("alt şerit");
+    expect(card.querySelector("[class*='size-(--size-thumb-card)']")).not.toBeNull();
+  });
+});

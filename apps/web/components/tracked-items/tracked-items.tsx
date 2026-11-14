@@ -362,7 +362,6 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
         {stale.length > 0 && oldest && (
           <StatusBanner tone="warning">{t("trackedItems.states.stale", { count: stale.length, hours: Math.floor((now - Date.parse(oldest)) / MS_PER_HOUR) })}</StatusBanner>
         )}
-        {active.length > 0 && <ColumnHeads t={t} />}
         {filter === "ended" ? (
           <Rows {...rowProps} items={ended} />
         ) : (
@@ -431,9 +430,10 @@ interface RowsProps {
 
 function Rows({ t, locale, items, now, onEnd, onRestore, restoringId }: RowsProps) {
   return (
-    <ul className="flex flex-col gap-2">
+    // Card grid v5: two columns from breakpoint.md, one below; cards in a row share one height.
+    <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
       {items.map((item) => (
-        <li key={item.id}>
+        <li key={item.id} className="flex flex-col">
           <TrackedRow t={t} locale={locale} item={item} now={now} onEnd={onEnd} onRestore={onRestore} restoring={restoringId === item.id} />
         </li>
       ))}

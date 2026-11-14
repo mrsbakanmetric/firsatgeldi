@@ -1,8 +1,9 @@
 "use client";
 
-// One Tracked Items row (pagedesign.md §8.4 "Row v4"; modules.md "Row prices v4"):
-// image 120 with the status icon on its corner · name (two lines, return badge above,
-// check time below) · price list · outcome · ⋯. The price list is one table — label ·
+// One Tracked Items card (pagedesign.md §8.4 "Card grid v5", content rules of "Row v4";
+// modules.md "Row prices v4"): header — image 84 with the status icon on its corner ·
+// name (two lines) · return badge · check time · ⋯ top-right; the price table at card
+// width; the summary as one thin line; a footer strip (deal or what is left). The price list is one table — label ·
 // stock · price, prices right-aligned in one column: the user's own row first (bought:
 // "<platform> · <satıcı>" + "Aldın"; want: "Hedefin"), cheaper offers **by rank only**
 // with a lock (never a seller or platform name before "Göster"), "+N satıcı daha",
@@ -12,7 +13,7 @@
 import type { Money, TrackedItemListItem } from "@firsatgeldi/contracts";
 import { daysBetween, RETURN_URGENT_DAYS, toCalendarDay } from "@firsatgeldi/core";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
-import { Button, buttonClasses, cn, Flag, focusRing, FreshnessLine, Icon, Menu, type MenuItem, ProductImage, ProductRow, type ProductRowColumn, Tooltip } from "@firsatgeldi/ui";
+import { Button, buttonClasses, cn, Flag, focusRing, FreshnessLine, Icon, Menu, type MenuItem, ProductImage, ProductRow, Tooltip } from "@firsatgeldi/ui";
 import { ArrowDown, ArrowUp, Bookmark, Check, CircleCheck, Clock, Ellipsis, Eye, Lock, Package, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -82,14 +83,6 @@ function PriceList({ t, locale, item, href, now }: { t: Translator; locale: Loca
   const staleHours = item.stale && item.lastCheckedAt ? Math.max(1, Math.floor((now - Date.parse(item.lastCheckedAt)) / MS_PER_HOUR)) : null;
   const stale = staleHours !== null;
   const reference = item.purchase?.pricePaid.amount ?? item.want?.targetPrice?.amount ?? null;
-  const values = item.priceHistory.cheapest;
-  const known = values.filter((value): value is number => value !== null);
-  const lastWeek = values.slice(-LOWEST_DAYS).filter((value): value is number => value !== null);
-  const firstIndex = values.findIndex((value) => value !== null);
-  const first = firstIndex >= 0 ? values[firstIndex] : null;
-  const last = known.at(-1) ?? null;
-  const changeDays = values.length - Math.max(0, firstIndex);
-  const change = first !== null && first !== undefined && last !== null && firstIndex < values.length - 1 ? last - first : null;
   const own = item.purchase;
   return (
     <table className="w-full border-collapse text-body-sm text-text">
@@ -138,61 +131,89 @@ function PriceList({ t, locale, item, href, now }: { t: Translator; locale: Loca
           />
         )}
       </tbody>
-      {known.length > 0 && (
-        <tbody className="border-t border-divider text-caption text-text-muted">
-          {lastWeek.length > 0 && <Row label={t("trackedItems.v4.lowest", { count: LOWEST_DAYS })} price={<span className="tabular-nums">{tl(Math.min(...lastWeek), locale)}</span>} />}
-          <Row label={t("trackedItems.v4.highest", { count: values.length })} price={<span className="tabular-nums">{tl(Math.max(...known), locale)}</span>} />
-          {change !== null && (
-            <Row
-              label={t("trackedItems.v4.change", { count: changeDays })}
-              price={
-                change === 0 ? (
-                  <span>{t("trackedItems.v4.unchanged")}</span>
-                ) : (
-                  <Price t={t} locale={locale} value={{ amount: Math.abs(change), currency: CURRENCY }} change={change < 0 ? "down" : "up"} />
-                )
-              }
-            />
-          )}
-        </tbody>
-      )}
     </table>
   );
 }
 
-function Outcome({ t, locale, item, href }: { t: Translator; locale: Locale; item: TrackedItemListItem; href: string }) {
+/** The summary as one thin caption line (v5): "7g en düşük … · 14g en yüksek … · 14g değişim ↓ …". */
+function Summary({ t, locale, item }: { t: Translator; locale: Locale; item: TrackedItemListItem }) {
+  const values = item.priceHistory.cheapest;
+  const known = values.filter((value): value is number => value !== null);
+  if (!known.length) return null;
+  const lastWeek = values.slice(-LOWEST_DAYS).filter((value): value is number => value !== null);
+  const firstIndex = values.findIndex((value) => value !== null);
+  const first = values[firstIndex] ?? null;
+  const last = known.at(-1) ?? null;
+  const changeDays = values.length - Math.max(0, firstIndex);
+  const change = first !== null && last !== null && firstIndex < values.length - 1 ? last - first : null;
+  const sep = <span aria-hidden="true">{t("common.listSeparator")}</span>;
+  return (
+    <p className="flex flex-wrap items-center gap-x-1 text-caption text-text-muted">
+      {lastWeek.length > 0 && <span>{t("trackedItems.v5.lowest", { count: LOWEST_DAYS, price: tl(Math.min(...lastWeek), locale) })}</span>}
+      {lastWeek.length > 0 && sep}
+      <span>{t("trackedItems.v5.highest", { count: values.length, price: tl(Math.max(...known), locale) })}</span>
+      {change !== null && (
+        <>
+          {sep}
+          <span className="inline-flex items-center gap-1">
+            {t("trackedItems.v5.change", { count: changeDays })}
+            {change === 0 ? (
+              <span>{t("trackedItems.v4.unchanged")}</span>
+            ) : (
+              <Price t={t} locale={locale} value={{ amount: Math.abs(change), currency: CURRENCY }} change={change < 0 ? "down" : "up"} />
+            )}
+          </span>
+        </>
+      )}
+    </p>
+  );
+}
+
+/**
+ * The strip closing the card (v5): a deal on savings-subtle — "En çok kazanç" + amount on the
+ * left, "Fırsatı gör" on the right (want: "Hedefe ulaştı ✓"); otherwise surface-alt with
+ * "Hedefe kalan N TL" + "Hedefe inince haber veririz", or "Daha ucuzu henüz yok".
+ */
+function Footer({ t, locale, item, href }: { t: Translator; locale: Locale; item: TrackedItemListItem; href: string }) {
+  const strip = "flex flex-wrap items-center justify-between gap-2 px-3 py-2";
   const seeDeal = (
-    // Above the row's stretched link, so it is its own action.
-    <Link href={href} className={buttonClasses("primary", "relative z-(--z-index-raised) self-start", "compact")}>
+    // Above the card's stretched link, so it is its own action.
+    <Link href={href} className={buttonClasses("primary", "relative z-(--z-index-raised)", "compact")}>
       {t("trackedItems.v3.seeDeal")}
     </Link>
   );
-  if (item.deal && item.stale) return <span className="text-body-sm font-semibold text-text">{t("trackedItems.row.state.unverified")}</span>;
-  if (item.mode === "BOUGHT") {
-    if (!item.deal) return <span className="text-body-sm text-text-muted">{t("trackedItems.v4.noCheaper")}</span>;
+  if (item.deal && !item.stale) {
     return (
-      <>
-        <span className="text-caption text-text-muted">{t("trackedItems.v4.upTo")}</span>
-        <span className="text-price text-savings">{t("trackedItems.v4.gain", { amount: money(item.deal.maxSaving, locale) })}</span>
+      <div className={cn(strip, "bg-savings-subtle")}>
+        {item.mode === "BOUGHT" ? (
+          <span className="flex flex-col">
+            <span className="text-caption text-text-muted">{t("trackedItems.v5.maxGain")}</span>
+            <span className="text-price text-savings">{money(item.deal.maxSaving, locale)}</span>
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 text-body font-semibold text-savings">
+            {t("trackedItems.v4.reached")}
+            <Icon icon={Check} size="sm" />
+          </span>
+        )}
         {seeDeal}
-      </>
+      </div>
     );
   }
   const target = item.want?.targetPrice;
-  if (item.deal) {
-    return (
-      <>
-        <span className="inline-flex items-center gap-1 text-body font-semibold text-savings">
-          {t("trackedItems.v4.reached")}
-          <Icon icon={Check} size="sm" />
-        </span>
-        {seeDeal}
-      </>
+  let text: ReactNode;
+  if (item.deal && item.stale) text = <span className="text-body-sm font-semibold text-text">{t("trackedItems.row.state.unverified")}</span>;
+  else if (item.mode === "BOUGHT") text = <span className="text-body-sm text-text-muted">{t("trackedItems.v4.noCheaper")}</span>;
+  else if (target && item.cheapest)
+    text = (
+      <span className="flex flex-col">
+        <span className="text-body-sm font-semibold text-text">{t("trackedItems.v5.toTarget", { amount: tl(Math.max(0, item.cheapest.amount - target.amount), locale) })}</span>
+        <span className="text-caption text-text-muted">{t("trackedItems.v5.notifyHint")}</span>
+      </span>
     );
-  }
-  if (target && item.cheapest) return <span className="text-body-sm font-semibold text-text">{t("trackedItems.v4.toTarget", { amount: tl(Math.max(0, item.cheapest.amount - target.amount), locale) })}</span>;
-  if (item.cheapest) return <span className="text-body-sm text-text">{t("trackedItems.row.state.cheapestNow", { price: money(item.cheapest, locale) })}</span>;
-  return <span className="text-body-sm text-text-muted">{t("trackedItems.row.state.noPrice")}</span>;
+  else if (item.cheapest) text = <span className="text-body-sm text-text">{t("trackedItems.row.state.cheapestNow", { price: money(item.cheapest, locale) })}</span>;
+  else text = <span className="text-body-sm text-text-muted">{t("trackedItems.row.state.noPrice")}</span>;
+  return <div className={cn(strip, "bg-surface-alt")}>{text}</div>;
 }
 
 /** Status on the image's corner: eye on primary = "Takip ediyorsun", bookmark = "Almak istiyorsun" (Tooltip + accessible name). */
@@ -236,29 +257,27 @@ export function TrackedRow({ t, locale, item, now, onEnd, onRestore, restoring =
   if (item.ended) {
     const saving = item.ended.savingRecorded;
     const restorable = item.ended.restorableUntil !== null && Date.parse(item.ended.restorableUntil) > now;
-    const columns: ProductRowColumn[] = [
-      {
-        key: "saving",
-        width: "1/4",
-        content: saving ? (
-          <span className="inline-flex items-center gap-1 text-body-sm font-semibold text-savings">
-            <Icon icon={CircleCheck} size="sm" />
-            {t("trackedItems.row.ended.saving", { amount: money(saving, locale) })}
-          </span>
-        ) : (
-          <span className="text-body-sm text-text-muted">{t("trackedItems.row.ended.noSaving")}</span>
-        ),
-      },
-    ];
     return (
       <ProductRow
+        layout="card"
         href={href}
-        image={<ProductImage src={imageUrl(item.product.imageSha256)} size="sm" fallbackIcon={Package} />}
+        image={<ProductImage src={imageUrl(item.product.imageSha256)} size="card" fallbackIcon={Package} />}
         flags={<Flag tone="neutral">{t("trackedItems.row.flags.ended")}</Flag>}
         title={item.product.name}
         line={t("trackedItems.row.ended.line", { reason: t(`trackedItems.row.ended.reason.${item.ended.reason}`), date: shortDay(toCalendarDay(new Date(item.ended.at)), locale) })}
-        columns={columns}
         dimmed
+        footer={
+          <div className="flex items-center px-3 py-2 bg-surface-alt">
+            {saving ? (
+              <span className="inline-flex items-center gap-1 text-body-sm font-semibold text-savings">
+                <Icon icon={CircleCheck} size="sm" />
+                {t("trackedItems.row.ended.saving", { amount: money(saving, locale) })}
+              </span>
+            ) : (
+              <span className="text-body-sm text-text-muted">{t("trackedItems.row.ended.noSaving")}</span>
+            )}
+          </div>
+        }
         {...(restorable
           ? {
               actions: (
@@ -300,11 +319,11 @@ export function TrackedRow({ t, locale, item, now, onEnd, onRestore, restoring =
 
   return (
     <ProductRow
-      layout="priceList"
+      layout="card"
       href={href}
       image={
         <span className="relative shrink-0">
-          <ProductImage src={imageUrl(item.product.imageSha256)} size="lg" fallbackIcon={Package} />
+          <ProductImage src={imageUrl(item.product.imageSha256)} size="card" fallbackIcon={Package} />
           <StatusIcon t={t} mode={item.mode} />
         </span>
       }
@@ -312,9 +331,10 @@ export function TrackedRow({ t, locale, item, now, onEnd, onRestore, restoring =
       title={item.product.name}
       {...(checked ? { line: checked } : {})}
       columns={[
-        { key: "prices", width: "fill", phoneFull: true, content: <PriceList t={t} locale={locale} item={item} href={href} now={now} /> },
-        { key: "outcome", width: "1/5", phoneFull: true, content: <Outcome t={t} locale={locale} item={item} href={href} /> },
+        { key: "prices", width: "fill", content: <PriceList t={t} locale={locale} item={item} href={href} now={now} /> },
+        { key: "summary", width: "fill", content: <Summary t={t} locale={locale} item={item} /> },
       ]}
+      footer={<Footer t={t} locale={locale} item={item} href={href} />}
       tone={deal ? "deal" : "default"}
       actions={<Menu label={t("trackedItems.v3.more")} items={menuItems} trigger={<Button variant="ghost" size="compact" iconOnly icon={Ellipsis} label={t("trackedItems.v3.more")} />} />}
     />
