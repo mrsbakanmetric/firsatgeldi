@@ -115,7 +115,7 @@ export interface CheckNowUsageRow {
 export interface TrackedItemEventRow {
   readonly id: string;
   readonly trackedItemId: string;
-  readonly type: "CREATED" | "ENDED" | "RESTORED";
+  readonly type: "CREATED" | "ENDED" | "RESTORED" | "BOUGHT";
   readonly data: Readonly<Record<string, unknown>>;
   readonly actor: "USER" | "SYSTEM" | "ADMIN";
   readonly createdAt: string;

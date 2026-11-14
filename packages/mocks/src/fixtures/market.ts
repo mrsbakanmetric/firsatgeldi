@@ -162,8 +162,9 @@ export const OFFERS: readonly OfferFixture[] = [
     stockState: "IN_STOCK", warrantyType: "UNKNOWN", stockSinceDaysAgo: 14, priceSinceDaysAgo: 1, checkedMinutesAgo: 12,
     listingPath: "/moda-deposu/kapusonlu-kislik-mont-p-60411872",
   }),
+  // Design v4 "Senin satıcın şimdi": the user's own listing is now dearer than the 30.999 TL paid.
   offer("dysonV15", "teknosaMagaza", {
-    priceMinor: 3_099_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
+    priceMinor: 3_129_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
     stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 14, priceSinceDaysAgo: 11, checkedMinutesAgo: 6,
     listingPath: "/dyson-v15-detect-absolute-p-125023",
   }),
@@ -181,6 +182,30 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 839_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },
     stockState: "LOW_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 2, priceSinceDaysAgo: 6, checkedMinutesAgo: 9,
     listingPath: "/kulaklik-pazari/apple-airpods-pro-2-p-HBC0000AP2",
+  }),
+  // Design v4: five offers cheaper than the coat's 3.299 TL → three by rank + "+2 satıcı daha".
+  ...([
+    ["sesDunyasi", 304_900, "IN_STOCK"],
+    ["evTeknik", 309_900, "LOW_STOCK"],
+    ["goruntuMarket", 314_900, "IN_STOCK"],
+    ["kulaklikPazari", 319_900, "IN_STOCK"],
+  ] as const).map(([sellerKey, priceMinor, stockState]) =>
+    offer("winterCoat", sellerKey, {
+      priceMinor, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 4 },
+      stockState, warrantyType: "UNKNOWN", stockSinceDaysAgo: 5, priceSinceDaysAgo: 3, checkedMinutesAgo: 12,
+      listingPath: `/${sellerKey}/kapusonlu-kislik-mont`,
+    }),
+  ),
+  // Design v4: a want-to-buy item whose target (17.000 TL) is reached.
+  offer("osmoPocket3", "sesDunyasi", {
+    priceMinor: 1_649_900, previousPriceMinor: 1_749_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
+    stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 4, priceSinceDaysAgo: 1, checkedMinutesAgo: 5,
+    listingPath: "/dp/B0DOSMOP3",
+  }),
+  offer("osmoPocket3", "goruntuMarket", {
+    priceMinor: 1_729_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },
+    stockState: "LOW_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 2, priceSinceDaysAgo: 6, checkedMinutesAgo: 5,
+    listingPath: "/goruntu-market/dji-osmo-pocket-3",
   }),
   offer("x4", "kameraAtolyesi", {
     priceMinor: 2_499_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },

@@ -290,6 +290,28 @@ export const tr = {
   },
   // Tracked Items (design "4 Takip Ettiklerim" v2; modules.md Tracked Items; pagedesign.md §8.4).
   trackedItems: {
+    v4: {
+      bought: "Aldın",
+      target: "Hedefin",
+      rankFirst: "En ucuz satıcı",
+      rank: "{rank}. ucuz satıcı",
+      hidden: "Satıcı “Göster”e kadar gizli",
+      more: { one: "+{count} satıcı daha", other: "+{count} satıcı daha" },
+      ownNow: "Senin satıcın şimdi",
+      stock: { IN_STOCK: "Stokta", LOW_STOCK: "Az kaldı", OUT_OF_STOCK: "Tükendi" },
+      lower: "daha düşük",
+      higher: "daha yüksek",
+      lowest: { one: "{count} günün en düşüğü", other: "{count} günün en düşüğü" },
+      highest: { one: "{count} günün en yükseği", other: "{count} günün en yükseği" },
+      change: { one: "{count} günde değişim", other: "{count} günde değişim" },
+      unchanged: "Değişmedi",
+      upTo: "en çok",
+      gain: "{amount} kazanç",
+      noCheaper: "Daha ucuzu henüz yok",
+      toTarget: "Hedefe {amount}",
+      reached: "Hedefe ulaştı",
+      markBought: "Aldım, kaydet",
+    },
     v3: {
       status: { BOUGHT: "Takip ediyorsun", WANT: "Almak istiyorsun" },
       dealGroup: "Fırsat olan ürünler",

@@ -5,7 +5,7 @@
 import { COMPACT_HISTORY_DAYS, type PriceConclusion, type TrackedItemFilter, type TrackedItemListItem, type TrackedItemSort } from "@firsatgeldi/contracts";
 import { addCalendarDays, daysBetween, RETURN_URGENT_DAYS, toCalendarDay } from "@firsatgeldi/core";
 import { PRODUCTS } from "../fixtures/catalog";
-import { offersFor, PLATFORMS, SELLERS } from "../fixtures/market";
+import { type OfferFixture, offersFor, PLATFORMS, SELLERS } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { seedByKey, stockCodeToState } from "../fixtures/tracking";
 import { MockApiError, route } from "../route";
@@ -14,7 +14,7 @@ import type { MockController, TrackedItemRow } from "../state";
 import { money, totalMinor } from "../views";
 import { newId } from "../ids";
 import { activeTrackingCount, checksUsedToday, emit, entitlements, fold, requireUser, tokens } from "./shared";
-import { cheaperOffers } from "./tracking";
+import { boughtDetails, cheaperOffers } from "./tracking";
 
 const MS_PER_MINUTE = 60_000;
 const MS_PER_HOUR = 3_600_000;
@@ -28,6 +28,12 @@ interface ViewContext {
 }
 
 const MS_PER_DAY = 86_400_000;
+/** At most three ranked offers per row (pagedesign.md §8.4 Row v4); more → "+N satıcı daha". */
+const RANKED_ROWS = 3;
+
+function ownOfferFor(item: TrackedItemRow): OfferFixture | undefined {
+  return item.sellerOfferId ? offersFor(item.productKey).find((offer) => offer.id === item.sellerOfferId) : undefined;
+}
 
 /** "Geri al" works for `tracking.restore_days` after ending; null once that has passed. */
 function restorableUntil(endedAt: string, now: Date): string | null {
@@ -104,6 +110,10 @@ function view(controller: MockController, item: TrackedItemRow, context: ViewCon
   const ownOffer = item.sellerOfferId ? offersFor(item.productKey).find((offer) => offer.id === item.sellerOfferId) : undefined;
   const platformName = item.platform ? PLATFORMS[item.platform].name : (item.otherPlatformName ?? null);
   const sellerName = ownOffer ? SELLERS[ownOffer.seller].name : (item.sellerName ?? null);
+  // Row prices v4: offers by rank only; the user's own listing now.
+  const rankedOffers = !active ? [] : item.mode === "BOUGHT" && item.pricePaidMinor !== null ? cheaperOffers(item.productKey, item.pricePaidMinor, item.sellerOfferId) : offers;
+  const ranked = rankedOffers.slice(0, RANKED_ROWS).map((offer, index) => ({ rank: index + 1, price: money(totalMinor(offer)), stockState: offer.stockState }));
+  const ownNow = active && item.mode === "BOUGHT" && ownOfferFor(item) ? { price: money(totalMinor(ownOfferFor(item) as OfferFixture)), stockState: (ownOfferFor(item) as OfferFixture).stockState } : null;
   const series = history(item, context.now, cheapest, (deal ? cheapestOffer : ownOffer ?? cheapestOffer)?.stockState ?? null);
   return {
     id: item.id,
@@ -119,6 +129,9 @@ function view(controller: MockController, item: TrackedItemRow, context: ViewCon
     returnDeadlineStatus: active ? (item.returnDeadlineStatus ?? null) : null,
     cheapest: cheapest === null ? null : money(cheapest),
     deal: deal ? { cheaperCount: deal.cheaperCount, maxSaving: money(deal.maxSaving) } : null,
+    ranked,
+    rankedMore: Math.max(0, rankedOffers.length - RANKED_ROWS),
+    ownNow,
     ...series,
     conclusion: active ? conclusionOf(item, context.now, cheapest) : null,
     lastCheckedAt: checked,
@@ -252,6 +265,35 @@ export function trackedItemHandlers(controller: MockController) {
       state.trackedItemEvents.push({ id: newId(), trackedItemId: row.id, type: "ENDED", actor: "USER", createdAt: endedAt, data: { method: body.method, saving } });
       note({ targetType: "tracked_item", targetId: row.id, metadata: { mode: row.mode, method: body.method, saving } });
       return { data: { id: row.id, state: "ENDED", endedAt, saving: saving === null ? null : money(saving), restorableUntil: restorableUntil(endedAt, now) ?? endedAt } };
+    }),
+
+    route(controller, "markBought", ({ params, body, actor, now, note }) => {
+      const { userId } = requireUser(actor);
+      const index = state.trackedItems.findIndex((item) => item.id === params.id && item.userId === userId);
+      const row = state.trackedItems[index];
+      if (!row) throw new MockApiError("NOT_FOUND");
+      if (row.state !== "ACTIVE" || row.mode !== "WANT") throw new MockApiError("VALIDATION", { fields: { id: "errors.validation" } });
+      if (state.trackedItems.some((item) => item.userId === userId && item.productKey === row.productKey && item.mode === "BOUGHT" && item.state === "ACTIVE")) {
+        throw new MockApiError("ALREADY_TRACKING");
+      }
+      const bought = boughtDetails(controller, userId, row.productKey, body);
+      const product = PRODUCTS[row.productKey];
+      // The same row becomes a bought row: target removed, return protection starts; history continues (v4 mode switch).
+      state.trackedItems[index] = {
+        ...row, mode: "BOUGHT", platform: bought.platformKey, otherPlatformName: bought.otherPlatformName, sellerOfferId: bought.sellerOfferId,
+        sellerName: body.sellerName ?? null, pricePaidMinor: body.pricePaid.amount, orderedOn: body.orderedOn, orderStatus: body.orderStatus,
+        returnDeadline: bought.deadline?.day ?? null, returnDeadlineStatus: bought.deadline?.status ?? null,
+        targetPriceMinor: null, trackingDuration: null, trackingEndsAt: null,
+      };
+      state.trackedItemEvents.push({ id: newId(), trackedItemId: row.id, type: "BOUGHT", actor: "USER", createdAt: now.toISOString(), data: { from: "WANT", pricePaid: body.pricePaid.amount } });
+      note({ targetType: "tracked_item", targetId: row.id, metadata: { productId: product.id, ...(bought.otherPlatformName ? { otherPlatform: true } : {}) } });
+      return {
+        data: {
+          id: row.id, productId: product.id, mode: "BOUGHT", state: "ACTIVE",
+          returnDeadline: bought.deadline?.day ?? null, returnDeadlineStatus: bought.deadline?.status ?? null,
+          noWithdrawalRight: product.category.noWithdrawalRight, trackingEndsAt: null, createdAt: row.createdAt,
+        },
+      };
     }),
 
     route(controller, "restoreTracking", ({ params, actor, now, note }) => {

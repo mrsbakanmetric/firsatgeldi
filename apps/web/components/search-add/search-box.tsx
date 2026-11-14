@@ -18,6 +18,7 @@ import { Link2, Package, Store } from "lucide-react";
 import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useState } from "react";
 import { API_BASE_URL } from "../../lib/api/config";
 import { useApiQuery } from "../../lib/api/hooks";
+import { acceptsCompletion, completionFor } from "../../lib/completion";
 import { useLinkCheck } from "../input-source/input-source";
 
 /** Time after the last keystroke before the catalogue is asked again. */
@@ -31,11 +32,6 @@ const PREVIEW_ATTRIBUTES = 4;
 
 export function imageUrl(sha256: string | null): string | null {
   return sha256 ? `${API_BASE_URL}${imagePath(sha256, "THUMB_160")}` : null;
-}
-
-/** Turkish case folding with ı = i (so "insta" matches "Insta360"); same length as the input. */
-function fold(text: string): string {
-  return text.toLocaleLowerCase("tr").replace(/ı/g, "i");
 }
 
 
@@ -107,9 +103,8 @@ export function CatalogueSearchBox({ t, inputRef, query, onQueryChange, signedIn
 
   // Inline completion (design v4): the rest of the first suggestion whose name starts
   // with the typed text; recomputed on every keystroke, gone when nothing matches.
-  const typedFolded = fold(query);
-  const completing = open && !link && query.length > 0 ? items.find((product) => fold(product.name).startsWith(typedFolded) && product.name.length > query.length) : undefined;
-  const completion = completing ? completing.name.slice(query.length) : "";
+  const completing = open && !link ? completionFor(query, items.map((product) => product.name)) : null;
+  const completion = completing ? completing.slice(query.length) : "";
 
   const choose = (product: ProductSummary) => {
     setOpen(false);
@@ -117,11 +112,10 @@ export function CatalogueSearchBox({ t, inputRef, query, onQueryChange, signedIn
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    const atEnd = event.currentTarget.selectionStart === query.length && event.currentTarget.selectionEnd === query.length;
-    if (completion && atEnd && (event.key === "Tab" || event.key === "ArrowRight") && !event.shiftKey) {
+    if (completing && acceptsCompletion(event, query.length)) {
       event.preventDefault();
       // Accepting takes the product's own spelling ("dys" → "Dyson V15 Detect Absolute").
-      onQueryChange(completing?.name ?? query + completion);
+      onQueryChange(completing);
       return;
     }
     if (event.key === "ArrowDown" && items.length) {

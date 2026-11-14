@@ -161,7 +161,7 @@ describe("ProductRow", () => {
     const onMore = vi.fn();
     rerender(<ProductRow href="/tr/takip/1" image={null} title="Biten" dimmed tone="deal" actions={<button type="button" onClick={onMore}>⋯</button>} />);
     const row = screen.getByRole("link", { name: /Biten/ }).closest("div") as HTMLElement;
-    expect(row.className).toContain("bg-savings-subtle");
+    expect(row.className).toContain("border-savings");
     expect(row.querySelector("[class*='opacity-(--component-button-disabled-opacity)']")).not.toBeNull();
     const more = screen.getByRole("button", { name: "⋯" });
     expect(more.parentElement?.className).toContain("z-(--z-index-raised)");

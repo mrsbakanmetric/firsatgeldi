@@ -7,15 +7,20 @@ describe("hand-over links (no Add product dialog: Search and Add is the one flow
   it("“Ürün ekle” opens Search and Add and comes back to Tracked Items, in each language", () => {
     expect(searchAddHref("tr", { backToTracking: true })).toBe("/tr/ara?donus=takip");
     expect(searchAddHref("en", { backToTracking: true })).toBe("/en/search?donus=takip");
-    expect(readHandoff("?donus=takip")).toEqual({ productId: null, mode: null, backToTracking: true });
+    expect(readHandoff("?donus=takip")).toEqual({ productId: null, mode: null, backToTracking: true, convertId: null });
   });
 
   it("“Takip et” marks the product and preselects the mode; it always comes back to Tracked Items", () => {
     const href = searchAddHref("tr", { productId: id, mode: "WANT" });
     expect(href).toBe(`/tr/ara?urun=${id}&mod=istiyorum`);
-    expect(readHandoff(href.slice(href.indexOf("?")))).toEqual({ productId: id, mode: "WANT", backToTracking: true });
+    expect(readHandoff(href.slice(href.indexOf("?")))).toEqual({ productId: id, mode: "WANT", backToTracking: true, convertId: null });
     expect(readHandoff(`?urun=${id}&mod=aldim`).mode).toBe("BOUGHT");
-    expect(readHandoff("?mod=bilinmiyor")).toEqual({ productId: null, mode: null, backToTracking: false });
+    expect(readHandoff("?mod=bilinmiyor")).toEqual({ productId: null, mode: null, backToTracking: false, convertId: null });
+  });
+
+  it("“Aldım, kaydet”: the want-to-buy item to switch travels with the product; the mode is bought", () => {
+    const href = searchAddHref("tr", { productId: id, mode: "BOUGHT", convertId: "c0b6e2b0-8f3c-4b8f-9f55-6d1e5b2a7c10" });
+    expect(readHandoff(href.slice(href.indexOf("?")))).toEqual({ productId: id, mode: "BOUGHT", backToTracking: true, convertId: "c0b6e2b0-8f3c-4b8f-9f55-6d1e5b2a7c10" });
   });
 
   it("Tracked Items can name the item just added", () => {
