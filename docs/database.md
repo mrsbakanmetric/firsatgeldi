@@ -991,6 +991,8 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `tokens.welcome_gift` | 3 | C |
 | `discover.share_reward_tokens` / `.share_reward_monthly_cap` | 1 / 10 | |
 | `discover.min_trackers` | 5 [ASSUMPTION] | A product appears in Discover only above this many trackers |
+| `home.tracked_cards` | 4 | Tracked cards on Home after Hemen Gözat [DECIDED 2026-11-15] |
+| `home.top_drops.count` / `.window_days` / `.min_drop_pct` / `.min_history_days` / `.refresh_minutes` | 3 / 30 / 10 / 14 / 60 [ASSUMPTION] | Home "Şu an en çok düşenler": how many, average window, minimum drop %, minimum days with price data, job interval [DECIDED 2026-11-15] |
 | `theme.active` | `firsatgeldi-default` | C |
 | `listing.seller_rating_good_min` | 4.0 [ASSUMPTION] | Fallback only when `seller_trust` is `INSUFFICIENT` |
 | `ratings.min_count` | 20 [ASSUMPTION] | Below → "az değerlendirme" |

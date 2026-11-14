@@ -173,24 +173,35 @@ These rules apply to every screen and are not repeated in each module.
 
 **Return reminder line [DECIDED, v1]:** even without a deal, for items whose return window ends within 2 days: "İade edecek bir şey var mı? N ürünün iade süresi 2 gün içinde bitiyor" — one line, links to those items. Also sent as a notification (Notifications and Preferences).
 
-**C. Other tracked items — compact rows**
-- Flag, name, purchase line or target price, one-line state, one action. Total count + "Tümü" link (Tracked Items).
+**C. "Takip ettiklerin" — small cards [DECIDED 2026-11-15, design v2]**
+- Up to `home.tracked_cards` (4) items after Hemen Gözat, in Home priority order, as small cards in a two-column grid (one column on phones); "Tümü (N)" → Tracked Items.
+- Card: image with the status icon (eye = "Takip ediyorsun", bookmark = "Almak istiyorsun") · name (one line) · purchase line ("Aldın 17.499 TL · İade için 2 gün") or target line ("Hedefin 3.000 TL · 1 ay") · check time · outcome on the right ("650 TL" + "en çok kazanç · 2 satıcıda" · "Hedefe ulaştı ✓" + current price · "Hedefe N TL" · "Daha ucuzu yok"). The whole card opens Product Detail; no seller names, no Göster here.
+- Every card has the same height and the outcome column lines up across cards.
+
+**D. "Şu an en çok düşenler" — top price drops [DECIDED 2026-11-15, design v2]**
+- Up to `home.top_drops.count` (3) products whose current cheapest price dropped the most against the average cheapest price of the last `home.top_drops.window_days` (30) days, at least `home.top_drops.min_drop_pct` (10 %) and in stock [values ASSUMPTION].
+- **Source:** our own price checks only (job `top-drops`); no user data, nobody's tracking or purchases are revealed.
+- **Scope:** the user's tracked categories first; the user's own tracked products are excluded. Fewer than 3 qualify, or nothing is tracked yet → the general list across all categories, labelled "Genel" (with a one-line note when the user has categories). Nothing qualifies → the section is hidden.
+- Card: image · category · name (two-line area, so every card aligns) · "↓ %N düştü" · "Ortalama X TL" → current price · "Fark Y TL" · "N satıcıda · en ucuzu gizli · <stock> · kargo dahil" · check time in the section caption · **"Takip et"** → Search and Add with the product marked and the confirm panel open (same hand-over as Discover).
+- **Hidden-seller rule:** no seller, platform, listing link or Göster in this section.
 
 ### Rules
 - If the user tracks anything, the screen opens **from cache immediately** and refreshes in the background.
-- One coral action, in Hemen Gözat only; actions in other blocks are secondary. The "Fırsat geldi" flag and the unread-deal bell counter are neutral on Home because "Fırsatı gör" is the surface's one coral element [DECIDED]. Hemen Gözat lists up to 3 cheaper offers; more are in Product Detail [DECIDED].
+- One coral action, in Hemen Gözat only; actions in other blocks are secondary (including "Takip et" in D) [DECIDED 2026-11-15].
+- **Hemen Gözat price chart (design v2) [DECIDED 2026-11-15]:** 14 days; price grid with labels, date labels, every step change of the cheapest price marked and labelled; the gap between price paid (want mode: target) and the cheapest price shaded `savings-subtle` with a "Fark X TL" pill; legend (Ödediğin / En ucuz satıcı / Kazanabileceğin); under it three tiles: 14 günün en yükseği · en düşüğü · 14 günde değişim. Offers as the ranked price table of Tracked Items (own row first, up to 3 hidden offers by rank, each with Göster); stock in words. The "Fırsat geldi" flag and the unread-deal bell counter are neutral on Home because "Fırsatı gör" is the surface's one coral element [DECIDED]. Hemen Gözat lists up to 3 cheaper offers; more are in Product Detail [DECIDED].
 - **Two urgent items [DECIDED]:** Hemen Gözat keeps one product; a second item at the same priority level sits at the top of list C as a compact row with an **emphasised border**.
 
 ### States
 | State | View |
 |---|---|
-| New user [DECIDED] | Search box + three steps below it: **Ekle → Biz takip edelim → Fark senin** (no interest picker) |
+| New user [DECIDED] | Search box + three steps below it: **Ekle → Biz takip edelim → Fark senin** (no interest picker); "Şu an en çok düşenler" with the general list [DECIDED 2026-11-15] |
+| No big drop in the user's categories [DECIDED 2026-11-15] | D shows the general list with "Genel" and a one-line note; nothing qualifies at all → D hidden |
 | Tracking, no deal | Hemen Gözat shows the item with the nearest return deadline: "Şu an senin fiyatın en ucuz" |
 | Everything being checked | Old data + its age; small progress on rows |
 | Source error | Last known value + age; subtle "Bazı mağazalara ulaşılamadı" note |
 
 ### API
-`GET /home` · `GET /me/stream` (SSE) · `POST /offers/:ref/reveal|hide` · `POST /tracked-items/:id/check-now`
+`GET /home` (`HomeView`, `architecture.md` §16.1) · `GET /me/stream` (SSE) · `POST /offers/:ref/reveal|hide` · `POST /tracked-items/:id/check-now`
 
 ---
 

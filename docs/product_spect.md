@@ -193,7 +193,7 @@ Defines **what each screen shows and does**, not how it looks. All screens obey 
 
 **Rule:** if the user tracks at least one product, Home opens with their latest data immediately (cache first, refreshed in the background). A new user sees the search box and three steps below it (no interest picker [DECIDED]; `modules.md` › Home). Signed-out visitors see the Landing Page.
 
-**Order:** summary line → (A) search box → (B) "Hemen Gözat" → return reminder line → (C) other tracked products.
+**Order:** summary line → (A) search box → (B) "Hemen Gözat" → return reminder line → (C) "Takip ettiklerin" (up to 4 small cards) → (D) "Şu an en çok düşenler" [DECIDED 2026-11-15].
 
 - **Summary line:** "Takipte 4 ürün · 38.400 TL koruma altında · tümü 4 dk önce kontrol edildi".
 - **A. Search box:** text, links and photos; recent searches. While typing, an inline area under the box shows the first 3 matches as image tiles (no price, no store); a tile, Enter or a link hands over to Search and Add at the matching step [DECIDED].
@@ -201,7 +201,8 @@ Defines **what each screen shows and does**, not how it looks. All screens obey 
   - Selection: (1) open deal, nearest return deadline first; (2) return ≤ 3 days; (3) target reached; (4) most recent change.
   - Shows: flags; name; purchase line (bought · seller/platform · price · date · order status); 14-day price history with conclusion; 14-day stock history of the cheapest offer; "N satıcıda daha ucuz · en çok kazanç X TL" and every cheaper offer on its own line (price, stock, duration, shipping, hidden seller, Göster); quick actions: Fırsatı gör · return policy · Şimdi kontrol et.
 - **Return reminder line [DECIDED, v1]:** even without a deal, for items whose window ends within 2 days ("İade edecek bir şey var mı?").
-- **C. Other tracked products:** compact rows; a second item at the same priority sits first with an emphasised border.
+- **C. "Takip ettiklerin":** up to 4 small cards in two columns (status icon, name, purchase or target line, outcome, check time); a second item at the same priority sits first with an emphasised border; "Tümü" → Tracked Items.
+- **D. "Şu an en çok düşenler" [DECIDED 2026-11-15]:** the 3 products whose cheapest price dropped most against their 30-day average (≥ 10 %, in stock) [values ASSUMPTION], from the user's tracked categories (own items excluded), else the general list. Built only from our own price checks; seller and platform hidden; "Takip et" opens Search and Add with the product marked. Gives a reason to come back even when nothing the user tracks has moved.
 
 ### 5.2 Search & add — identify → mark → confirm (target: under 10 seconds)
 
