@@ -103,7 +103,6 @@ describe.each(LOCALES)("shells in %s", (locale: Locale) => {
     );
     const footer = screen.getByRole("navigation", { name: t("shell.footer.label") });
     expect(within(footer).getAllByRole("link")).toHaveLength(5);
-    expect(screen.queryByText(t("shell.footer.commissionNote"))).toBeNull();
     const languages = screen.getByRole("navigation", { name: t("shell.language.label") });
     // Same row: the links and the language switch are siblings, the switch last.
     expect(footer.parentElement).toBe(languages.parentElement);

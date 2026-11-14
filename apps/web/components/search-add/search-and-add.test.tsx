@@ -157,7 +157,6 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     const preview = screen.getByRole("complementary", { name: t("searchAdd.suggest.previewLabel") });
     expect(preview.querySelector("[class*='size-(--size-thumb-lg)']")).not.toBeNull();
     expect(within(preview).getByRole("button", { name: t("searchAdd.suggest.choose") })).toBeDefined();
-    expect(within(preview).queryByText(new RegExp(t("searchAdd.suggest.previewNote")))).toBeNull();
     expect(within(preview).getAllByRole("definition").length).toBeLessThanOrEqual(4);
     await userEvent.click(screen.getByRole("option", { name: new RegExp(product.name[locale]) }));
     expect(await screen.findByText(t("searchAdd.candidates.marked"))).toBeDefined();
@@ -183,16 +182,13 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     await userEvent.click(screen.getByRole("button", { name: t("searchAdd.search.submit") }));
     await screen.findByRole("heading", { name: t("searchAdd.candidates.title") });
     expect(screen.getByRole("button", { name: t("searchAdd.search.submit") })).toBeDefined();
-    expect(screen.queryByText(t("searchAdd.search.again"))).toBeNull();
   });
 
-  it("empty box: no repeated hint and no catalogue note; the suggestion overlay closes on Esc and on a click outside", async () => {
+  it("the suggestion overlay closes on Esc and on a click outside", async () => {
     show(locale);
     await screen.findByText(t("searchAdd.states.emptyTitle"));
     const box = screen.getByRole("combobox");
     await userEvent.click(box);
-    expect(screen.queryByText(t("searchAdd.suggest.emptyHint"))).toBeNull();
-    expect(screen.queryByText(t("searchAdd.suggest.sourceNote"))).toBeNull();
     await userEvent.type(box, "ace pro 2");
     await screen.findByRole("listbox", undefined, { timeout: 3000 });
     await userEvent.keyboard("{Escape}");
@@ -223,7 +219,6 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
       await userEvent.keyboard("{Escape}");
     }
     expect(picked).not.toBeNull();
-    expect(screen.queryByRole("button", { name: t("searchAdd.understood.apply") })).toBeNull();
     expect(await screen.findByText(t("searchAdd.understood.changedShort", { label: picked ?? "" }))).toBeDefined();
     await userEvent.click(screen.getByRole("button", { name: t("searchAdd.understood.undo") }));
     await waitFor(() => expect(screen.queryByText(t("searchAdd.understood.changedShort", { label: picked ?? "" }))).toBeNull());
@@ -257,7 +252,6 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     show(locale);
     await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
     const date = (await screen.findByLabelText(t("searchAdd.confirm.lastDayLabel"))) as HTMLInputElement;
-    expect(screen.queryByRole("button", { name: t("searchAdd.confirm.changeLastDay") })).toBeNull();
     const help = screen.getByRole("button", { name: t("searchAdd.confirm.returnHelp") });
     expect(help.getAttribute("aria-expanded")).toBe("false");
     await userEvent.click(help);

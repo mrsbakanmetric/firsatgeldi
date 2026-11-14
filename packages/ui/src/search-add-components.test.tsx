@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { AttributeChip, FactTile, FactTiles, HiddenOfferCard, ImagePrivacyNote, MultiImageUpload, ProductImage, SearchField } from "./index";
 import { axeViolations } from "./test/axe";
 
-const chipTexts = { typeLabel: "Listede yoksa yaz", sourceNote: "Seçenekler kategori şablonundan gelir." };
+const chipTexts = { typeLabel: "Listede yoksa yaz" };
 
 describe("AttributeChip (design v3)", () => {
   it("a small grey chip opens a menu overlay; one click applies the value; no apply or close button, no warning", async () => {

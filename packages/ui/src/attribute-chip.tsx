@@ -32,8 +32,6 @@ export interface AttributeChipTexts {
   listHeading?: string;
   /** Field label "Listede yoksa yaz". */
   typeLabel: string;
-  /** Source note ("Seçenekler kategori şablonundan gelir."). */
-  sourceNote?: string;
 }
 
 export interface AttributeChipProps {
@@ -141,7 +139,6 @@ export function AttributeChip({ label, value, options, onPick, changed = false, 
             onChange={(event) => setTyped(event.target.value)}
             className={cn("h-(--size-touch-target-min) w-full min-w-0 rounded-md border border-border bg-surface-alt px-3 text-body-sm text-text", focusRing)}
           />
-          {texts.sourceNote && <p className="text-caption text-text-muted">{texts.sourceNote}</p>}
         </form>
       </PopoverSurface>
     </>

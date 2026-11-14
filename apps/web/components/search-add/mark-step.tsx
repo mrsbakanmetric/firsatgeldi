@@ -52,7 +52,6 @@ export function Understood({ t, result, change, onAnswer, onUndo }: { t: Transla
               texts={{
                 ...(HEADING_KEYS[attribute.key] ? { listHeading: t(HEADING_KEYS[attribute.key] as TranslationKey) } : {}),
                 typeLabel: t("searchAdd.understood.typeLabel"),
-                sourceNote: t("searchAdd.understood.sourceNote"),
               }}
             />
           ))}
