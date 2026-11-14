@@ -1,6 +1,6 @@
 # FırsatGeldi — Product Specification
 
-**Status:** Working draft · **Last updated:** 2026-11-13 (rev. 7: return rules read from store sites, ratings and seller trust, request tracking, campaigns read from store/bank pages, Discover and Profile, Application Manager screens drawn, screen status file; rev. 6: roles, reveal rules, packages, v1 helpers, histories, fraud, images, personal data and web stack decided; mobile technology open) · **Market:** Türkiye (international parked)
+**Status:** Working draft · **Last updated:** 2026-11-14 (rev. 8: "not in the catalogue → search stores" through identification, targeted catalogue warm-up job; rev. 7: return rules read from store sites, ratings and seller trust, request tracking, campaigns read from store/bank pages, Discover and Profile, Application Manager screens drawn, screen status file; rev. 6: roles, reveal rules, packages, v1 helpers, histories, fraud, images, personal data and web stack decided; mobile technology open) · **Market:** Türkiye (international parked)
 
 This document is the single source of truth for the FırsatGeldi product idea, the decisions taken so far, the research behind them and the open questions. Decisions marked **[DECIDED]** were confirmed by the product owner; [RECOMMENDED] / [ASSUMPTION] / [INTERIM] items await confirmation; [OPEN] / [DECIDE LATER] items are intentionally undecided.
 
@@ -386,6 +386,8 @@ Barcode (EAN) → brand + normalised model code → embedding similarity (pgvect
 ### 9.1 Hybrid catalogue
 Own index (≈50 ms) → if missing/stale → live Google Shopping + site search (1–3 s) → clean, match, save, index → show.
 
+**Not in the catalogue → search stores [DECIDED 2026-11-14]:** autocomplete answers from our own catalogue only. When it finds nothing, "Mağazalarda ara" sends the typed text to the normal identification (no separate endpoint), which runs the hybrid flow above and returns "Hangisi seninki?" candidates. If live sources find nothing either: "no exact match" + the closest three; a closed category shows "not yet supported". Guests may use it; the search is recorded like any other (`architecture.md` §11).
+
 ### 9.2 Data model
 Defined in `database.md` (products, offers, sellers, platforms, price/stock history, tracked items, reveals, histories, media, packages, roles…).
 
@@ -396,7 +398,9 @@ Defined in `database.md` (products, offers, sellers, platforms, price/stock hist
 Engine returns ~100 candidates → re-ranker: `score = text_match × (1 + 0.4·personal + 0.3·social + 0.2·popularity + 0.1·deal)`; signals precomputed and cached. Cold start: popularity + deals (no interest picker [DECIDED]).
 
 ### 9.5 Performance rules
-Cached first; progressive loading; pre-warm popular products; query cache 1–4 h; targets: own-index search < 100 ms, live query < 3 s, add product < 10 s.
+Cached first; progressive loading; query cache 1–4 h; targets: own-index search < 100 ms, live query < 3 s, add product < 10 s.
+
+**Catalogue warm-up [DECIDED 2026-11-14; values ASSUMPTION]:** a background job fills the catalogue in a targeted way once or twice a day (03:00 and 15:00 Europe/Istanbul, at most 500 queries per run, electronics + clothing — all settings): yesterday's searches without results · store best-seller / category listing pages in open categories (store site search first, SerpApi second) · products in approved campaigns · new variants, colours and bundles of catalogue products. It adds products only; **price and stock always come from live checks**. Polite data collection and the provider budget apply unchanged (`architecture.md` §9, §11; `database.md` §18).
 
 ### 9.6 Ease-of-use rules
 Max 3 steps; auto-fill from link/screenshot; max 1–2 tappable questions; typo-tolerant; recent searches; share-sheet in the mobile phase; clear "no exact match" message.
