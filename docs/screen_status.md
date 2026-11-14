@@ -36,7 +36,7 @@ Three surfaces, kept apart in this document:
 | 1 | Search and Add (Ara ve Ekle) | ✅ | ✅ in canvas 1 · 🟡 updated in check P | [1 Ara ve Ekle](https://claude.ai/artifact/HoAoJ78ugpSN9VUwg4RLiu) | v3 | Compact UI pass: smaller search-box controls, chip-style recent searches and attributes, instant attribute menu with Geri al, compact autocomplete preview, sticky confirm actions + "Evet, bu", inline return date, "Diğer" platform (see pagedesign §8.2; canvas not redrawn) |
 | 2 | Product Detail (Ürün Detayı) | ✅ revision approved 2026-11-13 · want-to-buy mode ✅ approved 2026-11-13 | 🟡 check P | [2 Ürün Detayı](https://claude.ai/artifact/7rCf9eKdjfCuVuPWvqsqDA) | v1 | Initial import |
 | 3 | Home (Ana Sayfa) | ✅ revision approved 2026-11-13 | 🟡 check P | [3 Ana Sayfa](https://claude.ai/artifact/8ufA9dkjTMtKo1ixGGqykA) | v1 | Initial import |
-| 4 | Tracked Items + Add product dialog (Takip Ettiklerim) | ✅ | rules only | [4 Takip Ettiklerim](https://claude.ai/artifact/64fCN5dCFLKUCcPHnJaZRT) | v1 | Initial import |
+| 4 | Tracked Items + Add product dialog (Takip Ettiklerim) | ✅ | rules only | [4 Takip Ettiklerim](https://claude.ai/artifact/64fCN5dCFLKUCcPHnJaZRT) | v2 | Compact UI pass (chips, compact buttons, 48 px rows, whole row links to Product Detail, ended items collapsed); Add product dialog removed — "Ürün ekle" goes to Search and Add (see pagedesign §8.4; canvas not redrawn) |
 | 5 | Notifications + bell panel (Bildirimler) | ✅ | 🟡 bell sheet in check P | [5 Bildirimler](https://claude.ai/artifact/8TPYLuzZrGAC5AG2FkCKEM) | v1 | Initial import |
 | 6 | My Savings (Kazancım) | ✅ | rules only | [6 Kazancım](https://claude.ai/artifact/W74PZmdtk6jJQvejRYKfL8) | v1 | Initial import |
 | 7 | Packages and Premium (Paketim ve Premium) | ✅ | rules only | [7 Paketim ve Premium](https://claude.ai/artifact/NCWYuVBrBG1gGnNPuy8e8d) | v1 | Initial import |
@@ -194,7 +194,7 @@ Everything else: Home, Search and Add, Product Detail, Tracked Items, Notificati
 | 4 | Mobile | Mobile app track (technology choice first) | After the web is finished [DECIDED 2026-11-14] |
 
 ### Backlog (parked by the user on 2026-11-13, to revisit later)
-- Redraw canvases "0 İskelet ve Bileşenler" (footer) and "1 Ara ve Ekle" to match design v2/v3 changes written in the docs on 2026-11-14 (the user chose to review these on the web build instead).
+- Redraw canvases "0 İskelet ve Bileşenler" (footer), "1 Ara ve Ekle" and "4 Takip Ettiklerim" (v2; Add product dialog boards obsolete) to match design v2/v3 changes written in the docs on 2026-11-14 (the user chose to review these on the web build instead).
 - Phone-width proposals (P): header 56 px, sheet max 92 %, "İade sayfası" short label.
 - Application Manager screens review (12a–12e) and its 8 proposals.
 - E-mail designs (E).

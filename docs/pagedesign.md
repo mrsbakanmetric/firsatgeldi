@@ -14,7 +14,7 @@ This document explains **how every page is built**: the one shell, the page temp
 | 1 | Search and Add | FırsatGeldi — 1 Ara ve Ekle |
 | 2 | Product Detail | FırsatGeldi — 2 Ürün Detayı |
 | 3 | Home | FırsatGeldi — 3 Ana Sayfa |
-| 4 | Tracked Items (+ Add product dialog) | FırsatGeldi — 4 Takip Ettiklerim |
+| 4 | Tracked Items | FırsatGeldi — 4 Takip Ettiklerim |
 | 5 | Notifications (+ bell panel, "Takip et" dialog) | FırsatGeldi — 5 Bildirimler |
 | 6 | My Savings | FırsatGeldi — 6 Kazancım |
 | 7 | Packages and Premium | FırsatGeldi — 7 Paketim ve Premium |
@@ -253,8 +253,14 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 
 ### 8.4 Tracked Items — `/[locale]/takip`
 - **Shell/template:** AppShell · List.
-- **Regions:** title "Takip ettiklerim" + "Takipte N/limit" + "Ürün ekle" → 4 stat tiles → **search + Kategori** → filters (Tümü · Aldım · Almak istiyorum · Fırsat var · Biten, with counts) + sort + "Görünenleri kontrol et (N)" with remaining allowance → rows (image 72 · flags/name/line · 14-day sparkline · 14-day stock · state + check time · Detay) → "Biten takipler" dimmed.
-- **Overlays:** **Ürün ekle dialog** (search · link paste · photo · suggestions · 3 image tiles · right panel with selected product and attribute value buttons · "Devam et" → step 2 Aldım / Almak istiyorum).
+- **Compact UI (design v2) [DECIDED 2026-11-14]** — same rules as Search and Add v3:
+  - Title "Takip ettiklerim" + one meta line "Takipte N/limit · bugün N kontrol hakkı" + compact "Ürün ekle" (`button.compact`).
+  - Summary: one thin row of four small figures (caption label, `fs-price` value), not four large tiles.
+  - Search (input 48) + filters as `components.chip` with counts (Tümü · Aldım · Almak istiyorum · Fırsat var · Biten); "Kategori" and "Sırala" are chips that open a `menu` overlay (`components.popover-dismiss`).
+  - "Görünenleri kontrol et (N)" is `button.compact`.
+  - Rows: image `size.thumb-sm` (48) · flags/name/line · 14-day sparkline · 14-day stock · state + check time. **The whole row is the link to Product Detail; no "Detay" button.**
+  - "Biten takipler (N)" collapsed by default; opens in place, rows dimmed.
+- **No Add product dialog [DECIDED 2026-11-14]:** "Ürün ekle" navigates to Search and Add (`/[locale]/ara`); "Takip et" from notifications, recent searches, Keşfet and the product page opens Search and Add with the product already marked and the confirm panel open (mode preselected when known). One flow, one implementation.
 - **States:** empty · empty filter · bulk check (allowance short, progress) · stale row · error · loading.
 - **API:** `GET /tracked-items?filter=&sort=&q=&category=`, `/summary`, `/check-now-bulk`.
 
@@ -334,19 +340,19 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 ```
 Guest search (Home / Search and Add) ──mark──► Confirm ──sign-in needed──► Sign-in ──► back to Confirm (values kept)
 Home "Fırsatı gör" ──► Product Detail ──"Göster"──► allowance (Packages order) ──► seller revealed ──► store
-Tracked Items "Ürün ekle" ──► Dialog step 1 (find) ──► step 2 (Aldım / Almak istiyorum) ──► Tracked Items
-Notification / recent search "Takip et" ──► Dialog step 2 ──► Tracked Items
+Tracked Items "Ürün ekle" ──► Search and Add ──mark──► Confirm (Aldım / Almak istiyorum) ──► Tracked Items
+Notification / recent search "Takip et" ──► Search and Add (product marked, confirm panel open) ──► Tracked Items
 Bell ──► panel ──click──► preview ──► Product Detail / Takip et / İade adımları
 Product Detail "Takibi bitir" ──► method + re-paid price ──► My Savings record (editable 7 days)
 Allowance used up ──► Packages request dialog ──► admin ──► notification + email
 Profile menu ──► Paketim · Ayarlar (Bildirimler, Güvenlik, Arama geçmişi …)
 Landing search ──► Search and Add (guest) ──confirm──► Sign-in ──► back to Confirm
 Landing "Ücretsiz başla" / showcase action ──► Sign-up ──► Home (new user)
-Product page "Bu ürünü takip et" / "Bunu aldım…" ──► Sign-in ──► Add product dialog step 2 (Almak istiyorum / Aldım)
+Product page "Bu ürünü takip et" / "Bunu aldım…" ──► Sign-in ──► Search and Add, product marked, confirm panel (Almak istiyorum / Aldım)
 Product page "Göster" (guest) ──► Sign-in ──► Product page with allowance prompt
 Footer / "Haklarını bil" / "?" ──► Help (store picker ──► guide) · contextual panel ──► "Yardım merkezinde aç"
 Help "Bize yaz" ──► request number ──► Taleplerim ──► reply notification + email
-Keşfet "Takip et" (product) ──► Add product dialog step 2 · "Göster" ──► reveal gate
+Keşfet "Takip et" (product) ──► Search and Add, product marked, confirm panel · "Göster" ──► reveal gate
 Keşfet first visit ──► sharing consent dialog ──► Ayarlar › Gizlilik holds the values
 "Link paylaş" ──► verification ──► verified (+1 token, hidden-seller offer) │ rejected (reason)
 Sign-in with pending re-consent ──► Re-consent dialog ──► accept │ "Şimdilik değil" ──► limited mode
