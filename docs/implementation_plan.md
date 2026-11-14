@@ -72,8 +72,8 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 27 | Worker jobs | Price and stock checks, deals, notification sending | ⬜ | — | — |
 | 28 | Security tests in CI | Hidden-seller leak, personal-data leak, data isolation, permission matrix | ⬜ | — | — |
 | 29 | Connect Search and Add | Screen on the real API | ⬜ | — | — |
+| 31 | Connect Tracked Items | Screen on the real API — before step 30 (user decision 2026-11-14) | ⬜ | — | — |
 | 30 | Connect Product Detail | Screen on the real API | ⬜ | — | — |
-| 31 | Connect Tracked Items | Screen on the real API | ⬜ | — | — |
 | 32 | Connect Notifications and Preferences | Screen on the real API | ⬜ | — | — |
 | 33 | Connect Home | Screen on the real API | ⬜ | — | — |
 | 34 | Connect My Savings | Screen on the real API | ⬜ | — | — |
@@ -107,7 +107,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 - **Open decisions review (24):** the database cannot be built while its rules are still open.
 - **Database, real API, worker jobs (25–27):** price tracking — the product's core — does not work without them.
 - **Security tests (28):** the hidden-seller rule is the product's foundation; no screen is connected to real data before these tests run.
-- **Connecting screens (29–39):** this is where the user-facing product becomes real; same order as Phase 1, sign-in last.
+- **Connecting screens (29–39):** this is where the user-facing product becomes real; same order as Phase 1, sign-in last. Tracked Items (31) is connected before Product Detail (30), as in Phase 1 [DECIDED 2026-11-14] (user); step numbers are kept.
 
 **Phase 3** — useful, but not needed for the first working product.
 - **Application Manager screens (40–41):** the design review is not finished, and at first the settings can run on their documented defaults.
