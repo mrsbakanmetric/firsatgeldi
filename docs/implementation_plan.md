@@ -49,9 +49,9 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ✅ | #53 · #55 (guest upload status, seller-lookup limit) | 2026-11-14 |
 | 10 | Search and Add | Screen as designed, on mock data | 🛠 | #61 · #68 (v3) · #79 (v4) | 2026-11-14 |
 | 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | 🛠 | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5) | 2026-11-14 |
+| 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | ⬜ | — | — |
 | 11 | Product Detail | Screen incl. Want to Buy mode | ⬜ | — | — |
 | 13 | Notifications and Preferences | Page, bell panel, notification preferences | ⬜ | — | — |
-| 14 | Home | Screen | ⬜ | — | — |
 | 15 | My Savings | Screen | ⬜ | — | — |
 | 16 | Packages and Premium | Screen | ⬜ | — | — |
 | 17 | Landing Page + SEO product page | Both pages | ⬜ | — | — |
@@ -101,13 +101,14 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 - Basic CI (step 4) comes right after the skeleton so every following PR is checked from the start.
 - Screens follow the screen order of `CLAUDE.md`; Application Manager screens are not here because their design review is still pending.
 - **Exception [DECIDED 2026-11-14] (user decision):** Tracked Items (step 12) is built before Product Detail (step 11); step numbers are kept. Until Product Detail exists, Tracked Items rows link to `/[locale]/takip/[id]`, which shows a "coming soon" page.
+- **Exception [DECIDED 2026-11-15] (user decision):** Home (step 14) is built before Product Detail (step 11), right after Tracked Items; step numbers are kept. Until Product Detail exists, Home links to a product (cards, "Fırsatı gör", "Ürünü gör") go to the same "coming soon" page. This exception is for Phase 1 only: the Phase 2 connecting order and the backend build order do not change.
 
 **Phase 2** — makes the product really work for users.
 - **Data test (23):** which data the stores really give affects every later decision, so it comes first.
 - **Open decisions review (24):** the database cannot be built while its rules are still open.
 - **Database, real API, worker jobs (25–27):** price tracking — the product's core — does not work without them.
 - **Security tests (28):** the hidden-seller rule is the product's foundation; no screen is connected to real data before these tests run.
-- **Connecting screens (29–39):** this is where the user-facing product becomes real; same order as Phase 1, sign-in last. Tracked Items (31) is connected before Product Detail (30), as in Phase 1 [DECIDED 2026-11-14] (user); step numbers are kept.
+- **Connecting screens (29–39):** this is where the user-facing product becomes real; same order as Phase 1, sign-in last. Tracked Items (31) is connected before Product Detail (30), as in Phase 1 [DECIDED 2026-11-14] (user); step numbers are kept. Home keeps its place here (33, after Notifications and Preferences): the Phase 1 exception of 2026-11-15 does not apply, because connecting Home needs the Product Detail group's backend (Check Now, price history).
 
 **Phase 3** — useful, but not needed for the first working product.
 - **Application Manager screens (40–41):** the design review is not finished, and at first the settings can run on their documented defaults.

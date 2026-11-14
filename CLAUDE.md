@@ -136,7 +136,7 @@ Three phases; steps, done-when conditions, PR names and the reason for each phas
 
 **Phase 3 — Application Manager and later slices (later):** Application Manager screens (after their design is approved) on mock data, then connected → Discover and Profile connected → deploy pipeline (after the hosting provider is chosen).
 
-**Screen order (all phases):** Search and Add → Tracked Items → Product Detail (with Want to Buy mode) [user decision 2026-11-14] → Notifications and Preferences → Home → My Savings → Packages and Premium → Landing Page + SEO product page → Legal Pages + Help and FAQ → Settings and Account → Sign-in and Sign-up → Discover and Profile → Application Manager screens. Each screen passes `docs/engineering_checklist.md` for what exists in its phase.
+**Screen order (all phases):** Search and Add → Tracked Items → Home [Phase 1 only, user decision 2026-11-15] → Product Detail (with Want to Buy mode) [user decision 2026-11-14] → Notifications and Preferences → My Savings → Packages and Premium → Landing Page + SEO product page → Legal Pages + Help and FAQ → Settings and Account → Sign-in and Sign-up → Discover and Profile → Application Manager screens. In Phase 2 and in the backend build order, Home stays after Notifications and Preferences (`docs/implementation_plan.md`). Each screen passes `docs/engineering_checklist.md` for what exists in its phase.
 
 ## Working rules
 - Smallest correct solution; no temporary workarounds, no disabled tests.
