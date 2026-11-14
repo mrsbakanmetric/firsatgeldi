@@ -4,6 +4,15 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-14 (night) · Claude Code
+- **Done:** plan step 9 — mock API and fixtures (#53, merged): Zod contract + endpoint registry + typed client (`packages/contracts`), MSW mock API with design fixtures in tr/en (`packages/mocks`), TanStack Query hooks in web, dev-only mock with a production build check, hidden-seller leak test (bodies, errors, image URLs, events, activity rows); 479 tests.
+- **Spec (#54, open):** field-level contract `architecture.md` §16.1, error codes §15.2, step 9 ✅ in the plan.
+- **Decided (user), written in #54:** guests read only their own upload status (`anon_id`), no live updates for guests, polling 2 s / max 60 s (settings), status reads logged · seller lookup signed-in only, 10 per minute (`seller_lookup.rate_limit_per_minute`), `RATE_LIMITED` · `apps/web/AGENTS.md` (written by `next dev`) goes into `.gitignore`.
+- **Open:** "Katalogda yok → mağazalarda ara" has no endpoint — ask the user before step 10 · [ASSUMPTION] items in §16.1 (key `upload.own.create` for status reads, action name `upload.status`, stream key `account.own.view`) await review · shell viewer still guest; connects to `GET /me` with step 10.
+- **Next:** after #54 merges → `fix/mock-guest-upload-and-rate-limit` (decisions 1–2 in contract, mock and tests; `.gitignore` line).
+
+---
+
 ## 2026-11-14 (late) · Claude Code
 - **Done:** plan step 8 — app shell (#50): `AppShell`, `AuthShell`, `AdminShell` (header only), five page templates, overlays, base primitives with Lucide; main navigation routes render empty templates; development-only preview `/tr/dev/shell`; z-index and component values as CSS variables; 328 tests, axe clean in tr/en, light/dark, 390/900/1280.
 - **Decided (user), written in docs:** shell preview page is development-only (#48, `implementation_plan.md` step 8); width tokens `size.side-column-width`, `size.section-menu-width` (#49, `design-tokens.json` 1.8.0); where canvas 0 and the docs differ, the docs win (5-item top bar with Keşfet, stale state as a warning `StatusBanner`).
