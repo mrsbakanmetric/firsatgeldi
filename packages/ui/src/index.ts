@@ -14,6 +14,7 @@ export { ImagePrivacyNote, MultiImageUpload, type MultiImageUploadProps, type Up
 export { PriceSparkline, type PriceSparklineProps } from "./price-sparkline";
 export { ProductImage, type ProductImageProps, type ProductImageSize } from "./product-image";
 export { ProductRow, type ProductRowColumn, type ProductRowProps } from "./product-row";
+export { SearchBox, type SearchBoxProps } from "./search-box";
 export { SearchField, type SearchFieldProps } from "./search-field";
 export { Button, buttonClasses, type ButtonProps, type ButtonSize, type ButtonVariant } from "./button";
 export { Checkbox, type CheckboxProps } from "./checkbox";

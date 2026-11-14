@@ -86,6 +86,18 @@ export const TRACKING_SEEDS: readonly TrackingSeed[] = [
     conclusion: { kind: "LOWEST_IN_DAYS", days: 30 },
   },
   {
+    key: "insta360-x4",
+    productKey: "x4",
+    // Design v3 "Tükendi · 2 gündür": the seller bought from is sold out.
+    row: { mode: "BOUGHT", platform: "AMAZON_TR", pricePaidMinor: 24_999 * KURUS, state: "ACTIVE", orderStatus: "SHIPPED", returnDeadlineStatus: "ESTIMATED" },
+    seller: "kameraAtolyesi",
+    createdDaysAgo: 3, orderedDaysAgo: 3, returnInDays: 29, endedDaysAgo: null, durationDays: null,
+    checkedMinutesAgo: 7, staleInScenario: false,
+    cheapestTl: [null, null, null, null, null, null, null, null, null, null, null, 24_999, 26_999, 26_499],
+    stock: "-----------ioo", stockSubject: "OWN_SELLER",
+    conclusion: { kind: "NO_CHEAPER" },
+  },
+  {
     key: "wh-1000xm5",
     productKey: "wh1000xm5",
     // "Biten takipler": ended by the user, saving recorded.

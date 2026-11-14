@@ -11,6 +11,8 @@ export const SYSTEM_SETTINGS = {
   "reveal.price_watch_minutes": 60,
   "tracking.stale_hours": 6,
   "check_now.cache_minutes": 5,
+  /** "Geri al" after ending tracking from the list (Tracked Items v3: 7 days) [ASSUMPTION — key]. */
+  "tracking.restore_days": 7,
   "return.default_rule": { days: 14, startType: "DELIVERY", avgDeliveryDays: null },
   "media.max_bytes": 10 * MEGABYTE,
   "media.max_images_per_request": 5,

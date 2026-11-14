@@ -90,6 +90,19 @@ export interface TrackedItemRow {
   readonly seedKey?: string;
 }
 
+/** `savings_records` row (database.md §8): written when a bought item ends with a saving; voided on "Geri al". */
+export interface SavingsRecordRow {
+  readonly id: string;
+  readonly userId: string;
+  readonly trackedItemId: string;
+  readonly method: "RETURN_REBUY" | "PRICE_DIFFERENCE";
+  readonly pricePaidMinor: number;
+  readonly priceReboughtMinor: number;
+  readonly savingMinor: number;
+  readonly recordedAt: string;
+  voidedAt: string | null;
+}
+
 /** `check_now_usage` row (database.md §9): consumed = false inside the cache window. */
 export interface CheckNowUsageRow {
   readonly userId: string;
@@ -102,7 +115,7 @@ export interface CheckNowUsageRow {
 export interface TrackedItemEventRow {
   readonly id: string;
   readonly trackedItemId: string;
-  readonly type: "CREATED";
+  readonly type: "CREATED" | "ENDED" | "RESTORED";
   readonly data: Readonly<Record<string, unknown>>;
   readonly actor: "USER" | "SYSTEM" | "ADMIN";
   readonly createdAt: string;
@@ -184,6 +197,7 @@ export interface MockState {
   /** Products found through the live sources and saved to the catalogue (architecture.md §11). */
   readonly catalogAdded: Set<string>;
   readonly checkNowUsage: CheckNowUsageRow[];
+  readonly savingsRecords: SavingsRecordRow[];
   /** Last finished check per tracked item (`checks`); seeded rows fall back to their fixture age. */
   readonly lastChecks: Map<string, string>;
 }
@@ -206,6 +220,7 @@ export function createMockState(): MockState {
     sellerLookups: new Map(),
     catalogAdded: new Set(),
     checkNowUsage: [],
+    savingsRecords: [],
     lastChecks: new Map(),
   };
 }

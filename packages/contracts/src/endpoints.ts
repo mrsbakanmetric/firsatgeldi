@@ -16,6 +16,9 @@ import {
   CheckNowBulkResult,
   ConfirmContext,
   CreateTrackedItemRequest,
+  EndTrackingRequest,
+  EndTrackingResult,
+  RestoreTrackingResult,
   SellerLookupRequest,
   SellerLookupResult,
   TeaserRequest,
@@ -161,6 +164,15 @@ export const ENDPOINTS = {
     // Idempotent [ASSUMPTION]: a repeated tap never spends the daily allowance twice.
     method: "POST", path: "/tracked-items/check-now-bulk", params: null, query: null, body: CheckNowBulkRequest,
     response: CheckNowBulkResult, ...READ, idempotent: true, activity: "check_now_bulk", permission: "checknow.own.use", public: false,
+  }),
+  endTracking: endpoint({
+    method: "POST", path: "/tracked-items/:id/end", params: IdParams, query: null, body: EndTrackingRequest,
+    response: EndTrackingResult, ...READ, idempotent: true, activity: "tracking.end", permission: "tracking.own.write", public: false,
+  }),
+  restoreTracking: endpoint({
+    // [ASSUMPTION — endpoint] "Geri al" within 7 days of ending (Tracked Items v3).
+    method: "POST", path: "/tracked-items/:id/restore", params: IdParams, query: null, body: null,
+    response: RestoreTrackingResult, ...READ, idempotent: true, activity: "tracking.restore", permission: "tracking.own.write", public: false,
   }),
 
   // REVEAL AND OFFERS

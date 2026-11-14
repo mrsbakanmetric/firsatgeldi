@@ -13,11 +13,12 @@
 // nothing found → "mağazalarda ara".
 import { type ApiError, type IdentifyResult, imagePath, type ProductSummary } from "@firsatgeldi/contracts";
 import type { Translator } from "@firsatgeldi/i18n";
-import { Button, chipClasses, cn, focusRing, Icon, ProductImage, SearchField, SkeletonBlock, useEscape, useOutsidePress } from "@firsatgeldi/ui";
-import { Camera, Link2, Package, Store } from "lucide-react";
-import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useMemo, useRef, useState } from "react";
+import { Button, chipClasses, cn, focusRing, Icon, ProductImage, SearchBox, SkeletonBlock } from "@firsatgeldi/ui";
+import { Link2, Package, Store } from "lucide-react";
+import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useState } from "react";
 import { API_BASE_URL } from "../../lib/api/config";
-import { useApiMutation, useApiQuery } from "../../lib/api/hooks";
+import { useApiQuery } from "../../lib/api/hooks";
+import { useLinkCheck } from "../input-source/input-source";
 
 /** Time after the last keystroke before the catalogue is asked again. */
 const TYPING_PAUSE_MS = 150;
@@ -27,7 +28,6 @@ const RECENT_COUNT = 4;
 const TILE_MIN_MATCHES = 4;
 /** Key attributes in the compact preview (pagedesign.md §8.2: 3–4). */
 const PREVIEW_ATTRIBUTES = 4;
-const URL_PATTERN = /^https?:\/\/\S+\.\S+/i;
 
 export function imageUrl(sha256: string | null): string | null {
   return sha256 ? `${API_BASE_URL}${imagePath(sha256, "THUMB_160")}` : null;
@@ -38,9 +38,6 @@ function fold(text: string): string {
   return text.toLocaleLowerCase("tr").replace(/ı/g, "i");
 }
 
-export function isLink(text: string): boolean {
-  return URL_PATTERN.test(text.trim());
-}
 
 function useDebounced(value: string): string {
   const [debounced, setDebounced] = useState(value);
@@ -51,7 +48,7 @@ function useDebounced(value: string): string {
   return debounced;
 }
 
-export interface SearchBoxProps {
+export interface CatalogueSearchBoxProps {
   t: Translator;
   /** The text input, so the empty state's way cards can focus it. */
   inputRef?: Ref<HTMLInputElement>;
@@ -75,24 +72,19 @@ export interface SearchBoxProps {
   onError: (error: ApiError) => void;
 }
 
-export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmit, submitting, canSubmit, onChoose, onSearchStores, onLink, onAddPhoto, below, onError }: SearchBoxProps) {
+export function CatalogueSearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmit, submitting, canSubmit, onChoose, onSearchStores, onLink, onAddPhoto, below, onError }: CatalogueSearchBoxProps) {
   const id = useId();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const typed = query.trim();
-  const link = isLink(typed);
+  const linkCheck = useLinkCheck(typed, onError);
+  const link = linkCheck.link;
   const debounced = useDebounced(typed);
   const searching = open && debounced.length > 0 && !link;
 
   const suggestions = useApiQuery("autocomplete", { query: { q: debounced } }, { enabled: searching, placeholderData: (previous) => previous });
   const recent = useApiQuery("getSearchHistory", { query: {} }, { enabled: open && signedIn && typed.length === 0, retry: false });
-  const linkCheck = useApiMutation("identify", { onError });
-  const { mutate: checkLink, reset: resetLink } = linkCheck;
 
-  useEffect(() => {
-    if (link) checkLink({ body: { link: typed } });
-    else resetLink();
-  }, [link, typed, checkLink, resetLink]);
 
   useEffect(() => {
     if (suggestions.isError) onError(suggestions.error);
@@ -111,11 +103,7 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
   // Nothing to offer on an empty box without recent searches: no overlay at all.
   const hasContent = link || typed.length > 0 || recentItems.length > 0;
 
-  // Overlay (components.popover-dismiss): a click outside the box and its list, or Esc, closes it.
-  const frame = useRef<HTMLDivElement>(null);
-  const inside = useMemo(() => [frame], []);
-  useOutsidePress(inside, open, () => setOpen(false));
-  useEscape(open && hasContent, () => setOpen(false));
+  // The overlay closes on a press outside, Esc, the camera and "Ara" (shared SearchBox, components.popover-dismiss).
 
   // Inline completion (design v4): the rest of the first suggestion whose name starts
   // with the typed text; recomputed on every keystroke, gone when nothing matches.
@@ -159,46 +147,38 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
   const meta = (product: ProductSummary) => [product.category.name, product.generation].filter(Boolean).join(t("common.listSeparator"));
 
   return (
-    <div ref={frame} className="relative flex flex-col">
-      <SearchField
-        ref={inputRef}
-        label={t("searchAdd.search.label")}
-        hideLabel
-        placeholder={t("searchAdd.search.label")}
-        value={query}
-        onChange={(event) => {
-          onQueryChange(event.target.value);
-          setActive(0);
-          setOpen(true);
-        }}
-        onFocus={() => setOpen(true)}
-        onKeyDown={onKeyDown}
-        role="combobox"
-        aria-expanded={open && items.length > 0}
-        aria-controls={listId}
-        aria-autocomplete={completion ? "both" : "list"}
-        completion={completion}
-        {...(open && current && items.length ? { "aria-activedescendant": optionId(items.indexOf(current)) } : {})}
-        clearLabel={t("searchAdd.search.clear")}
-        onClear={() => {
-          onQueryChange("");
-          setOpen(true);
-        }}
-        trailing={
-          <>
-            <Button variant="ghost" size="compact" iconOnly icon={Camera} label={t("searchAdd.search.addPhoto")} onClick={() => (setOpen(false), onAddPhoto())} />
-            <Button size="compact" onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting}>
-              {t("searchAdd.search.submit")}
-            </Button>
-          </>
-        }
-        below={below}
-      />
-
-      {open && hasContent && (
-        <div className="absolute inset-x-0 top-full z-(--z-index-popover) mt-2 flex flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-md">
+    <SearchBox
+      ref={inputRef}
+      label={t("searchAdd.search.label")}
+      placeholder={t("searchAdd.search.label")}
+      value={query}
+      onValueChange={(value) => {
+        onQueryChange(value);
+        setActive(0);
+        setOpen(true);
+      }}
+      onFocus={() => setOpen(true)}
+      onKeyDown={onKeyDown}
+      role="combobox"
+      aria-expanded={open && items.length > 0}
+      aria-controls={listId}
+      aria-autocomplete={completion ? "both" : "list"}
+      completion={completion}
+      {...(open && current && items.length ? { "aria-activedescendant": optionId(items.indexOf(current)) } : {})}
+      clearLabel={t("searchAdd.search.clear")}
+      addPhotoLabel={t("searchAdd.search.addPhoto")}
+      onAddPhoto={onAddPhoto}
+      submitLabel={t("searchAdd.search.submit")}
+      submitDisabled={!canSubmit}
+      submitting={submitting}
+      onSubmit={onSubmit}
+      below={below}
+      overlayOpen={open && hasContent}
+      onOverlayClose={() => setOpen(false)}
+      overlay={
+        <>
           {link ? (
-            <LinkCard t={t} pending={linkCheck.isPending} result={linkCheck.data?.data ?? null} onContinue={(result) => (setOpen(false), onLink(result))} />
+            <LinkCard t={t} pending={linkCheck.pending} result={linkCheck.result} onContinue={(result) => (setOpen(false), onLink(result))} />
           ) : typed.length === 0 ? (
             <div className="flex flex-col gap-2">
               <p className="text-caption text-text-muted">{t("searchAdd.suggest.recent")}</p>
@@ -290,9 +270,9 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
             </>
           )}
           {link && <p className="text-caption text-text-muted">{t("searchAdd.suggest.linkTip")}</p>}
-        </div>
-      )}
-    </div>
+        </>
+      }
+    />
   );
 }
 

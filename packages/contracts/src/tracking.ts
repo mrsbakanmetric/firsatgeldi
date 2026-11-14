@@ -235,7 +235,15 @@ export const TrackedItemListItem = z.object({
   lastCheckedAt: Timestamp.nullable(),
   /** Not checked for `tracking.stale_hours`: "Güncel değil", the deal "doğrulanamadı". */
   stale: z.boolean(),
-  ended: z.object({ at: Timestamp, reason: EndReason, savingRecorded: Money.nullable() }).nullable(),
+  ended: z
+    .object({
+      at: Timestamp,
+      reason: EndReason,
+      savingRecorded: Money.nullable(),
+      /** "Geri al" is offered until then (7 days after ending) [ASSUMPTION — field, design v3]. */
+      restorableUntil: Timestamp.nullable(),
+    })
+    .nullable(),
 });
 export type TrackedItemListItem = z.infer<typeof TrackedItemListItem>;
 
@@ -273,3 +281,31 @@ export const CheckNowBulkResult = z.object({
   remaining: z.number().int().nonnegative().nullable(),
 });
 export type CheckNowBulkResult = z.infer<typeof CheckNowBulkResult>;
+
+// ── End tracking from the list and undo (modules.md Tracked Items › "End tracking from
+// the list", design v3; architecture.md §16 `POST /tracked-items/:id/end`). Shapes [ASSUMPTION].
+
+/**
+ * How a bought item ended (`savings_records.method`): İade ettim → RETURN_REBUY,
+ * Fiyat farkı aldım → PRICE_DIFFERENCE; null = Vazgeçtim (no saving record) and always
+ * null for want-to-buy items. `reboughtPrice` is optional: the new price paid.
+ */
+export const EndTrackingRequest = z.object({
+  method: z.enum(["RETURN_REBUY", "PRICE_DIFFERENCE"]).nullable(),
+  reboughtPrice: Money.nullable(),
+});
+export type EndTrackingRequest = z.infer<typeof EndTrackingRequest>;
+
+/** → the ended item: the saving recorded for My Savings (null when none) and how long "Geri al" works. */
+export const EndTrackingResult = z.object({
+  id: Id,
+  state: TrackedItemState,
+  endedAt: Timestamp,
+  saving: Money.nullable(),
+  restorableUntil: Timestamp,
+});
+export type EndTrackingResult = z.infer<typeof EndTrackingResult>;
+
+/** `POST /tracked-items/:id/restore` — "Geri al" within 7 days: tracking continues, the saving record is voided [ASSUMPTION — endpoint]. */
+export const RestoreTrackingResult = z.object({ id: Id, state: TrackedItemState });
+export type RestoreTrackingResult = z.infer<typeof RestoreTrackingResult>;

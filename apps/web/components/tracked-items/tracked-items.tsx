@@ -1,13 +1,14 @@
 "use client";
 
-// Tracked Items screen (design "4 Takip Ettiklerim" v2 — compact UI;
-// pagedesign.md §8.4; modules.md Tracked Items): List template — title + one
-// meta line + compact "Ürün ekle" (→ Search and Add) · one thin row of four
-// figures · search (48) + filter chips with counts + "Kategori" and "Sırala"
-// chips with a menu overlay + compact "Görünenleri kontrol et (N)" · rows (the
-// whole row links to Product Detail) · "Biten takipler (N)" collapsed.
-// States: empty · empty filter · bulk check · stale row · error · loading.
-// Cheaper sellers are never named here (no "Göster" on this page).
+// Tracked Items screen (design "4 Takip Ettiklerim" v2–v3; pagedesign.md §8.4;
+// modules.md Tracked Items): List template — title + one meta line + compact
+// "Ürün ekle" (→ Search and Add) · one thin row of four figures · the shared
+// SearchBox (filters this list; a photo or link goes to Search and Add) + filter
+// chips Tümü · Fırsat var · Biten + "Kategori" and "Sırala" + "Görünenleri kontrol
+// et (N)" · the "Fırsat geldi" group first (the page's one coral badge) · other
+// rows · "Biten takipler (N)" collapsed. Rows link to Product Detail; ⋯ → "Takibi
+// bitir" with "Geri al" for 7 days. States: empty · empty filter · bulk check ·
+// stale row · error · loading. Cheaper sellers are never named here (no "Göster").
 import type { TrackedItemFilter, TrackedItemListItem, TrackedItemSort } from "@firsatgeldi/contracts";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
 import {
@@ -16,32 +17,38 @@ import {
   CategoryFilter,
   EmptyState,
   FilterChips,
+  Flag,
   Icon,
   PageTemplate,
-  SearchField,
+  SearchBox,
   SkeletonBlock,
   SortSelect,
   StatTile,
   StatTiles,
   StatusBanner,
-  StockKey,
 } from "@firsatgeldi/ui";
 import { keepPreviousData } from "@tanstack/react-query";
-import { ChevronDown, CircleCheck, ListChecks, LogIn, Plus, SearchX } from "lucide-react";
+import type { EndTrackingResult } from "@firsatgeldi/contracts";
+import { useQueryClient } from "@tanstack/react-query";
+import { ArrowRight, ChevronDown, CircleCheck, ListChecks, LogIn, Plus, RotateCcw, SearchX, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { useApiQuery, useSession } from "../../lib/api/hooks";
+import { errorMessage } from "../../lib/api/errors";
+import { apiQueryKey, useApiMutation, useApiQuery, useSession } from "../../lib/api/hooks";
+import { isLink, PhotoInput, useHandOverToSearchAdd } from "../input-source/input-source";
 import { HANDOFF_PARAMS, searchAddHref } from "../../lib/handoff";
 import { ago, money, useNow } from "../search-add/format";
 import { useTranslator } from "../shell/parts";
 import { useBulkCheck } from "./bulk-check";
+import { EndTrackingDialog } from "./end-dialog";
 import { shortDay } from "./format";
 import { TrackedRow } from "./row";
 
 /** Time after the last keystroke before the list is asked again. */
 const TYPING_PAUSE_MS = 250;
 const MS_PER_HOUR = 3_600_000;
-const FILTERS: readonly TrackedItemFilter[] = ["all", "bought", "want", "deal", "ended"];
+/** v3: no "Aldım" / "Almak istiyorum" chips; each row carries its status instead. */
+const FILTERS: readonly TrackedItemFilter[] = ["all", "deal", "ended"];
 const SORTS: readonly TrackedItemSort[] = ["priority", "deadline", "saving"];
 const LOADING_ROWS = 4;
 
@@ -85,7 +92,39 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
   const [sort, setSort] = useState<TrackedItemSort>("priority");
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
-  const q = useDebounced(search.trim());
+  const typed = search.trim();
+  const debounced = useDebounced(typed);
+  /** "Ara" / Enter applies the text at once; a link is not a filter (it goes to Search and Add). */
+  const [applied, setApplied] = useState<string | null>(null);
+  const q = isLink(typed) ? "" : applied === typed ? typed : debounced;
+  const handOver = useHandOverToSearchAdd(locale);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+  const [ending, setEnding] = useState<TrackedItemListItem | null>(null);
+  const [notice, setNotice] = useState<{ kind: "ended"; item: TrackedItemListItem; result: EndTrackingResult } | { kind: "restored"; item: TrackedItemListItem } | null>(null);
+  const [problem, setProblem] = useState<string | null>(null);
+  const refresh = () => {
+    void queryClient.invalidateQueries({ queryKey: apiQueryKey("listTrackedItems") });
+    void queryClient.invalidateQueries({ queryKey: apiQueryKey("getTrackedItemsSummary") });
+  };
+  const restore = useApiMutation("restoreTracking", {
+    onSuccess: (_data, input) => {
+      const item = items.find((entry) => entry.id === input.params.id);
+      setNotice(item ? { kind: "restored", item } : null);
+      refresh();
+    },
+    onError: (error) => setProblem(errorMessage(t, error)),
+  });
+  const onEnded = (item: TrackedItemListItem, result: EndTrackingResult) => {
+    setEnding(null);
+    setProblem(null);
+    setNotice({ kind: "ended", item, result });
+    refresh();
+  };
+  const runRestore = (item: TrackedItemListItem) => {
+    setProblem(null);
+    restore.mutate({ params: { id: item.id } });
+  };
   const [endedOpen, setEndedOpen] = useState(false);
 
   const list = useApiQuery(
@@ -164,21 +203,27 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
   ) : undefined;
 
   const counts = facets?.filters;
-  const hasAny = (counts?.all ?? 0) > 0 || q.length > 0 || category !== "" || filter !== "all";
+  const hasAny = (counts?.all ?? 0) > 0 || typed.length > 0 || category !== "" || filter !== "all";
   /** Nothing tracked yet: the empty state is the page (one action, no zero figures). */
   const firstRun = list.isSuccess && !hasAny;
   const toolbar = hasAny ? (
     <>
-      <SearchField
-        label={t("trackedItems.search.label")}
-        hideLabel
-        placeholder={t("trackedItems.search.placeholder")}
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-        clearLabel={t("trackedItems.search.clear")}
-        onClear={() => setSearch("")}
-        className="w-full"
-      />
+      <div className="w-full">
+        <PhotoInput inputRef={fileInput} onFiles={handOver.files} />
+        {/* The shared SearchBox (v3): here it filters this list; a photo or a link goes to Search and Add. */}
+        <SearchBox
+          label={t("trackedItems.search.label")}
+          placeholder={t("trackedItems.search.placeholder")}
+          value={search}
+          onValueChange={setSearch}
+          onSubmit={() => (isLink(typed) ? handOver.link(typed) : setApplied(typed))}
+          submitLabel={t("searchAdd.search.submit")}
+          submitDisabled={typed.length === 0}
+          addPhotoLabel={t("searchAdd.search.addPhoto")}
+          onAddPhoto={() => fileInput.current?.click()}
+          clearLabel={t("trackedItems.search.clear")}
+        />
+      </div>
       <FilterChips
         label={t("trackedItems.filters.label")}
         options={FILTERS.map((id) => ({ id, label: t(`trackedItems.filters.${id}`), count: counts?.[id] ?? 0 }))}
@@ -198,9 +243,37 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
 
   const clearAll = () => {
     setSearch("");
+    setApplied(null);
     setCategory("");
     setFilter("all");
   };
+
+  const rowProps = { t, locale, now, onEnd: setEnding, onRestore: runRestore, restoringId: restore.isPending ? (restore.variables?.params.id ?? null) : null };
+  const notices = (
+    <>
+      {problem && <StatusBanner tone="danger">{problem}</StatusBanner>}
+      {notice?.kind === "ended" && (
+        <StatusBanner
+          tone="info"
+          icon={CircleCheck}
+          action={
+            <Button variant="ghost" size="compact" icon={RotateCcw} loading={restore.isPending} onClick={() => runRestore(notice.item)}>
+              {t("trackedItems.v3.restore")}
+            </Button>
+          }
+        >
+          {[t("trackedItems.v3.ended", { name: notice.item.product.name }), notice.result.saving ? t("trackedItems.v3.endedSaving", { amount: money(notice.result.saving, locale) }) : null]
+            .filter(Boolean)
+            .join(t("common.listSeparator"))}
+        </StatusBanner>
+      )}
+      {notice?.kind === "restored" && (
+        <StatusBanner tone="info" icon={CircleCheck}>
+          {t("trackedItems.v3.restored", { name: notice.item.product.name })}
+        </StatusBanner>
+      )}
+    </>
+  );
 
   let content;
   if (list.isPending) {
@@ -237,25 +310,39 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
       />
     );
   } else if (items.length === 0) {
-    const searching = q.length > 0 || category !== "";
+    const searching = typed.length > 0 || category !== "";
     content = (
-      <EmptyState
-        icon={SearchX}
-        title={searching ? t("trackedItems.states.searchEmpty") : t(`trackedItems.states.filterEmpty.${filter}`)}
-        description={figures?.lastCheckedAt ? t("trackedItems.states.filterEmptyText", { ago: ago(t, figures.lastCheckedAt, now) }) : ""}
-        action={
-          <Button variant="secondary" size="compact" onClick={clearAll}>
-            {searching ? t("trackedItems.states.clearFilters") : t("trackedItems.states.showAll")}
-          </Button>
-        }
-      />
+      <div className="flex flex-col gap-3">
+        {/* v3: nothing in the list matches → search the catalogue for it. */}
+        {typed.length > 0 && (
+          <Link
+            href={`${searchAddHref(locale, { backToTracking: true })}&q=${encodeURIComponent(typed)}`}
+            className="flex min-h-(--size-touch-target-min) items-center gap-3 rounded-lg border border-border bg-surface p-3 text-body-sm font-semibold text-primary hover:bg-surface-alt"
+          >
+            <Icon icon={ArrowRight} />
+            {t("trackedItems.v3.searchAdd", { query: typed })}
+          </Link>
+        )}
+        <EmptyState
+          icon={SearchX}
+          title={searching ? t("trackedItems.states.searchEmpty") : t(`trackedItems.states.filterEmpty.${filter}`)}
+          description={figures?.lastCheckedAt ? t("trackedItems.states.filterEmptyText", { ago: ago(t, figures.lastCheckedAt, now) }) : ""}
+          action={
+            <Button variant="secondary" size="compact" onClick={clearAll}>
+              {searching ? t("trackedItems.states.clearFilters") : t("trackedItems.states.showAll")}
+            </Button>
+          }
+        />
+      </div>
     );
   } else {
+    const deals = active.filter((item) => item.deal !== null && !item.stale);
+    const others = active.filter((item) => !deals.includes(item));
     const stale = active.filter((item) => item.stale);
     const oldest = stale.map((item) => item.lastCheckedAt).filter((at): at is string => at !== null).sort()[0];
     content = (
       <div className="flex flex-col gap-3">
-        {added && (
+        {added && !notice && (
           <StatusBanner tone="info" icon={CircleCheck}>
             {t("trackedItems.added", { name: added.product.name })}
           </StatusBanner>
@@ -266,10 +353,22 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
         )}
         {active.length > 0 && <ColumnHeads t={t} />}
         {filter === "ended" ? (
-          <Rows t={t} locale={locale} items={ended} now={now} />
+          <Rows {...rowProps} items={ended} />
         ) : (
           <>
-            <Rows t={t} locale={locale} items={active} now={now} />
+            {deals.length > 0 && (
+              // v3: rows with a current deal first; the group heading carries the page's one coral badge.
+              <section aria-labelledby="deal-group" className="flex flex-col gap-2">
+                <h2 id="deal-group" className="flex items-center gap-2">
+                  <Flag tone="deal" icon={Zap}>
+                    {t("trackedItems.row.flags.deal")}
+                  </Flag>
+                  <span className="sr-only">{t("trackedItems.v3.dealGroup")}</span>
+                </h2>
+                <Rows {...rowProps} items={deals} />
+              </section>
+            )}
+            <Rows {...rowProps} items={others} />
             {ended.length > 0 && (
               <section className="flex flex-col gap-3">
                 <button
@@ -283,7 +382,7 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
                   {t("trackedItems.ended.title", { count: ended.length })}
                 </button>
                 <div id="ended-rows" hidden={!endedOpen}>
-                  {endedOpen && <Rows t={t} locale={locale} items={ended} now={now} />}
+                  {endedOpen && <Rows {...rowProps} items={ended} />}
                 </div>
               </section>
             )}
@@ -301,29 +400,30 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
       {...(firstRun ? {} : { actions: addLink })}
       {...(summaryRow && !firstRun ? { summary: summaryRow } : {})}
       {...(toolbar ? { toolbar } : {})}
-      {...(items.length > 0
-        ? {
-            footnote: (
-              <span className="flex flex-col gap-1">
-                <span>{t("trackedItems.footnote")}</span>
-                <span>{t("trackedItems.legend")}</span>
-                <StockKey labels={{ inStock: t("trackedItems.row.stock.IN_STOCK"), low: t("trackedItems.row.stock.LOW_STOCK"), out: t("trackedItems.row.stock.OUT_OF_STOCK") }} />
-              </span>
-            ),
-          }
-        : {})}
     >
+      {notices}
       {content}
+      {ending && <EndTrackingDialog t={t} locale={locale} item={ending} onClose={() => setEnding(null)} onEnded={onEnded} />}
     </PageTemplate>
   );
 }
 
-function Rows({ t, locale, items, now }: { t: Translator; locale: Locale; items: readonly TrackedItemListItem[]; now: number }) {
+interface RowsProps {
+  t: Translator;
+  locale: Locale;
+  items: readonly TrackedItemListItem[];
+  now: number;
+  onEnd: (item: TrackedItemListItem) => void;
+  onRestore: (item: TrackedItemListItem) => void;
+  restoringId: string | null;
+}
+
+function Rows({ t, locale, items, now, onEnd, onRestore, restoringId }: RowsProps) {
   return (
     <ul className="flex flex-col gap-2">
       {items.map((item) => (
         <li key={item.id}>
-          <TrackedRow t={t} locale={locale} item={item} now={now} />
+          <TrackedRow t={t} locale={locale} item={item} now={now} onEnd={onEnd} onRestore={onRestore} restoring={restoringId === item.id} />
         </li>
       ))}
     </ul>
@@ -338,6 +438,8 @@ function ColumnHeads({ t }: { t: Translator }) {
       <span className="w-1/4 shrink-0">{t("trackedItems.columns.price")}</span>
       <span className="w-1/6 shrink-0">{t("trackedItems.columns.stock")}</span>
       <span className="w-1/5 shrink-0">{t("trackedItems.columns.state")}</span>
+      {/* Same width as the row's ⋯ button (button.compact, icon only). */}
+      <span className="min-w-(--component-button-compact-height-touch) shrink-0 md:pointer-fine:min-w-(--component-button-compact-height)" />
     </div>
   );
 }

@@ -29,11 +29,12 @@ describe("list", () => {
       PRODUCTS.acePro2FlashPrint.name.tr,
       PRODUCTS.winterCoat.name.tr,
       PRODUCTS.dysonV15.name.tr,
+      PRODUCTS.x4.name.tr,
       PRODUCTS.airPodsPro2.name.tr,
       PRODUCTS.wh1000xm5.name.tr,
     ]);
-    expect(data.facets.filters).toEqual({ all: 5, bought: 3, want: 1, deal: 2, ended: 1 });
-    expect(meta?.total).toBe(5);
+    expect(data.facets.filters).toEqual({ all: 6, bought: 4, want: 1, deal: 2, ended: 1 });
+    expect(meta?.total).toBe(6);
     expect(meta?.entitlements?.checkNow).toEqual({ used: 7, limit: 10 });
   });
 
@@ -103,12 +104,12 @@ describe("list", () => {
 describe("summary", () => {
   it("tracked count, open deals with the total maximum saving, returns within three days, last check", async () => {
     const { data, meta } = await api.call("getTrackedItemsSummary", {});
-    expect(data.tracking).toEqual({ count: 4, bought: 3, want: 1 });
+    expect(data.tracking).toEqual({ count: 5, bought: 4, want: 1 });
     expect(data.deals).toEqual({ count: 2, maxSavingTotal: { amount: 330_200, currency: "TRY" } });
     expect(data.returnsSoon.count).toBe(1);
     expect(data.returnsSoon.nearest).toBe("2026-11-16");
     expect(data.lastCheckedAt).toBe(new Date(Date.parse("2026-11-14T09:00:00.000Z") - 4 * 60_000).toISOString());
-    expect(meta?.entitlements?.tracking).toEqual({ used: 4, limit: 10 });
+    expect(meta?.entitlements?.tracking).toEqual({ used: 5, limit: 10 });
   });
 });
 
@@ -118,8 +119,8 @@ describe("bulk check", () => {
     const { data } = await api.call("listTrackedItems", { query: { filter: "bought" } });
     const ids = data.items.map((item) => item.id);
     const [ace, coat, dyson] = data.items;
-    // Ace Pro 2 was checked 4 min ago (cache window 5 min): no allowance; 3 left for the other two.
-    const result = await api.call("checkNowBulk", { body: { trackedItemIds: ids } });
+    // Ace Pro 2 was checked 4 min ago (cache window 5 min): no allowance; 3 left for coat and Dyson (2 of the 3).
+    const result = await api.call("checkNowBulk", { body: { trackedItemIds: ids.slice(0, 3) } });
     expect(result.data.skippedCached).toEqual([ace?.id]);
     expect(result.data.willCheck).toEqual([coat?.id, dyson?.id]);
     expect(result.data.remaining).toBe(1);
@@ -130,6 +131,7 @@ describe("bulk check", () => {
     ]);
     const row = controller.state.activity.at(-1);
     expect(row).toMatchObject({ action: "check_now_bulk", outcome: "OK", metadata: { requested: 3, willCheck: 2, skippedCached: 1 } });
+    void ids;
   });
 
   it("stops at the allowance and refuses when nothing can be checked", async () => {
@@ -153,5 +155,46 @@ describe("bulk check", () => {
     const { data } = await api.call("listTrackedItems", { query: { filter: "ended" } });
     const error = await api.call("checkNowBulk", { body: { trackedItemIds: data.items.map((item) => item.id) } }).then(() => null, (caught: unknown) => caught);
     expect((error as ApiError).body.code).toBe("NOT_FOUND");
+  });
+});
+
+describe("end tracking from the list and “Geri al” (design v3)", () => {
+  const find = async (key: keyof typeof PRODUCTS) => (await api.call("listTrackedItems", {})).data.items.find((item) => item.product.id === PRODUCTS[key].id);
+
+  it("bought: “İade ettim” with a lower new price records the saving; the row moves to ended with “Geri al”; logged", async () => {
+    const ace = await find("acePro2FlashPrint");
+    const result = await api.call("endTracking", { params: { id: ace?.id ?? "" }, body: { method: "RETURN_REBUY", reboughtPrice: { amount: 2_599_700, currency: "TRY" } } });
+    expect(result.data).toMatchObject({ state: "ENDED", saving: { amount: 300_200, currency: "TRY" } });
+    expect(controller.state.savingsRecords.at(-1)).toMatchObject({ method: "RETURN_REBUY", savingMinor: 300_200, voidedAt: null });
+    expect(controller.state.trackedItemEvents.at(-1)).toMatchObject({ type: "ENDED", actor: "USER" });
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.end", outcome: "OK", targetId: ace?.id });
+    const ended = (await api.call("listTrackedItems", { query: { filter: "ended" } })).data.items.find((item) => item.id === ace?.id);
+    expect(ended?.ended?.restorableUntil).not.toBeNull();
+
+    await api.call("restoreTracking", { params: { id: ace?.id ?? "" } });
+    expect((await find("acePro2FlashPrint"))?.state).toBe("ACTIVE");
+    expect(controller.state.savingsRecords.at(-1)?.voidedAt).not.toBeNull();
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.restore", outcome: "OK" });
+  });
+
+  it("“Vazgeçtim” ends without a saving; a want-to-buy item ends on one confirm and refuses a method", async () => {
+    const dyson = await find("dysonV15");
+    const ended = await api.call("endTracking", { params: { id: dyson?.id ?? "" }, body: { method: null, reboughtPrice: null } });
+    expect(ended.data.saving).toBeNull();
+    const buds = await find("airPodsPro2");
+    const refused = await api.call("endTracking", { params: { id: buds?.id ?? "" }, body: { method: "PRICE_DIFFERENCE", reboughtPrice: null } }).then(() => null, (caught: unknown) => caught);
+    expect((refused as ApiError).body.code).toBe("VALIDATION");
+    expect((await api.call("endTracking", { params: { id: buds?.id ?? "" }, body: { method: null, reboughtPrice: null } })).data.state).toBe("ENDED");
+  });
+
+  it("“Geri al” only within 7 days; another user cannot end someone else's item", async () => {
+    const old = (await api.call("listTrackedItems", { query: { filter: "ended" } })).data.items.find((item) => item.product.id === PRODUCTS.wh1000xm5.id);
+    expect(old?.ended?.restorableUntil).toBeNull();
+    const late = await api.call("restoreTracking", { params: { id: old?.id ?? "" } }).then(() => null, (caught: unknown) => caught);
+    expect((late as ApiError).body.code).toBe("VALIDATION");
+    const coat = await find("winterCoat");
+    t.signInAs("secondUser");
+    const foreign = await api.call("endTracking", { params: { id: coat?.id ?? "" }, body: { method: null, reboughtPrice: null } }).then(() => null, (caught: unknown) => caught);
+    expect((foreign as ApiError).body.code).toBe("NOT_FOUND");
   });
 });

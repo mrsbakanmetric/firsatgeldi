@@ -16,7 +16,7 @@ import { Button, buttonClasses, cn, EmptyState, focusRing, Icon, MoneyDisplay, P
 import { Camera, CircleCheck, Link2, Package, PencilLine, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type RefObject, useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 import { useApiMutation, useSession } from "../../lib/api/hooks";
 import { useApiClient } from "../../lib/api/provider";
 import { type HandoffMode, readHandoff, trackedItemsHref } from "../../lib/handoff";
@@ -27,7 +27,8 @@ import { clearDraft, readDraft, RESUME_PARAM, saveDraft } from "./draft";
 import { formatDay, money, useNow } from "./format";
 import { type AttributeChange, BulkList, type BulkState, type Candidate, Candidates, Understood } from "./mark-step";
 import { PhotoArea, PhotoWatchers } from "./photos";
-import { imageUrl, isLink, SearchBox } from "./search-box";
+import { isLink, PhotoInput, takeHandedFiles } from "../input-source/input-source";
+import { CatalogueSearchBox, imageUrl } from "./search-box";
 import { usePhotos } from "./use-photos";
 
 type IdentifyBody = { text?: string; uploadIds?: string[]; link?: string };
@@ -152,46 +153,16 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
     runIdentify({ ...(text ? { text } : {}), ...(photos.readyIds.length ? { uploadIds: photos.readyIds } : {}) });
   };
 
-  // The shell's search box hands over `?q=`; after sign-in `?devam=1` restores the guest's draft.
-  const started = useRef(false);
-  const start = useEffectEvent(() => {
-    const params = new URLSearchParams(globalThis.location.search);
-    const draft = params.has(RESUME_PARAM) ? readDraft() : null;
-    if (draft && signedIn) {
-      setQuery(draft.query);
-      setResult(singleResult(null, draft.identifyRequestId ?? "", [draft.candidate]));
-      setMarked(draft.candidate);
-      setInitial({ pricePaid: draft.pricePaid, orderedOn: draft.orderedOn });
-      clearDraft();
-      return;
-    }
-    const handedOver = readHandoff(globalThis.location.search);
-    setHandoff({ mode: handedOver.mode, backToTracking: handedOver.backToTracking });
-    if (handedOver.productId) {
-      // "Takip et": the product is marked and the confirm panel opens (on phones as the sheet).
-      void client.call("getProduct", { params: { id: handedOver.productId } }).then(
-        ({ data }) => {
-          const candidate = candidateOf(data);
-          setQuery(data.title);
-          setResult(singleResult(null, "", [candidate]));
-          setMarked(candidate);
-          setSheetOpen(isPhoneWidth());
-        },
-        (failure: ApiError) => setError({ error: failure, kind: "suggest" }),
-      );
-      return;
-    }
-    const handed = params.get(QUERY_PARAM)?.trim();
-    if (handed) {
-      setQuery(handed);
-      runIdentify(isLink(handed) ? { link: handed } : { text: handed });
-    }
-  });
+
+  // Photos handed over by another page (InputSourceHandler) are added once the upload limits are known.
+  const [handedFiles] = useState<File[]>(() => (typeof window === "undefined" ? [] : takeHandedFiles()));
+  const handedAdded = useRef(false);
+  const { policy, add: addPhotos } = photos;
   useEffect(() => {
-    if (started.current || session.status === "loading") return;
-    started.current = true;
-    start();
-  }, [session.status]);
+    if (!policy || !handedFiles.length || handedAdded.current) return;
+    handedAdded.current = true;
+    addPhotos(handedFiles);
+  }, [policy, handedFiles, addPhotos]);
 
   // The user's own link wins; otherwise an order screen read from a photo fills the confirm panel (design cases A, B).
   const extracted = photos.extracted;
@@ -287,6 +258,52 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
     if (data.link) setLinkPrefill({ source: "LINK", platformId: data.link.platformId, platformName: data.link.platformName, sellerName: data.link.sellerName, pricePaid: data.link.pricePaid, orderedOn: null });
   };
 
+  // The shell's search box hands over `?q=`; after sign-in `?devam=1` restores the guest's draft.
+  const started = useRef(false);
+  const start = useEffectEvent(() => {
+    const params = new URLSearchParams(globalThis.location.search);
+    const draft = params.has(RESUME_PARAM) ? readDraft() : null;
+    if (draft && signedIn) {
+      setQuery(draft.query);
+      setResult(singleResult(null, draft.identifyRequestId ?? "", [draft.candidate]));
+      setMarked(draft.candidate);
+      setInitial({ pricePaid: draft.pricePaid, orderedOn: draft.orderedOn });
+      clearDraft();
+      return;
+    }
+    const handedOver = readHandoff(globalThis.location.search);
+    setHandoff({ mode: handedOver.mode, backToTracking: handedOver.backToTracking });
+    if (handedOver.productId) {
+      // "Takip et": the product is marked and the confirm panel opens (on phones as the sheet).
+      void client.call("getProduct", { params: { id: handedOver.productId } }).then(
+        ({ data }) => {
+          const candidate = candidateOf(data);
+          setQuery(data.title);
+          setResult(singleResult(null, "", [candidate]));
+          setMarked(candidate);
+          setSheetOpen(isPhoneWidth());
+        },
+        (failure: ApiError) => setError({ error: failure, kind: "suggest" }),
+      );
+      return;
+    }
+    const handed = params.get(QUERY_PARAM)?.trim();
+    if (handed && isLink(handed)) {
+      // A link handed over by another page (InputSourceHandler): same as "Bu linkle devam et".
+      setQuery(handed);
+      lastIdentify.current = { body: { link: handed }, markProductId: null };
+      identify.mutate({ body: { link: handed } }, { onSuccess: ({ data }) => continueWithLink(data), onError: (failure) => setError({ error: failure, kind: "identify" }) });
+    } else if (handed) {
+      setQuery(handed);
+      runIdentify({ text: handed });
+    }
+  });
+  useEffect(() => {
+    if (started.current || session.status === "loading") return;
+    started.current = true;
+    start();
+  }, [session.status]);
+
   const retry = () => {
     const failed = error?.kind;
     setError(null);
@@ -341,8 +358,8 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
         <Success t={t} locale={locale} created={created} onAnother={reset} />
       ) : (
         <>
-          <HiddenPhotoPicker photos={photos} inputRef={fileInput} />
-          <SearchBox
+          <PhotoInput inputRef={fileInput} onFiles={photos.add} />
+          <CatalogueSearchBox
             t={t}
             inputRef={searchInput}
             query={query}
@@ -430,27 +447,6 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
         </>
       )}
     </PageTemplate>
-  );
-}
-
-/** The file input lives once on the page; "Fotoğraf ekle" anywhere opens it. */
-function HiddenPhotoPicker({ photos, inputRef }: { photos: ReturnType<typeof usePhotos>; inputRef: RefObject<HTMLInputElement | null> }) {
-  if (!photos.policy) return null;
-  return (
-    <input
-      ref={inputRef}
-      type="file"
-      multiple
-      accept={photos.policy.acceptedTypes.join(",")}
-      className="sr-only"
-      tabIndex={-1}
-      aria-hidden="true"
-      onChange={(event) => {
-        const files = Array.from(event.target.files ?? []);
-        event.target.value = "";
-        if (files.length) photos.add(files);
-      }}
-    />
   );
 }
 

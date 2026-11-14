@@ -87,6 +87,9 @@ export const SELLERS = {
   kulaklikPazari: seller("HEPSIBURADA", "HB-SLR-71844", "Kulaklık Pazarı", 4.3, 415),
   // Sample seller for any other Trendyol link (link paste in development, design v4 request).
   supurgeMerkezi: seller("TRENDYOL", "TY-SLR-22871", "Süpürge Merkezi", 4.4, 980),
+  // Tracked Items v3 "Tükendi" row: the user's own seller is sold out; another seller has it, dearer.
+  kameraAtolyesi: seller("AMAZON_TR", "AMZ-SLR-K4T1", "Kamera Atölyesi", 4.6, 1320),
+  goruntuMarket: seller("TEKNOSA", "TK-SLR-5512", "Görüntü Market", 4.3, 280),
 } as const satisfies Record<string, SellerFixture>;
 
 export type SellerKey = keyof typeof SELLERS;
@@ -178,6 +181,16 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 839_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },
     stockState: "LOW_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 2, priceSinceDaysAgo: 6, checkedMinutesAgo: 9,
     listingPath: "/kulaklik-pazari/apple-airpods-pro-2-p-HBC0000AP2",
+  }),
+  offer("x4", "kameraAtolyesi", {
+    priceMinor: 2_499_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
+    stockState: "OUT_OF_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 2, priceSinceDaysAgo: 10, checkedMinutesAgo: 7,
+    listingPath: "/dp/B0DINSTAX4KA",
+  }),
+  offer("x4", "goruntuMarket", {
+    priceMinor: 2_649_900, previousPriceMinor: 2_699_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },
+    stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 6, priceSinceDaysAgo: 4, checkedMinutesAgo: 7,
+    listingPath: "/goruntu-market/insta360-x4-p-55120",
   }),
   offer("dysonV15", "supurgeMerkezi", {
     priceMinor: 3_249_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 4 },
