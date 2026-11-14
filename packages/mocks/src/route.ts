@@ -64,6 +64,8 @@ export interface RouteContext<N extends EndpointName> {
   readonly body: (typeof ENDPOINTS)[N]["body"] extends z.ZodType ? z.output<(typeof ENDPOINTS)[N]["body"]> : undefined;
   /** "empty" scenario: list-shaped answers come back empty. */
   readonly empty: boolean;
+  /** "stale" scenario: some stores could not be reached (`meta.sourcesMissing`). */
+  readonly sourcesMissing: boolean;
   /** Time of a check made `minutesAgo` minutes ago (moved back in the "stale" scenario). */
   checkedAt(minutesAgo: number): string;
   /** Adds target and metadata to this call's activity row. */
@@ -207,6 +209,7 @@ export function route<N extends EndpointName>(controller: MockController, name: 
         query: query?.data,
         body: body?.data,
         empty: scenarioApplies && config.scenario === "empty",
+        sourcesMissing: scenarioApplies && config.scenario === "stale",
         checkedAt: (minutesAgo: number) => new Date(now.getTime() - minutesAgo * MS_PER_MINUTE - staleShift).toISOString(),
         note: (extra: ActivityNote) => Object.assign(note, extra),
       } as unknown as RouteContext<N>;

@@ -28,6 +28,12 @@ export const CATEGORIES = {
   earbuds: category("earbuds", text("Kulak içi kulaklık", "In-ear headphones")),
   coat: category("coat", text("Mont", "Coat")),
   accessory: category("camera-accessory", text("Kamera aksesuarı", "Camera accessory")),
+  overEarHeadphones: category("over-ear-headphones", text("Kulak üstü kulaklık", "Over-ear headphones")),
+  // Phones: no right of withdrawal (design case H).
+  phone: category("phone", text("Cep telefonu", "Mobile phone"), { noWithdrawalRight: true }),
+  phoneAccessory: category("phone-accessory", text("Telefon aksesuarı", "Phone accessory")),
+  // Not a launch category yet (design case H "Bu kategori henüz desteklenmiyor").
+  perfume: category("perfume", text("Parfüm", "Perfume"), { supported: false }),
 } as const;
 
 /** Attribute labels (category template translations, architecture.md §19). */
@@ -59,6 +65,11 @@ export interface ProductFixture {
   /** Brand or model code known (otherwise tracked only at the user's seller, design case H). */
   readonly hasBrandCode: boolean;
   readonly searchTerms: Localized;
+  /**
+   * false = not in our catalogue yet: autocomplete does not know it; identification
+   * finds it through the live sources and saves it (architecture.md §11 "Catalogue miss").
+   */
+  readonly inCatalog: boolean;
 }
 
 interface ProductInput {
@@ -73,6 +84,7 @@ interface ProductInput {
   familyBundles?: Localized[];
   storeCount: number;
   hasBrandCode?: boolean;
+  inCatalog?: boolean;
 }
 
 function product(key: string, input: ProductInput): ProductFixture {
@@ -94,6 +106,7 @@ function product(key: string, input: ProductInput): ProductFixture {
     storeCount: input.storeCount,
     imageSha256: sha256For(key),
     hasBrandCode: input.hasBrandCode ?? true,
+    inCatalog: input.inCatalog ?? true,
     searchTerms: text(terms("tr"), terms("en")),
   };
 }
@@ -182,6 +195,31 @@ export const PRODUCTS = {
     category: CATEGORIES.coat, brand: null, model: null, family: "kapusonlu-kislik-mont", colors: [black, text("Haki", "Khaki")],
     storeCount: 3, hasBrandCode: false,
   }),
+  // Design AutoComplete case C "sony zv-e1 kit": not in the catalogue until "Mağazalarda ara" finds it live.
+  zvE1Kit: product("sony-zv-e1-28-60-kit", {
+    name: text("Sony ZV-E1 28-60 kit", "Sony ZV-E1 28-60 kit"), category: CATEGORIES.vlogCamera, brand: "Sony", model: "ZV-E1",
+    family: "sony-zv-e1", bundle: text("28-60 kit", "28-60 kit"), colors: [black], familyBundles: [text("Gövde", "Body"), text("28-60 kit", "28-60 kit")],
+    storeCount: 5, inCatalog: false,
+  }),
+  // Design Cases C (bulk add from one screenshot): items 2 and 3.
+  wh1000xm5: product("sony-wh-1000xm5", {
+    name: text("Sony WH-1000XM5 kablosuz kulaklık", "Sony WH-1000XM5 wireless headphones"), category: CATEGORIES.overEarHeadphones, brand: "Sony",
+    model: "WH-1000XM5", family: "sony-wh-1000xm5", colors: [black, text("Gümüş", "Silver")], storeCount: 14,
+  }),
+  iphone16Case: product("apple-iphone-16-silikon-kilif", {
+    name: text("Apple iPhone 16 MagSafe silikon kılıf", "Apple iPhone 16 MagSafe silicone case"), category: CATEGORIES.phoneAccessory, brand: "Apple",
+    model: "iPhone 16 Silicone Case", family: "apple-iphone-16-case", colors: [black], storeCount: 10,
+  }),
+  // Design case H: phones have no right of withdrawal.
+  iphone16: product("apple-iphone-16-128", {
+    name: text("Apple iPhone 16 128 GB", "Apple iPhone 16 128 GB"), category: CATEGORIES.phone, brand: "Apple", model: "iPhone 16",
+    family: "apple-iphone-16", bundle: text("128 GB", "128 GB"), colors: [black, white], storeCount: 16,
+  }),
+  // Design case H: a category that is not supported yet.
+  sauvage: product("dior-sauvage-edp-100", {
+    name: text("Dior Sauvage Eau de Parfum 100 ml", "Dior Sauvage Eau de Parfum 100 ml"), category: CATEGORIES.perfume, brand: "Dior",
+    model: "Sauvage EDP", family: "dior-sauvage", bundle: text("100 ml", "100 ml"), colors: [], storeCount: 9,
+  }),
 } as const satisfies Record<string, ProductFixture>;
 
 export type ProductKey = keyof typeof PRODUCTS;
@@ -201,6 +239,16 @@ export const SIMILAR: Readonly<Record<string, readonly { key: ProductKey; differ
 export const TARGET_HINTS_MINOR: Readonly<Partial<Record<ProductKey, { lowest30Days: number; lowest6Months: number }>>> = {
   acePro2FlashPrint: { lowest30Days: 2_490_000, lowest6Months: 2_399_900 },
 };
+
+/** Design Cases C: one screenshot with three products, in the drawn order. */
+export const BULK_SCREENSHOT: readonly { key: ProductKey; label: Localized }[] = [
+  { key: "acePro2FlashPrint", label: text("Insta360 Ace Pro 2 · Flash Print", "Insta360 Ace Pro 2 · Flash Print") },
+  { key: "wh1000xm5", label: text("Kulak üstü kablosuz kulaklık", "Over-ear wireless headphones") },
+  { key: "iphone16Case", label: text("Telefon kılıfı", "Phone case") },
+];
+
+/** Attributes whose change clears the mark (modules.md Search and Add: type, brand, model, generation, bundle). */
+export const MATCH_CRITICAL_ATTRIBUTES: ReadonlySet<string> = new Set(["type", "brand", "model", "generation", "bundle"]);
 
 /** "Bunu mu demek istedin" corrections drawn in the design (AutoComplete: ac → ace, gopr → gopro, dyso → dyson, kamra → kamera). */
 export const SPELLING_FIXES: Readonly<Record<string, string>> = { ac: "ace", gopr: "gopro", dyso: "dyson", kamra: "kamera" };

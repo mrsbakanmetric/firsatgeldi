@@ -12,15 +12,23 @@ export const MOCK_SESSIONS = ["guest", "user", "secondUser", "manager"] as const
 export type MockSession = (typeof MOCK_SESSIONS)[number];
 export const MOCK_SCENARIOS = ["success", "loading", "empty", "error", "stale"] as const;
 export type MockScenario = (typeof MOCK_SCENARIOS)[number];
+/**
+ * What the mock "recognises" in an uploaded photo (no image recognition in Phase 1):
+ * product = a product photo · order = an order screen (seller, price, date read; design case B) ·
+ * bulk = one screen with three products (design case C).
+ */
+export const MOCK_PHOTOS = ["product", "order", "bulk"] as const;
+export type MockPhoto = (typeof MOCK_PHOTOS)[number];
 
 export interface MockConfig {
   /** guest = no session; the other values sign in as that fixture user. */
   readonly session: MockSession;
   readonly scenario: MockScenario;
   readonly latencyMs: number;
+  readonly photo: MockPhoto;
 }
 
-export const DEFAULT_MOCK_CONFIG: MockConfig = { session: "user", scenario: "success", latencyMs: MOCK_SETTINGS.defaultLatencyMs };
+export const DEFAULT_MOCK_CONFIG: MockConfig = { session: "user", scenario: "success", latencyMs: MOCK_SETTINGS.defaultLatencyMs, photo: "product" };
 
 /** Who acts: a guest (anonymous cookie id) or a fixture user. */
 export type Actor = { readonly kind: "guest"; readonly anonId: string } | { readonly kind: "user"; readonly userKey: UserKey; readonly userId: string };
@@ -105,6 +113,8 @@ export interface UploadRow {
   readonly declaredBytes: number;
   status: "PRESIGNED" | "UPLOADED" | "PROCESSING" | "READY" | "REJECTED" | "EXPIRED" | "DELETED";
   rejectReason: "TYPE" | "SIZE" | "DIMENSIONS" | "DECODE" | "UNSAFE" | null;
+  /** What the mock "recognises" in this photo (`MockConfig.photo` at upload time). */
+  readonly recognised: MockPhoto;
   readonly expiresAt: string;
   readonly purgeAt: string;
 }
@@ -143,6 +153,8 @@ export interface MockState {
   readonly idempotency: Map<string, { readonly status: number; readonly body: unknown }>;
   /** Accepted seller lookups per user (epoch ms), for `seller_lookup.rate_limit_per_minute`. */
   readonly sellerLookups: Map<string, number[]>;
+  /** Products found through the live sources and saved to the catalogue (architecture.md §11). */
+  readonly catalogAdded: Set<string>;
 }
 
 export function createMockState(): MockState {
@@ -161,6 +173,7 @@ export function createMockState(): MockState {
     subscribers: new Set(),
     idempotency: new Map(),
     sellerLookups: new Map(),
+    catalogAdded: new Set(),
   };
 }
 

@@ -33,6 +33,12 @@ export const Meta = z.object({
   total: z.number().int().nonnegative().optional(),
   checkedAt: Timestamp.optional(),
   entitlements: EntitlementSummary.optional(),
+  /**
+   * Some stores could not be reached for this answer: last known values are shown
+   * with their age and the list may be incomplete (design "1 Ara ve Ekle", state 4)
+   * [ASSUMPTION — field; user decision 2026-11-14, to be written into architecture.md §16.1].
+   */
+  sourcesMissing: z.boolean().optional(),
 });
 export type Meta = z.infer<typeof Meta>;
 

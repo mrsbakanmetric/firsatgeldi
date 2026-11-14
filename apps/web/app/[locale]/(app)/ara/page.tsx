@@ -1,6 +1,10 @@
-import { EmptyPage } from "../../../../components/empty-page";
+import { isLocale } from "@firsatgeldi/i18n";
+import { notFound } from "next/navigation";
+import { SearchAndAdd } from "../../../../components/search-add/search-and-add";
 
-// Search and Add — empty flow template until its screen step (docs/implementation_plan.md).
-export default function SearchPage({ params }: PageProps<"/[locale]/ara">) {
-  return <EmptyPage params={params} kind="flow" titleKey="pages.search" />;
+// Search and Add — design "1 Ara ve Ekle" v1 (docs/screen_status.md), on the mock API in Phase 1.
+export default async function SearchPage({ params }: PageProps<"/[locale]/ara">) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  return <SearchAndAdd locale={locale} />;
 }

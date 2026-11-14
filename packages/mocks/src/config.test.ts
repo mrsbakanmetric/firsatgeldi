@@ -23,8 +23,8 @@ describe("mock session and scenario switch", () => {
 
   it("reads URL parameters and remembers them for the browser session", () => {
     const storage = memoryStorage();
-    const config = resolveMockConfig("?mock-session=guest&mock-scenario=error&mock-latency=0", storage);
-    expect(config).toEqual({ session: "guest", scenario: "error", latencyMs: 0 });
+    const config = resolveMockConfig("?mock-session=guest&mock-scenario=error&mock-latency=0&mock-photo=order", storage);
+    expect(config).toEqual({ session: "guest", scenario: "error", latencyMs: 0, photo: "order" });
     expect(resolveMockConfig("", storage)).toEqual(config);
   });
 

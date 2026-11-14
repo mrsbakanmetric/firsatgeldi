@@ -1,9 +1,9 @@
 // Development switch for the mock session and scenario [DECIDED 2026-11-14]:
 // URL parameters, remembered in the browser session. Storage can be missing or
 // blocked (private mode, tests): every read and write is guarded.
-import { DEFAULT_MOCK_CONFIG, MOCK_SCENARIOS, MOCK_SESSIONS, type MockConfig, type MockScenario, type MockSession } from "./state";
+import { DEFAULT_MOCK_CONFIG, MOCK_PHOTOS, MOCK_SCENARIOS, MOCK_SESSIONS, type MockConfig, type MockPhoto, type MockScenario, type MockSession } from "./state";
 
-export const MOCK_PARAMS = { session: "mock-session", scenario: "mock-scenario", latency: "mock-latency" } as const;
+export const MOCK_PARAMS = { session: "mock-session", scenario: "mock-scenario", latency: "mock-latency", photo: "mock-photo" } as const;
 export const MOCK_STORAGE_KEY = "fg-mock-config";
 const MAX_LATENCY_MS = 10_000;
 
@@ -32,6 +32,7 @@ function writeStored(storage: ConfigStorage | null, config: MockConfig): void {
 
 const isSession = (value: unknown): value is MockSession => MOCK_SESSIONS.includes(value as MockSession);
 const isScenario = (value: unknown): value is MockScenario => MOCK_SCENARIOS.includes(value as MockScenario);
+const isPhoto = (value: unknown): value is MockPhoto => MOCK_PHOTOS.includes(value as MockPhoto);
 const latency = (value: unknown): number | null => {
   const number = typeof value === "number" ? value : typeof value === "string" && value !== "" ? Number(value) : Number.NaN;
   return Number.isInteger(number) && number >= 0 && number <= MAX_LATENCY_MS ? number : null;
@@ -43,10 +44,12 @@ export function resolveMockConfig(search: string, storage: ConfigStorage | null)
   const stored = readStored(storage);
   const session = params.get(MOCK_PARAMS.session);
   const scenario = params.get(MOCK_PARAMS.scenario);
+  const photo = params.get(MOCK_PARAMS.photo);
   const config: MockConfig = {
     session: isSession(session) ? session : isSession(stored.session) ? stored.session : DEFAULT_MOCK_CONFIG.session,
     scenario: isScenario(scenario) ? scenario : isScenario(stored.scenario) ? stored.scenario : DEFAULT_MOCK_CONFIG.scenario,
     latencyMs: latency(params.get(MOCK_PARAMS.latency)) ?? latency(stored.latencyMs) ?? DEFAULT_MOCK_CONFIG.latencyMs,
+    photo: isPhoto(photo) ? photo : isPhoto(stored.photo) ? stored.photo : DEFAULT_MOCK_CONFIG.photo,
   };
   writeStored(storage, config);
   return config;

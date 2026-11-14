@@ -10,7 +10,9 @@ import { Icon } from "./icon";
 
 export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "id" | "aria-invalid" | "aria-describedby"> {
   label: string;
-  type?: "text" | "email" | "password" | "number" | "search";
+  type?: "text" | "email" | "password" | "number" | "search" | "date";
+  /** Text after the value inside the field (e.g. the currency "TL"). */
+  suffix?: string;
   helper?: string;
   /** Says what is wrong and how to fix it. */
   error?: string;
@@ -20,7 +22,7 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  { label, type = "text", helper, error, showPasswordLabel, hidePasswordLabel, className, ...input },
+  { label, type = "text", helper, error, showPasswordLabel, hidePasswordLabel, suffix, className, ...input },
   ref,
 ) {
   const id = useId();
@@ -46,11 +48,16 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
             "h-(--component-input-height) w-full min-w-0 rounded-md border bg-surface-alt px-3 text-body text-text placeholder:text-text-muted",
             "focus-visible:border-primary",
             error ? "border-danger" : "border-border",
-            isPassword && "pr-12",
+            (isPassword || suffix) && "pr-12",
             focusRing,
           )}
           {...input}
         />
+        {suffix && (
+          <span className="pointer-events-none absolute right-3 text-body text-text-muted">
+            {suffix}
+          </span>
+        )}
         {isPassword && showPasswordLabel && hidePasswordLabel && (
           <button
             type="button"

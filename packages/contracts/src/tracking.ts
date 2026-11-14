@@ -49,6 +49,22 @@ export const SellerLookupRequest = z.object({
   name: z.string().trim().min(1),
 });
 
+/**
+ * FırsatGeldi seller trust for the confirm panel's rating tile (modules.md "FırsatGeldi
+ * seller trust indicator"; database.md `seller_trust.verdict`) [ASSUMPTION — field;
+ * user decision 2026-11-14, to be written into architecture.md §16.1 by a spec PR].
+ * Never a number or a breakdown. `reasonKey` is a catalogue key (`trust.reason.*`).
+ * INSUFFICIENT → the server applies the fallback on the store rating
+ * (`listing.seller_rating_good_min`): reasonKey `trust.reason.storeRatingGood` /
+ * `trust.reason.storeRatingLow`; no store rating either → reasonKey null ("henüz yeterli veri yok").
+ */
+export const SellerTrustVerdict = z.enum(["GOOD", "CAUTION", "INSUFFICIENT"]);
+export const SellerTrust = z.object({
+  verdict: SellerTrustVerdict,
+  reasonKey: z.string().min(1).nullable(),
+});
+export type SellerTrust = z.infer<typeof SellerTrust>;
+
 /** The user's own seller: identity visible (architecture.md §6.1, column "Seller bought from"). */
 export const SellerLookupResult = z.object({
   match: z
@@ -57,6 +73,7 @@ export const SellerLookupResult = z.object({
       sellerName: z.string().min(1),
       sellerRating: z.number().min(0).max(5).nullable(),
       sellerRatingCount: z.number().int().nonnegative().nullable(),
+      trust: SellerTrust,
       stockState: StockState,
       warrantyType: WarrantyType,
       listingUrl: z.url(),

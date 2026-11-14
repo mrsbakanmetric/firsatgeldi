@@ -14,18 +14,24 @@ import { entitlements, fold, requireUser, scrubPersonalData, tokens } from "./sh
 
 const MS_PER_MINUTE = 60_000;
 
-export function matchProducts(query: string, locale: "tr" | "en"): ProductFixture[] {
+/** Products in our own catalogue: seeded ones plus those saved after a live search (architecture.md §11). */
+export function inCatalog(controller: MockController, product: ProductFixture): boolean {
+  return product.inCatalog || controller.state.catalogAdded.has(product.key);
+}
+
+/** Every word of the query matches; `scope` limits the search (autocomplete: own catalogue only). */
+export function matchProducts(query: string, locale: "tr" | "en", scope: (product: ProductFixture) => boolean = () => true): ProductFixture[] {
   const wanted = tokens(query);
   if (!wanted.length) return [];
-  return PRODUCT_LIST.filter((product) => {
+  return PRODUCT_LIST.filter(scope).filter((product) => {
     const haystack = fold(pick(product.searchTerms, locale));
     return wanted.every((token) => haystack.includes(token));
   });
 }
 
-function spellingFix(query: string, locale: "tr" | "en"): string | null {
+function spellingFix(query: string, locale: "tr" | "en", scope: (product: ProductFixture) => boolean): string | null {
   const fixed = tokens(query).map((token) => SPELLING_FIXES[token] ?? token).join(" ");
-  return fixed !== tokens(query).join(" ") && matchProducts(fixed, locale).length ? fixed : null;
+  return fixed !== tokens(query).join(" ") && matchProducts(fixed, locale, scope).length ? fixed : null;
 }
 
 /** Neutral placeholder image in the theme's colours; no store images in Phase 1 (implementation_plan.md §5 rule 7). */
@@ -76,7 +82,9 @@ export function catalogHandlers(controller: MockController) {
 
     route(controller, "autocomplete", ({ query, locale, actor, now, empty, note }) => {
       const pageSize = SYSTEM_SETTINGS["search.autocomplete_page_size"];
-      const all = empty ? [] : matchProducts(query.q, locale);
+      // Autocomplete answers from our own catalogue only [DECIDED 2026-11-14] (architecture.md §11).
+      const known = (product: ProductFixture) => inCatalog(controller, product);
+      const all = empty ? [] : matchProducts(query.q, locale, known);
       const offset = query.cursor ? Number.parseInt(query.cursor, 10) || 0 : 0;
       const page = all.slice(offset, offset + pageSize);
       const next = offset + pageSize < all.length ? String(offset + pageSize) : undefined;
@@ -95,7 +103,7 @@ export function catalogHandlers(controller: MockController) {
         data: {
           items: page.map((product) => productSummary(product, locale)),
           tileCount: SYSTEM_SETTINGS["search.autocomplete_tiles"],
-          didYouMean: all.length || empty ? null : spellingFix(query.q, locale),
+          didYouMean: all.length || empty ? null : spellingFix(query.q, locale, known),
         },
         meta: { total: all.length, ...(next ? { nextCursor: next } : {}) },
       };
