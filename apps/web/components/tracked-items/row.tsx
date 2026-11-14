@@ -22,6 +22,7 @@ import { imageUrl } from "../search-add/search-box";
 import { shortDay } from "./format";
 
 const CURRENCY = "TRY" as const;
+const MS_PER_HOUR = 3_600_000;
 /** Days of the two summary windows (pagedesign.md §8.4 Row v4). */
 const LOWEST_DAYS = 7;
 
@@ -30,21 +31,38 @@ function tl(amount: number, locale: Locale): string {
 }
 
 /** A price against the reference (price paid or target): lower = savings + ↓, higher = danger + ↑, equal = plain. */
-function Price({ t, locale, value, reference = null, change }: { t: Translator; locale: Locale; value: Money; reference?: number | null; change?: "down" | "up" }) {
+function Price({
+  t,
+  locale,
+  value,
+  reference = null,
+  change,
+  stale = false,
+}: {
+  t: Translator;
+  locale: Locale;
+  value: Money;
+  reference?: number | null;
+  change?: "down" | "up";
+  /** Not checked for `tracking.stale_hours`: the price is the last known one and says so. */
+  stale?: boolean;
+}) {
   // A change (14-day) carries its own direction; a price is compared with the reference.
   const direction = change ?? (reference === null || value.amount === reference ? null : value.amount < reference ? "down" : "up");
   return (
     <span className={cn("inline-flex items-center justify-end gap-1 font-semibold tabular-nums", direction === "down" ? "text-savings" : direction === "up" ? "text-danger" : "text-text")}>
       {direction && <Icon icon={direction === "down" ? ArrowDown : ArrowUp} size="sm" />}
       {direction && <span className="sr-only">{t(direction === "down" ? "trackedItems.v4.lower" : "trackedItems.v4.higher")}</span>}
-      {money(value, locale)}
+      {stale ? t("trackedItems.row.lastKnown", { price: money(value, locale) }) : money(value, locale)}
     </span>
   );
 }
 
 type StockState = TrackedItemListItem["ranked"][number]["stockState"];
 
-function StockWord({ t, state }: { t: Translator; state: StockState | null }) {
+/** Stock in words; on a stale row its age instead ("Stok bilgisi en az 12 saat önceki"). */
+function StockWord({ t, state, staleHours = null }: { t: Translator; state: StockState | null; staleHours?: number | null }) {
+  if (staleHours !== null) return <span className="text-on-warning-subtle">{t("trackedItems.row.staleStock", { count: staleHours })}</span>;
   if (!state) return null;
   return <span className={state === "IN_STOCK" ? "text-text-muted" : state === "LOW_STOCK" ? "text-on-warning-subtle" : "text-danger"}>{t(`trackedItems.v4.stock.${state}`)}</span>;
 }
@@ -53,13 +71,16 @@ function Row({ label, stock, price, className }: { label: ReactNode; stock?: Rea
   return (
     <tr className={className}>
       <td className="py-1 pr-2 pl-2 align-middle">{label}</td>
-      <td className="py-1 pr-2 align-middle text-caption whitespace-nowrap">{stock}</td>
+      <td className="py-1 pr-2 align-middle text-caption">{stock}</td>
       <td className="py-1 pr-2 text-right align-middle whitespace-nowrap">{price}</td>
     </tr>
   );
 }
 
-function PriceList({ t, locale, item, href }: { t: Translator; locale: Locale; item: TrackedItemListItem; href: string }) {
+function PriceList({ t, locale, item, href, now }: { t: Translator; locale: Locale; item: TrackedItemListItem; href: string; now: number }) {
+  // Stale row (modules.md Tracked Items › States): market prices are the last known ones, stock shows its age.
+  const staleHours = item.stale && item.lastCheckedAt ? Math.max(1, Math.floor((now - Date.parse(item.lastCheckedAt)) / MS_PER_HOUR)) : null;
+  const stale = staleHours !== null;
   const reference = item.purchase?.pricePaid.amount ?? item.want?.targetPrice?.amount ?? null;
   const values = item.priceHistory.cheapest;
   const known = values.filter((value): value is number => value !== null);
@@ -96,8 +117,8 @@ function PriceList({ t, locale, item, href }: { t: Translator; locale: Locale; i
                 {offer.rank === 1 ? t("trackedItems.v4.rankFirst") : t("trackedItems.v4.rank", { rank: offer.rank })}
               </span>
             }
-            stock={<StockWord t={t} state={offer.stockState} />}
-            price={<Price t={t} locale={locale} value={offer.price} reference={reference} />}
+            stock={<StockWord t={t} state={offer.stockState} staleHours={staleHours} />}
+            price={<Price t={t} locale={locale} value={offer.price} reference={reference} stale={stale} />}
           />
         ))}
         {item.rankedMore > 0 && (
@@ -110,7 +131,11 @@ function PriceList({ t, locale, item, href }: { t: Translator; locale: Locale; i
           />
         )}
         {item.ownNow && own && (
-          <Row label={t("trackedItems.v4.ownNow")} stock={<StockWord t={t} state={item.ownNow.stockState} />} price={<Price t={t} locale={locale} value={item.ownNow.price} reference={own.pricePaid.amount} />} />
+          <Row
+            label={t("trackedItems.v4.ownNow")}
+            stock={<StockWord t={t} state={item.ownNow.stockState} staleHours={staleHours} />}
+            price={<Price t={t} locale={locale} value={item.ownNow.price} reference={own.pricePaid.amount} stale={stale} />}
+          />
         )}
       </tbody>
       {known.length > 0 && (
@@ -287,7 +312,7 @@ export function TrackedRow({ t, locale, item, now, onEnd, onRestore, restoring =
       title={item.product.name}
       {...(checked ? { line: checked } : {})}
       columns={[
-        { key: "prices", width: "fill", phoneFull: true, content: <PriceList t={t} locale={locale} item={item} href={href} /> },
+        { key: "prices", width: "fill", phoneFull: true, content: <PriceList t={t} locale={locale} item={item} href={href} now={now} /> },
         { key: "outcome", width: "1/5", phoneFull: true, content: <Outcome t={t} locale={locale} item={item} href={href} /> },
       ]}
       tone={deal ? "deal" : "default"}

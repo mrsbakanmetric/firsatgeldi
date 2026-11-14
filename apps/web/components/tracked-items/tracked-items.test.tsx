@@ -272,6 +272,13 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     expect(await screen.findByText(t("trackedItems.row.flags.stale"))).toBeDefined();
     expect(screen.getByText(t("trackedItems.row.state.unverified"))).toBeDefined();
     expect(screen.getByText(t("trackedItems.row.staleAge", { ago: t("time.hoursAgo", { count: 12 }) }))).toBeDefined();
+    // The coat's market prices are the last known ones, and its stock shows its age (v4 price list).
+    const coat = screen.getByRole("link", { name: PRODUCTS.winterCoat.name[locale] }).closest("li") as HTMLElement;
+    expect(within(coat).getByText(t("trackedItems.row.lastKnown", { price: locale === "tr" ? "2.999 TL" : "TL 2,999" }))).toBeDefined();
+    expect(within(coat).getAllByText(t("trackedItems.row.staleStock", { count: 12 }))).toHaveLength(3);
+    // Fresh rows say neither.
+    const ace = screen.getByRole("link", { name: PRODUCTS.acePro2FlashPrint.name[locale] }).closest("li") as HTMLElement;
+    expect(within(ace).queryByText(new RegExp(t("trackedItems.row.lastKnown", { price: "" }).trim()))).toBeNull();
     expect(screen.getByText(t("trackedItems.states.stale", { count: 1, hours: 12 }))).toBeDefined();
   });
 
