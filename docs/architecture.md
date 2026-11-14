@@ -1121,13 +1121,13 @@ Hosting provider, LLM provider and transactional email provider are **[OPEN]**; 
 
 ## 25. Build order and first vertical slice
 
-Same as `modules.md` Appendix A and the screen order in `CLAUDE.md` › Phases [DECIDED 2026-11-13]. This is the **backend** build order: Phase 1 first builds the same screens on mock data; Phase 2 builds the backend and connects the screens in this order (rows 1–11); rows 12–13 are Phase 3 (`docs/implementation_plan.md`).
+Same as `modules.md` Appendix A and the screen order in `CLAUDE.md` › Phases [DECIDED 2026-11-13; Tracked Items before Product Detail 2026-11-14 (user)]. This is the **backend** build order: Phase 1 first builds the same screens on mock data; Phase 2 builds the backend and connects the screens in this order (rows 1–11); rows 12–13 are Phase 3 (`docs/implementation_plan.md`).
 
 | Order | Scope |
 |---|---|
 | 1 | **First vertical slice:** Search and Add (text + link + image upload) → confirm → tracking + `check_schedules` → scheduled check (SerpApi + at least one store adapter) → merge + history → verified deal (`deals`) → hidden seller (leak test included) → Göster/Gizle (`FreeToggleGate`) → outbound. With dev login; **permission checks, activity capture and personal-data encryption from day one**. |
-| 2 | Product Detail + Want to Buy (mode of Product Detail) + Price and Stock History + Return Window + Check Now + Trust and Accuracy (user side) |
-| 3 | Tracked Items |
+| 2 | Tracked Items [DECIDED 2026-11-14] (user: before Product Detail) |
+| 3 | Product Detail + Want to Buy (mode of Product Detail) + Price and Stock History + Return Window + Check Now + Trust and Accuracy (user side) |
 | 4 | Notifications and Preferences (incl. account/security) |
 | 5 | Home |
 | 6 | My Savings |
