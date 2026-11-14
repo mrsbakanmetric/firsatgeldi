@@ -175,7 +175,6 @@ export const tr = {
     confirm: {
       title: "Emin ol, sonra onayla",
       intro: "Varsaydıklarımızı kontrol et; dokunup değiştirebilirsin.",
-      emptyHint: "Soldaki listeden ürününü işaretle; satın alma bilgileri burada açılır.",
       change: "Değiştir",
       listing: "Aldığın ilan",
       platform: "Platform",

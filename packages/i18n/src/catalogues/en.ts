@@ -173,7 +173,6 @@ export const en = {
     confirm: {
       title: "Check, then confirm",
       intro: "Check what we assumed; tap anything to change it.",
-      emptyHint: "Mark your product in the list; the purchase details open here.",
       change: "Change",
       listing: "The listing you bought",
       platform: "Platform",
