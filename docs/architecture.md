@@ -1,6 +1,6 @@
 # FırsatGeldi — System Architecture
 
-> **Version:** 1.4
+> **Version:** 1.5
 > **Status:** Approved — technology stack confirmed [DECIDED — A1]; roles (Application Manager + User), web/mobile access, indefinite histories, fraud monitoring, image architecture and personal-data protection included
 > **Last updated:** 2026-11-14
 > **Scope:** Web + mobile screen coverage (same API, same permissions) + API + background workers. Mobile **technology** intentionally left open.
@@ -476,7 +476,7 @@ Client ──(3) POST /uploads/complete {batchId}──▶ API ──▶ queue: 
 | Serving | Catalogue: CDN, `Cache-Control: immutable` (the URL derives from content and never changes); `<picture>` with AVIF → WebP → JPEG; size-appropriate variant (`srcset`) |
 | Sending to the LLM | Only processed (metadata-stripped) images; provider must not retain data |
 | Avatar | Separate kind; signed link or CDN according to privacy level; deleted with the account |
-| Upload status for guests [DECIDED 2026-11-14] | A guest's upload is bound to the guest session (`anon_id`). `GET /uploads/:id` (key `upload.own.view`, separate from `upload.own.create`) is on the public allow-list and returns only the caller's own uploads; another session's or user's upload answers `NOT_FOUND`. Guests get no live updates (§13): they poll every `upload.guest_poll_interval_seconds` (2) and stop after `upload.guest_poll_max_seconds` (60), then show the error state. Every status read writes an activity row (`upload.status`). |
+| Upload status for guests [DECIDED 2026-11-14] | A guest's upload is bound to the guest session (`anon_id`). `GET /uploads/:id` (key `upload.own.view`, separate from `upload.own.create`) is on the public allow-list and returns only the caller's own uploads; another session's or user's upload answers `NOT_FOUND`. Guests get no live updates (§13): they poll every `upload.guest_poll_interval_seconds` (2) and stop after `upload.guest_poll_max_seconds` (60), then show the error state. The client learns both values from the `poll` field of the `POST /uploads/complete` answer (§16.1), never from its own constants. Every status read writes an activity row (`upload.status`). |
 | Fraud | Upload count and rejection ratio are risk-rule signals |
 | Admin | The Application Manager can view private uploads within their retention period (24 h, or 30 days for support screenshots) with a reason; every view audited |
 
@@ -656,7 +656,7 @@ GET       /me/stream                   # SSE
 ```
 GET  /search/autocomplete?q=        # own catalogue only: id, name, image variant, category, brand, generation, colours, bundles, store count; never price or store; ranked, paged for the scroll list
 POST /uploads/presign            # { purpose, files:[{mime, bytes}] } → batchId + presigned URLs
-POST /uploads/complete           # { batchId } → processing queue; result via SSE upload.ready
+POST /uploads/complete           # { batchId } → processing queue; result via SSE upload.ready (signed-in) or polling with `poll` (guests)
 GET  /uploads/:id                # status, extraction (personal data stripped); own uploads only — guests via anon_id, polling (§11a)
 GET  /img/:sha256/:variant       # catalogue image (CDN)
 POST /identify                   # { text?, uploadIds?, link? } → { understood, questions[], candidates[] | items[] }
@@ -821,6 +821,7 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | `SimilarProducts` | `items[{ product, difference }]`; `difference` ∈ `GENERATION`, `BUNDLE`, `VARIANT`, `ACCESSORY` | §16; `difference` [ASSUMPTION] (design "Benzer ama farklı") |
 | `PresignRequest` / `PresignResult` | `purpose`, `files[{mime,bytes}]` → `batchId`, `uploads[{ uploadId, position, uploadUrl, method: PUT, headers, expiresAt }]` | §11a; `database.md` §14b; item shape [ASSUMPTION] |
 | `CompleteUploadResult` | `batchId`, `uploads[{ uploadId, status }]` | §11a |
+| `CompleteUploadResult` | `poll`: `{ intervalSeconds, maxSeconds }` or `null` — for a guest filled from `upload.guest_poll_interval_seconds` / `upload.guest_poll_max_seconds` (`database.md` §18); `null` for a signed-in user, who gets the result through live updates (§13). The client polls `GET /uploads/:id` only while `poll` is not null, until a final status (`READY`, `REJECTED`, `EXPIRED`, `DELETED`) or `maxSeconds` | §11a [DECIDED 2026-11-14] |
 | `UploadView` | `id`, `batchId`, `purpose`, `position`, `status`, `rejectReason`, `extracted`, `purgeAt` | `database.md` §14b |
 | `UploadView.extracted` | `productText`, `sellerName`, `platformName`, `pricePaid`, `orderedOn` — product, seller, price, date only | `database.md` §14b; names [ASSUMPTION] |
 | `IdentifyRequest` | `text?`, `uploadIds?`, `link?` (at least one) | §16 |

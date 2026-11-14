@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-14 (night, 2) · Claude Code
+- **Done:** #54 merged (API contract fields, `upload.own.view`); #55 merged — `upload.own.view` in contract and mock, guest polling (2 s / 60 s from settings, `useUploadStatus` with the design's error text tr/en), seller lookup 10 per minute (`RATE_LIMITED`), `apps/web/AGENTS.md` in `.gitignore`; 501 tests.
+- **Decided (user), written in this PR:** guests get the polling values in the `poll` field of `POST /uploads/complete` (`{ intervalSeconds, maxSeconds }`, `null` for signed-in users) — `architecture.md` §11a, §16, §16.1 [DECIDED 2026-11-14] · timed-out text = the design's error state ("Arama tamamlanamadı …").
+- **Open:** "Katalogda yok → mağazalarda ara" has no endpoint — the user decides before step 10 · shell viewer still guest; connects to `GET /me` with step 10.
+- **Next:** after this PR merges → small code PR removing the `[ASSUMPTION — field]` note in `packages/contracts/src/uploads.ts`; then plan step 10 (Search and Add) after the open question is answered.
+
+---
+
 ## 2026-11-14 (night) · Claude Code
 - **Done:** plan step 9 — mock API and fixtures (#53, merged): Zod contract + endpoint registry + typed client (`packages/contracts`), MSW mock API with design fixtures in tr/en (`packages/mocks`), TanStack Query hooks in web, dev-only mock with a production build check, hidden-seller leak test (bodies, errors, image URLs, events, activity rows); 479 tests.
 - **Spec (#54, open):** field-level contract `architecture.md` §16.1, error codes §15.2, step 9 ✅ in the plan.
