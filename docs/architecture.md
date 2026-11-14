@@ -1,6 +1,6 @@
 # FırsatGeldi — System Architecture
 
-> **Version:** 1.5
+> **Version:** 1.6
 > **Status:** Approved — technology stack confirmed [DECIDED — A1]; roles (Application Manager + User), web/mobile access, indefinite histories, fraud monitoring, image architecture and personal-data protection included
 > **Last updated:** 2026-11-14
 > **Scope:** Web + mobile screen coverage (same API, same permissions) + API + background workers. Mobile **technology** intentionally left open.
@@ -382,7 +382,8 @@ robots.txt (daily cache), ~1–2 req/s per site, `max_concurrency`, identifiable
 | `delivery-prompt` | daily | Estimated delivery passed: "Teslim aldın mı?" [DECIDED] |
 | `expiry` | hourly | Return window / tracking duration ended; extension question 3 days before |
 | `report-threshold` | on report write | Threshold (3) reached → offer suspended [DECIDED] |
-| `identify` | user input | LLM extraction, candidates, multi-product image |
+| `identify` | user input | LLM extraction, candidates, multi-product image; catalogue miss → live sources (hybrid flow, §11) |
+| `catalog-warmup` | `catalog_warmup.run_times` (03:00 and 15:00 Europe/Istanbul [ASSUMPTION]) | Fills the catalogue in a targeted way (§11), at most `catalog_warmup.max_queries_per_run` queries per run; products only — no price or stock [DECIDED 2026-11-14] |
 | `link-resolve` | pasted link, Discover link | Seller, price, product resolution |
 | `index` | catalogue change | Meilisearch |
 | `image-ingest` | new store image | Download store image → `media-process` (catalogue) |
@@ -434,6 +435,13 @@ EAN → brand + normalised model → embedding (pgvector) + image pHash → LLM 
 ## 11. Search, catalogue and SEO pages
 
 - **Hybrid flow:** own index (~50 ms) → if missing/stale, live source (1–3 s) → clean, match, save, index.
+- **Catalogue miss → search stores [DECIDED 2026-11-14]:** autocomplete (`GET /search/autocomplete`) answers from our own catalogue only. When it has no result, "Mağazalarda ara" calls the existing `POST /identify` with the typed text — **no new endpoint**. Identify runs the hybrid flow: not in the catalogue → live sources → clean, match, save to the catalogue, index → "Hangisi seninki?" candidates. Live sources find nothing either → the usual rules (§10.4): "no exact match" + the closest three; closed category → "not yet supported". The search is recorded in `search_events` (`source = SEARCH_BOX`); guests allowed, key `identify.use`.
+- **Catalogue warm-up [DECIDED 2026-11-14; values ASSUMPTION]:** job `catalog-warmup` (§9) runs once or twice a day (`catalog_warmup.run_times`) and fills the catalogue in a targeted way, limited to `catalog_warmup.categories` and at most `catalog_warmup.max_queries_per_run` queries per run (`database.md` §18):
+  1. yesterday's searches without results (`search_events`);
+  2. store best-seller / category listing pages in open categories — store site search first, SerpApi second;
+  3. products in approved campaigns (`campaigns.status = ACTIVE`);
+  4. new variants, colours and bundles of products already in the catalogue.
+  It writes products, attributes and images only; **price and stock never come from this job** — they come from live checks (§7, §8). Polite data collection (core rule 6, §8.1 polite crawling) and the provider budget (§8.5) apply unchanged; its provider calls are counted in `api_usage`.
 - **Meilisearch:** Turkish normalisation, typo tolerance, synonyms, brand/model boosting, accessory demotion.
 - **Personal ranking:** `text × (1 + 0.4·personal + 0.3·social + 0.2·popularity + 0.1·deal)`; signals derived from `activity_events`, kept in Redis.
 - **Every search is recorded** in `search_events` (indefinite) [DECIDED]; email/phone patterns masked before storing.
@@ -659,7 +667,7 @@ POST /uploads/presign            # { purpose, files:[{mime, bytes}] } → batchI
 POST /uploads/complete           # { batchId } → processing queue; result via SSE upload.ready (signed-in) or polling with `poll` (guests)
 GET  /uploads/:id                # status, extraction (personal data stripped); own uploads only — guests via anon_id, polling (§11a)
 GET  /img/:sha256/:variant       # catalogue image (CDN)
-POST /identify                   # { text?, uploadIds?, link? } → { understood, questions[], candidates[] | items[] }
+POST /identify                   # { text?, uploadIds?, link? } → { understood, questions[], candidates[] | items[] }; catalogue miss → live sources (hybrid flow, §11); also "Mağazalarda ara" when autocomplete has no result
 POST /identify/:requestId/answer
 GET  /products/:id · GET /products/:id/similar
 ```
@@ -852,7 +860,7 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | Go result | `{ status: OK, url }` \| `{ status: GONE\|PRICE_CHANGED, next }` | §16; `status` discriminator [ASSUMPTION] |
 | Stream events | `upload.ready{ uploadId, batchId }`, `upload.rejected{ uploadId, batchId, reason }` | §13; payloads [ASSUMPTION] |
 
-**Open (not part of the contract yet):** "Katalogda yok → mağazalarda ara" (design "1 Ara ve Ekle", autocomplete case C) has no endpoint [OPEN] — the user decides before the Search and Add screen step.
+**"Katalogda yok → mağazalarda ara"** (design "1 Ara ve Ekle", autocomplete case C) [DECIDED 2026-11-14]: no endpoint of its own. The client calls `POST /identify` with `{ text }` (the typed text); the answer is a normal `IdentifyResult` — candidates found in the catalogue or through live sources and saved (§11), or no exact match + the closest three, or the "not yet supported" category state. Same key (`identify.use`), guest access, activity action (`identify`) and `search_events` row (`source = SEARCH_BOX`) as any identify call.
 
 ---
 

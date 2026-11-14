@@ -1,6 +1,6 @@
 # FırsatGeldi — Modules
 
-> **Version:** 1.2
+> **Version:** 1.3
 > **Status:** Approved — roles, web/mobile access, histories, fraud tracking, image handling and personal-data protection included; items marked "to be decided later" remain open
 > **Last updated:** 2026-11-14
 > **Scope:** Web and mobile screen coverage defined; mobile **technology** [OPEN].
@@ -231,6 +231,7 @@ These rules apply to every screen and are not repeated in each module.
 - **Guest [DECIDED]:** search and marking are allowed without signing in; sign-in is required at "Evet, bunu aldım" / "Sadece takip et", after which the user returns to the confirm panel where they left off (marked product and typed values kept).
 - Clothing / products without brand or model code → same-seller tracking only, stated explicitly.
 - **Seller lookup [DECIDED 2026-11-14]:** typing the seller in the confirm step is an exact-match lookup for signed-in users only (guests reach sign-in first); at most `seller_lookup.rate_limit_per_minute` (10) per user, above it "Çok sık denedin. Biraz bekleyip tekrar dene." (`RATE_LIMITED`).
+- **Not in the catalogue → search stores [DECIDED 2026-11-14]** (design autocomplete case C): autocomplete shows matches from our own catalogue only. With no result, "Mağazalarda ara" sends the typed text to the normal identification (`POST /identify`, no separate endpoint): live sources are searched, the result is cleaned and saved to the catalogue, and the user continues at "Hangisi seninki?". Nothing found there either → "tam eşleşme yok" + the closest three; closed category → "henüz desteklenmiyor". Guests allowed (`identify.use`); the search is recorded (`search_events`, source `SEARCH_BOX`).
 - **Photo status [DECIDED 2026-11-14]:** reading an upload's status has its own permission key `upload.own.view`, separate from uploading (`upload.own.create`); it is open to guests and covers only one's own uploads (guest: own session; user: own account).
 - **Photo status for guests [DECIDED 2026-11-14]:** a guest sees only the uploads of their own session; guests get no live updates, so the page asks for the status every `upload.guest_poll_interval_seconds` (2) for at most `upload.guest_poll_max_seconds` (60), then shows the error state. Each status read is logged.
 
@@ -247,7 +248,6 @@ These rules apply to every screen and are not repeated in each module.
 
 ### Open questions
 - [OPEN] Should more expensive sellers be shown by name? (spec §17-7)
-- [OPEN] "Katalogda yok → mağazalarda ara" (design autocomplete case C) has no endpoint yet; the user decides before the Search and Add screen step.
 
 ### API
 `GET /search/autocomplete` · `POST /uploads/presign` · `POST /uploads/complete` · `GET /uploads/:id` · `POST /identify` · `POST /identify/:requestId/answer` · `GET /products/:id` · `GET /products/:id/similar` · `GET /products/:id/confirm-context` · `POST /products/:id/seller-lookup` · `POST /products/:id/teaser` · `POST /tracked-items`

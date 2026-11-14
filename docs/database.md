@@ -1,6 +1,6 @@
 # FırsatGeldi — Database Design
 
-> **Version:** 1.2
+> **Version:** 1.3
 > **Status:** Approved — roles, access, histories, fraud tracking, image storage and personal-data protection included
 > **Last updated:** 2026-11-14
 > **Technology [DECIDED — A1]:** PostgreSQL + TimescaleDB (time series) + pgvector (matching) · ORM Prisma + raw SQL migrations (hypertables, continuous aggregates, vector and partial indexes, RLS, views)
@@ -1010,6 +1010,9 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `upload.guest_poll_interval_seconds` | 2 [DECIDED 2026-11-14] | Guests have no live updates: upload status is polled this often |
 | `upload.guest_poll_max_seconds` | 60 [DECIDED 2026-11-14] | Guests stop polling after this long and see the error state |
 | `seller_lookup.rate_limit_per_minute` | 10 [DECIDED 2026-11-14] | Seller lookup in the confirm step, per signed-in user; above it `RATE_LIMITED`. Guests cannot use seller lookup (`UNAUTHENTICATED`); a guest value is added only if that changes |
+| `catalog_warmup.run_times` | `["03:00","15:00"]` (Europe/Istanbul) [ASSUMPTION] | Job `catalog-warmup` runs at these times (`architecture.md` §9, §11) [DECIDED 2026-11-14] |
+| `catalog_warmup.max_queries_per_run` | 500 [ASSUMPTION] | Upper limit of source queries per warm-up run; counts against the provider budget |
+| `catalog_warmup.categories` | electronics, clothing [ASSUMPTION] | Open categories the warm-up fills |
 | `pii.reveal_minutes` | 10 | C |
 | `pii.reauth_minutes` | 15 | |
 | Plan values (`plans` table) | §9 | C |

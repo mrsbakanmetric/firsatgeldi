@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-14 (night, 3) · Claude Code
+- **Done:** #56 (`poll` field in §16.1) and #57 (code note marked decided) merged.
+- **Decided (user), written in this PR:** "Katalogda yok → mağazalarda ara" uses `POST /identify` with the typed text, no new endpoint; identify runs the hybrid flow and saves to the catalogue; nothing found → no exact match + closest three / "not yet supported"; `search_events` `SEARCH_BOX`, guests allowed (`architecture.md` §11, §16, §16.1; `modules.md` Search and Add; `product_spect.md` §9.1) · catalogue warm-up job `catalog-warmup` 1–2×/day, products only, no price/stock (§9, §11; `product_spect.md` §9.5; plan step 27); settings 03:00 + 15:00, 500 queries/run, electronics + clothing are [ASSUMPTION] (`database.md` §18).
+- **Open:** shell viewer still guest; connects to `GET /me` with step 10. Design unchanged (the live store search row is already in canvas "1 Ara ve Ekle").
+- **Next:** after merge → plan step 10, Search and Add (`feat/search-and-add`), with the user's approval.
+
+---
+
 ## 2026-11-14 (night, 2) · Claude Code
 - **Done:** #54 merged (API contract fields, `upload.own.view`); #55 merged — `upload.own.view` in contract and mock, guest polling (2 s / 60 s from settings, `useUploadStatus` with the design's error text tr/en), seller lookup 10 per minute (`RATE_LIMITED`), `apps/web/AGENTS.md` in `.gitignore`; 501 tests.
 - **Decided (user), written in this PR:** guests get the polling values in the `poll` field of `POST /uploads/complete` (`{ intervalSeconds, maxSeconds }`, `null` for signed-in users) — `architecture.md` §11a, §16, §16.1 [DECIDED 2026-11-14] · timed-out text = the design's error state ("Arama tamamlanamadı …").
