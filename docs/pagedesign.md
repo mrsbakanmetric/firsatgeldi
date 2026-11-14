@@ -281,6 +281,13 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
   - **Outcome** column (right): bought with a cheaper offer → "en çok" + "N TL kazanç" (`savings`, `fs-price`) + "Fırsatı gör"; bought without → "Daha ucuzu henüz yok"; want-to-buy → "Hedefe N TL", or "Hedefe ulaştı ✓" + "Fırsatı gör" when reached.
   - **Mode switch:** when a want-to-buy item is bought ("Aldım, kaydet"), the row becomes a bought row: target removed, first row = platform · seller · price paid, return badge appears; tracking continues without a gap.
   - On narrow widths the price list shrinks first; the name column keeps its minimum.
+- **Card grid v5 [DECIDED 2026-11-14]** — replaces the v4 single-row layout; the v4 content rules (price list, ranks, colours, summary, outcomes, mode switch, stale texts) stay:
+  - Items are **cards in a two-column grid** (`repeat(2, minmax(0,1fr))`, gap `space.3`) from `breakpoint.md`; one column below it. Cards in the same row share one height; no empty space inside a card.
+  - **Card header:** image `size.thumb-card` (84) with the status icon on its top-left corner · name (up to two lines) · return badge "İade için N gün" (bought) · check time · ⋯ at the top-right.
+  - **Price table** spans the card width (label · stock · price; prices right-aligned); first row on `surface-alt`.
+  - **Summary** as one thin caption line under the table: "7g en düşük · 14g en yüksek · 14g değişim".
+  - **Footer strip** at the bottom of the card: deal → `savings-subtle` background, "En çok kazanç" + amount (`fs-price`, `savings`) on the left, "Fırsatı gör" on the right; no deal → `surface-alt`, "Hedefe kalan N TL" or "Daha ucuzu henüz yok" + "Hedefe inince haber veririz" hint. Deal cards have a `savings` border.
+  - "Fırsat geldi" group and "Biten takipler" keep the same grid.
 - **SearchBox inline completion** works here too (completes from the user's own tracked item names; Tab / → accepts).
 - **No Add product dialog [DECIDED 2026-11-14]:** "Ürün ekle" navigates to Search and Add (`/[locale]/ara`); "Takip et" from notifications, recent searches, Keşfet and the product page opens Search and Add with the product already marked and the confirm panel open (mode preselected when known). One flow, one implementation.
 - **States:** empty · empty filter · bulk check (allowance short, progress) · stale row · error · loading.
