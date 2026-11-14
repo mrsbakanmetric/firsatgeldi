@@ -5,9 +5,9 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 ---
 
 ## 2026-11-15 (night) · claude.ai
-- **Done:** web review of Search and Add and Tracked Items with the user; design-change PRs #63, #65, #67, #71, #74, #83, #86, #89, #91 (Search and Add v2→v4, app shell v2 footer, Tracked Items v2→v5, tokens 1.10–1.13) and spec PRs #64, #66, #72, #75, #84, #87, #90 — all merged except #91. Canvases were not redrawn (user choice; backlog in `screen_status.md`).
+- **Done:** web review of Search and Add and Tracked Items with the user; design-change PRs #63, #65, #67, #71, #74, #83, #86, #89, #91 (Search and Add v2→v4, app shell v2 footer, Tracked Items v2→v5, tokens 1.10–1.13) and spec PRs #64, #66, #72, #75, #84, #87, #90 — all merged. Canvases were not redrawn (user choice; backlog in `screen_status.md`).
 - **Decided (user), written in docs:** compact UI rules (chips, compact buttons, 48 px search box, overlays close on outside click); no Add product dialog (Search and Add instead); canonical `SearchBox` + `InputSourceHandler`; first result pre-selected, verified with "Evet, bu?"; "Diğer" platform; Tracked Items cards in a two-column grid with ranked hidden-seller price list, green ↓ / red ↑, 7/14-day summary, "Takibi bitir" from the list; want-to-buy record switches to bought.
-- **Open:** #92 (Tracked Items v5 code) to merge · then remove token `size.list-name-min-width` (claude.ai) · two end-of-tracking questions come with My Savings / Product Detail · user proposal to start real data: claude.ai recommends only the Phase 2 data test now (needs a plan-change spec PR and the user's approval).
+- **Open:** #92 (Tracked Items v5 code) merged; its unused-code/text deletion was approved in Claude Code · remove token `size.list-name-min-width` (claude.ai) · two end-of-tracking questions come with My Savings / Product Detail · user proposal to start real data: claude.ai recommends only the Phase 2 data test now (needs a plan-change spec PR and the user's approval).
 - **Next:** user decides: data test in Claude Code and/or Product Detail design here (mockups first, then one coding pass).
 
 ---
