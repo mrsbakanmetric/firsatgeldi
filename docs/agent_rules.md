@@ -37,7 +37,7 @@ The user opens and closes sessions with "session aç" and "session kapat" on **b
 
 **claude.ai — prompts for Claude Code [DECIDED 2026-11-13]:** every prompt the user is given to paste into Claude Code starts with a header line stating how to run it:
 - **Oturum:** new session or the same session
-- **Mod:** Plan mode / Ask before edits (manually approve) — never auto mode unless the user asks
+- **Mod:** Plan mode / Ask before edits (manually approve) — never auto mode unless the user asks. **A prompt that asks Claude Code for a plan (to read, propose and wait for approval) always says Plan mode**; the follow-up prompt that implements the approved plan says Ask before edits [DECIDED 2026-11-14]
 - **Model:** e.g. Opus 5.5 · **Düzey:** low / medium / high
 - **İzin verilecekler:** which commands and files to allow; anything else → ask the user first
 
