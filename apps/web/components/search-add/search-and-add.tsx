@@ -7,10 +7,10 @@
 // panel), success. Guests search and mark freely; sign-in comes at confirmation.
 import type { ApiError, IdentifyAnswer, IdentifyResult, ProductSummary } from "@firsatgeldi/contracts";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
-import { Button, buttonClasses, EmptyState, Icon, MoneyDisplay, PageTemplate, ProductImage, Sheet, SkeletonBlock, SkeletonRow, StatusBanner, StepIndicator } from "@firsatgeldi/ui";
+import { Button, buttonClasses, cn, EmptyState, focusRing, Icon, MoneyDisplay, PageTemplate, ProductImage, Sheet, SkeletonBlock, SkeletonRow, StatusBanner, StepIndicator } from "@firsatgeldi/ui";
 import { Camera, CircleCheck, Link2, Package, PencilLine, SearchX } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
+import { type RefObject, useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 import { useApiMutation, useSession } from "../../lib/api/hooks";
 import { UPLOAD_TIMEOUT_TEXT } from "../../lib/api/uploads";
 import { useTranslator } from "../shell/parts";
@@ -48,7 +48,12 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
   const session = useSession();
   const signedIn = session.status === "ready" && session.me !== null;
   const photos = usePhotos();
-  const pickPhoto = useRef<() => void>(() => undefined);
+  // The page's one file input and the search box: the file dialog opens only
+  // from "Fotoğraf ekle" and the photo way card; the other cards focus the box.
+  const fileInput = useRef<HTMLInputElement>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const pickPhoto = () => fileInput.current?.click();
+  const focusSearch = () => searchInput.current?.focus();
 
   const [query, setQuery] = useState("");
   const [lastText, setLastText] = useState("");
@@ -247,7 +252,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
         framed={framed}
         onChangeProduct={() => (setMarked(null), setSheetOpen(false))}
         onCreated={onCreated}
-        onAddPhoto={() => pickPhoto.current()}
+        onAddPhoto={pickPhoto}
       />
     ) : (
       <GuestConfirm t={t} candidate={marked} framed={framed} signInHref={signInHref} onSignIn={keepDraft} onChangeProduct={() => (setMarked(null), setSheetOpen(false))} />
@@ -275,9 +280,10 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
         <Success t={t} locale={locale} created={created} onAnother={reset} />
       ) : (
         <>
-          <HiddenPhotoPicker photos={photos} register={(open) => (pickPhoto.current = open)} />
+          <HiddenPhotoPicker photos={photos} inputRef={fileInput} />
           <SearchBox
             t={t}
+            inputRef={searchInput}
             query={query}
             onQueryChange={setQuery}
             signedIn={signedIn}
@@ -288,7 +294,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
             onChoose={chooseProduct}
             onSearchStores={() => runIdentify({ text: query.trim() })}
             onLink={continueWithLink}
-            onAddPhoto={() => pickPhoto.current()}
+            onAddPhoto={pickPhoto}
             onError={(failure) => setError({ error: failure, kind: "suggest" })}
           />
 
@@ -343,7 +349,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
               <Candidates t={t} result={shown} markedId={marked?.product.id ?? null} onToggle={toggleMark} onFixSearch={() => setResult(null)} />
             </>
           ) : (
-            !typedOrPhotos && !error && <Ways t={t} />
+            !typedOrPhotos && !error && <Ways t={t} onType={focusSearch} onPhoto={pickPhoto} />
           )}
 
           {marked && (
@@ -362,13 +368,11 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
 }
 
 /** The file input lives once on the page; "Fotoğraf ekle" anywhere opens it. */
-function HiddenPhotoPicker({ photos, register }: { photos: ReturnType<typeof usePhotos>; register: (open: () => void) => void }) {
-  const input = useRef<HTMLInputElement>(null);
-  useEffect(() => register(() => input.current?.click()), [register]);
+function HiddenPhotoPicker({ photos, inputRef }: { photos: ReturnType<typeof usePhotos>; inputRef: RefObject<HTMLInputElement | null> }) {
   if (!photos.policy) return null;
   return (
     <input
-      ref={input}
+      ref={inputRef}
       type="file"
       multiple
       accept={photos.policy.acceptedTypes.join(",")}
@@ -384,12 +388,12 @@ function HiddenPhotoPicker({ photos, register }: { photos: ReturnType<typeof use
   );
 }
 
-/** Empty state (design States 2): three ways to add. */
-function Ways({ t }: { t: Translator }) {
+/** Empty state (design States 2): three ways to add. Name and link focus the box; the photo way opens the file dialog. */
+function Ways({ t, onType, onPhoto }: { t: Translator; onType: () => void; onPhoto: () => void }) {
   const ways = [
-    { icon: PencilLine, title: t("searchAdd.states.ways.name"), text: t("searchAdd.states.ways.nameText") },
-    { icon: Link2, title: t("searchAdd.states.ways.link"), text: t("searchAdd.states.ways.linkText") },
-    { icon: Camera, title: t("searchAdd.states.ways.photo"), text: t("searchAdd.states.ways.photoText") },
+    { icon: PencilLine, title: t("searchAdd.states.ways.name"), text: t("searchAdd.states.ways.nameText"), onClick: onType },
+    { icon: Link2, title: t("searchAdd.states.ways.link"), text: t("searchAdd.states.ways.linkText"), onClick: onType },
+    { icon: Camera, title: t("searchAdd.states.ways.photo"), text: t("searchAdd.states.ways.photoText"), onClick: onPhoto },
   ];
   return (
     <section aria-labelledby="ways-title" className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-4">
@@ -398,12 +402,14 @@ function Ways({ t }: { t: Translator }) {
       </h2>
       <ol className="grid gap-3 md:grid-cols-3">
         {ways.map((way) => (
-          <li key={way.title} className="flex items-start gap-3 rounded-md bg-surface-alt p-3">
-            <Icon icon={way.icon} className="text-primary" />
-            <span className="flex flex-col">
-              <span className="text-body-sm font-semibold text-text">{way.title}</span>
-              <span className="text-caption text-text-muted">{way.text}</span>
-            </span>
+          <li key={way.title} className="flex">
+            <button type="button" onClick={way.onClick} className={cn("flex flex-1 items-start gap-3 rounded-md bg-surface-alt p-3 text-left hover:bg-primary-subtle", focusRing)}>
+              <Icon icon={way.icon} className="text-primary" />
+              <span className="flex flex-col">
+                <span className="text-body-sm font-semibold text-text">{way.title}</span>
+                <span className="text-caption text-text-muted">{way.text}</span>
+              </span>
+            </button>
           </li>
         ))}
       </ol>

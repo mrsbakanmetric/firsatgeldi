@@ -49,6 +49,25 @@ function show(locale: Locale) {
   );
 }
 
+/** Counts every attempt to open a file dialog on the page (any file input clicked), without opening one. */
+let stopWatching: (() => void) | null = null;
+function watchFileDialogs() {
+  const opened = vi.fn();
+  const onClick = (event: MouseEvent) => {
+    if (event.target instanceof HTMLInputElement && event.target.type === "file") {
+      event.preventDefault();
+      opened();
+    }
+  };
+  document.addEventListener("click", onClick, true);
+  stopWatching = () => document.removeEventListener("click", onClick, true);
+  return opened;
+}
+afterEach(() => {
+  stopWatching?.();
+  stopWatching = null;
+});
+
 async function typeAndChoose(locale: Locale, text: string, productName: string) {
   const t = createTranslator(locale);
   const box = screen.getByRole("combobox");
@@ -66,6 +85,46 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     expect(await screen.findByText(t("searchAdd.states.emptyTitle"))).toBeDefined();
     expect(screen.getByText(t("searchAdd.states.ways.link"))).toBeDefined();
     expect(screen.getByText(t("searchAdd.steps.phone", { current: 1, total: 3, name: t("searchAdd.steps.find") }))).toBeDefined();
+  });
+
+  it("the file dialog opens only from “Fotoğraf ekle” and the photo card; the text box, “Ara” and the box frame never open it", async () => {
+    show(locale);
+    await screen.findByText(t("searchAdd.states.emptyTitle"));
+    const opened = watchFileDialogs();
+    const box = screen.getByRole("combobox");
+    const submit = () => screen.getAllByRole("button", { name: t("searchAdd.search.submit") });
+
+    // Empty box: "Ara" is disabled.
+    for (const button of submit()) expect(button.hasAttribute("disabled")).toBe(true);
+
+    await userEvent.click(box);
+    expect(document.activeElement).toBe(box);
+    await userEvent.click(box.closest("div.border") as HTMLElement);
+    await userEvent.type(box, "dyson{Escape}");
+    await userEvent.click(submit()[0] as HTMLElement);
+    await waitFor(() => expect(screen.queryByText(t("searchAdd.states.loading"))).toBeNull());
+    await userEvent.click(box);
+    expect(opened).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getAllByRole("button", { name: t("searchAdd.search.addPhoto") })[0] as HTMLElement);
+    expect(opened).toHaveBeenCalledTimes(1);
+  });
+
+  it("empty state cards: name and link focus the search box, the order-screen card opens the file dialog", async () => {
+    show(locale);
+    const nameCard = await screen.findByRole("button", { name: new RegExp(t("searchAdd.states.ways.name")) });
+    const opened = watchFileDialogs();
+    const box = screen.getByRole("combobox");
+
+    await userEvent.click(nameCard);
+    expect(document.activeElement).toBe(box);
+    (document.activeElement as HTMLElement).blur();
+    await userEvent.click(screen.getByRole("button", { name: new RegExp(t("searchAdd.states.ways.link")) }));
+    expect(document.activeElement).toBe(box);
+    expect(opened).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole("button", { name: new RegExp(t("searchAdd.states.ways.photo")) }));
+    expect(opened).toHaveBeenCalledTimes(1);
   });
 
   it("autocomplete from our catalogue: tiles, list and preview without prices or stores; choosing marks the product", async () => {

@@ -10,7 +10,7 @@ import { type ApiError, type IdentifyResult, imagePath, type ProductSummary } fr
 import type { Translator } from "@firsatgeldi/i18n";
 import { Button, cn, focusRing, Icon, ProductImage, SearchField, SkeletonBlock } from "@firsatgeldi/ui";
 import { Camera, Link2, Package, Search, Store } from "lucide-react";
-import { type KeyboardEvent, type ReactNode, useEffect, useId, useState } from "react";
+import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useState } from "react";
 import { API_BASE_URL } from "../../lib/api/config";
 import { useApiMutation, useApiQuery } from "../../lib/api/hooks";
 
@@ -39,6 +39,8 @@ function useDebounced(value: string): string {
 
 export interface SearchBoxProps {
   t: Translator;
+  /** The text input, so the empty state's way cards can focus it. */
+  inputRef?: Ref<HTMLInputElement>;
   query: string;
   onQueryChange: (query: string) => void;
   signedIn: boolean;
@@ -61,7 +63,7 @@ export interface SearchBoxProps {
   onError: (error: ApiError) => void;
 }
 
-export function SearchBox({ t, query, onQueryChange, signedIn, onSubmit, submitLabel, submitting, canSubmit, onChoose, onSearchStores, onLink, onAddPhoto, below, onError }: SearchBoxProps) {
+export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmit, submitLabel, submitting, canSubmit, onChoose, onSearchStores, onLink, onAddPhoto, below, onError }: SearchBoxProps) {
   const id = useId();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
@@ -124,6 +126,7 @@ export function SearchBox({ t, query, onQueryChange, signedIn, onSubmit, submitL
   return (
     <div className="flex flex-col gap-3">
       <SearchField
+        ref={inputRef}
         label={t("searchAdd.search.label")}
         hideLabel
         placeholder={t("searchAdd.search.label")}
@@ -146,15 +149,20 @@ export function SearchBox({ t, query, onQueryChange, signedIn, onSubmit, submitL
           setOpen(true);
         }}
         trailing={
+          // One wrapper per width: a display class on Button itself loses to the button's own inline-flex.
           <>
-            <Button variant="ghost" icon={Camera} onClick={onAddPhoto} className="hidden md:inline-flex">
-              {t("searchAdd.search.addPhoto")}
-            </Button>
-            <Button variant="ghost" iconOnly icon={Camera} label={t("searchAdd.search.addPhoto")} onClick={onAddPhoto} className="md:hidden" />
-            <Button onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting} className="hidden md:inline-flex">
-              {submitLabel}
-            </Button>
-            <Button iconOnly icon={Search} label={submitLabel} onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting} className="md:hidden" />
+            <div className="hidden items-center gap-2 md:flex">
+              <Button variant="ghost" icon={Camera} onClick={onAddPhoto}>
+                {t("searchAdd.search.addPhoto")}
+              </Button>
+              <Button onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting}>
+                {submitLabel}
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 md:hidden">
+              <Button variant="ghost" iconOnly icon={Camera} label={t("searchAdd.search.addPhoto")} onClick={onAddPhoto} />
+              <Button iconOnly icon={Search} label={submitLabel} onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting} />
+            </div>
           </>
         }
         below={below}
