@@ -1,6 +1,6 @@
 # FırsatGeldi — Screen Design Status (Web and Mobile)
 
-**Last updated:** 2026-11-14 · **Method:** draft → comment → revision → approval → documents updated (`pagedesign.md`, `modules.md`, `product_design_pattern.md`, `design-tokens.json`, `database.md`, `architecture.md`, `engineering_checklist.md`, `product_spect.md`)
+**Last updated:** 2026-11-15 · **Method:** draft → comment → revision → approval → documents updated (`pagedesign.md`, `modules.md`, `product_design_pattern.md`, `design-tokens.json`, `database.md`, `architecture.md`, `engineering_checklist.md`, `product_spect.md`)
 
 **How this file is used [DECIDED 2026-11-13]:** this is the single plan for screen work. Every screen plan starts from §5 "Order from here"; the file is updated in the same change as every new draft, approval, revision, hold, canvas link or platform decision (`agent_rules.md` › Screen Work Rules).
 
@@ -35,7 +35,7 @@ Three surfaces, kept apart in this document:
 | 0 | App shell and component set (İskelet ve Bileşenler) | ✅ | ✅ shell rules | [0 İskelet ve Bileşenler](https://claude.ai/artifact/UviFwo1Ftk2FrYFU3aeAr4) | v2 | Footer one thin row, language switch right, no commission sentence; chip, compact button, popover-dismiss tokens (canvas not redrawn) |
 | 1 | Search and Add (Ara ve Ekle) | ✅ | ✅ in canvas 1 · 🟡 updated in check P | [1 Ara ve Ekle](https://claude.ai/artifact/HoAoJ78ugpSN9VUwg4RLiu) | v4 | Step bar full width; inline completion; first result pre-selected + panel opens, verified with "Evet, bu?" (warning tone → primary); radio selection; chip menu input on top, slimmer; no "Nasıl anladık" label; suggestions close on any outside press (see pagedesign §8.2; canvas not redrawn) |
 | 2 | Product Detail (Ürün Detayı) | ✅ revision approved 2026-11-13 · want-to-buy mode ✅ approved 2026-11-13 | 🟡 check P | [2 Ürün Detayı](https://claude.ai/artifact/7rCf9eKdjfCuVuPWvqsqDA) | v1 | Initial import |
-| 3 | Home (Ana Sayfa) | ✅ revision approved 2026-11-13 | 🟡 check P | [3 Ana Sayfa](https://claude.ai/artifact/8ufA9dkjTMtKo1ixGGqykA) | v1 | Initial import |
+| 3 | Home (Ana Sayfa) | ✅ v2 approved 2026-11-15 | 🟡 check P | [3 Ana Sayfa v2](https://claude.ai/artifact/7cT9XgNfgbKcLiLqoN7bz6) · inline search board: [v1](https://claude.ai/artifact/8ufA9dkjTMtKo1ixGGqykA) | v2 | Canonical SearchBox; Hemen Gözat with ranked price table and a richer price chart (price grid, dates, labelled drops, shaded gap, three summary tiles); "Takip ettiklerin" as up to 4 small cards in two columns; new "Şu an en çok düşenler" (top 3 price drops in the user's categories, seller-less) |
 | 4 | Tracked Items + Add product dialog (Takip Ettiklerim) | ✅ | rules only | [4 Takip Ettiklerim](https://claude.ai/artifact/64fCN5dCFLKUCcPHnJaZRT) | v5 | Two-column card grid (84 px image, full-width price table, summary line, footer strip with saving / target); v4 content rules kept (see pagedesign §8.4; canvas not redrawn) |
 | 5 | Notifications + bell panel (Bildirimler) | ✅ | 🟡 bell sheet in check P | [5 Bildirimler](https://claude.ai/artifact/8TPYLuzZrGAC5AG2FkCKEM) | v1 | Initial import |
 | 6 | My Savings (Kazancım) | ✅ | rules only | [6 Kazancım](https://claude.ai/artifact/W74PZmdtk6jJQvejRYKfL8) | v1 | Initial import |
@@ -76,6 +76,8 @@ Approved: deal summary, price history, cheaper sellers, stock history, action st
 Drawn with the recommended one-line summary on each offer card ("✓ Güvenilir satıcı · Peşin fiyatına en çok 6 taksit · Kart kampanyası olabilir") that expands into trust, installment, campaign and (after Göster) store-rating details.
 
 **3 · Home — ✅ revision approved 2026-11-13** Summary line, inline 3-tile search, Hemen Gözat, return reminder, other items. Added: the one-line offer summary from Product Detail on each Hemen Gözat offer ("✓ Güvenilir · 6 taksit · Kart kampanyası olabilir"), expandable; bank and card after Göster.
+
+**Design v2 — ✅ approved 2026-11-15** (boards Main / MainDark / States / StatesDark). Summary line adds the open-deal count · canonical SearchBox + recent-search chips · Hemen Gözat: price chart with price grid labels, date labels, labelled step drops, the gap between price paid and cheapest shaded (`savings-subtle`) with a "Fark X TL" pill, legend and three tiles (14-day high · low · change); ranked price table (own row first, up to 3 hidden offers with Göster); stock in words; "Fırsatı gör" is the page's one coral action · "Takip ettiklerin": up to 4 small cards in two columns, one height, outcome column aligned, "Tümü (N)"; a second urgent item first with a `savings` border · **new "Şu an en çok düşenler"**: 3 cards, drop vs the 30-day average of the cheapest price in the user's tracked categories, own items excluded, seller and platform hidden, name area always two lines so every card aligns, "Takip et" → Search and Add with the product marked · States: new user (3 steps + general list), loading, no big drop in the user's categories (general list, says so).
 
 **4 · Tracked Items — ✅** List with images, search + category, ended items dimmed; Add product dialog with right attribute panel.
 
