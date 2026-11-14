@@ -94,6 +94,40 @@ function trackingEndsAt(now: Date, duration: "1W" | "1M" | "3M" | "UNLIMITED"): 
   return end.toISOString();
 }
 
+type BoughtBody = {
+  platformId: string | null;
+  otherPlatformName?: string | null | undefined;
+  sellerRef: string | null;
+  orderedOn: string;
+  returnDeadline: string | null;
+};
+
+/**
+ * The bought side of a tracked item (confirm and "Aldım, kaydet"): the user's platform (or the
+ * typed "Diğer" one), their own seller's listing, and the last return day — the user's own day,
+ * else estimated from the platform rule; "Diğer" has no rule, so only the user's day counts.
+ */
+export function boughtDetails(controller: MockController, userId: string, key: ProductKey, body: BoughtBody) {
+  const product = PRODUCTS[key];
+  const otherPlatformName = body.otherPlatformName ?? null;
+  let deadline: { day: string; status: "ESTIMATED" | "CONFIRMED" | "USER_EDITED" } | null = null;
+  if (otherPlatformName) {
+    if (!product.category.noWithdrawalRight && body.returnDeadline) deadline = { day: body.returnDeadline, status: "USER_EDITED" };
+    return { platformKey: null, otherPlatformName, sellerOfferId: null, deadline };
+  }
+  const platform = PLATFORM_LIST.find((item) => item.id === body.platformId);
+  if (!platform) throw new MockApiError("NOT_FOUND");
+  const sellerOfferId = ownRef(controller, userId, body.sellerRef)?.offerId ?? null;
+  if (!product.category.noWithdrawalRight) {
+    if (body.returnDeadline) deadline = { day: body.returnDeadline, status: "USER_EDITED" };
+    else {
+      const estimate = returnDeadline(body.orderedOn, platform.returnRule);
+      deadline = { day: estimate.day, status: estimate.estimated ? "ESTIMATED" : "CONFIRMED" };
+    }
+  }
+  return { platformKey: platform.key as keyof typeof PLATFORMS, otherPlatformName: null, sellerOfferId, deadline };
+}
+
 export function trackingHandlers(controller: MockController) {
   const { state } = controller;
   return [
@@ -181,26 +215,11 @@ export function trackingHandlers(controller: MockController) {
 
       const id = newId();
       const createdAt = now.toISOString();
-      let deadline: { day: string; status: "ESTIMATED" | "CONFIRMED" | "USER_EDITED" } | null = null;
-      let platformKey: keyof typeof PLATFORMS | null = null;
-      let sellerOfferId: string | null = null;
-      const otherPlatformName = body.mode === "BOUGHT" ? (body.otherPlatformName ?? null) : null;
-      if (body.mode === "BOUGHT" && otherPlatformName) {
-        // "Diğer" platform: no return rule is known, so only the user's last day counts; the seller stays as typed.
-        if (!product.category.noWithdrawalRight && body.returnDeadline) deadline = { day: body.returnDeadline, status: "USER_EDITED" };
-      } else if (body.mode === "BOUGHT") {
-        const platform = PLATFORM_LIST.find((item) => item.id === body.platformId);
-        if (!platform) throw new MockApiError("NOT_FOUND");
-        platformKey = platform.key as keyof typeof PLATFORMS;
-        sellerOfferId = ownRef(controller, userId, body.sellerRef)?.offerId ?? null;
-        if (!product.category.noWithdrawalRight) {
-          if (body.returnDeadline) deadline = { day: body.returnDeadline, status: "USER_EDITED" };
-          else {
-            const estimate = returnDeadline(body.orderedOn, platform.returnRule);
-            deadline = { day: estimate.day, status: estimate.estimated ? "ESTIMATED" : "CONFIRMED" };
-          }
-        }
-      }
+      const bought = body.mode === "BOUGHT" ? boughtDetails(controller, userId, key, body) : null;
+      const deadline = bought?.deadline ?? null;
+      const platformKey = bought?.platformKey ?? null;
+      const sellerOfferId = bought?.sellerOfferId ?? null;
+      const otherPlatformName = bought?.otherPlatformName ?? null;
       const endsAt = body.mode === "WANT" ? trackingEndsAt(now, body.trackingDuration) : null;
       state.trackedItems.push({
         id, userId, productKey: key, mode: body.mode, platform: platformKey, otherPlatformName, sellerOfferId,

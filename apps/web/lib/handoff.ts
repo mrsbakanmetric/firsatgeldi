@@ -13,6 +13,8 @@ export const HANDOFF_PARAMS = {
   back: "donus",
   /** Tracked Items: the item just added, to say so once. */
   added: "eklendi",
+  /** "Aldım, kaydet" on a want-to-buy item: the tracked item that becomes a bought one. */
+  convert: "takip",
 } as const;
 
 export type HandoffMode = "BOUGHT" | "WANT";
@@ -24,12 +26,15 @@ export interface Handoff {
   readonly mode: HandoffMode | null;
   /** After confirming, go to Tracked Items. */
   readonly backToTracking: boolean;
+  /** "Aldım, kaydet": this want-to-buy item is switched to bought instead of adding a new one. */
+  readonly convertId: string | null;
 }
 
 /** Search and Add, optionally with a product marked (confirm panel open) and a mode. */
-export function searchAddHref(locale: Locale, options: { productId?: string; mode?: HandoffMode; backToTracking?: boolean } = {}): string {
+export function searchAddHref(locale: Locale, options: { productId?: string; mode?: HandoffMode; backToTracking?: boolean; convertId?: string } = {}): string {
   const params = new URLSearchParams();
   if (options.productId) params.set(HANDOFF_PARAMS.product, options.productId);
+  if (options.convertId) params.set(HANDOFF_PARAMS.convert, options.convertId);
   if (options.mode) params.set(HANDOFF_PARAMS.mode, MODE_VALUES[options.mode]);
   if (options.backToTracking) params.set(HANDOFF_PARAMS.back, BACK_TO_TRACKING);
   const query = params.toString();
@@ -42,7 +47,8 @@ export function readHandoff(search: string): Handoff {
   const modeValue = params.get(HANDOFF_PARAMS.mode);
   const mode = (Object.keys(MODE_VALUES) as HandoffMode[]).find((key) => MODE_VALUES[key] === modeValue) ?? null;
   // A "Takip et" hand-over always comes back to Tracked Items.
-  return { productId, mode, backToTracking: productId !== null || params.get(HANDOFF_PARAMS.back) === BACK_TO_TRACKING };
+  const convertId = productId ? params.get(HANDOFF_PARAMS.convert)?.trim() || null : null;
+  return { productId, mode: convertId ? "BOUGHT" : mode, backToTracking: productId !== null || params.get(HANDOFF_PARAMS.back) === BACK_TO_TRACKING, convertId };
 }
 
 /** Tracked Items, optionally naming the item just added. */

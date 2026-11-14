@@ -113,7 +113,12 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
   const lastAnswer = useRef<{ body: IdentifyAnswer; change: AttributeChange | null } | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   /** "Ürün ekle" / "Takip et" hand-over: preselected mode, and Tracked Items after confirming. */
-  const [handoff, setHandoff] = useState<{ mode: HandoffMode | null; backToTracking: boolean }>({ mode: null, backToTracking: false });
+  const [handoff, setHandoff] = useState<{ mode: HandoffMode | null; backToTracking: boolean; productId: string | null; convertId: string | null }>({
+    mode: null,
+    backToTracking: false,
+    productId: null,
+    convertId: null,
+  });
   const client = useApiClient();
   const router = useRouter();
 
@@ -272,7 +277,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
       return;
     }
     const handedOver = readHandoff(globalThis.location.search);
-    setHandoff({ mode: handedOver.mode, backToTracking: handedOver.backToTracking });
+    setHandoff({ mode: handedOver.mode, backToTracking: handedOver.backToTracking, productId: handedOver.productId, convertId: handedOver.convertId });
     if (handedOver.productId) {
       // "Takip et": the product is marked and the confirm panel opens (on phones as the sheet).
       void client.call("getProduct", { params: { id: handedOver.productId } }).then(
@@ -341,6 +346,8 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
         onCreated={onCreated}
         onAddPhoto={pickPhoto}
         initialMode={handoff.mode}
+        // "Aldım, kaydet": only for the handed-over product; choosing another one adds a new item.
+        convertTrackedItemId={marked.product.id === handoff.productId ? handoff.convertId : null}
       />
     ) : (
       <GuestConfirm t={t} candidate={marked} framed={framed} signInHref={signInHref} onSignIn={keepDraft} onChangeProduct={() => (setMarked(null), setSheetOpen(false))} />

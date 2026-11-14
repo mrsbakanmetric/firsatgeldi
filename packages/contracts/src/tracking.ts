@@ -110,24 +110,39 @@ const TYPED_NAME_MAX = 80;
  * `otherPlatformName` typed; the seller is saved as typed (`sellerName`, no exact-match
  * check, so no `sellerRef`); the return last day comes only from the user (null = unknown).
  */
+/** What the user bought: their own platform, seller and the price they typed (BOUGHT; also "Aldım, kaydet"). */
+const BOUGHT_FIELDS = {
+  /** A known platform; null when the user picked "Diğer". */
+  platformId: Id.nullable(),
+  otherPlatformName: z.string().trim().min(1).max(TYPED_NAME_MAX).nullable().optional(),
+  /** Typed seller on a "Diğer" platform, saved as typed. */
+  sellerName: z.string().trim().min(1).max(TYPED_NAME_MAX).nullable().optional(),
+  sellerRef: OfferRef.nullable(),
+  pricePaid: Money,
+  pricePaidSource: z.enum(["USER_TYPED", "USER_LINK", "USER_SCREENSHOT"]),
+  orderedOn: CalendarDay,
+  orderStatus: OrderStatus,
+  /** Set only when the user picked the last day (always the user's on a "Diğer" platform). */
+  returnDeadline: CalendarDay.nullable(),
+};
+
+type BoughtFields = { platformId: string | null; otherPlatformName?: string | null | undefined; sellerName?: string | null | undefined; sellerRef: string | null };
+
+/** Exactly one: a known platform or a typed "Diğer" platform; a typed seller only there, never looked up. */
+function checkBoughtPlatform(request: BoughtFields, context: z.RefinementCtx) {
+  const other = Boolean(request.otherPlatformName);
+  if ((request.platformId === null) !== other) context.addIssue({ code: "custom", path: ["platformId"], message: "platformId or otherPlatformName" });
+  if (other && request.sellerRef !== null) context.addIssue({ code: "custom", path: ["sellerRef"], message: "no sellerRef on another platform" });
+  if (!other && request.sellerName) context.addIssue({ code: "custom", path: ["sellerName"], message: "sellerName only on another platform" });
+}
+
 export const CreateTrackedItemRequest = z
   .discriminatedUnion("mode", [
     z.object({
       mode: z.literal("BOUGHT"),
       productId: Id,
       identifyRequestId: Id.nullable(),
-      /** A known platform; null when the user picked "Diğer". */
-      platformId: Id.nullable(),
-      otherPlatformName: z.string().trim().min(1).max(TYPED_NAME_MAX).nullable().optional(),
-      /** Typed seller on a "Diğer" platform, saved as typed. */
-      sellerName: z.string().trim().min(1).max(TYPED_NAME_MAX).nullable().optional(),
-      sellerRef: OfferRef.nullable(),
-      pricePaid: Money,
-      pricePaidSource: z.enum(["USER_TYPED", "USER_LINK", "USER_SCREENSHOT"]),
-      orderedOn: CalendarDay,
-      orderStatus: OrderStatus,
-      /** Set only when the user picked the last day (always the user's on a "Diğer" platform). */
-      returnDeadline: CalendarDay.nullable(),
+      ...BOUGHT_FIELDS,
     }),
     z.object({
       mode: z.literal("WANT"),
@@ -138,13 +153,7 @@ export const CreateTrackedItemRequest = z
     }),
   ])
   .superRefine((request, context) => {
-    if (request.mode !== "BOUGHT") return;
-    const other = Boolean(request.otherPlatformName);
-    // Exactly one: a known platform or a typed "Diğer" platform.
-    if ((request.platformId === null) !== other) context.addIssue({ code: "custom", path: ["platformId"], message: "platformId or otherPlatformName" });
-    // A typed seller only on a "Diğer" platform; there it is never looked up.
-    if (other && request.sellerRef !== null) context.addIssue({ code: "custom", path: ["sellerRef"], message: "no sellerRef on another platform" });
-    if (!other && request.sellerName) context.addIssue({ code: "custom", path: ["sellerName"], message: "sellerName only on another platform" });
+    if (request.mode === "BOUGHT") checkBoughtPlatform(request, context);
   });
 export type CreateTrackedItemRequest = z.infer<typeof CreateTrackedItemRequest>;
 
@@ -227,6 +236,15 @@ export const TrackedItemListItem = z.object({
   cheapest: Money.nullable(),
   /** Open deal: "N satıcıda daha ucuz · en çok X" — counts only. */
   deal: z.object({ cheaperCount: z.number().int().positive(), maxSaving: Money }).nullable(),
+  /**
+   * Row prices v4 [ASSUMPTION — fields]: offers by rank only (1 = cheapest), at most 3 —
+   * bought: cheaper than the price paid (own listing excluded); want: the cheapest. Never a
+   * seller, platform, offer id or link. `rankedMore` = how many more ("+N satıcı daha").
+   */
+  ranked: z.array(z.object({ rank: z.number().int().positive(), price: Money, stockState: StockState })).max(3),
+  rankedMore: z.number().int().nonnegative(),
+  /** Bought: the user's own listing now ("Senin satıcın şimdi") — own data, so visible; null when not known [ASSUMPTION — field]. */
+  ownNow: z.object({ price: Money, stockState: StockState }).nullable(),
   /** Cheapest price per day, oldest first, `COMPACT_HISTORY_DAYS` entries; null = no data that day. Kuruş. */
   priceHistory: z.object({ from: CalendarDay, cheapest: z.array(z.number().int().nonnegative().nullable()).length(COMPACT_HISTORY_DAYS) }),
   /** Stock per day of the cheapest offer when a deal exists, otherwise of the seller bought from. */
@@ -309,3 +327,12 @@ export type EndTrackingResult = z.infer<typeof EndTrackingResult>;
 /** `POST /tracked-items/:id/restore` — "Geri al" within 7 days: tracking continues, the saving record is voided [ASSUMPTION — endpoint]. */
 export const RestoreTrackingResult = z.object({ id: Id, state: TrackedItemState });
 export type RestoreTrackingResult = z.infer<typeof RestoreTrackingResult>;
+
+/**
+ * `POST /tracked-items/:id/bought` — "Aldım, kaydet" on a want-to-buy item (modules.md Want to Buy;
+ * Tracked Items v4 "mode switch"): the same row becomes a bought row (target removed, return
+ * protection starts); tracking continues without a gap. Same fields and rules as a BOUGHT confirm
+ * [ASSUMPTION — body and in-place switch]. → `TrackedItemCreated`.
+ */
+export const MarkBoughtRequest = z.object(BOUGHT_FIELDS).superRefine(checkBoughtPlatform);
+export type MarkBoughtRequest = z.infer<typeof MarkBoughtRequest>;

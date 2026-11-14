@@ -4,7 +4,7 @@
 // catalogue in tr and en, the five states via mock scenarios, the guest flow,
 // the hidden-seller rule on the rendered page, and action logging.
 import { createTranslator, LOCALES, type Locale } from "@firsatgeldi/i18n";
-import { OFFERS, PRODUCTS, SELLERS } from "@firsatgeldi/mocks";
+import { OFFERS, PRODUCTS, SELLERS, USERS } from "@firsatgeldi/mocks";
 import { createMockServer } from "@firsatgeldi/mocks/node";
 import { axeViolations } from "@firsatgeldi/ui/test";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
@@ -550,5 +550,37 @@ describe.each(LOCALES)("Search and Add — design v4 — %s", (locale) => {
     expect(await screen.findByRole("radio", { name: new RegExp(PRODUCTS.dysonV15.name[locale]), checked: true })).toBeDefined();
     expect(await screen.findByText(t("searchAdd.confirm.prefilledLink"))).toBeDefined();
     expect((screen.getByLabelText(t("searchAdd.confirm.seller")) as HTMLInputElement).value).toBe(SELLERS.supurgeMerkezi.name);
+  });
+});
+
+describe.each(LOCALES)("Search and Add — “Aldım, kaydet” from Tracked Items (v4 mode switch) — %s", (locale) => {
+  const t = createTranslator(locale);
+  afterEach(() => {
+    globalThis.history.replaceState(null, "", "/");
+    push.mockClear();
+  });
+
+  it("the want-to-buy item becomes the bought one: bought mode only, verified, then back to Tracked Items; no second item", async () => {
+    const target = PRODUCTS.goProHero13;
+    const id = globalThis.crypto.randomUUID();
+    controller.state.trackedItems.push({
+      id, userId: USERS.user.id, productKey: "goProHero13", mode: "WANT", platform: null, sellerOfferId: null, pricePaidMinor: null, state: "ACTIVE",
+      createdAt: new Date().toISOString(), targetPriceMinor: 1_500_000, trackingDuration: "1M",
+    });
+    globalThis.history.replaceState(null, "", `/${locale}/ara?urun=${target.id}&takip=${id}&mod=aldim`);
+    show(locale);
+    expect(await screen.findByRole("radio", { name: new RegExp(target.name[locale]), checked: true })).toBeDefined();
+    const price = await screen.findByLabelText(t("searchAdd.confirm.pricePaid"));
+    // Recording a purchase: no switch back to "Sadece takip et".
+    expect(screen.queryByRole("button", { name: t("searchAdd.confirm.wantShort") })).toBeNull();
+    await verify(locale);
+    await userEvent.type(price, locale === "tr" ? "14.999" : "14,999");
+    const bought = screen.getByRole("button", { name: t("searchAdd.confirm.bought") });
+    await waitFor(() => expect(bought.hasAttribute("disabled")).toBe(false));
+    await userEvent.click(bought);
+    await waitFor(() => expect(push).toHaveBeenCalledWith(expect.stringContaining(`eklendi=${id}`)));
+    expect(controller.state.trackedItems.filter((item) => item.productKey === "goProHero13")).toHaveLength(1);
+    expect(controller.state.trackedItems.find((item) => item.id === id)).toMatchObject({ mode: "BOUGHT", pricePaidMinor: 1_499_900, targetPriceMinor: null });
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.bought", outcome: "OK" });
   });
 });

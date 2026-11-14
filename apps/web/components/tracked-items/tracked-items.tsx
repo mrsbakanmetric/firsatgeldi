@@ -35,6 +35,7 @@ import Link from "next/link";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { errorMessage } from "../../lib/api/errors";
 import { apiQueryKey, useApiMutation, useApiQuery, useSession } from "../../lib/api/hooks";
+import { acceptsCompletion, completionFor } from "../../lib/completion";
 import { isLink, PhotoInput, useHandOverToSearchAdd } from "../input-source/input-source";
 import { HANDOFF_PARAMS, searchAddHref } from "../../lib/handoff";
 import { ago, money, useNow } from "../search-add/format";
@@ -202,6 +203,7 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
     <SkeletonBlock shape="title" width="3/4" />
   ) : undefined;
 
+  const completing = isLink(typed) ? null : completionFor(search, [...new Set(items.map((item) => item.product.name))]);
   const counts = facets?.filters;
   const hasAny = (counts?.all ?? 0) > 0 || typed.length > 0 || category !== "" || filter !== "all";
   /** Nothing tracked yet: the empty state is the page (one action, no zero figures). */
@@ -216,6 +218,15 @@ function SignedInList({ t, locale, enabled }: { t: Translator; locale: Locale; e
           placeholder={t("trackedItems.search.placeholder")}
           value={search}
           onValueChange={setSearch}
+          // v4: inline completion from the user's own tracked item names; Tab / → accepts.
+          completion={completing ? completing.slice(search.length) : ""}
+          aria-autocomplete={completing ? "both" : "none"}
+          onKeyDown={(event) => {
+            if (completing && acceptsCompletion(event, search.length)) {
+              event.preventDefault();
+              setSearch(completing);
+            }
+          }}
           onSubmit={() => (isLink(typed) ? handOver.link(typed) : setApplied(typed))}
           submitLabel={t("searchAdd.search.submit")}
           submitDisabled={typed.length === 0}
@@ -434,9 +445,13 @@ function Rows({ t, locale, items, now, onEnd, onRestore, restoringId }: RowsProp
 function ColumnHeads({ t }: { t: Translator }) {
   return (
     <div aria-hidden="true" className="hidden gap-4 px-3 text-caption text-text-muted md:flex">
-      <span className="flex-1">{t("trackedItems.columns.product")}</span>
-      <span className="w-1/4 shrink-0">{t("trackedItems.columns.price")}</span>
-      <span className="w-1/6 shrink-0">{t("trackedItems.columns.stock")}</span>
+      {/* v4 columns: image + name · price list · outcome · ⋯ */}
+      {/* Image (size.thumb-lg) + name (size.list-name-min-width), as in the rows. */}
+      <span className="flex shrink-0 gap-3">
+        <span className="w-(--size-thumb-lg)">{t("trackedItems.columns.product")}</span>
+        <span className="w-(--size-list-name-min-width)" />
+      </span>
+      <span className="min-w-0 flex-1">{t("trackedItems.columns.price")}</span>
       <span className="w-1/5 shrink-0">{t("trackedItems.columns.state")}</span>
       {/* Same width as the row's ⋯ button (button.compact, icon only). */}
       <span className="min-w-(--component-button-compact-height-touch) shrink-0 md:pointer-fine:min-w-(--component-button-compact-height)" />

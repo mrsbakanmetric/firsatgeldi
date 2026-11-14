@@ -67,48 +67,81 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
   const t = createTranslator(locale);
   const name = (key: keyof typeof PRODUCTS) => PRODUCTS[key].name[locale];
 
-  it("v3: deal group first with the page's one coral badge; status per row; price block with numbers; stock in words; no explanation sentences", async () => {
+  it("v4: deal group first (one coral badge); status icon on a 120 px image; price list by rank with stock in words; outcome; no explanation sentences", async () => {
     const { container } = show(locale);
     await screen.findByText(name("acePro2FlashPrint"));
+    const tl = (tr: string, en: string) => (locale === "tr" ? tr : en);
     expect(screen.getByRole("heading", { level: 1, name: t("trackedItems.title") })).toBeDefined();
-    expect(screen.getByText([t("trackedItems.trackingCount", { used: 5, limit: 10 }), t("trackedItems.checksLeft", { count: 3 })].join(t("common.listSeparator")))).toBeDefined();
-    const summary = await screen.findByLabelText(t("trackedItems.summary.label"));
-    expect(within(summary).getByText(t("trackedItems.summary.returnsSoon"))).toBeDefined();
-    // "Ürün ekle" goes to Search and Add and comes back here.
+    expect(screen.getByText([t("trackedItems.trackingCount", { used: 6, limit: 10 }), t("trackedItems.checksLeft", { count: 3 })].join(t("common.listSeparator")))).toBeDefined();
     expect(screen.getByRole("link", { name: t("trackedItems.add") }).getAttribute("href")).toBe(`/${locale}/${locale === "tr" ? "ara" : "search"}?donus=takip`);
-    // Filters (v3): Tümü · Fırsat var · Biten — no mode chips.
     const filters = screen.getByRole("group", { name: t("trackedItems.filters.label") });
     expect(within(filters).getAllByRole("button").map((chip) => chip.textContent?.replace(/\d+$/, ""))).toEqual([t("trackedItems.filters.all"), t("trackedItems.filters.deal"), t("trackedItems.filters.ended")]);
-    // Deal group: first, one coral badge on the whole screen, rows on savings-subtle with the saving and "Fırsatı gör".
+
+    // Deal group: bought rows with a cheaper offer and the want row whose target is reached; one coral badge.
     const group = screen.getByRole("region", { name: new RegExp(t("trackedItems.row.flags.deal")) });
     expect(container.querySelectorAll(".bg-accent")).toHaveLength(1);
-    expect(within(group).getAllByRole("listitem")).toHaveLength(2);
-    expect(within(group).getByText(t("trackedItems.v3.canSave", { amount: locale === "tr" ? "3.002 TL" : "TL 3,002" }))).toBeDefined();
-    const seeDeal = within(group).getAllByRole("link", { name: t("trackedItems.v3.seeDeal") });
-    expect(seeDeal[0]?.getAttribute("href")).toMatch(new RegExp(`^/${locale}/(takip|tracking)/`));
-    expect(seeDeal[0]?.closest("li")?.querySelector(".bg-savings-subtle")).not.toBeNull();
-    // Five active rows, each one link; status badges instead of mode filters.
-    expect(rowLinks()).toHaveLength(5);
-    expect(screen.getAllByText(t("trackedItems.v3.status.BOUGHT"))).toHaveLength(4);
-    expect(screen.getAllByText(t("trackedItems.v3.status.WANT"))).toHaveLength(1);
-    expect(screen.queryByRole("button", { name: /^Detay$|^Details$/ })).toBeNull();
-    // Price block: current price and the change; chart labels; "Sen …" on the paid line.
-    expect(screen.getByText(t("trackedItems.v3.change.down", { count: 14, amount: locale === "tr" ? "3.502 TL" : "TL 3,502", percent: 12 }))).toBeDefined();
-    expect(screen.getAllByText(t("trackedItems.v3.chart.paid", { price: locale === "tr" ? "28.999 TL" : "TL 28,999" })).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(t("trackedItems.v3.chart.min", { price: locale === "tr" ? "25.997 TL" : "TL 25,997" })).length).toBeGreaterThan(0);
-    // Stock in plain words.
-    expect(screen.getByText(t("trackedItems.v3.stock.IN_STOCK", { count: 7 }))).toBeDefined();
-    expect(screen.getByText(t("trackedItems.v3.stock.OUT_OF_STOCK", { count: 2 }))).toBeDefined();
-    expect(screen.queryByRole("img", { name: /gündür|for at least/ })).toBeNull();
-    // No explanation sentences any more (v3) — but the rule still holds: no cheaper seller's name, no "Göster".
+    expect(within(group).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(group).getByText(t("trackedItems.v4.gain", { amount: tl("3.002 TL", "TL 3,002") }))).toBeDefined();
+    expect(within(group).getByText(t("trackedItems.v4.reached"))).toBeDefined();
+    expect(within(group).getAllByRole("link", { name: t("trackedItems.v3.seeDeal") })).toHaveLength(3);
+    expect(group.querySelector(".border-savings")).not.toBeNull();
+
+    // Six active rows; status as an icon on the image (accessible name), no status text badge.
+    expect(rowLinks()).toHaveLength(6);
+    expect(screen.getAllByRole("img", { name: t("trackedItems.v3.status.BOUGHT") })).toHaveLength(4);
+    expect(screen.getAllByRole("img", { name: t("trackedItems.v3.status.WANT") })).toHaveLength(2);
+    expect(container.querySelector("[class*='size-(--size-thumb-lg)']")).not.toBeNull();
+
+    // Price list of the coat: own row first, three cheaper by rank with a lock, "+2 satıcı daha", summary.
+    const coat = screen.getByRole("link", { name: name("winterCoat") }).closest("li") as HTMLElement;
+    const table = within(coat).getByRole("table");
+    const rows = within(table).getAllByRole("row").map((row) => row.textContent ?? "");
+    expect(rows[0]).toContain("LC Waikiki");
+    expect(rows[0]).toContain(t("trackedItems.v4.bought"));
+    expect(rows[1]).toContain(t("trackedItems.v4.rankFirst"));
+    expect(rows[3]).toContain(t("trackedItems.v4.rank", { rank: 3 }));
+    expect(within(coat).getAllByRole("img", { name: t("trackedItems.v4.hidden") })).toHaveLength(3);
+    expect(within(coat).getByRole("link", { name: t("trackedItems.v4.more", { count: 2 }) })).toBeDefined();
+    expect(within(coat).getAllByText(t("trackedItems.v4.stock.LOW_STOCK")).length).toBeGreaterThan(0);
+    expect(within(table).getByText(t("trackedItems.v4.lowest", { count: 7 }))).toBeDefined();
+    // Lower than paid: green with ↓ and a word for assistive technology.
+    expect(within(table).getAllByText(t("trackedItems.v4.lower")).length).toBeGreaterThan(0);
+
+    // Dyson: own seller now dearer than paid (red ↑), nothing cheaper.
+    const dyson = screen.getByRole("link", { name: name("dysonV15") }).closest("li") as HTMLElement;
+    expect(within(dyson).getByText(t("trackedItems.v4.ownNow"))).toBeDefined();
+    expect(within(dyson).getByText(tl("31.299 TL", "TL 31,299")).closest("span")?.className).toContain("text-danger");
+    expect(within(dyson).getByText(t("trackedItems.v4.noCheaper"))).toBeDefined();
+    // AirPods: target not reached.
+    expect(screen.getByText(t("trackedItems.v4.toTarget", { amount: tl("650 TL", "TL 650") }))).toBeDefined();
+    // X4: own listing sold out.
+    const x4 = screen.getByRole("link", { name: name("x4") }).closest("li") as HTMLElement;
+    expect(within(x4).getByText(t("trackedItems.v4.stock.OUT_OF_STOCK"))).toBeDefined();
+
+    // No chart, no explanation sentences — and never a cheaper seller's name or "Göster".
+    expect(container.querySelector("svg polyline")).toBeNull();
     for (const seller of HIDDEN_SELLERS) expect(document.body.textContent).not.toContain(seller);
     expect(screen.queryByRole("button", { name: t("searchAdd.confirm.reveal") })).toBeNull();
-    // Ended rows collapsed.
     const endedToggle = screen.getByRole("button", { name: t("trackedItems.ended.title", { count: 1 }) });
     expect(endedToggle.getAttribute("aria-expanded")).toBe("false");
-    await userEvent.click(endedToggle);
-    expect(screen.getByText(name("wh1000xm5"))).toBeDefined();
     expect(await axeViolations(container)).toEqual([]);
+  });
+
+  it("“Aldım, kaydet” on a want-to-buy row opens Search and Add for that item; the search box completes from the list", async () => {
+    show(locale);
+    await screen.findByText(name("airPodsPro2"));
+    const row = screen.getByRole("link", { name: name("airPodsPro2") }).closest("li") as HTMLElement;
+    await userEvent.click(within(row).getByRole("button", { name: t("trackedItems.v3.more") }));
+    const item = screen.getByRole("menuitem", { name: t("trackedItems.v4.markBought") });
+    const tracked = controller.state.trackedItems.find((entry) => entry.productKey === "airPodsPro2");
+    expect(item.getAttribute("href")).toBe(`/${locale}/${locale === "tr" ? "ara" : "search"}?urun=${PRODUCTS.airPodsPro2.id}&takip=${tracked?.id ?? ""}&mod=aldim`);
+    await userEvent.keyboard("{Escape}");
+
+    const box = screen.getByRole("textbox", { name: t("trackedItems.search.label") }) as HTMLInputElement;
+    await userEvent.type(box, "dys");
+    await waitFor(() => expect(box.getAttribute("aria-autocomplete")).toBe("both"));
+    await userEvent.keyboard("{Tab}");
+    expect(box.value).toBe(name("dysonV15"));
   });
 
   it("⋯ → “Takibi bitir” (bought): how it ended + new price → saving to My Savings; the row moves to ended; “Geri al” brings it back", async () => {
@@ -167,9 +200,9 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     show(locale);
     await screen.findByText(name("acePro2FlashPrint"));
     await userEvent.click(screen.getByRole("button", { name: new RegExp(t("trackedItems.filters.deal")) }));
-    await waitFor(() => expect(rowLinks()).toHaveLength(2));
+    await waitFor(() => expect(rowLinks()).toHaveLength(3));
     await userEvent.click(screen.getByRole("button", { name: new RegExp(`^${t("trackedItems.filters.all")}`) }));
-    await waitFor(() => expect(rowLinks()).toHaveLength(5));
+    await waitFor(() => expect(rowLinks()).toHaveLength(6));
 
     const sortChip = screen.getByRole("button", { name: new RegExp(t("trackedItems.sort.label")) });
     await userEvent.click(sortChip);
@@ -181,7 +214,7 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     await userEvent.click(sortChip);
     await userEvent.click(screen.getByRole("option", { name: t("trackedItems.sort.deadline") }));
     // The deal group stays first; below it the nearest return date leads.
-    await waitFor(() => expect(rowLinks()[2]?.textContent).toContain(name("dysonV15")));
+    await waitFor(() => expect(rowLinks()[3]?.textContent).toContain(name("dysonV15")));
 
     await userEvent.type(screen.getByRole("textbox", { name: t("trackedItems.search.label") }), "DYSON");
     await waitFor(() => expect(rowLinks()).toHaveLength(1));
@@ -191,7 +224,7 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     const searchAdd = screen.getByRole("link", { name: t("trackedItems.v3.searchAdd", { query: "DYSONzzz" }) });
     expect(searchAdd.getAttribute("href")).toContain(`q=DYSONzzz`);
     await userEvent.click(screen.getByRole("button", { name: t("trackedItems.states.clearFilters") }));
-    await waitFor(() => expect(rowLinks()).toHaveLength(5));
+    await waitFor(() => expect(rowLinks()).toHaveLength(6));
   });
 
   it("empty filter: no deal → its own message and “Tümünü göster”", async () => {
@@ -209,17 +242,17 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     show(locale);
     await screen.findByText(name("acePro2FlashPrint"));
     const before = controller.state.activity.length;
-    await userEvent.click(screen.getByRole("button", { name: t("trackedItems.bulk.action", { count: 5 }) }));
+    await userEvent.click(screen.getByRole("button", { name: t("trackedItems.bulk.action", { count: 6 }) }));
     expect(screen.getByText(t("trackedItems.bulk.short", { count: 3 }))).toBeDefined();
     await userEvent.click(screen.getByRole("button", { name: t("trackedItems.bulk.confirm", { count: 3 }) }));
     expect(await screen.findByText(t("trackedItems.bulk.finished"))).toBeDefined();
     expect(screen.getAllByText(t("trackedItems.bulk.itemDone"))).toHaveLength(3);
-    // The fifth: no checks left today, stays on automatic checks.
-    expect(screen.getByText(t("trackedItems.bulk.itemSkipped"))).toBeDefined();
+    // The other two: no checks left today, they stay on automatic checks.
+    expect(screen.getAllByText(t("trackedItems.bulk.itemSkipped"))).toHaveLength(2);
     expect(screen.getByText(t("trackedItems.bulk.itemCached"))).toBeDefined();
     expect(controller.state.activity.slice(before).map((row) => row.action)).toContain("check_now_bulk");
     await userEvent.click(screen.getByRole("button", { name: t("trackedItems.bulk.close") }));
-    await waitFor(() => expect((screen.getByRole("button", { name: t("trackedItems.bulk.action", { count: 5 }) }) as HTMLButtonElement).disabled).toBe(true));
+    await waitFor(() => expect((screen.getByRole("button", { name: t("trackedItems.bulk.action", { count: 6 }) }) as HTMLButtonElement).disabled).toBe(true));
     expect(screen.getByText(t("trackedItems.bulk.none"))).toBeDefined();
   });
 
@@ -238,7 +271,14 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     show(locale);
     expect(await screen.findByText(t("trackedItems.row.flags.stale"))).toBeDefined();
     expect(screen.getByText(t("trackedItems.row.state.unverified"))).toBeDefined();
-    expect(screen.getByText(t("trackedItems.row.lastKnown", { price: locale === "tr" ? "2.999 TL" : "TL 2,999" }))).toBeDefined();
+    expect(screen.getByText(t("trackedItems.row.staleAge", { ago: t("time.hoursAgo", { count: 12 }) }))).toBeDefined();
+    // The coat's market prices are the last known ones, and its stock shows its age (v4 price list).
+    const coat = screen.getByRole("link", { name: PRODUCTS.winterCoat.name[locale] }).closest("li") as HTMLElement;
+    expect(within(coat).getByText(t("trackedItems.row.lastKnown", { price: locale === "tr" ? "2.999 TL" : "TL 2,999" }))).toBeDefined();
+    expect(within(coat).getAllByText(t("trackedItems.row.staleStock", { count: 12 }))).toHaveLength(3);
+    // Fresh rows say neither.
+    const ace = screen.getByRole("link", { name: PRODUCTS.acePro2FlashPrint.name[locale] }).closest("li") as HTMLElement;
+    expect(within(ace).queryByText(new RegExp(t("trackedItems.row.lastKnown", { price: "" }).trim()))).toBeNull();
     expect(screen.getByText(t("trackedItems.states.stale", { count: 1, hours: 12 }))).toBeDefined();
   });
 

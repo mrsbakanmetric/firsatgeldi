@@ -70,7 +70,7 @@ export const TRACKING_SEEDS: readonly TrackingSeed[] = [
     seller: "teknosaMagaza",
     createdDaysAgo: 11, orderedDaysAgo: 11, returnInDays: 2, endedDaysAgo: null, durationDays: null,
     checkedMinutesAgo: 6, staleInScenario: false,
-    cheapestTl: [32_499, 32_499, 31_999, 31_999, 31_999, 31_499, 31_499, 31_499, 31_499, 31_499, 31_499, 31_499, 30_999, 30_999],
+    cheapestTl: [32_499, 32_499, 31_999, 31_999, 31_999, 31_499, 31_499, 31_499, 31_499, 31_499, 31_499, 30_999, 30_999, 31_299],
     stock: "iiiiiiiiiiiiii", stockSubject: "OWN_SELLER",
     conclusion: { kind: "NO_CHEAPER" },
   },
@@ -96,6 +96,18 @@ export const TRACKING_SEEDS: readonly TrackingSeed[] = [
     cheapestTl: [null, null, null, null, null, null, null, null, null, null, null, 24_999, 26_999, 26_499],
     stock: "-----------ioo", stockSubject: "OWN_SELLER",
     conclusion: { kind: "NO_CHEAPER" },
+  },
+  {
+    key: "osmo-pocket-3",
+    productKey: "osmoPocket3",
+    // Design v4: want-to-buy, target reached ("Hedefe ulaştı ✓").
+    row: { mode: "WANT", platform: null, pricePaidMinor: null, state: "ACTIVE", targetPriceMinor: 17_000 * KURUS, trackingDuration: "3M" },
+    seller: null,
+    createdDaysAgo: 9, orderedDaysAgo: null, returnInDays: null, endedDaysAgo: null, durationDays: 90,
+    checkedMinutesAgo: 5, staleInScenario: false,
+    cheapestTl: [null, null, null, null, null, 17_999, 17_999, 17_499, 17_499, 17_499, 17_499, 17_499, 17_499, 16_499],
+    stock: "-----iiiiiiiii", stockSubject: "CHEAPEST",
+    conclusion: { kind: "DROPPED", minutesAgo: 60 },
   },
   {
     key: "wh-1000xm5",

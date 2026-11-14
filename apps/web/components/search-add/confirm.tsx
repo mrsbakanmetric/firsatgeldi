@@ -17,6 +17,7 @@ import {
   type CreateTrackedItemRequest,
   type Money,
   type SellerLookupResult,
+  type MarkBoughtRequest,
   type TrackedItemCreated,
 } from "@firsatgeldi/contracts";
 import { formatNumber, returnDeadline, toCalendarDay } from "@firsatgeldi/core";
@@ -209,9 +210,11 @@ export interface ConfirmProps {
   onAddPhoto: () => void;
   /** Preselected by a "Takip et" hand-over ("Bunu aldım…" / "Bu ürünü takip et"). */
   initialMode?: Mode | null;
+  /** "Aldım, kaydet": this want-to-buy item becomes the bought one (`POST /tracked-items/:id/bought`). */
+  convertTrackedItemId?: string | null;
 }
 
-export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefill, initial, now, framed, onChangeProduct, onCreated, onAddPhoto, initialMode = null }: ConfirmProps) {
+export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefill, initial, now, framed, onChangeProduct, onCreated, onAddPhoto, initialMode = null, convertTrackedItemId = null }: ConfirmProps) {
   const productId = candidate.product.id;
   const context = useApiQuery("getConfirmContext", { params: { id: productId } });
   const ctx: ConfirmContext | null = context.data?.data ?? null;
@@ -272,19 +275,22 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   );
   const stale = Boolean(lookup.data?.meta?.sourcesMissing || teaser.data?.meta?.sourcesMissing);
 
-  const create = useApiMutation("createTrackedItem", {
-    onSuccess: ({ data }) =>
+  const saved = {
+    onSuccess: ({ data }: { data: TrackedItemCreated }) =>
       onCreated({
         item: data,
         candidate,
         cheaper: teaser.data ? { count: teaser.data.data.summary.cheaperCount, maxSaving: teaser.data.data.summary.maxSaving } : null,
       }),
-    onError: (error) => {
+    onError: (error: ApiError) => {
       attempt.current = globalThis.crypto.randomUUID();
-      if (error instanceof ApiError && error.body.code === "ALREADY_TRACKING") setAlready(true);
+      if (error.body.code === "ALREADY_TRACKING") setAlready(true);
       else setProblem(errorMessage(t, error));
     },
-  });
+  };
+  const createNew = useApiMutation("createTrackedItem", saved);
+  const markBought = useApiMutation("markBought", saved);
+  const create = convertTrackedItemId ? markBought : createNew;
 
   if (context.isPending) {
     return (
@@ -323,10 +329,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
     setProblem(null);
     const open = justVerified ? missing.filter((item) => item.field !== "verify") : missing;
     if ((!platform && !isOther) || price === null || open.length) return;
-    const body: CreateTrackedItemRequest = {
-      mode: "BOUGHT",
-      productId,
-      identifyRequestId,
+    const bought: MarkBoughtRequest = {
       platformId: platform?.id ?? null,
       ...(isOther ? { otherPlatformName: otherName.trim(), sellerName: sellerName.trim() || null } : {}),
       sellerRef: isOther ? null : (match?.sellerRef ?? null),
@@ -336,7 +339,13 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       orderStatus: status,
       returnDeadline: customLastDay,
     };
-    create.mutate({ body, idempotencyKey: attempt.current });
+    if (convertTrackedItemId) {
+      // "Aldım, kaydet": the want-to-buy row switches to bought, with the same fields as a new bought item.
+      markBought.mutate({ params: { id: convertTrackedItemId }, body: bought, idempotencyKey: attempt.current });
+      return;
+    }
+    const body: CreateTrackedItemRequest = { mode: "BOUGHT", productId, identifyRequestId, ...bought };
+    createNew.mutate({ body, idempotencyKey: attempt.current });
   };
   /** "Evet, bu?": verifies the product; then the same confirm, or straight to the first missing field (bought mode). */
   const verifyAndConfirm = () => {
@@ -359,7 +368,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       targetPrice: target === null ? null : { amount: target, currency: "TRY" },
       trackingDuration: duration,
     };
-    create.mutate({ body, idempotencyKey: attempt.current });
+    createNew.mutate({ body, idempotencyKey: attempt.current });
   };
 
   const blockedNote = alreadyTracking || already ? (
@@ -406,9 +415,12 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       {mode === "BOUGHT" ? (
         <>
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={() => (setMode("WANT"), setAlready(false), setProblem(null))} className="flex-1">
-              {t("searchAdd.confirm.wantShort")}
-            </Button>
+            {/* "Aldım, kaydet" records a purchase: no switch back to want-to-buy. */}
+            {!convertTrackedItemId && (
+              <Button variant="secondary" onClick={() => (setMode("WANT"), setAlready(false), setProblem(null))} className="flex-1">
+                {t("searchAdd.confirm.wantShort")}
+              </Button>
+            )}
             <Button onClick={() => submitBought()} disabled={(!platform && !isOther) || missing.length > 0 || limitReached || alreadyTracking !== null} loading={create.isPending} className="flex-1">
               {t("searchAdd.confirm.bought")}
             </Button>

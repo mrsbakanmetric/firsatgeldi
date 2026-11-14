@@ -25,6 +25,8 @@ export const ACTIVITY_ACTIONS = [
   "tracking.end",
   /** "Geri al" after ending tracking [ASSUMPTION — action name]. */
   "tracking.restore",
+  /** "Aldım, kaydet" on a want-to-buy item [ASSUMPTION — action name]. */
+  "tracking.bought",
 ] as const;
 export const ActivityAction = z.enum(ACTIVITY_ACTIONS);
 export type ActivityAction = z.infer<typeof ActivityAction>;

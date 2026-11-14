@@ -18,6 +18,7 @@ import {
   CreateTrackedItemRequest,
   EndTrackingRequest,
   EndTrackingResult,
+  MarkBoughtRequest,
   RestoreTrackingResult,
   SellerLookupRequest,
   SellerLookupResult,
@@ -168,6 +169,10 @@ export const ENDPOINTS = {
   endTracking: endpoint({
     method: "POST", path: "/tracked-items/:id/end", params: IdParams, query: null, body: EndTrackingRequest,
     response: EndTrackingResult, ...READ, idempotent: true, activity: "tracking.end", permission: "tracking.own.write", public: false,
+  }),
+  markBought: endpoint({
+    method: "POST", path: "/tracked-items/:id/bought", params: IdParams, query: null, body: MarkBoughtRequest,
+    response: TrackedItemCreated, ...READ, idempotent: true, activity: "tracking.bought", permission: "tracking.own.write", public: false,
   }),
   restoreTracking: endpoint({
     // [ASSUMPTION — endpoint] "Geri al" within 7 days of ending (Tracked Items v3).

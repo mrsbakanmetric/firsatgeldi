@@ -4,7 +4,7 @@
 import { ApiError, COMPACT_HISTORY_DAYS } from "@firsatgeldi/contracts";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { PRODUCTS } from "./fixtures/catalog";
-import { SELLERS } from "./fixtures/market";
+import { PLATFORMS, SELLERS } from "./fixtures/market";
 import { MOCK_SETTINGS } from "./settings";
 import { createTestApi } from "./test/harness";
 
@@ -29,12 +29,13 @@ describe("list", () => {
       PRODUCTS.acePro2FlashPrint.name.tr,
       PRODUCTS.winterCoat.name.tr,
       PRODUCTS.dysonV15.name.tr,
+      PRODUCTS.osmoPocket3.name.tr,
       PRODUCTS.x4.name.tr,
       PRODUCTS.airPodsPro2.name.tr,
       PRODUCTS.wh1000xm5.name.tr,
     ]);
-    expect(data.facets.filters).toEqual({ all: 6, bought: 4, want: 1, deal: 2, ended: 1 });
-    expect(meta?.total).toBe(6);
+    expect(data.facets.filters).toEqual({ all: 7, bought: 4, want: 2, deal: 3, ended: 1 });
+    expect(meta?.total).toBe(7);
     expect(meta?.entitlements?.checkNow).toEqual({ used: 7, limit: 10 });
   });
 
@@ -61,7 +62,7 @@ describe("list", () => {
   });
 
   it("filters, sorts, searches and narrows by category", async () => {
-    expect(names((await api.call("listTrackedItems", { query: { filter: "deal" } })).data.items)).toHaveLength(2);
+    expect(names((await api.call("listTrackedItems", { query: { filter: "deal" } })).data.items)).toHaveLength(3);
     expect(names((await api.call("listTrackedItems", { query: { filter: "ended" } })).data.items)).toEqual([PRODUCTS.wh1000xm5.name.tr]);
     const byDeadline = (await api.call("listTrackedItems", { query: { sort: "deadline" } })).data.items;
     expect(byDeadline[0]?.product.id).toBe(PRODUCTS.dysonV15.id);
@@ -104,12 +105,13 @@ describe("list", () => {
 describe("summary", () => {
   it("tracked count, open deals with the total maximum saving, returns within three days, last check", async () => {
     const { data, meta } = await api.call("getTrackedItemsSummary", {});
-    expect(data.tracking).toEqual({ count: 5, bought: 4, want: 1 });
-    expect(data.deals).toEqual({ count: 2, maxSavingTotal: { amount: 330_200, currency: "TRY" } });
+    expect(data.tracking).toEqual({ count: 6, bought: 4, want: 2 });
+    // Osmo Pocket 3 reached its 17.000 TL target at 16.499 TL: 501 TL below it.
+    expect(data.deals).toEqual({ count: 3, maxSavingTotal: { amount: 380_300, currency: "TRY" } });
     expect(data.returnsSoon.count).toBe(1);
     expect(data.returnsSoon.nearest).toBe("2026-11-16");
     expect(data.lastCheckedAt).toBe(new Date(Date.parse("2026-11-14T09:00:00.000Z") - 4 * 60_000).toISOString());
-    expect(meta?.entitlements?.tracking).toEqual({ used: 5, limit: 10 });
+    expect(meta?.entitlements?.tracking).toEqual({ used: 6, limit: 10 });
   });
 });
 
@@ -196,5 +198,43 @@ describe("end tracking from the list and “Geri al” (design v3)", () => {
     t.signInAs("secondUser");
     const foreign = await api.call("endTracking", { params: { id: coat?.id ?? "" }, body: { method: null, reboughtPrice: null } }).then(() => null, (caught: unknown) => caught);
     expect((foreign as ApiError).body.code).toBe("NOT_FOUND");
+  });
+});
+
+describe("row prices v4 and the mode switch", () => {
+  const find = async (key: keyof typeof PRODUCTS) => (await api.call("listTrackedItems", {})).data.items.find((item) => item.product.id === PRODUCTS[key].id);
+
+  it("cheaper offers by rank only (at most 3, then a count); the own listing now; no identity", async () => {
+    const coat = await find("winterCoat");
+    expect(coat?.ranked.map((row) => row.rank)).toEqual([1, 2, 3]);
+    expect(coat?.ranked[0]?.price.amount).toBe(299_900);
+    expect(coat?.rankedMore).toBe(2);
+    expect(Object.keys(coat?.ranked[0] ?? {}).sort()).toEqual(["price", "rank", "stockState"]);
+    // (Dyson was ended by an earlier test in this file; X4's own listing is sold out.)
+    const x4 = await find("x4");
+    expect(x4?.ranked).toEqual([]);
+    expect(x4?.ownNow).toEqual({ price: { amount: 2_499_900, currency: "TRY" }, stockState: "OUT_OF_STOCK" });
+    // Want to buy: the cheapest offers by rank; no own listing.
+    const osmo = await find("osmoPocket3");
+    expect(osmo?.ranked.map((row) => row.price.amount)).toEqual([1_649_900, 1_729_900]);
+    expect(osmo?.ownNow).toBeNull();
+    const text = JSON.stringify((await api.call("listTrackedItems", {})).data);
+    for (const seller of ["Moda Deposu", "Ses Dünyası", "Ev Teknik", "Görüntü Market", "Kulaklık Pazarı", "Aksiyon Market", "Lens Deposu"]) expect(text).not.toContain(seller);
+  });
+
+  it("“Aldım, kaydet” turns a want-to-buy row into a bought row (target removed, return day set); logged", async () => {
+    const osmo = await find("osmoPocket3");
+    const result = await api.call("markBought", {
+      params: { id: osmo?.id ?? "" },
+      body: { platformId: PLATFORMS.HEPSIBURADA.id, sellerRef: null, pricePaid: { amount: 1_649_900, currency: "TRY" }, pricePaidSource: "USER_TYPED", orderedOn: "2026-11-14", orderStatus: "ORDERED", returnDeadline: null },
+    });
+    expect(result.data).toMatchObject({ id: osmo?.id, mode: "BOUGHT", returnDeadlineStatus: "ESTIMATED" });
+    const after = await find("osmoPocket3");
+    expect(after).toMatchObject({ mode: "BOUGHT", want: null, purchase: { platformName: "Hepsiburada", pricePaid: { amount: 1_649_900 } } });
+    expect(after?.returnDeadline).not.toBeNull();
+    expect(controller.state.trackedItemEvents.at(-1)).toMatchObject({ type: "BOUGHT", trackedItemId: osmo?.id });
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.bought", outcome: "OK" });
+    const again = await api.call("markBought", { params: { id: osmo?.id ?? "" }, body: { platformId: PLATFORMS.HEPSIBURADA.id, sellerRef: null, pricePaid: { amount: 1, currency: "TRY" }, pricePaidSource: "USER_TYPED", orderedOn: "2026-11-14", orderStatus: "ORDERED", returnDeadline: null } }).then(() => null, (caught: unknown) => caught);
+    expect((again as ApiError).body.code).toBe("VALIDATION");
   });
 });
