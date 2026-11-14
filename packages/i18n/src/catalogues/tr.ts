@@ -100,6 +100,8 @@ export const tr = {
       title: "Fotoğraflar",
       count: "{count} / {max}",
       limits: "Ürün, etiket ya da sipariş ekranı · {types} · dosya başına en çok {size}",
+      /** Desktop input step (design v2): one line under the search box. */
+      limitsLine: "{count} / {max} fotoğraf · ürün, etiket ya da sipariş ekranı · {types} · dosya başına en çok {size}",
       megabytes: "{count} MB",
       remove: "{name} kaldır",
       uploading: "Yükleniyor",

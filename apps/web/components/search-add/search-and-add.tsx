@@ -2,8 +2,10 @@
 
 // Search and Add screen (design "1 Ara ve Ekle"; modules.md Search and Add;
 // pagedesign.md §8.2): Flow template — Bul → Hangisi seninki? → Emin ol, onayla.
-// Desktop: the confirm panel in the right column; phone: a "Onaya geç" bar opens
-// it as a sheet. Five states: loading, empty, error (input kept), stale (confirm
+// Desktop (design v2): one full-width column until a product is marked, photos
+// inline under the search box; the right column holds only the confirm panel.
+// Phone: photos in their panel under the box; a "Onaya geç" bar opens the
+// confirm panel as a sheet. Five states: loading, empty, error (input kept), stale (confirm
 // panel), success. Guests search and mark freely; sign-in comes at confirmation.
 import type { ApiError, IdentifyAnswer, IdentifyResult, ProductSummary } from "@firsatgeldi/contracts";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
@@ -18,7 +20,7 @@ import { type Created, GuestConfirm, type Prefill, SignedInConfirm } from "./con
 import { clearDraft, readDraft, RESUME_PARAM, saveDraft } from "./draft";
 import { formatDay, money, useNow } from "./format";
 import { type AttributeChange, BulkList, type BulkState, type Candidate, Candidates, Understood } from "./mark-step";
-import { PhotoArea } from "./photos";
+import { PhotoArea, PhotoWatchers } from "./photos";
 import { imageUrl, isLink, SearchBox } from "./search-box";
 import { usePhotos } from "./use-photos";
 
@@ -258,21 +260,11 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
       <GuestConfirm t={t} candidate={marked} framed={framed} signInHref={signInHref} onSignIn={keepDraft} onChangeProduct={() => (setMarked(null), setSheetOpen(false))} />
     );
 
-  const side = created ? undefined : result ? (
-    <div className="hidden md:block">
-      {confirmFor(true) ?? (
-        <div className="flex flex-col gap-2 rounded-lg border border-dashed border-border bg-surface p-4">
-          <p className="text-h3 text-text">{t("searchAdd.confirm.title")}</p>
-          <p className="text-body-sm text-text-muted">{t("searchAdd.confirm.emptyHint")}</p>
-        </div>
-      )}
-    </div>
-  ) : (
-    <PhotoArea t={t} photos={photos} />
-  );
+  // The right column exists only while a product is marked (design v2).
+  const side = created || !marked ? undefined : <div className="hidden md:block">{confirmFor(true)}</div>;
 
   return (
-    <PageTemplate kind="flow" title={t("searchAdd.title")} caption={t("searchAdd.intro")} side={side} sideLabel={result ? t("searchAdd.confirm.title") : t("searchAdd.photos.title")}>
+    <PageTemplate kind="flow" title={t("searchAdd.title")} caption={t("searchAdd.intro")} side={side} sideLabel={t("searchAdd.confirm.title")}>
       <StepIndicator label={t("searchAdd.steps.label")} steps={names} current={step} completedLabel={t("common.stepCompleted")} className="hidden md:flex" />
       <p className="text-body-sm font-semibold text-text md:hidden">{t("searchAdd.steps.phone", { current: step + 1, total: STEP_COUNT, name: names[step] })}</p>
 
@@ -298,11 +290,17 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
             onError={(failure) => setError({ error: failure, kind: "suggest" })}
           />
 
-          {/* Phone: photos sit under the box (the right column does not exist there). */}
+          <PhotoWatchers photos={photos} />
+          {/* Photos under the box: inline chips on desktop (design v2), the panel on phones (unchanged). */}
           {!result && (
-            <div className="md:hidden">
-              <PhotoArea t={t} photos={photos} />
-            </div>
+            <>
+              <div className="hidden md:block">
+                <PhotoArea t={t} photos={photos} layout="inline" />
+              </div>
+              <div className="md:hidden">
+                <PhotoArea t={t} photos={photos} layout="panel" />
+              </div>
+            </>
           )}
 
           {error && (

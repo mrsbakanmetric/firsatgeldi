@@ -98,6 +98,8 @@ export const en = {
       title: "Photos",
       count: "{count} / {max}",
       limits: "Product, label or order screen · {types} · up to {size} per file",
+      /** Desktop input step (design v2): one line under the search box. */
+      limitsLine: "{count} / {max} photos · product, label or order screen · {types} · up to {size} per file",
       megabytes: "{count} MB",
       remove: "Remove {name}",
       uploading: "Uploading",

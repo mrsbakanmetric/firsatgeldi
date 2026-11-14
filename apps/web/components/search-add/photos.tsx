@@ -1,8 +1,9 @@
 "use client";
 
-// The photo area of the input step (design "1 Ara ve Ekle", Main: "Fotoğraflar
-// 3 / 5"): MultiImageUpload + the image privacy note, limits from the upload
-// policy. Each processing file is watched through useUploadStatus.
+// The photo area of the input step (design "1 Ara ve Ekle"): MultiImageUpload +
+// the image privacy note, limits from the upload policy. Desktop (design v2):
+// inline under the search box; phone: the "Fotoğraflar 3 / 5" panel. Each
+// processing file is watched once through useUploadStatus (PhotoWatchers).
 import type { Translator } from "@firsatgeldi/i18n";
 import { ImagePrivacyNote, MultiImageUpload, type UploadFileView } from "@firsatgeldi/ui";
 import { useEffect, useEffectEvent } from "react";
@@ -49,7 +50,14 @@ function statusText(t: Translator, photos: Photos, photo: Photo): string {
   }
 }
 
-export function PhotoArea({ t, photos }: { t: Translator; photos: Photos }) {
+/** Follows every processing upload; rendered once per page, whatever the layout. */
+export function PhotoWatchers({ photos }: { photos: Photos }) {
+  return photos.photos
+    .filter((photo) => photo.state === "processing" && photo.uploadId)
+    .map((photo) => <UploadStatusWatcher key={photo.localId} photo={photo} onChange={(patch) => photos.update(photo.localId, patch)} />);
+}
+
+export function PhotoArea({ t, photos, layout }: { t: Translator; photos: Photos; layout: "panel" | "inline" }) {
   const { policy } = photos;
   if (!policy) return null;
   const counted = photos.photos.filter((photo) => photo.state !== "rejected").length;
@@ -62,27 +70,34 @@ export function PhotoArea({ t, photos }: { t: Translator; photos: Photos }) {
     progress: photo.progress,
   }));
   const retention = policy.retention;
-  return (
-    <>
-      {photos.photos
-        .filter((photo) => photo.state === "processing" && photo.uploadId)
-        .map((photo) => (
-          <UploadStatusWatcher key={photo.localId} photo={photo} onChange={(patch) => photos.update(photo.localId, patch)} />
-        ))}
+  const privacy = retention && retention.unit === "HOURS" ? t("searchAdd.photos.privacyHours", { count: retention.amount }) : null;
+  const common = {
+    title: t("searchAdd.photos.title"),
+    files,
+    removeLabel: (name: string) => t("searchAdd.photos.remove", { name }),
+    progressLabel: t("searchAdd.photos.uploading"),
+    onRemove: photos.remove,
+  };
+  if (layout === "inline") {
+    return (
       <MultiImageUpload
-        title={t("searchAdd.photos.title")}
-        countLabel={t("searchAdd.photos.count", { count: counted, max: policy.maxFiles })}
-        limits={t("searchAdd.photos.limits", { types: typeList(policy), size: megabytes(t, policy) })}
-        files={files}
-        addLabel={t("searchAdd.search.addPhoto")}
-        removeLabel={(name) => t("searchAdd.photos.remove", { name })}
-        progressLabel={t("searchAdd.photos.uploading")}
-        canAdd={counted < policy.maxFiles}
-        accept={policy.acceptedTypes.join(",")}
-        onAdd={photos.add}
-        onRemove={photos.remove}
-        note={retention && retention.unit === "HOURS" ? <ImagePrivacyNote>{t("searchAdd.photos.privacyHours", { count: retention.amount })}</ImagePrivacyNote> : null}
+        {...common}
+        layout="inline"
+        limits={t("searchAdd.photos.limitsLine", { count: counted, max: policy.maxFiles, types: typeList(policy), size: megabytes(t, policy) })}
+        note={privacy && <ImagePrivacyNote variant="line">{privacy}</ImagePrivacyNote>}
       />
-    </>
+    );
+  }
+  return (
+    <MultiImageUpload
+      {...common}
+      countLabel={t("searchAdd.photos.count", { count: counted, max: policy.maxFiles })}
+      limits={t("searchAdd.photos.limits", { types: typeList(policy), size: megabytes(t, policy) })}
+      addLabel={t("searchAdd.search.addPhoto")}
+      canAdd={counted < policy.maxFiles}
+      accept={policy.acceptedTypes.join(",")}
+      onAdd={photos.add}
+      note={privacy && <ImagePrivacyNote>{privacy}</ImagePrivacyNote>}
+    />
   );
 }

@@ -96,6 +96,34 @@ describe("MultiImageUpload", () => {
     expect(onRemove).toHaveBeenCalledWith("2");
     expect(await axeViolations(container)).toEqual([]);
   });
+
+  it("inline (design v2): file chips, one limits line and the one-line privacy note; no add control or file input of its own", async () => {
+    const onRemove = vi.fn();
+    const { container } = render(
+      <MultiImageUpload
+        layout="inline"
+        title="Fotoğraflar"
+        limits="2 / 5 fotoğraf · ürün, etiket ya da sipariş ekranı · JPEG, PNG · dosya başına en çok 10 MB"
+        files={[
+          { id: "1", name: "kutu.jpg", previewUrl: null, state: "ready", status: "Hazır" },
+          { id: "2", name: "urun-videosu.mov", previewUrl: null, state: "rejected", status: "Desteklenmeyen dosya" },
+        ]}
+        removeLabel={(name) => `${name} kaldır`}
+        progressLabel="Yükleniyor"
+        onRemove={onRemove}
+        note={<ImagePrivacyNote variant="line">Görselin 24 saat sonra silinir.</ImagePrivacyNote>}
+      />,
+    );
+    const section = screen.getByRole("region", { name: "Fotoğraflar" });
+    expect(section.querySelectorAll("li")).toHaveLength(2);
+    expect(screen.getByText(/^2 \/ 5 fotoğraf · /)).toBeDefined();
+    expect(screen.getByText("Görselin 24 saat sonra silinir.").parentElement?.className).not.toContain("bg-info-subtle");
+    expect(screen.queryByRole("button", { name: "Fotoğraf ekle" })).toBeNull();
+    expect(container.querySelector('input[type="file"]')).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: "urun-videosu.mov kaldır" }));
+    expect(onRemove).toHaveBeenCalledWith("2");
+    expect(await axeViolations(container)).toEqual([]);
+  });
 });
 
 describe("SearchField and ProductImage", () => {

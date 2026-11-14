@@ -127,6 +127,25 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     expect(opened).toHaveBeenCalledTimes(1);
   });
 
+  it("design v2: no right column before a product is marked; photos inline under the search box; the confirm panel is the only right column", async () => {
+    const { container } = show(locale);
+    await screen.findByText(t("searchAdd.states.emptyTitle"));
+    expect(screen.queryByRole("complementary")).toBeNull();
+
+    // Desktop photo section: limits line + one-line privacy note, a picked file as a chip (an unsupported type is rejected on that chip only).
+    const inline = (await screen.findAllByRole("region", { name: t("searchAdd.photos.title") }))[0] as HTMLElement;
+    expect(within(inline).getByText(new RegExp(`^${t("searchAdd.photos.limitsLine", { count: 0, max: 5, types: "", size: "" }).split(" · ")[0]}`))).toBeDefined();
+    expect(within(inline).queryByRole("button", { name: t("searchAdd.search.addPhoto") })).toBeNull();
+    const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
+    await userEvent.upload(fileInput, new File(["x"], "urun-videosu.mov", { type: "video/quicktime" }), { applyAccept: false });
+    expect(await within(inline).findByText("urun-videosu.mov")).toBeDefined();
+    expect(within(inline).getByText(t("searchAdd.photos.rejectedType"))).toBeDefined();
+    expect(screen.queryByRole("complementary")).toBeNull();
+
+    await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
+    expect(screen.getByRole("complementary", { name: t("searchAdd.confirm.title") })).toBeDefined();
+  });
+
   it("autocomplete from our catalogue: tiles, list and preview without prices or stores; choosing marks the product", async () => {
     show(locale);
     await userEvent.type(screen.getByRole("combobox"), "ace pro 2");

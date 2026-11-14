@@ -5,6 +5,9 @@
 // thumbnail and progress; a rejected file shows its reason on that file only
 // and the others continue; files can be removed one by one. Accepted types and
 // the size limit are stated near the control. The privacy note is always visible.
+// "panel": a card with its own "Fotoğraf ekle" control. "inline" (Search and Add
+// design v2, pagedesign.md §8.2): under the search box, files as compact chips,
+// then one limits line and the one-line privacy note; files are added elsewhere.
 import { ImagePlus, ShieldCheck, TriangleAlert, X } from "lucide-react";
 import { type ChangeEvent, type ReactNode, useId, useRef } from "react";
 import { cn, focusRing } from "./cn";
@@ -24,30 +27,44 @@ export interface UploadFileView {
   progress?: number;
 }
 
-export interface MultiImageUploadProps {
-  /** Section heading ("Fotoğraflar"). */
+interface CommonProps {
+  /** Section heading ("Fotoğraflar"); the accessible name of the inline section. */
   title: string;
-  /** "3 / 5". */
-  countLabel: string;
-  /** Accepted types and size limit, worded. */
+  /** Panel: accepted types and size limit. Inline: the whole limits line, count included. */
   limits: string;
   files: readonly UploadFileView[];
-  /** "Fotoğraf ekle". */
-  addLabel: string;
   /** Accessible name of a file's remove button, e.g. `${name} kaldır`. */
   removeLabel: (name: string) => string;
   /** Accessible name of the progress bar ("Yükleniyor"). */
   progressLabel: string;
-  canAdd: boolean;
-  accept: string;
-  onAdd: (files: File[]) => void;
   onRemove: (id: string) => void;
   /** The privacy note under the list. */
   note: ReactNode;
   className?: string;
 }
 
-export function MultiImageUpload({ title, countLabel, limits, files, addLabel, removeLabel, progressLabel, canAdd, accept, onAdd, onRemove, note, className }: MultiImageUploadProps) {
+interface PanelProps extends CommonProps {
+  layout?: "panel";
+  /** "3 / 5". */
+  countLabel: string;
+  /** "Fotoğraf ekle". */
+  addLabel: string;
+  canAdd: boolean;
+  accept: string;
+  onAdd: (files: File[]) => void;
+}
+
+interface InlineProps extends CommonProps {
+  layout: "inline";
+}
+
+export type MultiImageUploadProps = PanelProps | InlineProps;
+
+export function MultiImageUpload(props: MultiImageUploadProps) {
+  return props.layout === "inline" ? <InlineUpload {...props} /> : <PanelUpload {...props} />;
+}
+
+function PanelUpload({ title, countLabel, limits, files, addLabel, removeLabel, progressLabel, canAdd, accept, onAdd, onRemove, note, className }: PanelProps) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
   const picked = (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,18 +92,7 @@ export function MultiImageUpload({ title, countLabel, limits, files, addLabel, r
               </span>
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="truncate text-body-sm text-text">{file.name}</span>
-                {file.state === "uploading" && (
-                  <span
-                    role="progressbar"
-                    aria-label={progressLabel}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={file.progress ?? 0}
-                    className="h-(--size-progress-height) w-full overflow-hidden rounded-pill bg-surface-alt"
-                  >
-                    <span className="block h-full rounded-pill bg-primary" style={{ width: `${file.progress ?? 0}%` }} />
-                  </span>
-                )}
+                {file.state === "uploading" && <Progress label={progressLabel} value={file.progress ?? 0} />}
                 <span className={cn("flex items-center gap-1 text-caption", file.state === "rejected" ? "text-danger" : "text-text-muted")}>
                   {file.state === "rejected" && <Icon icon={TriangleAlert} size="sm" />}
                   <span>{file.status}</span>
@@ -123,10 +129,60 @@ export function MultiImageUpload({ title, countLabel, limits, files, addLabel, r
   );
 }
 
-/** Image privacy note (§5.20): info style with a shield icon; always visible. */
-export function ImagePrivacyNote({ children }: { children: string }) {
+function InlineUpload({ title, limits, files, removeLabel, progressLabel, onRemove, note, className }: InlineProps) {
   return (
-    <p className="flex items-start gap-2 rounded-md bg-info-subtle p-3 text-caption text-text">
+    <section aria-label={title} className={cn("flex flex-col gap-3", className)}>
+      {files.length > 0 && (
+        <ul className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
+          {files.map((file) => {
+            const rejected = file.state === "rejected";
+            return (
+              <li key={file.id} className={cn("flex min-w-0 items-center gap-2 rounded-md border py-1 pl-1", rejected ? "border-danger bg-danger-subtle" : "border-border bg-surface")}>
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "flex size-(--size-thumb-sm) shrink-0 items-center justify-center overflow-hidden rounded-sm",
+                    rejected ? "border-(length:--border-width-strong) border-dashed border-danger" : "bg-surface-alt",
+                  )}
+                >
+                  {file.previewUrl && !rejected ? <img src={file.previewUrl} alt={file.name} className="size-full object-cover" /> : <Icon icon={rejected ? TriangleAlert : ImagePlus} size="sm" className={rejected ? "text-danger" : "text-text-muted"} />}
+                </span>
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="truncate text-caption font-semibold text-text">{file.name}</span>
+                  {file.state === "uploading" && <Progress label={progressLabel} value={file.progress ?? 0} />}
+                  <span className={cn("text-caption", file.state !== "uploading" && "font-semibold", file.state === "ready" ? "text-savings" : rejected ? "text-danger" : "text-text-muted")}>{file.status}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onRemove(file.id)}
+                  aria-label={removeLabel(file.name)}
+                  className={cn("flex size-(--size-touch-target-min) shrink-0 items-center justify-center rounded-pill text-text-muted hover:bg-surface-alt", focusRing)}
+                >
+                  <Icon icon={X} size="sm" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      <p className="text-caption text-text-muted">{limits}</p>
+      {note}
+    </section>
+  );
+}
+
+function Progress({ label, value }: { label: string; value: number }) {
+  return (
+    <span role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={value} className="h-(--size-progress-height) w-full overflow-hidden rounded-pill bg-surface-alt">
+      <span className="block h-full rounded-pill bg-primary" style={{ width: `${value}%` }} />
+    </span>
+  );
+}
+
+/** Image privacy note (§5.20): always visible. "box": info box; "line": one line with the shield icon (inline upload). */
+export function ImagePrivacyNote({ children, variant = "box" }: { children: string; variant?: "box" | "line" }) {
+  return (
+    <p className={cn("flex items-start gap-2 text-caption text-text", variant === "box" && "rounded-md bg-info-subtle p-3")}>
       <Icon icon={ShieldCheck} size="sm" className="text-info" />
       <span>{children}</span>
     </p>
