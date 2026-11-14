@@ -69,7 +69,7 @@ Every page = **shell + one template + shared components + the five states**. A p
   - Right end: **notification bell** (counter: coral only when an unread deal exists, otherwise neutral ink) and the **profile avatar menu**.
   - Profile menu entries: **Profilim** · **Paketim** · **Ayarlar** (Bildirimler, Güvenlik, Arama geçmişi, Dil, Tema, Gizlilik, Hesap) · **Çıkış**. When a page inside the menu is open, the avatar button carries `aria-current="page"` and a 2 px `primary` border.
   - Guest (Landing Page, product pages, legal, help): navigation becomes **Nasıl çalışır · Örnek fırsatlar · Haklarını bil · Yardım**; right end **Giriş yap** (text) + **Ücretsiz başla** (primary). Inside the app a guest sees the normal navigation with "Giriş yap" in place of bell and avatar.
-- **Footer** (`surface`, top `border`): KVKK aydınlatma metni · Kullanım koşulları · Çerez politikası · Komisyon açıklaması · Yardım ve SSS · language switch (Türkçe · English).
+- **Footer** (`surface`, top `border`) — **one thin row** [DECIDED 2026-11-14]: KVKK aydınlatma metni · Kullanım koşulları · Çerez politikası · Komisyon açıklaması · Yardım ve SSS on the left, language switch (Türkçe · English) small at the right end; `space.4` vertical padding; caption text. No separate commission sentence (the "Komisyon açıklaması" link and the note next to every "Mağazaya git" button cover it). On phones the links wrap.
 - Below `breakpoint.md`: bottom tab bar (`size.bottom-nav-height`) with the four sections + Profil; side panels become bottom sheets.
 
 ### 2.2 `AuthShell` (Sign-in, Sign-up, password reset, email verification)
@@ -229,6 +229,16 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 ### 8.2 Search and Add — `/[locale]/ara`
 - **Shell/template:** AppShell · Flow.
 - **Regions:** search box (text · link · photo) → autocomplete (3 image tiles + scrollable list + preview) → "Nasıl anladık" chips → "Hangisi seninki?" candidates (image 72, product/variant only, no price/store) → right **confirm panel** (platform, typed seller with exact match, price paid typed, order date/status, return day, fact tiles, teaser after price) → "Evet, bunu aldım" / "Almadım, sadece takip et".
+- **Compact UI (design v3) [DECIDED 2026-11-14]:**
+  - Step indicator max width 640 px (as drawn), not full width.
+  - Search box `components.search-box` (min-height 48): icon-only photo button (Tooltip "Fotoğraf ekle"), × clear only when there is text, compact "Ara" button (`components.search-box.action`); the label is always "Ara".
+  - Recent searches: `components.chip` (small grey pills).
+  - Empty state: no repeated hint sentence under the box (the three "Ne aldın…" cards say it); no "Kendi kataloğumuzdan…" note.
+  - Photo limits line and privacy note appear only after the first photo is added (the note is shown before any upload completes).
+  - Autocomplete: image tiles only when there are 4 or more matches (otherwise the list alone, no duplicate); the preview is compact — image 120 px, name, category, 3–4 key attributes, "Bu ürünü seç" — never a full-height image.
+  - "Nasıl anladık": no card and no heading block; one row under the search box — small muted label "Nasıl anladık:" + `components.chip` per attribute. A chip opens a `menu` overlay (never pushes the layout) with the template values; one click applies immediately (no "Uygula"/"Kapat"); "Listede yoksa yaz" is one input at the bottom of the menu, Enter applies. No warning before a change; after a match-critical change a short toast "<Attribute> değişti · Geri al".
+  - All overlays follow `components.popover-dismiss`.
+  - Confirm panel: product row has "Değiştir" and a compact primary "Evet, bu" (same action as "Evet, bunu aldım"; if a required field is empty it scrolls to and highlights the first one). Actions ("Sadece takip et" · "Evet, bunu aldım") sit in a footer bar fixed to the bottom of the panel; when disabled, one line above them names what is missing (e.g. "Ödediğin fiyatı yaz"). Seller field: the lookup is a compact button inside the field's right end (aligned with the input, not with its help text). Platform list ends with "Diğer" (then a "Platform adı" input). Return window: the date itself is the control (tap → date picker, applies at once; badge "tahmini" → "senin girdiğin"); explanation only behind the "?" icon; no "Son günü değiştir" link.
 - **Layout (design v2):** before a product is marked the page is one full-width column; `MultiImageUpload` renders inline under the search box as file chips + limits line + `ImagePrivacyNote` (no separate photos panel). The right column is used only by the confirm panel after marking.
 - **States:** loading · empty (three ways to add) · error (keeps input) · stale · success ("Takibe eklendi" with image).
 - **API:** `/search/autocomplete`, `/identify`, `/products/:id/confirm-context`, `/products/:id/seller-lookup`, `/products/:id/teaser`, `POST /tracked-items`.
