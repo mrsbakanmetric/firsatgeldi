@@ -9,6 +9,8 @@ export const PERMISSION_KEYS = [
   "search.use",
   "identify.use",
   "upload.own.create",
+  // Reading the status of one's own uploads, separate from uploading [DECIDED 2026-11-14].
+  "upload.own.view",
   "auth.use",
   "support.own.create",
   "consent.own.write",

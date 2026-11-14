@@ -77,7 +77,7 @@ export const ENDPOINTS = {
   }),
   stream: endpoint({
     method: "GET", path: "/me/stream", ...NONE, response: null, ...READ, kind: "stream",
-    // [ASSUMPTION] the docs name no key for the live-update stream.
+    // Signed-in users only; guests poll instead [DECIDED 2026-11-14] (architecture.md §13, §16.1).
     permission: "account.own.view", public: false,
   }),
 
@@ -95,9 +95,9 @@ export const ENDPOINTS = {
     response: CompleteUploadResult, ...READ, idempotent: true, activity: "upload", permission: "upload.own.create", public: true,
   }),
   getUpload: endpoint({
-    // Not marked "(guest)" in implementation_plan.md Appendix B.1; the key is [ASSUMPTION].
+    // Own uploads only (guest: own session; user: own account); every read is logged [DECIDED 2026-11-14] (architecture.md §11a, §16.1).
     method: "GET", path: "/uploads/:id", params: IdParams, query: null, body: null,
-    response: UploadView, ...READ, permission: "upload.own.create", public: false,
+    response: UploadView, ...READ, activity: "upload.status", permission: "upload.own.view", public: true,
   }),
   image: endpoint({
     method: "GET", path: "/img/:sha256/:variant", params: z.object({ sha256: ImageSha256, variant: ImageVariant }), query: null, body: null,

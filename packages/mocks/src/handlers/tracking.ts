@@ -26,6 +26,21 @@ function normalise(name: string): string {
   return fold(name.trim()).replace(/\s+/g, " ");
 }
 
+/**
+ * Seller lookup limit per signed-in user [DECIDED 2026-11-14]: at most
+ * `seller_lookup.rate_limit_per_minute` lookups in any 60 seconds; above it RATE_LIMITED.
+ * Refused calls do not count, so the user can try again once the window moves on.
+ */
+function takeSellerLookup(controller: MockController, userId: string): void {
+  const now = controller.now().getTime();
+  const recent = (controller.state.sellerLookups.get(userId) ?? []).filter((at) => now - at < MS_PER_MINUTE);
+  if (recent.length >= SYSTEM_SETTINGS["seller_lookup.rate_limit_per_minute"]) {
+    controller.state.sellerLookups.set(userId, recent);
+    throw new MockApiError("RATE_LIMITED");
+  }
+  controller.state.sellerLookups.set(userId, [...recent, now]);
+}
+
 /** Offers cheaper than the price paid, the user's own offer excluded, cheapest first. */
 function cheaperOffers(productKey: ProductKey, pricePaidMinor: number, ownOfferId: string | null): OfferFixture[] {
   return offersFor(productKey)
@@ -96,6 +111,8 @@ export function trackingHandlers(controller: MockController) {
     route(controller, "sellerLookup", ({ params, body, actor, checkedAt, note }) => {
       const { userId } = requireUser(actor);
       const key = productOrThrow(params.id);
+      note({ targetType: "product", targetId: PRODUCTS[key].id, metadata: { platformId: body.platformId } });
+      takeSellerLookup(controller, userId);
       const platform = PLATFORM_LIST.find((item) => item.id === body.platformId);
       if (!platform) throw new MockApiError("NOT_FOUND");
       // Exact match only, on this product and platform (architecture.md §6.4 R1: no seller list).

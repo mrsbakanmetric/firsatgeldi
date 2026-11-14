@@ -19,4 +19,5 @@ export {
   type MockScenario,
   type MockSession,
   type MockState,
+  startGuestSession,
 } from "./state";

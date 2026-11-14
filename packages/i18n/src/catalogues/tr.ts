@@ -28,6 +28,11 @@ export const tr = {
     internal: "Bir şeyler ters gitti. Tekrar dene; yazdıkların duruyor.",
     network: "Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.",
   },
+  // Photo status a guest waits for, when polling runs out (design "1 Ara ve Ekle", error state; architecture.md §11a).
+  uploadStatus: {
+    timeoutTitle: "Arama tamamlanamadı",
+    timeoutBody: "Bağlantını kontrol et. Yazdıkların ve fotoğrafların duruyor.",
+  },
   // App shell, auth shell and admin shell (pagedesign.md §2, canvas "0 İskelet ve Bileşenler").
   shell: {
     skipToContent: "İçeriğe geç",

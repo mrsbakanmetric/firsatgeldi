@@ -6,14 +6,15 @@ import { Id, Timestamp } from "./common";
 
 /**
  * Activity actions (database.md §14a `activity_events.action`). Listed there:
- * search, identify, upload, tracking.confirm, reveal, offer.go …
- * `seller_lookup`, `teaser` and `reveal.hide` are [ASSUMPTION] names for
- * Search and Add actions the docs do not name yet.
+ * search, identify, upload, upload.status [DECIDED 2026-11-14], tracking.confirm,
+ * reveal, offer.go … `seller_lookup`, `teaser` and `reveal.hide` are
+ * [ASSUMPTION] names for Search and Add actions the docs do not name yet.
  */
 export const ACTIVITY_ACTIONS = [
   "search",
   "identify",
   "upload",
+  "upload.status",
   "seller_lookup",
   "teaser",
   "tracking.confirm",
