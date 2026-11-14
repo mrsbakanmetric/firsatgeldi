@@ -2,13 +2,13 @@
 
 // "Nasıl anladık" and "Hangisi seninki?" (design "1 Ara ve Ekle": Main,
 // AttrEdit, Cases C/D; product_design_pattern.md §5.1, §5.27). "Nasıl anladık"
-// (design v3) is one row under the search box — a muted label and a chip per
-// attribute; a change applies at once and a short "… değişti · Geri al" notice
-// follows it. Candidates are products and variants only — no store, no price.
-// Marking only selects and can be undone; a changed match-critical attribute clears the mark.
+// (design v4) is one row of chips under the search box, no label; each chip says
+// "Yanlışsa düzelt"; a change applies at once and a short "… değişti · Geri al"
+// notice follows it. Candidates are products and variants only — no store, no
+// price. Selection is a radio (design v4); the first result is pre-selected.
 import type { IdentifyAnswer, IdentifyResult } from "@firsatgeldi/contracts";
 import type { Translator, TranslationKey } from "@firsatgeldi/i18n";
-import { AttributeChip, Button, cn, Flag, focusRing, Icon, ProductImage, SegmentedChoice, SkeletonBlock } from "@firsatgeldi/ui";
+import { AttributeChip, Button, cn, focusRing, Icon, ProductImage, SegmentedChoice, SkeletonBlock } from "@firsatgeldi/ui";
 import { Check, ChevronDown, Package, RotateCcw } from "lucide-react";
 import { useId, useState } from "react";
 import { useApiQuery } from "../../lib/api/hooks";
@@ -38,7 +38,6 @@ export function Understood({ t, result, change, onAnswer, onUndo }: { t: Transla
     <section aria-label={t("searchAdd.understood.title")} className="flex flex-col gap-2">
       {result.understood.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-caption text-text-muted">{t("searchAdd.understood.label")}</span>
           {result.understood.map((attribute) => (
             <AttributeChip
               key={attribute.key}
@@ -52,6 +51,7 @@ export function Understood({ t, result, change, onAnswer, onUndo }: { t: Transla
               texts={{
                 ...(HEADING_KEYS[attribute.key] ? { listHeading: t(HEADING_KEYS[attribute.key] as TranslationKey) } : {}),
                 typeLabel: t("searchAdd.understood.typeLabel"),
+                hint: t("searchAdd.understood.hint"),
               }}
             />
           ))}
@@ -84,26 +84,36 @@ export function Understood({ t, result, change, onAnswer, onUndo }: { t: Transla
   );
 }
 
-function CandidateCard({ t, candidate, marked, onToggle, difference }: { t: Translator; candidate: Candidate; marked: boolean; onToggle: () => void; difference?: string | null }) {
+/** One result as a radio (design v4): filled circle + check when selected; no "İşaretlendi" badge. */
+function CandidateCard({ candidate, name, selected, onSelect, difference, stores }: { candidate: Candidate; name: string; selected: boolean; onSelect: () => void; difference?: string | null; stores: string }) {
   const product = candidate.product;
   return (
-    <li className={cn("flex items-center gap-4 rounded-lg bg-surface p-4", marked ? "border-(length:--border-width-strong) border-primary" : "border border-border")}>
-      <ProductImage src={imageUrl(product.imageSha256)} size="md" fallbackIcon={Package} />
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        {marked && (
-          <Flag tone="success" icon={Check} className="self-start">
-            {t("searchAdd.candidates.marked")}
-          </Flag>
+    <div>
+      <label
+        className={cn(
+          "flex cursor-pointer items-center gap-4 rounded-lg bg-surface p-4 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary",
+          selected ? "border-(length:--border-width-strong) border-primary" : "border border-border hover:border-text-muted",
         )}
-        <span className="text-body font-semibold break-words text-text">{product.name}</span>
-        {candidate.variantLine && <span className="text-body-sm text-text-muted">{candidate.variantLine}</span>}
-        {difference && <span className="text-caption text-on-warning-subtle">{difference}</span>}
-        <span className="text-caption text-text-muted">{t("searchAdd.suggest.stores", { count: product.storeCount })}</span>
-      </div>
-      <Button variant={marked ? "ghost" : "secondary"} onClick={onToggle} aria-pressed={marked}>
-        {marked ? t("searchAdd.candidates.unmark") : t("searchAdd.candidates.mark")}
-      </Button>
-    </li>
+      >
+        <input type="radio" name={name} checked={selected} onChange={onSelect} className="peer sr-only" />
+        <span
+          aria-hidden="true"
+          className={cn(
+            "flex size-(--size-icon-md) shrink-0 items-center justify-center rounded-pill border-(length:--border-width-strong)",
+            selected ? "border-primary bg-primary text-on-primary" : "border-border bg-surface",
+          )}
+        >
+          {selected && <Icon icon={Check} size="sm" />}
+        </span>
+        <ProductImage src={imageUrl(product.imageSha256)} size="md" fallbackIcon={Package} />
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="text-body font-semibold break-words text-text">{product.name}</span>
+          {candidate.variantLine && <span className="text-body-sm text-text-muted">{candidate.variantLine}</span>}
+          {difference && <span className="text-caption text-on-warning-subtle">{difference}</span>}
+          <span className="text-caption text-text-muted">{stores}</span>
+        </span>
+      </label>
+    </div>
   );
 }
 
@@ -111,15 +121,17 @@ export function Candidates({
   t,
   result,
   markedId,
-  onToggle,
+  onSelect,
   onFixSearch,
 }: {
   t: Translator;
   result: IdentifyResult;
   markedId: string | null;
-  onToggle: (candidate: Candidate) => void;
+  onSelect: (candidate: Candidate) => void;
   onFixSearch: () => void;
 }) {
+  const name = useId();
+  const stores = (candidate: Candidate) => t("searchAdd.suggest.stores", { count: candidate.product.storeCount });
   const exact = result.candidates.filter((candidate) => candidate.match === "EXACT");
   const close = result.candidates.filter((candidate) => candidate.match === "CLOSE");
   const lead = (exact[0] ?? close[0])?.product.id ?? null;
@@ -131,11 +143,11 @@ export function Candidates({
       {exact.length > 0 ? (
         <>
           <p className="text-body-sm text-text-muted">{t("searchAdd.candidates.summary", { count: exact.length })}</p>
-          <ul className="flex flex-col gap-3">
+          <div role="radiogroup" aria-labelledby="candidates-title" className="flex flex-col gap-3">
             {exact.map((candidate) => (
-              <CandidateCard key={candidate.product.id} t={t} candidate={candidate} marked={candidate.product.id === markedId} onToggle={() => onToggle(candidate)} />
+              <CandidateCard key={candidate.product.id} name={name} candidate={candidate} selected={candidate.product.id === markedId} onSelect={() => onSelect(candidate)} stores={stores(candidate)} />
             ))}
-          </ul>
+          </div>
         </>
       ) : (
         <>
@@ -143,18 +155,19 @@ export function Candidates({
             <p className="text-body font-semibold text-on-warning-subtle">{t("searchAdd.candidates.noExactTitle")}</p>
             <p className="text-body-sm text-text">{t("searchAdd.candidates.noExactText", { count: close.length })}</p>
           </div>
-          <ul className="flex flex-col gap-3">
+          <div role="radiogroup" aria-labelledby="candidates-title" className="flex flex-col gap-3">
             {close.map((candidate) => (
               <CandidateCard
                 key={candidate.product.id}
-                t={t}
+                name={name}
                 candidate={candidate}
-                marked={candidate.product.id === markedId}
-                onToggle={() => onToggle(candidate)}
+                selected={candidate.product.id === markedId}
+                onSelect={() => onSelect(candidate)}
+                stores={stores(candidate)}
                 difference={candidate.difference ? t(`searchAdd.candidates.difference.${candidate.difference}`) : null}
               />
             ))}
-          </ul>
+          </div>
           <Button variant="ghost" onClick={onFixSearch} className="self-start">
             {t("searchAdd.candidates.fixSearch")}
           </Button>

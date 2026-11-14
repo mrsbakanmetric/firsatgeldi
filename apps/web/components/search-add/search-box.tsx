@@ -6,7 +6,9 @@
 // compact "Ara". While typing, an overlay opens under the box (it never pushes
 // the page) with every match in a scrollable list and a compact preview of the
 // active one; the first matches also appear as image tiles, only from 4 matches
-// on. ↑/↓ move, Enter chooses; Esc and a click outside close it. Our own
+// on. ↑/↓ move, Enter chooses; Esc, a click outside, the camera and "Ara"
+// close it (design v4). The first suggestion that starts with the typed text
+// completes it inline in muted colour; Tab or → accepts (design v4). Our own
 // catalogue only — no prices, no stores. A pasted store link is detected;
 // nothing found → "mağazalarda ara".
 import { type ApiError, type IdentifyResult, imagePath, type ProductSummary } from "@firsatgeldi/contracts";
@@ -29,6 +31,11 @@ const URL_PATTERN = /^https?:\/\/\S+\.\S+/i;
 
 export function imageUrl(sha256: string | null): string | null {
   return sha256 ? `${API_BASE_URL}${imagePath(sha256, "THUMB_160")}` : null;
+}
+
+/** Turkish case folding with ı = i (so "insta" matches "Insta360"); same length as the input. */
+function fold(text: string): string {
+  return text.toLocaleLowerCase("tr").replace(/ı/g, "i");
 }
 
 export function isLink(text: string): boolean {
@@ -110,12 +117,25 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
   useOutsidePress(inside, open, () => setOpen(false));
   useEscape(open && hasContent, () => setOpen(false));
 
+  // Inline completion (design v4): the rest of the first suggestion whose name starts
+  // with the typed text; recomputed on every keystroke, gone when nothing matches.
+  const typedFolded = fold(query);
+  const completing = open && !link && query.length > 0 ? items.find((product) => fold(product.name).startsWith(typedFolded) && product.name.length > query.length) : undefined;
+  const completion = completing ? completing.name.slice(query.length) : "";
+
   const choose = (product: ProductSummary) => {
     setOpen(false);
     onChoose(product);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    const atEnd = event.currentTarget.selectionStart === query.length && event.currentTarget.selectionEnd === query.length;
+    if (completion && atEnd && (event.key === "Tab" || event.key === "ArrowRight") && !event.shiftKey) {
+      event.preventDefault();
+      // Accepting takes the product's own spelling ("dys" → "Dyson V15 Detect Absolute").
+      onQueryChange(completing?.name ?? query + completion);
+      return;
+    }
     if (event.key === "ArrowDown" && items.length) {
       event.preventDefault();
       setOpen(true);
@@ -156,7 +176,8 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
         role="combobox"
         aria-expanded={open && items.length > 0}
         aria-controls={listId}
-        aria-autocomplete="list"
+        aria-autocomplete={completion ? "both" : "list"}
+        completion={completion}
         {...(open && current && items.length ? { "aria-activedescendant": optionId(items.indexOf(current)) } : {})}
         clearLabel={t("searchAdd.search.clear")}
         onClear={() => {
@@ -165,7 +186,7 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
         }}
         trailing={
           <>
-            <Button variant="ghost" size="compact" iconOnly icon={Camera} label={t("searchAdd.search.addPhoto")} onClick={onAddPhoto} />
+            <Button variant="ghost" size="compact" iconOnly icon={Camera} label={t("searchAdd.search.addPhoto")} onClick={() => (setOpen(false), onAddPhoto())} />
             <Button size="compact" onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting}>
               {t("searchAdd.search.submit")}
             </Button>

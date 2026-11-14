@@ -119,7 +119,8 @@ export const tr = {
         generation: "Nesil",
         color: "Bu modelde bulunan renkler",
       },
-      typeLabel: "Listede yoksa yaz",
+      typeLabel: "Ara ya da listede yoksa yaz",
+      hint: "Yanlışsa düzelt",
       undo: "Geri al",
       /** Design v3: the small muted label in front of the attribute chips. */
       label: "Nasıl anladık:",
@@ -168,13 +169,15 @@ export const tr = {
       seller: "Satıcı",
       sellerHelp: "Adını tam yaz ya da ilan linkini yapıştır.",
       /** Design v3: compact primary next to "Değiştir"; same action as "Evet, bunu aldım". */
-      quickConfirm: "Evet, bu",
+      quickConfirm: "Evet, bu?",
+      verified: "Evet, bu",
       /** Last entry of the platform list (modules.md Search and Add step 4). */
       otherPlatform: "Diğer",
       otherPlatformName: "Platform adı",
       otherSellerHelp: "Adı ilandaki gibi yaz; bu platformda satıcıyı kontrol edemiyoruz.",
       /** One line above the disabled actions: what is missing. */
       missing: {
+        verify: "Önce ürünü doğrula: “Evet, bu?”",
         platformName: "Platform adını yaz",
         price: "Ödediğin fiyatı yaz",
       },

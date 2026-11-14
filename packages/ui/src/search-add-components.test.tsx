@@ -27,7 +27,23 @@ describe("AttributeChip (design v3)", () => {
     expect(screen.queryByRole("listbox")).toBeNull();
   });
 
-  it("“Listede yoksa yaz” at the bottom of the menu applies on Enter", async () => {
+  it("design v4: the input is at the top and filters the values (Turkish folding); the chip carries its hint", async () => {
+    const onPick = vi.fn();
+    render(<AttributeChip label="Renk" value="Siyah" options={["Siyah", "Gümüş", "Işıltılı mavi"]} onPick={onPick} texts={{ ...chipTexts, hint: "Yanlışsa düzelt" }} />);
+    const chip = screen.getByRole("button", { name: /Renk/ });
+    expect(document.getElementById(chip.getAttribute("aria-describedby") ?? "")?.textContent).toBe("Yanlışsa düzelt");
+    await userEvent.click(chip);
+    const input = screen.getByLabelText(chipTexts.typeLabel);
+    expect(input.compareDocumentPosition(screen.getByRole("listbox")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    await userEvent.type(input, "ışıl");
+    expect(screen.getAllByRole("option").map((option) => option.textContent)).toEqual(["Işıltılı mavi"]);
+    await userEvent.clear(input);
+    // Typing a listed value in another case applies the listed spelling.
+    await userEvent.type(input, "gümüş{Enter}");
+    expect(onPick).toHaveBeenCalledWith("Gümüş");
+  });
+
+  it("“Listede yoksa yaz” applies on Enter", async () => {
     const onPick = vi.fn();
     render(<AttributeChip label="Renk" value="Siyah" options={["Siyah"]} onPick={onPick} texts={chipTexts} />);
     await userEvent.click(screen.getByRole("button", { name: /Renk/ }));

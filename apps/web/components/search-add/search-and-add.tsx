@@ -4,7 +4,8 @@
 // pagedesign.md §8.2): Flow template — Bul → Hangisi seninki? → Emin ol, onayla.
 // Desktop (design v2): one full-width column until a product is marked, photos
 // inline under the search box; the right column holds only the confirm panel.
-// Compact UI (design v3): step bar at most 640 px; the photo limits and privacy
+// Compact UI (design v3–v4): step bar as wide as the search box; the first result
+// is pre-selected and verified in the panel with "Evet, bu?"; the photo limits and privacy
 // note appear with the first photo; no repeated hint in the empty state.
 // Phone: photos in their panel under the box; a "Onaya geç" bar opens the
 // confirm panel as a sheet. Five states: loading, empty, error (input kept), stale (confirm
@@ -68,6 +69,11 @@ function isPhoneWidth(): boolean {
   return width !== "" && globalThis.matchMedia?.(`(min-width: ${width})`).matches === false;
 }
 
+/** The first result: an exact match, otherwise the closest one. */
+function firstResult(data: IdentifyResult): Candidate | null {
+  return data.candidates.find((candidate) => candidate.match === "EXACT") ?? data.candidates[0] ?? null;
+}
+
 /** A result that holds only one candidate (restored after sign-in, or one bulk item). */
 function singleResult(base: IdentifyResult | null, requestId: string, candidates: readonly Candidate[]): IdentifyResult {
   return { requestId, understood: [], questions: [], candidates: [...candidates], items: [], similarCount: 0, link: base?.link ?? null };
@@ -119,7 +125,9 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
     setCreated(null);
     setBulk(data.items.length ? { states: data.items.map((_, index) => (index === 0 ? "current" : "next")), current: 0 } : null);
     const candidates = data.items.length ? (data.items[0]?.candidates ?? []) : data.candidates;
-    setMarked(markProductId ? (candidates.find((candidate) => candidate.product.id === markProductId) ?? null) : null);
+    // Design v4: the first result is pre-selected (our guess) and the confirm panel opens;
+    // it still has to be verified with "Evet, bu?" before anything is saved.
+    setMarked(markProductId ? (candidates.find((candidate) => candidate.product.id === markProductId) ?? null) : data.items.length ? null : firstResult(data));
   }, []);
 
   const runIdentify = useCallback(
@@ -193,9 +201,9 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
       ? { source: "SCREENSHOT", platformId: null, platformName: extracted.platformName, sellerName: extracted.sellerName, pricePaid: extracted.pricePaid, orderedOn: extracted.orderedOn }
       : null);
 
-  const toggleMark = (candidate: Candidate) => {
-    const next = marked?.product.id === candidate.product.id ? null : candidate;
-    setMarked(next);
+  /** Radio selection (design v4): another result moves the selection; its verification starts over. */
+  const select = (candidate: Candidate) => {
+    setMarked(candidate);
     setSheetOpen(false);
   };
 
@@ -208,7 +216,8 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
         onSuccess: ({ data }) => {
           setResult(data);
           setChange(attributeChange);
-          if (attributeChange?.critical || "questionId" in body) setMarked(null);
+          // A changed match-critical attribute or an answered question: the new first result is pre-selected (unverified).
+          if (attributeChange?.critical || "questionId" in body) setMarked(firstResult(data));
         },
         onError: (failure) => {
           lastAnswer.current = { body, change: attributeChange };
@@ -219,7 +228,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
   };
   const undo = () => {
     if (!change || !result) return;
-    answer.mutate({ params: { requestId: result.requestId }, body: { attributeKey: change.key, value: change.previous } }, { onSuccess: ({ data }) => (setResult(data), setChange(null)) });
+    answer.mutate({ params: { requestId: result.requestId }, body: { attributeKey: change.key, value: change.previous } }, { onSuccess: ({ data }) => (setResult(data), setChange(null), change.critical && setMarked(firstResult(data))) });
   };
 
   const onCreated = (done: Created) => {
@@ -325,7 +334,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
 
   return (
     <PageTemplate kind="flow" title={t("searchAdd.title")} caption={t("searchAdd.intro")} side={side} sideLabel={t("searchAdd.confirm.title")}>
-      <StepIndicator label={t("searchAdd.steps.label")} steps={names} current={step} completedLabel={t("common.stepCompleted")} className="hidden max-w-(--size-step-indicator-max-width) md:flex" />
+      <StepIndicator label={t("searchAdd.steps.label")} steps={names} current={step} completedLabel={t("common.stepCompleted")} className="hidden md:flex" />
       <p className="text-body-sm font-semibold text-text md:hidden">{t("searchAdd.steps.phone", { current: step + 1, total: STEP_COUNT, name: names[step] })}</p>
 
       {created ? (
@@ -403,7 +412,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
             <>
               {bulk && result && <BulkList t={t} items={result.items} states={bulk.states} current={bulk.current} onSkip={skipBulk} onOpen={openBulk} />}
               <Understood t={t} result={shown} change={change} onAnswer={onAnswer} onUndo={undo} />
-              <Candidates t={t} result={shown} markedId={marked?.product.id ?? null} onToggle={toggleMark} onFixSearch={() => setResult(null)} />
+              <Candidates t={t} result={shown} markedId={marked?.product.id ?? null} onSelect={select} onFixSearch={() => setResult(null)} />
             </>
           ) : (
             !typedOrPhotos && !error && <Ways t={t} onType={focusSearch} onPhoto={pickPhoto} />

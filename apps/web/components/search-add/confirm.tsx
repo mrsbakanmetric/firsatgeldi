@@ -41,9 +41,9 @@ import {
   StatusBanner,
   TextField,
 } from "@firsatgeldi/ui";
-import { CircleHelp, ExternalLink, Info, LogIn, Package, TriangleAlert } from "lucide-react";
+import { Check, CircleHelp, ExternalLink, Info, LogIn, Package, TriangleAlert } from "lucide-react";
 import Link from "next/link";
-import { type FormEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { type FormEvent, type ReactNode, type Ref, useEffect, useId, useRef, useState } from "react";
 import { useApiMutation, useApiQuery } from "../../lib/api/hooks";
 import { errorMessage } from "../../lib/api/errors";
 import { checkedAgo, formatDay, money, parsePrice, priceInput } from "./format";
@@ -77,8 +77,32 @@ type Mode = "BOUGHT" | "WANT";
 type Duration = "1W" | "1M" | "3M" | "UNLIMITED";
 type OrderStatus = "ORDERED" | "SHIPPED" | "DELIVERED";
 
-/** The marked product with "Değiştir" and, when given, the quick "Evet, bu" (design v3). */
-function ProductTop({ t, candidate, onChange, onQuick, quickBusy = false }: { t: Translator; candidate: Candidate; onChange: () => void; onQuick?: () => void; quickBusy?: boolean }) {
+/** Compact control in the button.compact size (36 px with a mouse from breakpoint.md, otherwise the 44 px hit area). */
+const VERIFY_SIZE =
+  "inline-flex min-h-(--component-button-compact-height-touch) items-center justify-center gap-1 rounded-(--component-button-compact-radius) px-3 py-1 text-body-sm font-semibold md:pointer-fine:min-h-(--component-button-compact-height)";
+
+/**
+ * The selected product with "Değiştir" and the verification "Evet, bu?" (design v4):
+ * the first result is our guess, so it shows in the warning tone with "?"; once pressed
+ * it turns to the primary tone with a check. Never coral (that is the deal colour only).
+ */
+function ProductTop({
+  t,
+  candidate,
+  onChange,
+  verified,
+  onVerify,
+  verifyRef,
+  busy = false,
+}: {
+  t: Translator;
+  candidate: Candidate;
+  onChange: () => void;
+  verified?: boolean;
+  onVerify?: () => void;
+  verifyRef?: Ref<HTMLButtonElement>;
+  busy?: boolean;
+}) {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <ProductImage src={imageUrl(candidate.product.imageSha256)} size="sm" fallbackIcon={Package} />
@@ -90,10 +114,18 @@ function ProductTop({ t, candidate, onChange, onQuick, quickBusy = false }: { t:
         <Button variant="ghost" size="compact" onClick={onChange}>
           {t("searchAdd.confirm.change")}
         </Button>
-        {onQuick && (
-          <Button size="compact" onClick={onQuick} loading={quickBusy}>
-            {t("searchAdd.confirm.quickConfirm")}
-          </Button>
+        {onVerify && (
+          <button
+            ref={verifyRef}
+            type="button"
+            aria-pressed={verified}
+            disabled={busy}
+            onClick={onVerify}
+            className={cn(VERIFY_SIZE, verified ? "bg-primary text-on-primary" : "bg-warning-subtle text-on-warning-subtle", focusRing)}
+          >
+            {verified && <Icon icon={Check} size="sm" />}
+            {verified ? t("searchAdd.confirm.verified") : t("searchAdd.confirm.quickConfirm")}
+          </button>
         )}
       </div>
     </div>
@@ -194,6 +226,9 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const [otherName, setOtherName] = useState("");
   /** After "Evet, bu" with a gap: the missing fields say so. */
   const [showMissing, setShowMissing] = useState(false);
+  /** Design v4: the pre-selected product is only our guess until "Evet, bu?" (a new product remounts this panel, so it starts unverified). */
+  const [verified, setVerified] = useState(false);
+  const verifyRef = useRef<HTMLButtonElement>(null);
   const otherNameRef = useRef<HTMLInputElement>(null);
   const priceRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<Mode>(initialMode ?? "BOUGHT");
@@ -273,7 +308,8 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const deadline = platform ? returnDeadline(orderedOn, platform.returnRule) : null;
   const lastDay = customLastDay ?? deadline?.day ?? null;
   // What "Evet, bunu aldım" still needs, in the order of the fields.
-  const missing: { message: string; field: "platformName" | "price" }[] = [
+  const missing: { message: string; field: "verify" | "platformName" | "price" }[] = [
+    ...(verified ? [] : [{ message: t("searchAdd.confirm.missing.verify"), field: "verify" as const }]),
     ...(isOther && !otherName.trim() ? [{ message: t("searchAdd.confirm.missing.platformName"), field: "platformName" as const }] : []),
     ...(price === null ? [{ message: priceText.trim() ? t("searchAdd.confirm.priceInvalid") : t("searchAdd.confirm.missing.price"), field: "price" as const }] : []),
   ];
@@ -282,9 +318,11 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const fromUser = priceSource !== "USER_TYPED";
   const target = parsePrice(targetText, locale);
 
-  const submitBought = () => {
+  /** `justVerified`: called from "Evet, bu?" in the same press, before the state updates. */
+  const submitBought = (justVerified = false) => {
     setProblem(null);
-    if ((!platform && !isOther) || price === null || missing.length) return;
+    const open = justVerified ? missing.filter((item) => item.field !== "verify") : missing;
+    if ((!platform && !isOther) || price === null || open.length) return;
     const body: CreateTrackedItemRequest = {
       mode: "BOUGHT",
       productId,
@@ -300,10 +338,12 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
     };
     create.mutate({ body, idempotencyKey: attempt.current });
   };
-  /** "Evet, bu": the same confirm, or straight to the first missing field. */
-  const quickConfirm = () => {
-    const first = missing[0];
-    if (!first) return submitBought();
+  /** "Evet, bu?": verifies the product; then the same confirm, or straight to the first missing field (bought mode). */
+  const verifyAndConfirm = () => {
+    setVerified(true);
+    if (mode !== "BOUGHT" || limitReached || alreadyTracking !== null) return;
+    const first = missing.find((item) => item.field !== "verify");
+    if (!first) return submitBought(true);
     setShowMissing(true);
     const field = (first.field === "platformName" ? otherNameRef : priceRef).current;
     field?.scrollIntoView?.({ block: "center", behavior: "smooth" });
@@ -311,6 +351,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   };
   const submitWant = () => {
     setProblem(null);
+    if (!verified) return;
     const body: CreateTrackedItemRequest = {
       mode: "WANT",
       productId,
@@ -356,19 +397,19 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       {problem && <StatusBanner tone="danger">{problem}</StatusBanner>}
       {limitNote}
       {blockedNote}
+      {(mode === "BOUGHT" ? missing[0] : verified ? undefined : missing[0]) && !limitReached && alreadyTracking === null && (
+        <p role="status" className="flex items-center gap-1 text-caption text-text-muted">
+          <Icon icon={Info} size="sm" />
+          <span>{missing[0]?.message}</span>
+        </p>
+      )}
       {mode === "BOUGHT" ? (
         <>
-          {missing[0] && !limitReached && alreadyTracking === null && (
-            <p role="status" className="flex items-center gap-1 text-caption text-text-muted">
-              <Icon icon={Info} size="sm" />
-              <span>{missing[0].message}</span>
-            </p>
-          )}
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => (setMode("WANT"), setAlready(false), setProblem(null))} className="flex-1">
               {t("searchAdd.confirm.wantShort")}
             </Button>
-            <Button onClick={submitBought} disabled={(!platform && !isOther) || missing.length > 0 || limitReached || alreadyTracking !== null} loading={create.isPending} className="flex-1">
+            <Button onClick={() => submitBought()} disabled={(!platform && !isOther) || missing.length > 0 || limitReached || alreadyTracking !== null} loading={create.isPending} className="flex-1">
               {t("searchAdd.confirm.bought")}
             </Button>
           </div>
@@ -378,7 +419,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
           <Button variant="ghost" onClick={() => (setMode("BOUGHT"), setAlready(false), setProblem(null))}>
             {t("searchAdd.confirm.back")}
           </Button>
-          <Button onClick={submitWant} disabled={limitReached || alreadyTracking !== null || (targetText.trim() !== "" && target === null)} loading={create.isPending} className="flex-1">
+          <Button onClick={submitWant} disabled={!verified || limitReached || alreadyTracking !== null || (targetText.trim() !== "" && target === null)} loading={create.isPending} className="flex-1">
             {t("searchAdd.confirm.startTracking")}
           </Button>
         </div>
@@ -397,7 +438,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
           t={t}
           candidate={candidate}
           onChange={onChangeProduct}
-          {...(mode === "BOUGHT" && !unsupported && !limitReached && alreadyTracking === null ? { onQuick: quickConfirm, quickBusy: create.isPending } : {})}
+          {...(unsupported ? {} : { verified, onVerify: verifyAndConfirm, verifyRef, busy: create.isPending })}
         />
       }
       footer={footer}

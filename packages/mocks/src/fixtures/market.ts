@@ -85,6 +85,8 @@ export const SELLERS = {
   teknosaMagaza: seller("TEKNOSA", "TK-SLR-0001", "Teknosa", 4.6, 15400),
   sesDunyasi: seller("AMAZON_TR", "AMZ-SLR-S7K2", "Ses Dünyası", 4.7, 2210),
   kulaklikPazari: seller("HEPSIBURADA", "HB-SLR-71844", "Kulaklık Pazarı", 4.3, 415),
+  // Sample seller for any other Trendyol link (link paste in development, design v4 request).
+  supurgeMerkezi: seller("TRENDYOL", "TY-SLR-22871", "Süpürge Merkezi", 4.4, 980),
 } as const satisfies Record<string, SellerFixture>;
 
 export type SellerKey = keyof typeof SELLERS;
@@ -177,6 +179,11 @@ export const OFFERS: readonly OfferFixture[] = [
     stockState: "LOW_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 2, priceSinceDaysAgo: 6, checkedMinutesAgo: 9,
     listingPath: "/kulaklik-pazari/apple-airpods-pro-2-p-HBC0000AP2",
   }),
+  offer("dysonV15", "supurgeMerkezi", {
+    priceMinor: 3_249_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 4 },
+    stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 8, priceSinceDaysAgo: 8, checkedMinutesAgo: 15,
+    listingPath: "/supurge-merkezi/dyson-v15-detect-absolute-p-71230045",
+  }),
 ];
 
 export function listingUrl(offerFixture: OfferFixture): string {
@@ -191,6 +198,31 @@ export function offersFor(productKey: ProductKey): readonly OfferFixture[] {
 /** Product of a pasted store link (design case A: a Hepsiburada link to the Flash Print Bundle). */
 export function offerByListingUrl(url: string): OfferFixture | undefined {
   return OFFERS.find((item) => url.startsWith(listingUrl(item)));
+}
+
+/**
+ * Any pasted link of these stores answers with a sample listing (development only; real
+ * link resolution comes with Phase 2 — architecture.md §11): Hepsiburada → the design's
+ * own purchase (Ace Pro 2 Flash Print at Kamera Dünyası), Trendyol → Dyson V15 at a sample seller.
+ */
+const SAMPLE_LINK_OFFERS: Readonly<Partial<Record<PlatformKey, { product: ProductKey; seller: SellerKey }>>> = {
+  HEPSIBURADA: { product: "acePro2FlashPrint", seller: "kameraDunyasi" },
+  TRENDYOL: { product: "dysonV15", seller: "supurgeMerkezi" },
+};
+
+/** The listing of a pasted link: an exact fixture listing, otherwise the store's sample listing. */
+export function offerForLink(url: string): OfferFixture | undefined {
+  const exact = offerByListingUrl(url);
+  if (exact) return exact;
+  let host: string;
+  try {
+    host = new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return undefined;
+  }
+  const platform = (Object.keys(PLATFORMS) as PlatformKey[]).find((key) => PLATFORMS[key].domain === host);
+  const sample = platform ? SAMPLE_LINK_OFFERS[platform] : undefined;
+  return sample ? OFFERS.find((item) => item.product === sample.product && item.seller === sample.seller) : undefined;
 }
 
 export function productKeyOf(id: string): ProductKey | undefined {

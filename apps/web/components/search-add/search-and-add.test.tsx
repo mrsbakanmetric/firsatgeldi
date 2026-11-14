@@ -75,7 +75,14 @@ async function typeAndChoose(locale: Locale, text: string, productName: string) 
   await userEvent.type(box, text);
   const option = await screen.findByRole("option", { name: new RegExp(productName) }, { timeout: 3000 });
   await userEvent.click(option);
-  await screen.findByText(t("searchAdd.candidates.marked"));
+  await screen.findByRole("radio", { name: new RegExp(productName), checked: true });
+  void t;
+}
+
+/** "Evet, bu?" (design v4): the pre-selected product must be verified before anything is saved. */
+async function verify(locale: Locale) {
+  const t = createTranslator(locale);
+  await userEvent.click(await screen.findByRole("button", { name: t("searchAdd.confirm.quickConfirm") }));
 }
 
 describe.each(LOCALES)("Search and Add — %s", (locale) => {
@@ -160,9 +167,8 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     expect(within(preview).getByRole("button", { name: t("searchAdd.suggest.choose") })).toBeDefined();
     expect(within(preview).getAllByRole("definition").length).toBeLessThanOrEqual(4);
     await userEvent.click(screen.getByRole("option", { name: new RegExp(product.name[locale]) }));
-    expect(await screen.findByText(t("searchAdd.candidates.marked"))).toBeDefined();
+    expect(await screen.findByRole("radio", { name: new RegExp(product.name[locale]), checked: true })).toBeDefined();
     expect(screen.getByRole("heading", { name: t("searchAdd.candidates.title") })).toBeDefined();
-    expect(screen.getByText(t("searchAdd.understood.label"))).toBeDefined();
   });
 
   it("autocomplete with 1–3 matches shows the list alone (no tile repeats a product)", async () => {
@@ -200,13 +206,16 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     expect(screen.queryByRole("listbox")).toBeNull();
   });
 
-  it("“Nasıl anladık” (design v3): one row with a label and chips, no heading; a value applies on one click, then “… değişti · Geri al”", async () => {
+  it("“Nasıl anladık” (design v4): one row of chips, no heading and no label, each says “Yanlışsa düzelt”; a value applies on one click, then “… değişti · Geri al”", async () => {
     show(locale);
     await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
     expect(screen.queryByRole("heading", { name: t("searchAdd.understood.title") })).toBeNull();
-    const row = screen.getByText(t("searchAdd.understood.label")).parentElement as HTMLElement;
+    const row = screen.getByRole("region", { name: t("searchAdd.understood.title") });
+    expect(row.textContent).not.toContain(t("searchAdd.understood.title"));
     const chips = within(row).getAllByRole("button").filter((button) => button.getAttribute("aria-haspopup") === "listbox");
     expect(chips.length).toBeGreaterThan(0);
+    const hint = document.getElementById(chips[0]?.getAttribute("aria-describedby") ?? "");
+    expect(hint?.textContent).toBe(t("searchAdd.understood.hint"));
     // The first chip whose menu offers another value.
     let picked: string | null = null;
     for (const chip of chips) {
@@ -225,26 +234,35 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     await waitFor(() => expect(screen.queryByText(t("searchAdd.understood.changedShort", { label: picked ?? "" }))).toBeNull());
   });
 
-  it("confirm panel (design v3): actions at the bottom with a line naming what is missing; “Evet, bu” goes to the first missing field", async () => {
+  it("confirm panel (design v3–v4): actions at the bottom with a line naming what is missing; “Evet, bu?” verifies, then goes to the first missing field", async () => {
     show(locale);
     await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
     const bought = await screen.findByRole("button", { name: t("searchAdd.confirm.bought") });
     expect(bought.hasAttribute("disabled")).toBe(true);
     const footer = bought.closest("div.sticky") as HTMLElement;
     expect(footer).not.toBeNull();
-    expect(within(footer).getByText(t("searchAdd.confirm.missing.price"))).toBeDefined();
+    // Not verified yet: that is the first thing missing.
+    expect(within(footer).getByText(t("searchAdd.confirm.missing.verify"))).toBeDefined();
     const actions = within(footer).getAllByRole("button").map((button) => button.textContent);
     expect(actions).toEqual([t("searchAdd.confirm.wantShort"), t("searchAdd.confirm.bought")]);
 
-    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.quickConfirm") }));
+    const check = screen.getByRole("button", { name: t("searchAdd.confirm.quickConfirm") });
+    expect(check.className).toContain("bg-warning-subtle");
+    expect(check.getAttribute("aria-pressed")).toBe("false");
+    await userEvent.click(check);
+    const done = screen.getByRole("button", { name: t("searchAdd.confirm.verified") });
+    expect(done.getAttribute("aria-pressed")).toBe("true");
+    expect(done.className).toContain("bg-primary");
+    expect(done.className).not.toContain("bg-accent");
     const price = screen.getByLabelText(t("searchAdd.confirm.pricePaid"));
     expect(document.activeElement).toBe(price);
     expect(price.getAttribute("aria-invalid")).toBe("true");
+    expect(within(footer).getByText(t("searchAdd.confirm.missing.price"))).toBeDefined();
     expect(controller.state.trackedItems).toHaveLength(0);
 
     await userEvent.type(price, locale === "tr" ? "28.999" : "28,999");
     await waitFor(() => expect(bought.hasAttribute("disabled")).toBe(false));
-    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.quickConfirm") }));
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.verified") }));
     expect(await screen.findByText(t("searchAdd.success.title"))).toBeDefined();
     expect(controller.state.trackedItems).toHaveLength(1);
   });
@@ -271,6 +289,7 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     const activityBefore = controller.state.activity.length;
     await userEvent.click(platform);
     await userEvent.click(screen.getByRole("option", { name: new RegExp(t("searchAdd.confirm.otherPlatform")) }));
+    await verify(locale);
     expect(screen.queryByRole("button", { name: t("searchAdd.confirm.sellerFind") })).toBeNull();
     expect(screen.getByText(t("searchAdd.confirm.returnUnknown"))).toBeDefined();
     expect(within(screen.getByRole("button", { name: t("searchAdd.confirm.bought") }).closest("div.sticky") as HTMLElement).getByText(t("searchAdd.confirm.missing.platformName"))).toBeDefined();
@@ -293,6 +312,7 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     await userEvent.type(await within(document.body).findByLabelText(t("searchAdd.confirm.seller")), SELLERS.kameraDunyasi.name);
     await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.sellerFind") }));
     expect(await screen.findByText(t("searchAdd.confirm.sellerFound"))).toBeDefined();
+    await verify(locale);
     expect(screen.getByText(t("searchAdd.confirm.stockState.IN_STOCK"))).toBeDefined();
     expect(screen.getByText(t("searchAdd.confirm.warrantyType.DISTRIBUTOR"))).toBeDefined();
 
@@ -326,7 +346,8 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     await userEvent.type(screen.getByRole("combobox"), "sony zv-e1 kit");
     const searchStores = await screen.findByRole("button", { name: t("searchAdd.suggest.searchStores", { query: "sony zv-e1 kit" }) }, { timeout: 3000 });
     await userEvent.click(searchStores);
-    expect(await screen.findByText(PRODUCTS.zvE1Kit.name[locale])).toBeDefined();
+    // Found live, and pre-selected (design v4).
+    expect(await screen.findByRole("radio", { name: new RegExp(PRODUCTS.zvE1Kit.name[locale]), checked: true })).toBeDefined();
     expect(controller.state.catalogAdded.has(PRODUCTS.zvE1Kit.key)).toBe(true);
     expect(controller.state.searchEvents.at(-1)?.source).toBe("SEARCH_BOX");
   });
@@ -357,6 +378,7 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     await userEvent.type(await screen.findByLabelText(t("searchAdd.confirm.seller")), SELLERS.kameraDunyasi.name);
     await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.sellerFind") }));
     expect(await screen.findByText(t("searchAdd.states.staleText"))).toBeDefined();
+    await verify(locale);
     await userEvent.type(screen.getByLabelText(t("searchAdd.confirm.pricePaid")), locale === "tr" ? "28.999" : "28,999");
     await waitFor(() => expect(screen.getByRole("button", { name: t("searchAdd.confirm.bought") }).hasAttribute("disabled")).toBe(false));
   });
@@ -417,10 +439,13 @@ describe.each(LOCALES)("Search and Add — hand-over from Tracked Items and “T
     const target = PRODUCTS.goProHero13;
     globalThis.history.replaceState(null, "", `/${locale}/ara?urun=${target.id}&mod=istiyorum`);
     show(locale);
-    expect(await screen.findByText(t("searchAdd.candidates.marked"))).toBeDefined();
+    expect(await screen.findByRole("radio", { name: new RegExp(target.name[locale]), checked: true })).toBeDefined();
     const start = await screen.findByRole("button", { name: t("searchAdd.confirm.startTracking") });
-    // Want mode preselected: no price-paid field.
+    // Want mode preselected: no price-paid field. Not saved before "Evet, bu?".
     expect(screen.queryByLabelText(new RegExp(t("searchAdd.confirm.pricePaid")))).toBeNull();
+    expect(start.hasAttribute("disabled")).toBe(true);
+    await verify(locale);
+    await waitFor(() => expect(start.hasAttribute("disabled")).toBe(false));
     await userEvent.click(start);
     await waitFor(() => expect(push).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`^/${locale}/(takip|tracking)\\?eklendi=[0-9a-f-]{36}$`))));
     expect(controller.state.trackedItems.at(-1)).toMatchObject({ productKey: "goProHero13", mode: "WANT" });
@@ -431,8 +456,100 @@ describe.each(LOCALES)("Search and Add — hand-over from Tracked Items and “T
     show(locale);
     await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
     await userEvent.click(await screen.findByRole("button", { name: t("searchAdd.confirm.wantShort") }));
+    await verify(locale);
     await userEvent.click(await screen.findByRole("button", { name: t("searchAdd.confirm.startTracking") }));
     await waitFor(() => expect(push).toHaveBeenCalledTimes(1));
     expect(screen.queryByText(t("searchAdd.success.title"))).toBeNull();
+  });
+});
+
+describe.each(LOCALES)("Search and Add — design v4 — %s", (locale) => {
+  const t = createTranslator(locale);
+  const searchFor = async (text: string) => {
+    await userEvent.type(screen.getByRole("combobox"), `${text}{Escape}`);
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.search.submit") }));
+  };
+
+  it("after a search the first result is pre-selected (radio) and the panel opens; another result moves the selection and resets “Evet, bu?”", async () => {
+    show(locale);
+    await screen.findByText(t("searchAdd.states.emptyTitle"));
+    // Step bar as wide as the search box (no 640 px cap any more).
+    expect(screen.getByRole("list", { name: t("searchAdd.steps.label") }).className).not.toContain("max-w-");
+    await searchFor("ace pro 2");
+    const radios = await screen.findAllByRole("radio");
+    expect(radios.length).toBeGreaterThan(1);
+    expect((radios[0] as HTMLInputElement).checked).toBe(true);
+    expect(screen.queryByText(t("searchAdd.candidates.marked"))).toBeNull();
+    expect(screen.getByRole("complementary", { name: t("searchAdd.confirm.title") })).toBeDefined();
+    await verify(locale);
+    expect(screen.getByRole("button", { name: t("searchAdd.confirm.verified") })).toBeDefined();
+
+    await userEvent.click(radios[1] as HTMLElement);
+    expect((radios[1] as HTMLInputElement).checked).toBe(true);
+    // A new product starts unverified: "Evet, bu?" again, saving blocked.
+    expect(await screen.findByRole("button", { name: t("searchAdd.confirm.quickConfirm") })).toBeDefined();
+    expect(screen.getByRole("button", { name: t("searchAdd.confirm.bought") }).hasAttribute("disabled")).toBe(true);
+  });
+
+  it("inline completion: the first matching suggestion completes the text in muted colour; Tab and → accept", async () => {
+    show(locale);
+    const box = screen.getByRole("combobox") as HTMLInputElement;
+    await userEvent.type(box, "insta");
+    await waitFor(() => expect(box.getAttribute("aria-autocomplete")).toBe("both"), { timeout: 3000 });
+    const ghost = box.parentElement?.querySelector("[aria-hidden='true'] .text-text-muted");
+    expect(ghost?.className).toContain("text-text-muted");
+    expect(`insta${ghost?.textContent ?? ""}`.length).toBeGreaterThan("insta".length);
+    await userEvent.keyboard("{Tab}");
+    expect(box.value.startsWith("Insta360")).toBe(true);
+    expect(box.value.length).toBeGreaterThan("insta".length);
+    expect(document.activeElement).toBe(box);
+
+    await userEvent.clear(box);
+    await userEvent.type(box, "dys");
+    await waitFor(() => expect(box.getAttribute("aria-autocomplete")).toBe("both"), { timeout: 3000 });
+    await userEvent.keyboard("{ArrowRight}");
+    // Accepting takes the product's own spelling.
+    expect(box.value).toBe(PRODUCTS.dysonV15.name[locale]);
+  });
+
+  it("the suggestion block closes when the camera or “Ara” is pressed", async () => {
+    show(locale);
+    const box = screen.getByRole("combobox");
+    const opened = watchFileDialogs();
+    await userEvent.type(box, "ace pro 2");
+    await screen.findByRole("listbox", undefined, { timeout: 3000 });
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.search.addPhoto") }));
+    expect(screen.queryByRole("listbox")).toBeNull();
+    expect(opened).toHaveBeenCalledTimes(1);
+    await userEvent.type(box, " ");
+    await screen.findByRole("listbox", undefined, { timeout: 3000 });
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.search.submit") }));
+    expect(screen.queryByRole("listbox", { name: t("searchAdd.suggest.label") })).toBeNull();
+  });
+
+  it("attribute menu: the input is at the top, filters the values, Enter applies the typed value; value rows are slim", async () => {
+    show(locale);
+    await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
+    const row = screen.getByRole("region", { name: t("searchAdd.understood.title") });
+    const chip = within(row).getAllByRole("button").find((button) => button.getAttribute("aria-haspopup") === "listbox") as HTMLElement;
+    await userEvent.click(chip);
+    const menu = document.getElementById(chip.getAttribute("aria-controls") ?? "") as HTMLElement;
+    const input = within(menu).getByLabelText(t("searchAdd.understood.typeLabel"));
+    // The input comes before the value list.
+    expect(input.compareDocumentPosition(within(menu).getByRole("listbox")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(within(menu).getAllByRole("option")[0]?.className).toContain("text-caption");
+    await userEvent.type(input, "zzz-yok");
+    expect(within(menu).queryAllByRole("option")).toHaveLength(0);
+    await userEvent.keyboard("{Enter}");
+    expect(await screen.findByText(new RegExp(t("searchAdd.understood.changedShort", { label: chip.querySelector("span")?.textContent ?? "" })))).toBeDefined();
+  });
+
+  it("a pasted Trendyol link (any path) is recognised in development: platform, seller and price come from the link", async () => {
+    show(locale);
+    await userEvent.type(screen.getByRole("combobox"), "https://www.trendyol.com/herhangi-bir-urun-p-998877");
+    await userEvent.click(await screen.findByRole("button", { name: t("searchAdd.suggest.linkContinue") }, { timeout: 3000 }));
+    expect(await screen.findByRole("radio", { name: new RegExp(PRODUCTS.dysonV15.name[locale]), checked: true })).toBeDefined();
+    expect(await screen.findByText(t("searchAdd.confirm.prefilledLink"))).toBeDefined();
+    expect((screen.getByLabelText(t("searchAdd.confirm.seller")) as HTMLInputElement).value).toBe(SELLERS.supurgeMerkezi.name);
   });
 });
