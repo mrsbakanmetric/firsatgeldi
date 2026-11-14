@@ -3,6 +3,8 @@
 // editable, then the confirming actions. This is the frame; the fields come
 // from the screen (Search and Add, Add product dialog, Want to Buy "Aldım").
 // On phones the same content sits in a Sheet, so the frame has no own border there.
+// The footer (confirming actions) stays fixed to the bottom of the panel while
+// the fields scroll (Search and Add design v3).
 import type { ReactNode } from "react";
 import { cn } from "./cn";
 
@@ -15,7 +17,7 @@ export interface ConfirmPanelProps {
   product?: ReactNode;
   /** Field sections. */
   children: ReactNode;
-  /** Confirming actions and their note. */
+  /** Confirming actions and their note; sticks to the bottom of the panel. */
   footer?: ReactNode;
   framed?: boolean;
   className?: string;
@@ -32,7 +34,10 @@ export function ConfirmPanel({ title, intro, product, children, footer, framed =
       )}
       {product}
       {children}
-      {footer && <div className="flex flex-col gap-3">{footer}</div>}
+      {footer && (
+        // Inside a Sheet the body has space.4 padding: the bar sits on the sheet's bottom edge, not above it.
+        <div className={cn("sticky z-(--z-index-raised) flex flex-col gap-2 border-t border-divider bg-surface py-3", framed ? "bottom-0" : "-bottom-4")}>{footer}</div>
+      )}
     </div>
   );
 }

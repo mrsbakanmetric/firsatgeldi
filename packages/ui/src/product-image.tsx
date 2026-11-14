@@ -5,12 +5,13 @@ import type { LucideIcon } from "lucide-react";
 import { cn } from "./cn";
 import { Icon } from "./icon";
 
-/** sm = compact lists and side columns · md = main lists · fill = previews (fills its column). */
-export type ProductImageSize = "sm" | "md" | "fill";
+/** sm = compact lists and side columns · md = main lists · lg = compact previews (autocomplete) · fill = fills its column. */
+export type ProductImageSize = "sm" | "md" | "lg" | "fill";
 
 const SIZE_CLASSES: Record<ProductImageSize, string> = {
   sm: "size-(--size-thumb-sm)",
   md: "size-(--size-thumb-md)",
+  lg: "size-(--size-thumb-lg)",
   fill: "aspect-square w-full",
 };
 

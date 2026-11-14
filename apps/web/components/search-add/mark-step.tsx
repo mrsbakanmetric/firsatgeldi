@@ -1,9 +1,11 @@
 "use client";
 
 // "Nasıl anladık" and "Hangisi seninki?" (design "1 Ara ve Ekle": Main,
-// AttrEdit, Cases C/D; product_design_pattern.md §5.1, §5.27). Candidates are
-// products and variants only — no store, no price. Marking only selects and can
-// be undone; a changed match-critical attribute clears the mark.
+// AttrEdit, Cases C/D; product_design_pattern.md §5.1, §5.27). "Nasıl anladık"
+// (design v3) is one row under the search box — a muted label and a chip per
+// attribute; a change applies at once and a short "… değişti · Geri al" notice
+// follows it. Candidates are products and variants only — no store, no price.
+// Marking only selects and can be undone; a changed match-critical attribute clears the mark.
 import type { IdentifyAnswer, IdentifyResult } from "@firsatgeldi/contracts";
 import type { Translator, TranslationKey } from "@firsatgeldi/i18n";
 import { AttributeChip, Button, cn, Flag, focusRing, Icon, ProductImage, SegmentedChoice, SkeletonBlock } from "@firsatgeldi/ui";
@@ -22,12 +24,6 @@ const HEADING_KEYS: Readonly<Record<string, TranslationKey>> = {
   color: "searchAdd.understood.headings.color",
 };
 
-const WARNING_KEYS: Readonly<Record<string, TranslationKey>> = {
-  type: "searchAdd.understood.warnings.type",
-  brand: "searchAdd.understood.warnings.brand",
-  model: "searchAdd.understood.warnings.model",
-};
-
 export interface AttributeChange {
   readonly key: string;
   readonly label: string;
@@ -39,35 +35,39 @@ export interface AttributeChange {
 export function Understood({ t, result, change, onAnswer, onUndo }: { t: Translator; result: IdentifyResult; change: AttributeChange | null; onAnswer: (answer: IdentifyAnswer, change: AttributeChange | null) => void; onUndo: () => void }) {
   if (!result.understood.length && !result.questions.length) return null;
   return (
-    <section aria-labelledby="understood-title" className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="understood-title" className="text-h3 text-text">
-          {t("searchAdd.understood.title")}
-        </h2>
-        <span className="text-caption text-text-muted">{t("searchAdd.understood.hint")}</span>
-      </div>
-      <div className="flex flex-wrap items-start gap-2">
-        {result.understood.map((attribute) => (
-          <AttributeChip
-            key={attribute.key}
-            label={attribute.label}
-            value={attribute.value}
-            options={attribute.options}
-            changed={change?.key === attribute.key}
-            onPick={(value) =>
-              onAnswer({ attributeKey: attribute.key, value }, { key: attribute.key, label: attribute.label, value, previous: attribute.value, critical: attribute.matchCritical })
-            }
-            texts={{
-              ...(HEADING_KEYS[attribute.key] ? { listHeading: t(HEADING_KEYS[attribute.key] as TranslationKey) } : {}),
-              typeLabel: t("searchAdd.understood.typeLabel"),
-              applyLabel: t("searchAdd.understood.apply"),
-              closeLabel: t("searchAdd.understood.close"),
-              sourceNote: t("searchAdd.understood.sourceNote"),
-              ...(attribute.matchCritical ? { warning: t(WARNING_KEYS[attribute.key] ?? "searchAdd.understood.warnings.critical") } : {}),
-            }}
-          />
-        ))}
-      </div>
+    <section aria-label={t("searchAdd.understood.title")} className="flex flex-col gap-2">
+      {result.understood.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-caption text-text-muted">{t("searchAdd.understood.label")}</span>
+          {result.understood.map((attribute) => (
+            <AttributeChip
+              key={attribute.key}
+              label={attribute.label}
+              value={attribute.value}
+              options={attribute.options}
+              changed={change?.key === attribute.key}
+              onPick={(value) =>
+                onAnswer({ attributeKey: attribute.key, value }, { key: attribute.key, label: attribute.label, value, previous: attribute.value, critical: attribute.matchCritical })
+              }
+              texts={{
+                ...(HEADING_KEYS[attribute.key] ? { listHeading: t(HEADING_KEYS[attribute.key] as TranslationKey) } : {}),
+                typeLabel: t("searchAdd.understood.typeLabel"),
+              }}
+            />
+          ))}
+          {change && (
+            <span role="status" className="inline-flex items-center gap-1 text-caption text-text">
+              <span>{t("searchAdd.understood.changedShort", { label: change.label })}</span>
+              <span aria-hidden="true" className="text-text-muted">
+                {t("common.listSeparator")}
+              </span>
+              <Button variant="ghost" size="compact" icon={RotateCcw} onClick={onUndo}>
+                {t("searchAdd.understood.undo")}
+              </Button>
+            </span>
+          )}
+        </div>
+      )}
       {result.questions.map((question) => (
         <div key={question.id} className="flex flex-col gap-2">
           <p className="text-body-sm font-semibold text-text">{question.prompt}</p>
@@ -80,17 +80,6 @@ export function Understood({ t, result, change, onAnswer, onUndo }: { t: Transla
           />
         </div>
       ))}
-      {change && (
-        <div role="status" className="flex flex-wrap items-center gap-3 rounded-md bg-info-subtle p-3 text-body-sm text-text">
-          <span className="min-w-0 flex-1">
-            {t("searchAdd.understood.changed", { label: change.label, value: change.value })}
-            {change.critical && ` ${t("searchAdd.understood.markCleared")}`}
-          </span>
-          <Button variant="ghost" icon={RotateCcw} onClick={onUndo}>
-            {t("searchAdd.understood.undo")}
-          </Button>
-        </div>
-      )}
     </section>
   );
 }

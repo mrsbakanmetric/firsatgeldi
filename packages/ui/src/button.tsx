@@ -15,16 +15,33 @@ export type ButtonVariant = "primary" | "deal" | "secondary" | "ghost" | "danger
 const BASE_CLASSES =
   "relative inline-flex items-center justify-center gap-2 rounded-md text-center font-semibold transition-colors duration-(--duration-fast) ease-standard";
 
+/** Colours per variant; the same for every size. */
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: "min-h-(--component-button-primary-height) px-5 py-2 text-button bg-primary text-on-primary hover:bg-primary-hover",
-  deal: "min-h-(--component-button-deal-height) px-5 py-2 text-button bg-accent text-on-accent hover:bg-accent-hover",
-  secondary: "min-h-(--component-button-secondary-height) px-5 py-2 text-button border border-primary bg-surface text-primary hover:bg-primary-subtle",
-  // 44 px below breakpoint.md and on touch; 40 px only from breakpoint.md with a mouse (§4.2).
-  ghost:
-    "min-h-(--component-button-ghost-height-touch) md:pointer-fine:min-h-(--component-button-ghost-height) px-3 py-2 text-body-sm font-semibold text-primary hover:bg-surface-alt",
-  danger: "min-h-(--component-button-danger-height) px-5 py-2 text-button bg-danger text-text-inverse",
+  primary: "bg-primary text-on-primary hover:bg-primary-hover",
+  deal: "bg-accent text-on-accent hover:bg-accent-hover",
+  secondary: "border border-primary bg-surface text-primary hover:bg-primary-subtle",
+  ghost: "text-primary hover:bg-surface-alt",
+  danger: "bg-danger text-text-inverse",
   link: "rounded-sm text-body font-medium text-primary underline underline-offset-4 hover:text-primary-hover",
 };
+
+/** Height, padding and type of the default size. */
+const DEFAULT_SIZE_CLASSES: Record<ButtonVariant, string> = {
+  primary: "min-h-(--component-button-primary-height) px-5 py-2 text-button",
+  deal: "min-h-(--component-button-deal-height) px-5 py-2 text-button",
+  secondary: "min-h-(--component-button-secondary-height) px-5 py-2 text-button",
+  // 44 px below breakpoint.md and on touch; 40 px only from breakpoint.md with a mouse (§4.2).
+  ghost: "min-h-(--component-button-ghost-height-touch) md:pointer-fine:min-h-(--component-button-ghost-height) px-3 py-2 text-body-sm font-semibold",
+  danger: "min-h-(--component-button-danger-height) px-5 py-2 text-button",
+  link: "",
+};
+
+/**
+ * components.button.compact: same colours, 36 px only from breakpoint.md with a
+ * fine pointer; otherwise the hit area stays size.touch-target-min.
+ */
+const COMPACT_SIZE_CLASSES =
+  "min-h-(--component-button-compact-height-touch) md:pointer-fine:min-h-(--component-button-compact-height) rounded-(--component-button-compact-radius) px-3 py-1 text-body-sm";
 
 /** Square size for icon-only buttons, per variant height. */
 const ICON_ONLY_CLASSES: Record<ButtonVariant, string> = {
@@ -36,13 +53,24 @@ const ICON_ONLY_CLASSES: Record<ButtonVariant, string> = {
   link: "",
 };
 
+const COMPACT_ICON_ONLY_CLASSES =
+  "min-w-(--component-button-compact-height-touch) md:pointer-fine:min-w-(--component-button-compact-height) px-0";
+
+export type ButtonSize = "default" | "compact";
+
+function sizeClasses(variant: ButtonVariant, size: ButtonSize): string {
+  return size === "compact" && variant !== "link" ? COMPACT_SIZE_CLASSES : DEFAULT_SIZE_CLASSES[variant];
+}
+
 /** Classes of a button variant, for links that look like buttons (e.g. "Ücretsiz başla"). */
-export function buttonClasses(variant: ButtonVariant = "primary", className?: string): string {
-  return cn(BASE_CLASSES, VARIANT_CLASSES[variant], focusRing, className);
+export function buttonClasses(variant: ButtonVariant = "primary", className?: string, size: ButtonSize = "default"): string {
+  return cn(BASE_CLASSES, sizeClasses(variant, size), VARIANT_CLASSES[variant], focusRing, className);
 }
 
 interface CommonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "aria-label"> {
   variant?: ButtonVariant;
+  /** "compact" = components.button.compact (search box action, quick confirm, small inline actions). */
+  size?: ButtonSize;
   icon?: LucideIcon;
   /** Shows progress in place; the button keeps its width and cannot be pressed again. */
   loading?: boolean;
@@ -64,7 +92,7 @@ interface IconOnlyButtonProps extends CommonProps {
 export type ButtonProps = TextButtonProps | IconOnlyButtonProps;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, ref) {
-  const { variant = "primary", icon, loading = false, className, disabled, type = "button", ...rest } = props;
+  const { variant = "primary", size = "default", icon, loading = false, className, disabled, type = "button", ...rest } = props;
   const iconOnly = props.iconOnly === true;
   const native = { ...rest } as Record<string, unknown>;
   delete native["iconOnly"];
@@ -74,7 +102,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   const content = (
     <>
       <span className={cn("inline-flex items-center justify-center gap-2", loading && "opacity-0")}>
-        {icon && <Icon icon={icon} size={iconOnly ? "lg" : "md"} />}
+        {icon && <Icon icon={icon} size={iconOnly && size === "default" ? "lg" : "md"} />}
         {!iconOnly && props.children}
       </span>
       {loading && (
@@ -94,8 +122,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       aria-label={iconOnly ? props.label : undefined}
       className={cn(
         BASE_CLASSES,
+        sizeClasses(variant, size),
         VARIANT_CLASSES[variant],
-        iconOnly && ICON_ONLY_CLASSES[variant],
+        iconOnly && (size === "compact" ? cn(COMPACT_ICON_ONLY_CLASSES, variant === "ghost" && "text-text") : ICON_ONLY_CLASSES[variant]),
         focusRing,
         disabled && !loading && "cursor-not-allowed opacity-(--component-button-disabled-opacity)",
         className,

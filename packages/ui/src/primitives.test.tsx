@@ -6,6 +6,15 @@ import { describe, expect, it, vi } from "vitest";
 import { Avatar, Button, Checkbox, Icon, Select, Switch, TextField } from "./index";
 import { axeViolations } from "./test/axe";
 
+describe("TextField action", () => {
+  it("a compact button sits inside the field, next to the input", () => {
+    render(<TextField label="Satıcı" helper="Adını tam yaz." action={<Button size="compact">Satıcıyı bul</Button>} />);
+    const input = screen.getByLabelText("Satıcı");
+    expect(input.parentElement?.contains(screen.getByRole("button", { name: "Satıcıyı bul" }))).toBe(true);
+    expect(input.parentElement?.contains(screen.getByText("Adını tam yaz."))).toBe(false);
+  });
+});
+
 describe("Button", () => {
   it("is a real button, type=button by default", () => {
     render(<Button>Takibi bitir</Button>);
@@ -24,6 +33,20 @@ describe("Button", () => {
     expect(button).toHaveProperty("disabled", true);
     await userEvent.click(button);
     expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it("compact button (components.button.compact): 36 px only from breakpoint.md with a mouse, 44 px hit area otherwise; same colours", () => {
+    render(
+      <>
+        <Button size="compact">Ara</Button>
+        <Button size="compact" variant="ghost" iconOnly icon={Trash2} label="Fotoğraf ekle" />
+      </>,
+    );
+    const text = screen.getByRole("button", { name: "Ara" }).className.split(" ");
+    expect(text).toEqual(expect.arrayContaining(["min-h-(--component-button-compact-height-touch)", "md:pointer-fine:min-h-(--component-button-compact-height)", "text-body-sm", "bg-primary"]));
+    expect(text).not.toContain("min-h-(--component-button-primary-height)");
+    const icon = screen.getByRole("button", { name: "Fotoğraf ekle" }).className.split(" ");
+    expect(icon).toContain("md:pointer-fine:min-w-(--component-button-compact-height)");
   });
 
   it("ghost button is 44 px on touch and below breakpoint.md, 40 px only from breakpoint.md with a mouse", () => {

@@ -5,28 +5,53 @@ import { describe, expect, it, vi } from "vitest";
 import { AttributeChip, FactTile, FactTiles, HiddenOfferCard, ImagePrivacyNote, MultiImageUpload, ProductImage, SearchField } from "./index";
 import { axeViolations } from "./test/axe";
 
-const chipTexts = { typeLabel: "Listede yoksa yaz", applyLabel: "Uygula", closeLabel: "Kapat", sourceNote: "Seçenekler kategori şablonundan gelir.", warning: "Model eşleşme için kritik." };
+const chipTexts = { typeLabel: "Listede yoksa yaz" };
 
-describe("AttributeChip", () => {
-  it("opens the template values, marks the current one and picks another", async () => {
+describe("AttributeChip (design v3)", () => {
+  it("a small grey chip opens a menu overlay; one click applies the value; no apply or close button, no warning", async () => {
     const onPick = vi.fn();
-    render(<AttributeChip label="Model" value="Ace Pro 2" options={["Ace Pro 2", "Ace Pro"]} onPick={onPick} texts={chipTexts} />);
+    const { container } = render(<AttributeChip label="Model" value="Ace Pro 2" options={["Ace Pro 2", "Ace Pro"]} onPick={onPick} texts={chipTexts} />);
     const chip = screen.getByRole("button", { name: /Model/ });
+    expect(chip.className).toContain("h-(--component-chip-height)");
+    expect(chip.className).not.toContain("border-primary");
     expect(chip.getAttribute("aria-expanded")).toBe("false");
     await userEvent.click(chip);
+    // The menu renders in a portal: the chip's own container (the page) does not grow.
+    expect(container.querySelector("[role='listbox']")).toBeNull();
     expect(screen.getByRole("option", { name: "Ace Pro 2" }).getAttribute("aria-selected")).toBe("true");
-    expect(screen.getByText(chipTexts.warning)).toBeDefined();
+    expect(document.activeElement).toBe(screen.getByRole("option", { name: "Ace Pro 2" }));
+    expect(screen.queryByRole("button", { name: "Uygula" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Kapat" })).toBeNull();
     await userEvent.click(screen.getByRole("option", { name: "Ace Pro" }));
     expect(onPick).toHaveBeenCalledWith("Ace Pro");
+    expect(screen.queryByRole("listbox")).toBeNull();
   });
 
-  it("takes a typed value when it is not listed", async () => {
+  it("“Listede yoksa yaz” at the bottom of the menu applies on Enter", async () => {
     const onPick = vi.fn();
     render(<AttributeChip label="Renk" value="Siyah" options={["Siyah"]} onPick={onPick} texts={chipTexts} />);
     await userEvent.click(screen.getByRole("button", { name: /Renk/ }));
-    await userEvent.type(screen.getByLabelText(chipTexts.typeLabel), "Gri");
-    await userEvent.click(screen.getByRole("button", { name: chipTexts.applyLabel }));
+    await userEvent.type(screen.getByLabelText(chipTexts.typeLabel), "Gri{Enter}");
     expect(onPick).toHaveBeenCalledWith("Gri");
+  });
+
+  it("closes on Esc (focus back on the chip) and on a click outside, without picking", async () => {
+    const onPick = vi.fn();
+    render(
+      <main>
+        <p>dışarısı</p>
+        <AttributeChip label="Model" value="Ace Pro 2" options={["Ace Pro 2", "Ace Pro"]} onPick={onPick} texts={chipTexts} />
+      </main>,
+    );
+    const chip = screen.getByRole("button", { name: /Model/ });
+    await userEvent.click(chip);
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("listbox")).toBeNull();
+    expect(document.activeElement).toBe(chip);
+    await userEvent.click(chip);
+    await userEvent.click(screen.getByText("dışarısı"));
+    expect(screen.queryByRole("listbox")).toBeNull();
+    expect(onPick).not.toHaveBeenCalled();
   });
 });
 
@@ -146,6 +171,19 @@ describe("MultiImageUpload", () => {
 });
 
 describe("SearchField and ProductImage", () => {
+  it("the large search box uses the 48 px search-box height; × only while there is text", () => {
+    const { rerender } = render(<SearchField label="Ürün adı" value="" onChange={vi.fn()} clearLabel="Aramayı temizle" onClear={vi.fn()} />);
+    expect(screen.getByLabelText("Ürün adı").closest("div.border")?.className).toContain("min-h-(--component-search-box-min-height)");
+    expect(screen.queryByRole("button", { name: "Aramayı temizle" })).toBeNull();
+    rerender(<SearchField label="Ürün adı" value="ace" onChange={vi.fn()} clearLabel="Aramayı temizle" onClear={vi.fn()} />);
+    expect(screen.getByRole("button", { name: "Aramayı temizle" })).toBeDefined();
+  });
+
+  it("the compact preview image is size.thumb-lg", () => {
+    const { container } = render(<ProductImage src={null} size="lg" fallbackIcon={Package} />);
+    expect(container.firstElementChild?.className).toContain("size-(--size-thumb-lg)");
+  });
+
   it("the search box has a label and a clear control once there is text", async () => {
     const onClear = vi.fn();
     render(<SearchField label="Ürün adı" value="ace" onChange={vi.fn()} clearLabel="Aramayı temizle" onClear={onClear} />);

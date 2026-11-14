@@ -1,16 +1,19 @@
 "use client";
 
 // Input step search box + autocomplete (design "1 Ara ve Ekle", AutoComplete
-// A–D; modules.md Search and Add "Autocomplete"): while typing, an area opens
-// under the box (pushing the page down) with the first matches as image tiles,
-// every match in a scrollable list and a preview of the active one. ↑/↓ move,
-// Enter chooses, Esc closes. Our own catalogue only — no prices, no stores.
-// A pasted store link is detected; nothing found → "mağazalarda ara".
+// A–D, compact UI v3; modules.md Search and Add "Autocomplete"): the box is
+// 48 px with an icon-only photo button, × only while there is text and a
+// compact "Ara". While typing, an overlay opens under the box (it never pushes
+// the page) with every match in a scrollable list and a compact preview of the
+// active one; the first matches also appear as image tiles, only from 4 matches
+// on. ↑/↓ move, Enter chooses; Esc and a click outside close it. Our own
+// catalogue only — no prices, no stores. A pasted store link is detected;
+// nothing found → "mağazalarda ara".
 import { type ApiError, type IdentifyResult, imagePath, type ProductSummary } from "@firsatgeldi/contracts";
 import type { Translator } from "@firsatgeldi/i18n";
-import { Button, cn, focusRing, Icon, ProductImage, SearchField, SkeletonBlock } from "@firsatgeldi/ui";
-import { Camera, Link2, Package, Search, Store } from "lucide-react";
-import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useState } from "react";
+import { Button, chipClasses, cn, focusRing, Icon, ProductImage, SearchField, SkeletonBlock, useEscape, useOutsidePress } from "@firsatgeldi/ui";
+import { Camera, Link2, Package, Store } from "lucide-react";
+import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useMemo, useRef, useState } from "react";
 import { API_BASE_URL } from "../../lib/api/config";
 import { useApiMutation, useApiQuery } from "../../lib/api/hooks";
 
@@ -18,6 +21,10 @@ import { useApiMutation, useApiQuery } from "../../lib/api/hooks";
 const TYPING_PAUSE_MS = 150;
 /** How many recent searches are offered on an empty box (design D shows a short row). */
 const RECENT_COUNT = 4;
+/** Image tiles only from this many matches; with fewer the list alone shows them (no product twice). */
+const TILE_MIN_MATCHES = 4;
+/** Key attributes in the compact preview (pagedesign.md §8.2: 3–4). */
+const PREVIEW_ATTRIBUTES = 4;
 const URL_PATTERN = /^https?:\/\/\S+\.\S+/i;
 
 export function imageUrl(sha256: string | null): string | null {
@@ -44,10 +51,8 @@ export interface SearchBoxProps {
   query: string;
   onQueryChange: (query: string) => void;
   signedIn: boolean;
-  /** Enter / "Ara": identify the typed text (and ready photos). */
+  /** Enter / "Ara" (always "Ara", never "Yeniden ara"): identify the typed text (and ready photos). */
   onSubmit: () => void;
-  /** "Ara" in the input step, "Yeniden ara" once there are results. */
-  submitLabel: string;
   submitting: boolean;
   canSubmit: boolean;
   /** A tile, a row or "Bu ürünü seç". */
@@ -63,7 +68,7 @@ export interface SearchBoxProps {
   onError: (error: ApiError) => void;
 }
 
-export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmit, submitLabel, submitting, canSubmit, onChoose, onSearchStores, onLink, onAddPhoto, below, onError }: SearchBoxProps) {
+export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmit, submitting, canSubmit, onChoose, onSearchStores, onLink, onAddPhoto, below, onError }: SearchBoxProps) {
   const id = useId();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
@@ -94,6 +99,16 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
   const listId = `${id}-list`;
   const optionId = (index: number) => `${id}-option-${index}`;
   const noHits = searching && suggestions.isSuccess && items.length === 0 && !didYouMean;
+  const showTiles = total >= TILE_MIN_MATCHES && tileCount > 0;
+  const recentItems = signedIn ? (recent.data?.data.items.slice(0, RECENT_COUNT) ?? []) : [];
+  // Nothing to offer on an empty box without recent searches: no overlay at all.
+  const hasContent = link || typed.length > 0 || recentItems.length > 0;
+
+  // Overlay (components.popover-dismiss): a click outside the box and its list, or Esc, closes it.
+  const frame = useRef<HTMLDivElement>(null);
+  const inside = useMemo(() => [frame], []);
+  useOutsidePress(inside, open, () => setOpen(false));
+  useEscape(open && hasContent, () => setOpen(false));
 
   const choose = (product: ProductSummary) => {
     setOpen(false);
@@ -124,7 +139,7 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
   const meta = (product: ProductSummary) => [product.category.name, product.generation].filter(Boolean).join(t("common.listSeparator"));
 
   return (
-    <div className="flex flex-col gap-3">
+    <div ref={frame} className="relative flex flex-col">
       <SearchField
         ref={inputRef}
         label={t("searchAdd.search.label")}
@@ -149,44 +164,30 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
           setOpen(true);
         }}
         trailing={
-          // One wrapper per width: a display class on Button itself loses to the button's own inline-flex.
           <>
-            <div className="hidden items-center gap-2 md:flex">
-              <Button variant="ghost" icon={Camera} onClick={onAddPhoto}>
-                {t("searchAdd.search.addPhoto")}
-              </Button>
-              <Button onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting}>
-                {submitLabel}
-              </Button>
-            </div>
-            <div className="flex items-center gap-2 md:hidden">
-              <Button variant="ghost" iconOnly icon={Camera} label={t("searchAdd.search.addPhoto")} onClick={onAddPhoto} />
-              <Button iconOnly icon={Search} label={submitLabel} onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting} />
-            </div>
+            <Button variant="ghost" size="compact" iconOnly icon={Camera} label={t("searchAdd.search.addPhoto")} onClick={onAddPhoto} />
+            <Button size="compact" onClick={() => (setOpen(false), onSubmit())} disabled={!canSubmit} loading={submitting}>
+              {t("searchAdd.search.submit")}
+            </Button>
           </>
         }
         below={below}
       />
 
-      {open && (
-        <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-md">
+      {open && hasContent && (
+        <div className="absolute inset-x-0 top-full z-(--z-index-popover) mt-2 flex flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-md">
           {link ? (
             <LinkCard t={t} pending={linkCheck.isPending} result={linkCheck.data?.data ?? null} onContinue={(result) => (setOpen(false), onLink(result))} />
           ) : typed.length === 0 ? (
-            <div className="flex flex-col gap-3">
-              {signedIn && (recent.data?.data.items.length ?? 0) > 0 && (
-                <div className="flex flex-col gap-2">
-                  <p className="text-caption text-text-muted uppercase">{t("searchAdd.suggest.recent")}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {recent.data?.data.items.slice(0, RECENT_COUNT).map((item) => (
-                      <Button key={item.id} variant="secondary" onClick={() => onQueryChange(item.query)}>
-                        {item.query}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <p className="text-body-sm text-text-muted">{t("searchAdd.suggest.emptyHint")}</p>
+            <div className="flex flex-col gap-2">
+              <p className="text-caption text-text-muted">{t("searchAdd.suggest.recent")}</p>
+              <div className="flex flex-wrap gap-2">
+                {recentItems.map((item) => (
+                  <button key={item.id} type="button" onClick={() => onQueryChange(item.query)} className={chipClasses()}>
+                    {item.query}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             <>
@@ -199,10 +200,11 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
               {items.length > 0 && (
                 <div className="flex flex-col gap-4">
                   <p className="text-caption text-text-muted">
-                    {[t("searchAdd.suggest.found", { count: total }), total > tileCount ? t("searchAdd.suggest.firstTiles", { count: tileCount }) : null, t("searchAdd.suggest.updates")]
+                    {[t("searchAdd.suggest.found", { count: total }), showTiles ? t("searchAdd.suggest.firstTiles", { count: tileCount }) : null, t("searchAdd.suggest.updates")]
                       .filter(Boolean)
                       .join(t("common.listSeparator"))}
                   </p>
+                  {showTiles && (
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                     {items.slice(0, tileCount).map((product) => (
                       <button
@@ -226,6 +228,7 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
                       </button>
                     ))}
                   </div>
+                  )}
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="flex min-w-0 flex-col gap-2">
                       <p className="text-caption text-text-muted uppercase">{t("searchAdd.suggest.allResults")}</p>
@@ -265,41 +268,45 @@ export function SearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmi
               )}
             </>
           )}
-          <p className="text-caption text-text-muted">{link ? t("searchAdd.suggest.linkTip") : t("searchAdd.suggest.sourceNote")}</p>
+          {link && <p className="text-caption text-text-muted">{t("searchAdd.suggest.linkTip")}</p>}
         </div>
       )}
     </div>
   );
 }
 
+/** Compact preview (design v3): image 120 px, category, name, 3–4 key attributes, "Bu ürünü seç". */
 function Preview({ t, product, onChoose }: { t: Translator; product: ProductSummary; onChoose: () => void }) {
-  const rows: [string, string][] = [
-    [t("searchAdd.suggest.brand"), product.brand ?? ""],
-    [t("searchAdd.suggest.generation"), product.generation ?? ""],
-    [t("searchAdd.suggest.colors"), product.colors.join(t("common.listSeparator"))],
-    [t("searchAdd.suggest.bundles"), product.bundles.join(t("common.listSeparator"))],
-  ];
+  const rows = (
+    [
+      [t("searchAdd.suggest.brand"), product.brand ?? ""],
+      [t("searchAdd.suggest.generation"), product.generation ?? ""],
+      [t("searchAdd.suggest.colors"), product.colors.join(t("common.listSeparator"))],
+      [t("searchAdd.suggest.bundles"), product.bundles.join(t("common.listSeparator"))],
+    ] as [string, string][]
+  )
+    .filter(([, value]) => value)
+    .slice(0, PREVIEW_ATTRIBUTES);
   return (
-    <aside aria-label={t("searchAdd.suggest.previewLabel")} aria-live="polite" className="flex flex-col gap-3 rounded-md bg-surface-alt p-3">
-      <ProductImage src={imageUrl(product.imageSha256)} size="fill" fallbackIcon={Package} className="bg-surface" />
-      <p className="text-caption text-text-muted">{product.category.name}</p>
-      <p className="text-body font-semibold text-text">{product.name}</p>
-      <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-body-sm">
-        {rows
-          .filter(([, value]) => value)
-          .map(([label, value]) => (
-            <div key={label} className="contents">
-              <dt className="text-text-muted">{label}</dt>
-              <dd className="text-text">{value}</dd>
+    <aside aria-label={t("searchAdd.suggest.previewLabel")} aria-live="polite" className="flex items-start gap-3 self-start rounded-md bg-surface-alt p-3">
+      <ProductImage src={imageUrl(product.imageSha256)} size="lg" fallbackIcon={Package} className="bg-surface" />
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <div className="flex flex-col">
+          <p className="text-caption text-text-muted">{[product.category.name, t("searchAdd.suggest.stores", { count: product.storeCount })].join(t("common.listSeparator"))}</p>
+          <p className="text-body-sm font-semibold break-words text-text">{product.name}</p>
+        </div>
+        <dl className="flex flex-col gap-1 text-caption">
+          {rows.map(([label, value]) => (
+            <div key={label} className="flex gap-2">
+              <dt className="shrink-0 text-text-muted">{label}</dt>
+              <dd className="min-w-0 break-words text-text">{value}</dd>
             </div>
           ))}
-      </dl>
-      <p className="text-caption text-text-muted">
-        {[t("searchAdd.suggest.stores", { count: product.storeCount }), t("searchAdd.suggest.previewNote")].join(t("common.listSeparator"))}
-      </p>
-      <Button variant="secondary" onClick={onChoose}>
-        {t("searchAdd.suggest.choose")}
-      </Button>
+        </dl>
+        <Button size="compact" variant="secondary" onClick={onChoose} className="self-start">
+          {t("searchAdd.suggest.choose")}
+        </Button>
+      </div>
     </aside>
   );
 }

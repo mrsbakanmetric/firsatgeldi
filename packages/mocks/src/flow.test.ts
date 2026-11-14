@@ -1,6 +1,6 @@
 // The Search and Add flow through the typed client, as the screen will call it
 // (implementation_plan.md step 9: "the typed client gets valid responses").
-import { ActivityEvent, ApiError } from "@firsatgeldi/contracts";
+import { ActivityEvent, ApiError, CreateTrackedItemRequest } from "@firsatgeldi/contracts";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { PRODUCTS } from "./fixtures/catalog";
 import { PLATFORMS } from "./fixtures/market";
@@ -183,6 +183,28 @@ describe("confirm, teaser and tracking", () => {
       [2, 2_719_900, 175_000],
     ]);
     expect(data.summary).toMatchObject({ cheaperCount: 2, maxSaving: { amount: 300_200, currency: "TRY" } });
+  });
+
+  it("“Diğer” platform: typed platform and seller, no seller check; the return last day only from the user (none = unknown)", async () => {
+    const base = {
+      mode: "BOUGHT", productId: product.id, identifyRequestId: null, platformId: null, otherPlatformName: "Mahalle Kamera", sellerName: "Ali Usta", sellerRef: null,
+      pricePaid, pricePaidSource: "USER_TYPED", orderedOn: "2026-11-08", orderStatus: "DELIVERED", returnDeadline: null,
+    } as const;
+    const { data } = await api.call("createTrackedItem", { body: base, idempotencyKey: "other-1" });
+    expect(data).toMatchObject({ mode: "BOUGHT", returnDeadline: null, returnDeadlineStatus: null });
+    expect(controller.state.trackedItems.at(-1)).toMatchObject({ platform: null, otherPlatformName: "Mahalle Kamera", sellerName: "Ali Usta", sellerOfferId: null });
+    expect(controller.state.trackedItemEvents.at(-1)?.data).toMatchObject({ otherPlatformName: "Mahalle Kamera" });
+    expect(controller.state.activity.at(-1)?.metadata).toMatchObject({ otherPlatform: true });
+
+    // Neither a known platform nor a typed one, both, or a seller ref on a typed platform → rejected by the contract.
+    for (const body of [{ ...base, otherPlatformName: null }, { ...base, platformId: PLATFORMS.HEPSIBURADA.id }, { ...base, sellerRef: "ref_x" }]) {
+      expect(CreateTrackedItemRequest.safeParse(body).success).toBe(false);
+    }
+    // A typed seller belongs to a typed platform only.
+    expect(CreateTrackedItemRequest.safeParse({ ...base, platformId: PLATFORMS.HEPSIBURADA.id, otherPlatformName: null }).success).toBe(false);
+
+    // This product is tracked once per mode; the next test starts it again.
+    controller.state.trackedItems.splice(controller.state.trackedItems.findIndex((item) => item.id === data.id), 1);
   });
 
   it("creates a BOUGHT tracking with an estimated last return day, once", async () => {

@@ -64,7 +64,11 @@ export interface TrackedItemRow {
   readonly productKey: ProductKey;
   readonly mode: "BOUGHT" | "WANT";
   readonly platform: PlatformKey | null;
+  /** Typed platform name when the user picked "Diğer". */
+  readonly otherPlatformName?: string | null;
   readonly sellerOfferId: string | null;
+  /** Typed seller on a "Diğer" platform, saved as typed. */
+  readonly sellerName?: string | null;
   readonly pricePaidMinor: number | null;
   readonly state: "ACTIVE" | "ENDED" | "EXPIRED";
   readonly createdAt: string;
