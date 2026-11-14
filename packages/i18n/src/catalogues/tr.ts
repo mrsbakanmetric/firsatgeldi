@@ -315,26 +315,7 @@ export const tr = {
     v3: {
       status: { BOUGHT: "Takip ediyorsun", WANT: "Almak istiyorsun" },
       dealGroup: "Fırsat olan ürünler",
-      canSave: "{amount} kazanabilirsin",
       seeDeal: "Fırsatı gör",
-      change: {
-        down: { one: "↓ {amount} (%{percent}) · {count} gün", other: "↓ {amount} (%{percent}) · {count} gün" },
-        up: { one: "↑ {amount} (%{percent}) · {count} gün", other: "↑ {amount} (%{percent}) · {count} gün" },
-        same: { one: "Değişmedi · {count} gün", other: "Değişmedi · {count} gün" },
-      },
-      chart: {
-        min: "En düşük {price}",
-        max: "En yüksek {price}",
-        paid: "Sen {price}",
-        cheapest: "En ucuz",
-        target: "Hedef {price}",
-        readout: "{day} · {price}",
-      },
-      stock: {
-        IN_STOCK: { one: "Stokta · en az {count} gündür", other: "Stokta · en az {count} gündür" },
-        LOW_STOCK: "Az kaldı",
-        OUT_OF_STOCK: { one: "Tükendi · {count} gündür", other: "Tükendi · {count} gündür" },
-      },
       more: "Diğer işlemler",
       end: "Takibi bitir",
       endTitle: "Takibi bitir",
@@ -391,25 +372,10 @@ export const tr = {
     columns: {
       product: "Ürün",
       price: "Fiyat · 14 gün",
-      stock: "Stok · 14 gün",
       state: "Durum",
     },
     row: {
-      bought: "Aldın {price}",
-      orderStatus: {
-        ORDERED: "Sipariş verildi",
-        SHIPPED: "Kargoda",
-        DELIVERED: "Teslim alındı",
-      },
-      target: "Hedef {price}",
       noTarget: "Hedef fiyat yok",
-      duration: {
-        "1W": "1 hafta takip",
-        "1M": "1 ay takip",
-        "3M": "3 ay takip",
-        UNLIMITED: "Süresiz takip",
-      },
-      daysLeft: { one: "{count} gün kaldı", other: "{count} gün kaldı" },
       flags: {
         deal: "Fırsat geldi",
         returnDays: { one: "İade için {count} gün", other: "İade için {count} gün" },
@@ -417,19 +383,7 @@ export const tr = {
         stale: "Güncel değil",
         ended: "Takip bitti",
       },
-      chart: {
-        paidAndCheapest: "Ödediğin {paid}, en ucuz {cheapest}",
-        targetAndCheapest: "Hedef {target}, en ucuz {cheapest}",
-        cheapest: "En ucuz {cheapest}",
-        noData: "Bu dönem için fiyat verisi yok",
-      },
-      stock: {
-        noData: "Stok verisi yok",
-      },
       state: {
-        cheapestYours: "Senin fiyatın en ucuz",
-        toTarget: "Hedefe {amount} kaldı",
-        belowTarget: "Hedefin altında · en ucuz {price}",
         cheapestNow: "En ucuz {price}",
         unverified: "Fırsat doğrulanamadı",
         noPrice: "Fiyat henüz bilinmiyor",

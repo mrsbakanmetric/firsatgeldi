@@ -312,26 +312,7 @@ export const en = {
     v3: {
       status: { BOUGHT: "You're tracking", WANT: "You want to buy" },
       dealGroup: "Products with a deal",
-      canSave: "You could save {amount}",
       seeDeal: "See the deal",
-      change: {
-        down: { one: "↓ {amount} ({percent}%) · {count} day", other: "↓ {amount} ({percent}%) · {count} days" },
-        up: { one: "↑ {amount} ({percent}%) · {count} day", other: "↑ {amount} ({percent}%) · {count} days" },
-        same: { one: "No change · {count} day", other: "No change · {count} days" },
-      },
-      chart: {
-        min: "Lowest {price}",
-        max: "Highest {price}",
-        paid: "You {price}",
-        cheapest: "Cheapest",
-        target: "Target {price}",
-        readout: "{day} · {price}",
-      },
-      stock: {
-        IN_STOCK: { one: "In stock · for at least {count} day", other: "In stock · for at least {count} days" },
-        LOW_STOCK: "Only a few left",
-        OUT_OF_STOCK: { one: "Sold out · for {count} day", other: "Sold out · for {count} days" },
-      },
       more: "More actions",
       end: "End tracking",
       endTitle: "End tracking",
@@ -388,25 +369,10 @@ export const en = {
     columns: {
       product: "Product",
       price: "Price · 14 days",
-      stock: "Stock · 14 days",
       state: "Status",
     },
     row: {
-      bought: "You paid {price}",
-      orderStatus: {
-        ORDERED: "Ordered",
-        SHIPPED: "Shipped",
-        DELIVERED: "Delivered",
-      },
-      target: "Target {price}",
       noTarget: "No target price",
-      duration: {
-        "1W": "1-week tracking",
-        "1M": "1-month tracking",
-        "3M": "3-month tracking",
-        UNLIMITED: "No end date",
-      },
-      daysLeft: { one: "{count} day left", other: "{count} days left" },
       flags: {
         deal: "Deal found",
         returnDays: { one: "{count} day to return", other: "{count} days to return" },
@@ -414,19 +380,7 @@ export const en = {
         stale: "Not up to date",
         ended: "Tracking ended",
       },
-      chart: {
-        paidAndCheapest: "You paid {paid}, cheapest {cheapest}",
-        targetAndCheapest: "Target {target}, cheapest {cheapest}",
-        cheapest: "Cheapest {cheapest}",
-        noData: "No price data for this period",
-      },
-      stock: {
-        noData: "No stock data",
-      },
       state: {
-        cheapestYours: "Your price is the cheapest",
-        toTarget: "{amount} to your target",
-        belowTarget: "Below your target · cheapest {price}",
         cheapestNow: "Cheapest {price}",
         unverified: "Deal could not be verified",
         noPrice: "No price yet",
