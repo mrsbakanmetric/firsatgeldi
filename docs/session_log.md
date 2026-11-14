@@ -4,6 +4,15 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-14 (morning) · claude.ai
+- **Done:** reviewed #53–#58 before merge; claude.ai project mirrors refreshed to `main` @ `0cea74a`; #59 opened (prompt rule).
+- **Decided (user), written in docs:** upload status read key `upload.own.view`, action `upload.status`, stream key `account.own.view` (#54) · catalogue miss → "Mağazalarda ara" via `POST /identify`, no new endpoint; catalogue warm-up job twice a day (#58) · prompts asking Claude Code for a plan say Plan mode (#59, `agent_rules.md`).
+- **Decided (user), for step 10 (Claude Code writes them into `architecture.md` §16.1 in a spec PR after the step 10 PR):** seller-lookup `trust { verdict, reasonKey }` · `meta.sourcesMissing` · identify attributes carry `options` + `matchCritical` · `GET /uploads/policy?purpose=` (limits and retention from settings) · client always sends `IDENTIFY` · no bell counter until the notifications endpoint · closed category shows text only, "Haber ver" stays open.
+- **Open:** #59 to merge · step 10 (Search and Add) PR in progress · the user checks the screen in the browser before step 11.
+- **Next:** step 10 PR review in the browser (`pnpm dev`), then the spec PR for the new fields.
+
+---
+
 ## 2026-11-14 (night, 3) · Claude Code
 - **Done:** #56 (`poll` field in §16.1) and #57 (code note marked decided) merged.
 - **Decided (user), written in this PR:** "Katalogda yok → mağazalarda ara" uses `POST /identify` with the typed text, no new endpoint; identify runs the hybrid flow and saves to the catalogue; nothing found → no exact match + closest three / "not yet supported"; `search_events` `SEARCH_BOX`, guests allowed (`architecture.md` §11, §16, §16.1; `modules.md` Search and Add; `product_spect.md` §9.1) · catalogue warm-up job `catalog-warmup` 1–2×/day, products only, no price/stock (§9, §11; `product_spect.md` §9.5; plan step 27); settings 03:00 + 15:00, 500 queries/run, electronics + clothing are [ASSUMPTION] (`database.md` §18).
