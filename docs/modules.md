@@ -1162,13 +1162,13 @@ Each rule can be turned on/off; threshold and weight are editable.
 
 ## Appendix A — Build order
 
-[DECIDED 2026-11-13] Same order as the screen order in `CLAUDE.md` › Phases and `architecture.md` §25. This is the **backend** build order: Phase 1 first builds the same screens on mock data; Phase 2 builds the backend and connects the screens in this order (rows 1–11); rows 12–13 are Phase 3 (`docs/implementation_plan.md`). The first vertical slice (A2) is approved. One module group = one screen step; each step stops for approval.
+[DECIDED 2026-11-13; Tracked Items moved before Product Detail 2026-11-14 (user)] Same order as the screen order in `CLAUDE.md` › Phases and `architecture.md` §25. This is the **backend** build order: Phase 1 first builds the same screens on mock data; Phase 2 builds the backend and connects the screens in this order (rows 1–11); rows 12–13 are Phase 3 (`docs/implementation_plan.md`). The first vertical slice (A2) is approved. One module group = one screen step; each step stops for approval.
 
 | Order | Modules | Why |
 |---|---|---|
 | 1 | Search and Add + Hidden Seller + (background: price engine, scheduling) + **permission checks and activity capture** | First vertical slice: add → check → hidden deal → Göster; history recorded from day one |
-| 2 | Product Detail + **Want to Buy (a mode of Product Detail)** + Price and Stock History + Return Window + Check Now + Trust and Accuracy (user side: reports) | Makes the deal usable; Want to Buy has no screen of its own |
-| 3 | Tracked Items | Daily-use list |
+| 2 | Tracked Items | Daily-use list; before Product Detail [DECIDED 2026-11-14] (user) |
+| 3 | Product Detail + **Want to Buy (a mode of Product Detail)** + Price and Stock History + Return Window + Check Now + Trust and Accuracy (user side: reports) | Makes the deal usable; Want to Buy has no screen of its own |
 | 4 | Notifications and Preferences (incl. account/security) | Brings users back |
 | 5 | Home | Daily-use summary, built on the modules above |
 | 6 | My Savings | Builds trust |
