@@ -94,7 +94,7 @@ describe.each(LOCALES)("shells in %s", (locale: Locale) => {
     expect(await axeViolations()).toEqual([]);
   });
 
-  it("footer: legal links, commission note and a language switch to the same page", () => {
+  it("footer (app shell v2): one thin row — legal links, then the language switch at the right end; no commission sentence", () => {
     navigation.pathname = locale === "tr" ? "/tr/takip/42" : "/en/tracking/42";
     render(
       <AppShell locale={locale} viewer={{ kind: "guest" }}>
@@ -103,8 +103,11 @@ describe.each(LOCALES)("shells in %s", (locale: Locale) => {
     );
     const footer = screen.getByRole("navigation", { name: t("shell.footer.label") });
     expect(within(footer).getAllByRole("link")).toHaveLength(5);
-    expect(screen.getByText(t("shell.footer.commissionNote"))).toBeDefined();
+    expect(screen.queryByText(t("shell.footer.commissionNote"))).toBeNull();
     const languages = screen.getByRole("navigation", { name: t("shell.language.label") });
+    // Same row: the links and the language switch are siblings, the switch last.
+    expect(footer.parentElement).toBe(languages.parentElement);
+    expect(footer.parentElement?.lastElementChild).toBe(languages);
     expect(within(languages).getByRole("link", { name: "English" }).getAttribute("href")).toBe("/en/tracking/42");
     expect(within(languages).getByRole("link", { name: "Türkçe" }).getAttribute("href")).toBe("/tr/takip/42");
   });

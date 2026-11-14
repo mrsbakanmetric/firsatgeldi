@@ -184,7 +184,11 @@ export function trackingHandlers(controller: MockController) {
       let deadline: { day: string; status: "ESTIMATED" | "CONFIRMED" | "USER_EDITED" } | null = null;
       let platformKey: keyof typeof PLATFORMS | null = null;
       let sellerOfferId: string | null = null;
-      if (body.mode === "BOUGHT") {
+      const otherPlatformName = body.mode === "BOUGHT" ? (body.otherPlatformName ?? null) : null;
+      if (body.mode === "BOUGHT" && otherPlatformName) {
+        // "Diğer" platform: no return rule is known, so only the user's last day counts; the seller stays as typed.
+        if (!product.category.noWithdrawalRight && body.returnDeadline) deadline = { day: body.returnDeadline, status: "USER_EDITED" };
+      } else if (body.mode === "BOUGHT") {
         const platform = PLATFORM_LIST.find((item) => item.id === body.platformId);
         if (!platform) throw new MockApiError("NOT_FOUND");
         platformKey = platform.key as keyof typeof PLATFORMS;
@@ -198,11 +202,15 @@ export function trackingHandlers(controller: MockController) {
         }
       }
       state.trackedItems.push({
-        id, userId, productKey: key, mode: body.mode, platform: platformKey, sellerOfferId,
+        id, userId, productKey: key, mode: body.mode, platform: platformKey, otherPlatformName, sellerOfferId,
+        sellerName: body.mode === "BOUGHT" ? (body.sellerName ?? null) : null,
         pricePaidMinor: body.mode === "BOUGHT" ? body.pricePaid.amount : null, state: "ACTIVE", createdAt,
       });
-      state.trackedItemEvents.push({ id: newId(), trackedItemId: id, type: "CREATED", data: { mode: body.mode, plan: user.plan }, actor: "USER", createdAt });
-      note({ targetType: "tracked_item", targetId: id, metadata: { mode: body.mode, productId: product.id } });
+      state.trackedItemEvents.push({
+        id: newId(), trackedItemId: id, type: "CREATED", actor: "USER", createdAt,
+        data: { mode: body.mode, plan: user.plan, ...(otherPlatformName ? { otherPlatformName } : {}) },
+      });
+      note({ targetType: "tracked_item", targetId: id, metadata: { mode: body.mode, productId: product.id, ...(otherPlatformName ? { otherPlatform: true } : {}) } });
       return {
         status: 201,
         data: {

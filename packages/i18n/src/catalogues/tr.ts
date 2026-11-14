@@ -138,6 +138,10 @@ export const tr = {
       changed: "{label} “{value}” olarak değişti; ürünler bu değerle yeniden arandı.",
       markCleared: "İşaretin kaldırıldı.",
       undo: "Geri al",
+      /** Design v3: the small muted label in front of the attribute chips. */
+      label: "Nasıl anladık:",
+      /** Design v3: short notice after a change, next to "Geri al". */
+      changedShort: "{label} değişti",
     },
     candidates: {
       title: "Hangisi seninki?",
@@ -180,6 +184,17 @@ export const tr = {
       platform: "Platform",
       seller: "Satıcı",
       sellerHelp: "Adını tam yaz ya da ilan linkini yapıştır.",
+      /** Design v3: compact primary next to "Değiştir"; same action as "Evet, bunu aldım". */
+      quickConfirm: "Evet, bu",
+      /** Last entry of the platform list (modules.md Search and Add step 4). */
+      otherPlatform: "Diğer",
+      otherPlatformName: "Platform adı",
+      otherSellerHelp: "Adı ilandaki gibi yaz; bu platformda satıcıyı kontrol edemiyoruz.",
+      /** One line above the disabled actions: what is missing. */
+      missing: {
+        platformName: "Platform adını yaz",
+        price: "Ödediğin fiyatı yaz",
+      },
       sellerFind: "Satıcıyı bul",
       sellerFound: "Bu üründe bulundu",
       sellerNotFound: "Bu adla bu üründe satıcı bulamadık. Adı ilandaki gibi yaz ya da ilan linkini yapıştır.",
@@ -219,6 +234,10 @@ export const tr = {
       ruleDefault: "Bu platformun iade kuralını okuyamadık; varsayılan kural kullanıldı.",
       changeLastDay: "Son günü değiştir",
       lastDayLabel: "Son gün",
+      returnHelp: "İade süresi nasıl hesaplandı?",
+      userEntered: "senin girdiğin",
+      returnUnknown: "İade süresi bilinmiyor",
+      returnOtherHelp: "Bu platformun iade kuralını bilmiyoruz; son günü biliyorsan seç.",
       noWithdrawal: "Bu kategoride cayma hakkı yok. İade önermeyiz; daha ucuz fiyat çıkarsa satıcıdan fiyat farkı istemeni öneririz.",
       noBrandCode: "Marka ya da model kodu bulunamadı: bu ürünü yalnız aldığın satıcıda takip ederiz. Etiket fotoğrafı eklersen diğer satıcılarda da arayabiliriz.",
       addLabelPhoto: "Etiket fotoğrafı ekle",

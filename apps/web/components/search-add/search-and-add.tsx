@@ -4,6 +4,8 @@
 // pagedesign.md §8.2): Flow template — Bul → Hangisi seninki? → Emin ol, onayla.
 // Desktop (design v2): one full-width column until a product is marked, photos
 // inline under the search box; the right column holds only the confirm panel.
+// Compact UI (design v3): step bar at most 640 px; the photo limits and privacy
+// note appear with the first photo; no repeated hint in the empty state.
 // Phone: photos in their panel under the box; a "Onaya geç" bar opens the
 // confirm panel as a sheet. Five states: loading, empty, error (input kept), stale (confirm
 // panel), success. Guests search and mark freely; sign-in comes at confirmation.
@@ -265,7 +267,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
 
   return (
     <PageTemplate kind="flow" title={t("searchAdd.title")} caption={t("searchAdd.intro")} side={side} sideLabel={t("searchAdd.confirm.title")}>
-      <StepIndicator label={t("searchAdd.steps.label")} steps={names} current={step} completedLabel={t("common.stepCompleted")} className="hidden md:flex" />
+      <StepIndicator label={t("searchAdd.steps.label")} steps={names} current={step} completedLabel={t("common.stepCompleted")} className="hidden max-w-(--size-step-indicator-max-width) md:flex" />
       <p className="text-body-sm font-semibold text-text md:hidden">{t("searchAdd.steps.phone", { current: step + 1, total: STEP_COUNT, name: names[step] })}</p>
 
       {created ? (
@@ -280,7 +282,6 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
             onQueryChange={setQuery}
             signedIn={signedIn}
             onSubmit={submit}
-            submitLabel={result ? t("searchAdd.search.again") : t("searchAdd.search.submit")}
             submitting={identify.isPending}
             canSubmit={(query.trim().length > 0 || photos.readyIds.length > 0) && !photos.busy}
             onChoose={chooseProduct}
@@ -291,8 +292,8 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
           />
 
           <PhotoWatchers photos={photos} />
-          {/* Photos under the box: inline chips on desktop (design v2), the panel on phones (unchanged). */}
-          {!result && (
+          {/* Photos under the box once there is one: inline chips on desktop (design v2), the panel on phones. */}
+          {!result && photos.photos.length > 0 && (
             <>
               <div className="hidden md:block">
                 <PhotoArea t={t} photos={photos} layout="inline" />

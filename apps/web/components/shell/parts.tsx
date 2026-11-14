@@ -81,28 +81,30 @@ export function LanguageSwitch({ locale, t, onHero = false }: { locale: Locale; 
   );
 }
 
-/** Footer: legal links, help, commission note, language switch. Short labels on phones. */
+/**
+ * Footer (app shell v2): one thin row — legal links and help on the left, the
+ * language switch small at the right end; caption text, space.4 vertical
+ * padding; no separate commission sentence (the "Komisyon açıklaması" link
+ * covers it). Short labels on phones, where the links wrap.
+ */
 export function SiteFooter({ locale, t, variant = "full" }: { locale: Locale; t: Translator; variant?: "full" | "auth" }) {
   const links = variant === "auth" ? FOOTER_LINKS.filter((link) => (AUTH_FOOTER_IDS as readonly string[]).includes(link.id)) : FOOTER_LINKS;
   return (
     <footer className="shrink-0 border-t border-border bg-surface">
-      <div className="mx-auto flex max-w-(--size-content-max-width) flex-col gap-3 px-4 py-4 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-4 md:p-6">
-        <nav aria-label={t("shell.footer.label")} className="flex flex-wrap gap-x-3 gap-y-1 md:gap-5">
+      <div className="mx-auto flex max-w-(--size-content-max-width) items-center justify-between gap-3 px-4 py-4 md:px-6">
+        <nav aria-label={t("shell.footer.label")} className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 md:gap-x-5">
           {links.map((link) => (
             <Link
               key={link.id}
               href={hrefFor(link.route, locale)}
-              className={cn("flex min-h-(--size-touch-target-min) items-center rounded-sm text-caption text-text-muted underline-offset-4 hover:underline md:text-body-sm", focusRing)}
+              className={cn("flex min-h-(--size-touch-target-min) items-center rounded-sm text-caption text-text-muted underline-offset-4 hover:underline", focusRing)}
             >
               <span className="md:hidden">{t(link.short)}</span>
               <span className="hidden md:inline">{t(link.label)}</span>
             </Link>
           ))}
         </nav>
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-          {variant === "full" && <p className="text-caption text-text-muted">{t("shell.footer.commissionNote")}</p>}
-          <LanguageSwitch locale={locale} t={t} />
-        </div>
+        <LanguageSwitch locale={locale} t={t} />
       </div>
     </footer>
   );

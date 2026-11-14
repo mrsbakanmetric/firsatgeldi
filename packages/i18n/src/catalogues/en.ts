@@ -136,6 +136,10 @@ export const en = {
       changed: "{label} changed to “{value}”; products were searched again with it.",
       markCleared: "Your mark was cleared.",
       undo: "Undo",
+      /** Design v3: the small muted label in front of the attribute chips. */
+      label: "How we understood it:",
+      /** Design v3: short notice after a change, next to "Undo". */
+      changedShort: "{label} changed",
     },
     candidates: {
       title: "Which one is yours?",
@@ -178,6 +182,17 @@ export const en = {
       platform: "Platform",
       seller: "Seller",
       sellerHelp: "Type the full name or paste the listing link.",
+      /** Design v3: compact primary next to "Change"; same action as "Yes, I bought this". */
+      quickConfirm: "Yes, this one",
+      /** Last entry of the platform list (modules.md Search and Add step 4). */
+      otherPlatform: "Other",
+      otherPlatformName: "Platform name",
+      otherSellerHelp: "Type the name as on the listing; we can't check sellers on this platform.",
+      /** One line above the disabled actions: what is missing. */
+      missing: {
+        platformName: "Type the platform name",
+        price: "Type the price you paid",
+      },
       sellerFind: "Find seller",
       sellerFound: "Found on this product",
       sellerNotFound: "We couldn't find a seller with this name for this product. Type the name as on the listing or paste the listing link.",
@@ -217,6 +232,10 @@ export const en = {
       ruleDefault: "We couldn't read this platform's return rule; the default rule is used.",
       changeLastDay: "Change last day",
       lastDayLabel: "Last day",
+      returnHelp: "How was the return window worked out?",
+      userEntered: "entered by you",
+      returnUnknown: "Return window unknown",
+      returnOtherHelp: "We don't know this platform's return rule; pick the last day if you know it.",
       noWithdrawal: "This category has no right of withdrawal. We won't suggest a return; if a lower price appears, we'll suggest asking the seller for the difference.",
       noBrandCode: "No brand or model code found: we'll track this product only at the seller you bought from. Add a label photo and we can search other sellers too.",
       addLabelPhoto: "Add label photo",

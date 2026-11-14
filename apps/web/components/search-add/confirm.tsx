@@ -6,6 +6,11 @@
 // user (prefilled only from their own link or order screen); no seller list —
 // the seller is typed and confirmed by exact match. Nothing is saved before
 // "Evet, bunu aldım" / "Takibe al". Guests see the sign-in card instead.
+// Compact UI (design v3): a quick "Evet, bu" next to "Değiştir"; the actions
+// stay at the bottom of the panel with one line naming what is missing; the
+// seller lookup sits inside the field; the platform list ends with "Diğer"
+// (typed platform, typed seller, return last day from the user); the return
+// date itself is the control and its explanation sits behind "?".
 import {
   ApiError,
   type ConfirmContext,
@@ -19,12 +24,14 @@ import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
 import {
   Button,
   buttonClasses,
+  cn,
   ConfirmPanel,
   ConfirmSection,
   FactTile,
   FactTiles,
   type FactVerdict,
   Flag,
+  focusRing,
   FreshnessLine,
   Icon,
   ProductImage,
@@ -33,11 +40,10 @@ import {
   SkeletonBlock,
   StatusBanner,
   TextField,
-  Tooltip,
 } from "@firsatgeldi/ui";
 import { CircleHelp, ExternalLink, Info, LogIn, Package, TriangleAlert } from "lucide-react";
 import Link from "next/link";
-import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { type FormEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { useApiMutation, useApiQuery } from "../../lib/api/hooks";
 import { errorMessage } from "../../lib/api/errors";
 import { checkedAgo, formatDay, money, parsePrice, priceInput } from "./format";
@@ -48,6 +54,8 @@ import { Teaser } from "./teaser";
 /** Pause after the last price keystroke before the teaser is asked. */
 const PRICE_PAUSE_MS = 400;
 const RATING_DIGITS = { minimumFractionDigits: 1, maximumFractionDigits: 1 } as const;
+/** Value of the "Diğer" entry at the end of the platform list (never a platform id). */
+const OTHER_PLATFORM = "OTHER";
 
 export interface Prefill {
   readonly source: "LINK" | "SCREENSHOT";
@@ -69,18 +77,49 @@ type Mode = "BOUGHT" | "WANT";
 type Duration = "1W" | "1M" | "3M" | "UNLIMITED";
 type OrderStatus = "ORDERED" | "SHIPPED" | "DELIVERED";
 
-function ProductTop({ t, candidate, onChange }: { t: Translator; candidate: Candidate; onChange: () => void }) {
+/** The marked product with "Değiştir" and, when given, the quick "Evet, bu" (design v3). */
+function ProductTop({ t, candidate, onChange, onQuick, quickBusy = false }: { t: Translator; candidate: Candidate; onChange: () => void; onQuick?: () => void; quickBusy?: boolean }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center gap-3">
       <ProductImage src={imageUrl(candidate.product.imageSha256)} size="sm" fallbackIcon={Package} />
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="text-body font-semibold break-words text-text">{candidate.product.name}</span>
         {candidate.variantLine && <span className="text-caption text-text-muted">{candidate.variantLine}</span>}
       </div>
-      <Button variant="ghost" onClick={onChange}>
-        {t("searchAdd.confirm.change")}
-      </Button>
+      <div className="flex items-center gap-1">
+        <Button variant="ghost" size="compact" onClick={onChange}>
+          {t("searchAdd.confirm.change")}
+        </Button>
+        {onQuick && (
+          <Button size="compact" onClick={onQuick} loading={quickBusy}>
+            {t("searchAdd.confirm.quickConfirm")}
+          </Button>
+        )}
+      </div>
     </div>
+  );
+}
+
+/** "?" next to the return date: the explanation opens under it on click or tap (never hover-only). */
+function ReturnHelp({ t, children }: { t: Translator; children: ReactNode }) {
+  const id = useId();
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        type="button"
+        aria-label={t("searchAdd.confirm.returnHelp")}
+        aria-expanded={open}
+        aria-controls={`${id}-help`}
+        onClick={() => setOpen((value) => !value)}
+        className={cn("flex size-(--size-touch-target-min) items-center justify-center rounded-pill text-text-muted hover:bg-surface-alt", focusRing)}
+      >
+        <Icon icon={CircleHelp} />
+      </button>
+      <p id={`${id}-help`} hidden={!open} className="basis-full text-caption text-text-muted">
+        {children}
+      </p>
+    </>
   );
 }
 
@@ -150,7 +189,11 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const [orderedOn, setOrderedOn] = useState(() => initial?.orderedOn ?? prefill?.orderedOn ?? toCalendarDay(new Date()));
   const [status, setStatus] = useState<OrderStatus>("ORDERED");
   const [customLastDay, setCustomLastDay] = useState<string | null>(null);
-  const [editingLastDay, setEditingLastDay] = useState(false);
+  const [otherName, setOtherName] = useState("");
+  /** After "Evet, bu" with a gap: the missing fields say so. */
+  const [showMissing, setShowMissing] = useState(false);
+  const otherNameRef = useRef<HTMLInputElement>(null);
+  const priceRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<Mode>("BOUGHT");
   const [targetText, setTargetText] = useState("");
   const [duration, setDuration] = useState<Duration>("1M");
@@ -158,9 +201,10 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const [already, setAlready] = useState(false);
   const attempt = useRef<string>(globalThis.crypto.randomUUID());
 
-  // Platform: from the user's own link/screen when known, otherwise the first one.
+  // Platform: from the user's own link/screen when known, otherwise the first one; "Diğer" = typed by the user.
   const platforms = ctx?.platforms ?? [];
-  const platform = platforms.find((item) => item.id === platformId) ?? platforms.find((item) => item.name === prefill?.platformName) ?? platforms[0] ?? null;
+  const isOther = platformId === OTHER_PLATFORM;
+  const platform = isOther ? null : (platforms.find((item) => item.id === platformId) ?? platforms.find((item) => item.name === prefill?.platformName) ?? platforms[0] ?? null);
 
   const lookup = useApiMutation("sellerLookup", { onError: (error) => setProblem(errorMessage(t, error)) });
   const { mutate: runLookup, reset: resetLookup } = lookup;
@@ -172,11 +216,11 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   // A seller read from the user's own link or screen is looked up once the platforms are known.
   const autoLookup = useRef(false);
   useEffect(() => {
-    if (!autoLookup.current && platform && prefill?.sellerName) {
+    if (!autoLookup.current && platform && !isOther && prefill?.sellerName) {
       autoLookup.current = true;
       runLookup({ params: { id: productId }, body: { platformId: platform.id, name: prefill.sellerName } });
     }
-  }, [platform, prefill, productId, runLookup]);
+  }, [platform, isOther, prefill, productId, runLookup]);
 
   const price = parsePrice(priceText, locale);
   const [settledPrice, setSettledPrice] = useState<number | null>(price);
@@ -226,6 +270,11 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const alreadyTracking = ctx.alreadyTracking.find((item) => item.mode === mode) ?? null;
   const deadline = platform ? returnDeadline(orderedOn, platform.returnRule) : null;
   const lastDay = customLastDay ?? deadline?.day ?? null;
+  // What "Evet, bunu aldım" still needs, in the order of the fields.
+  const missing: { message: string; field: "platformName" | "price" }[] = [
+    ...(isOther && !otherName.trim() ? [{ message: t("searchAdd.confirm.missing.platformName"), field: "platformName" as const }] : []),
+    ...(price === null ? [{ message: priceText.trim() ? t("searchAdd.confirm.priceInvalid") : t("searchAdd.confirm.missing.price"), field: "price" as const }] : []),
+  ];
   const priceSource: "USER_TYPED" | "USER_LINK" | "USER_SCREENSHOT" =
     prefill?.pricePaid && price === prefill.pricePaid.amount ? (prefill.source === "LINK" ? "USER_LINK" : "USER_SCREENSHOT") : "USER_TYPED";
   const fromUser = priceSource !== "USER_TYPED";
@@ -233,13 +282,14 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
 
   const submitBought = () => {
     setProblem(null);
-    if (!platform || price === null) return;
+    if ((!platform && !isOther) || price === null || missing.length) return;
     const body: CreateTrackedItemRequest = {
       mode: "BOUGHT",
       productId,
       identifyRequestId,
-      platformId: platform.id,
-      sellerRef: match?.sellerRef ?? null,
+      platformId: platform?.id ?? null,
+      ...(isOther ? { otherPlatformName: otherName.trim(), sellerName: sellerName.trim() || null } : {}),
+      sellerRef: isOther ? null : (match?.sellerRef ?? null),
       pricePaid: { amount: price, currency: "TRY" },
       pricePaidSource: priceSource,
       orderedOn,
@@ -247,6 +297,15 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       returnDeadline: customLastDay,
     };
     create.mutate({ body, idempotencyKey: attempt.current });
+  };
+  /** "Evet, bu": the same confirm, or straight to the first missing field. */
+  const quickConfirm = () => {
+    const first = missing[0];
+    if (!first) return submitBought();
+    setShowMissing(true);
+    const field = (first.field === "platformName" ? otherNameRef : priceRef).current;
+    field?.scrollIntoView?.({ block: "center", behavior: "smooth" });
+    field?.focus();
   };
   const submitWant = () => {
     setProblem(null);
@@ -297,22 +356,30 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       {blockedNote}
       {mode === "BOUGHT" ? (
         <>
-          <Button onClick={submitBought} disabled={!platform || price === null || limitReached || alreadyTracking !== null} loading={create.isPending}>
-            {t("searchAdd.confirm.bought")}
-          </Button>
-          <Button variant="secondary" onClick={() => (setMode("WANT"), setAlready(false), setProblem(null))}>
-            {t("searchAdd.confirm.want")}
-          </Button>
+          {missing[0] && !limitReached && alreadyTracking === null && (
+            <p role="status" className="flex items-center gap-1 text-caption text-text-muted">
+              <Icon icon={Info} size="sm" />
+              <span>{missing[0].message}</span>
+            </p>
+          )}
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" onClick={() => (setMode("WANT"), setAlready(false), setProblem(null))} className="flex-1">
+              {t("searchAdd.confirm.wantShort")}
+            </Button>
+            <Button onClick={submitBought} disabled={(!platform && !isOther) || missing.length > 0 || limitReached || alreadyTracking !== null} loading={create.isPending} className="flex-1">
+              {t("searchAdd.confirm.bought")}
+            </Button>
+          </div>
         </>
       ) : (
-        <>
-          <Button onClick={submitWant} disabled={limitReached || alreadyTracking !== null || (targetText.trim() !== "" && target === null)} loading={create.isPending}>
-            {t("searchAdd.confirm.startTracking")}
-          </Button>
+        <div className="flex flex-wrap gap-2">
           <Button variant="ghost" onClick={() => (setMode("BOUGHT"), setAlready(false), setProblem(null))}>
             {t("searchAdd.confirm.back")}
           </Button>
-        </>
+          <Button onClick={submitWant} disabled={limitReached || alreadyTracking !== null || (targetText.trim() !== "" && target === null)} loading={create.isPending} className="flex-1">
+            {t("searchAdd.confirm.startTracking")}
+          </Button>
+        </div>
       )}
       <p className="text-caption text-text-muted">{t("searchAdd.confirm.actionsNote")}</p>
     </>
@@ -323,7 +390,14 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       framed={framed}
       {...(framed ? { title: t("searchAdd.confirm.title") } : {})}
       intro={t("searchAdd.confirm.intro")}
-      product={<ProductTop t={t} candidate={candidate} onChange={onChangeProduct} />}
+      product={
+        <ProductTop
+          t={t}
+          candidate={candidate}
+          onChange={onChangeProduct}
+          {...(mode === "BOUGHT" && !unsupported && !limitReached && alreadyTracking === null ? { onQuick: quickConfirm, quickBusy: create.isPending } : {})}
+        />
+      }
       footer={footer}
     >
       {stale && (
@@ -380,35 +454,51 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
           <ConfirmSection title={t("searchAdd.confirm.listing")}>
             <Select
               label={t("searchAdd.confirm.platform")}
-              value={platform?.id ?? ""}
+              value={isOther ? OTHER_PLATFORM : (platform?.id ?? "")}
               onValueChange={(value) => {
                 setPlatformId(value);
+                setCustomLastDay(null);
                 resetLookup();
               }}
-              options={platforms.map((item) => ({ value: item.id, label: item.name }))}
+              options={[...platforms.map((item) => ({ value: item.id, label: item.name })), { value: OTHER_PLATFORM, label: t("searchAdd.confirm.otherPlatform") }]}
             />
-            <form onSubmit={findSeller} className="flex items-end gap-2">
-              <TextField
-                label={t("searchAdd.confirm.seller")}
-                helper={t("searchAdd.confirm.sellerHelp")}
-                value={sellerName}
-                onChange={(event) => setSellerName(event.target.value)}
-                onBlur={() => {
-                  if (sellerName.trim() && !match) findSeller();
-                }}
-                className="flex-1"
-              />
-              <Button type="submit" variant="secondary" loading={lookup.isPending} disabled={!sellerName.trim()}>
-                {t("searchAdd.confirm.sellerFind")}
-              </Button>
-            </form>
-            {lookup.isSuccess && !match && (
+            {isOther ? (
+              <>
+                <TextField
+                  ref={otherNameRef}
+                  label={t("searchAdd.confirm.otherPlatformName")}
+                  value={otherName}
+                  onChange={(event) => setOtherName(event.target.value)}
+                  {...(showMissing && !otherName.trim() ? { error: t("searchAdd.confirm.missing.platformName") } : {})}
+                />
+                <TextField label={t("searchAdd.confirm.seller")} helper={t("searchAdd.confirm.otherSellerHelp")} value={sellerName} onChange={(event) => setSellerName(event.target.value)} />
+              </>
+            ) : (
+              <form onSubmit={findSeller}>
+                <TextField
+                  label={t("searchAdd.confirm.seller")}
+                  helper={t("searchAdd.confirm.sellerHelp")}
+                  value={sellerName}
+                  onChange={(event) => setSellerName(event.target.value)}
+                  onBlur={(event) => {
+                    // Not when the blur goes to "Satıcıyı bul" itself: that press looks it up.
+                    if (sellerName.trim() && !match && !event.currentTarget.parentElement?.contains(event.relatedTarget)) findSeller();
+                  }}
+                  action={
+                    <Button type="submit" size="compact" variant="secondary" loading={lookup.isPending} disabled={!sellerName.trim()}>
+                      {t("searchAdd.confirm.sellerFind")}
+                    </Button>
+                  }
+                />
+              </form>
+            )}
+            {!isOther && lookup.isSuccess && !match && (
               <p className="flex items-start gap-1 text-caption text-danger">
                 <Icon icon={TriangleAlert} size="sm" />
                 <span>{t("searchAdd.confirm.sellerNotFound")}</span>
               </p>
             )}
-            {match && (
+            {!isOther && match && (
               <>
                 <Flag tone="success" className="self-start">
                   {t("searchAdd.confirm.sellerFound")}
@@ -439,13 +529,18 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
 
           <ConfirmSection title={t("searchAdd.confirm.purchase")}>
             <TextField
+              ref={priceRef}
               label={t("searchAdd.confirm.pricePaid")}
               inputMode="decimal"
               suffix={t("searchAdd.confirm.currency")}
               value={priceText}
               onChange={(event) => setPriceText(event.target.value)}
               helper={fromUser ? (prefill?.source === "LINK" ? t("searchAdd.confirm.linkNote") : t("searchAdd.confirm.fromShot")) : t("searchAdd.confirm.priceHelp")}
-              {...(priceText.trim() && price === null ? { error: t("searchAdd.confirm.priceInvalid") } : {})}
+              {...(priceText.trim() && price === null
+                ? { error: t("searchAdd.confirm.priceInvalid") }
+                : showMissing && price === null
+                  ? { error: t("searchAdd.confirm.missing.price") }
+                  : {})}
             />
             {fromUser && (
               <Flag tone="info" className="self-start">
@@ -464,41 +559,45 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
             </div>
           </ConfirmSection>
 
-          {platform && lastDay && (
+          {(isOther || (platform && lastDay)) && (
             <ConfirmSection title={t("searchAdd.confirm.returnTitle")}>
-              <p className="flex flex-wrap items-center gap-2 text-body font-semibold text-text">
-                <span>{t("searchAdd.confirm.lastDay", { date: formatDay(lastDay, locale) })}</span>
-                {!customLastDay && deadline?.estimated && (
-                  <>
-                    <Flag tone="info">{t("searchAdd.confirm.estimated")}</Flag>
-                    <Tooltip text={t("searchAdd.confirm.estimatedText")}>
-                      <button type="button" aria-label={t("searchAdd.confirm.estimatedHelp")} className="flex size-(--size-touch-target-min) items-center justify-center rounded-pill text-text-muted">
-                        <Icon icon={CircleHelp} />
-                      </button>
-                    </Tooltip>
-                  </>
+              {/* The date itself is the control: picking a day applies at once (design v3). */}
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="date"
+                  aria-label={t("searchAdd.confirm.lastDayLabel")}
+                  value={lastDay ?? ""}
+                  min={orderedOn}
+                  onChange={(event) => setCustomLastDay(event.target.value || null)}
+                  className={cn("h-(--size-touch-target-min) rounded-md border border-border bg-surface-alt px-3 text-body font-semibold text-text", focusRing)}
+                />
+                {customLastDay ? (
+                  <Flag tone="info">{t("searchAdd.confirm.userEntered")}</Flag>
+                ) : isOther ? (
+                  <Flag tone="neutral">{t("searchAdd.confirm.returnUnknown")}</Flag>
+                ) : (
+                  deadline?.estimated && <Flag tone="info">{t("searchAdd.confirm.estimated")}</Flag>
                 )}
-              </p>
-              <p className="text-body-sm text-text-muted">
-                {platform.returnRule.sourceState === "DEFAULT"
-                  ? t("searchAdd.confirm.ruleDefault")
-                  : platform.returnRule.startType === "DELIVERY"
-                    ? t("searchAdd.confirm.ruleDelivery", { count: platform.returnRule.days })
-                    : t("searchAdd.confirm.ruleOrder", { count: platform.returnRule.days })}
-                {!customLastDay && deadline?.estimated && ` ${t("searchAdd.confirm.estimatedText")}`}
-              </p>
+                <ReturnHelp t={t}>
+                  {isOther
+                    ? t("searchAdd.confirm.returnOtherHelp")
+                    : [
+                        platform?.returnRule.sourceState === "DEFAULT"
+                          ? t("searchAdd.confirm.ruleDefault")
+                          : platform?.returnRule.startType === "DELIVERY"
+                            ? t("searchAdd.confirm.ruleDelivery", { count: platform.returnRule.days })
+                            : t("searchAdd.confirm.ruleOrder", { count: platform?.returnRule.days ?? 0 }),
+                        !customLastDay && deadline?.estimated ? t("searchAdd.confirm.estimatedText") : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                </ReturnHelp>
+              </div>
               {ctx.noWithdrawalRight && (
                 <p className="flex items-start gap-2 rounded-md bg-warning-subtle p-3 text-body-sm text-text">
                   <Icon icon={TriangleAlert} size="sm" className="text-on-warning-subtle" />
                   <span>{t("searchAdd.confirm.noWithdrawal")}</span>
                 </p>
-              )}
-              {editingLastDay ? (
-                <TextField label={t("searchAdd.confirm.lastDayLabel")} type="date" value={lastDay} min={orderedOn} onChange={(event) => event.target.value && setCustomLastDay(event.target.value)} />
-              ) : (
-                <Button variant="ghost" onClick={() => setEditingLastDay(true)} className="self-start">
-                  {t("searchAdd.confirm.changeLastDay")}
-                </Button>
               )}
             </ConfirmSection>
           )}

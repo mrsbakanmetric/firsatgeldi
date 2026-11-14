@@ -2,8 +2,9 @@
 
 // SearchField (product_design_pattern.md §5.30; pagedesign.md §8.2): a search
 // box with its label, a clear control and trailing actions (photo, "Ara").
-// "large" is the Search and Add box (components.search-box); "list" sits above
-// a list. Combobox attributes are passed through for autocomplete.
+// "large" is the Search and Add box (components.search-box, min-height 48; the
+// × shows only while there is text); "list" sits above a list. Combobox
+// attributes are passed through for autocomplete.
 import { Search, X } from "lucide-react";
 import { forwardRef, type InputHTMLAttributes, type ReactNode, useId } from "react";
 import { cn, focusRing } from "./cn";
@@ -37,7 +38,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       <div
         className={cn(
           "flex flex-col gap-2 border border-border bg-surface focus-within:border-primary",
-          size === "large" ? "min-h-(--component-search-box-min-height) rounded-(--component-search-box-radius) px-3 py-2 shadow-sm" : "rounded-md px-3",
+          size === "large" ? "min-h-(--component-search-box-min-height) justify-center rounded-(--component-search-box-radius) px-3 shadow-sm" : "rounded-md px-3",
         )}
       >
         <div className="flex min-h-(--size-touch-target-min) flex-1 items-center gap-2">

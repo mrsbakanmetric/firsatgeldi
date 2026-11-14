@@ -7,7 +7,7 @@ import { createTranslator, LOCALES, type Locale } from "@firsatgeldi/i18n";
 import { OFFERS, PRODUCTS, SELLERS } from "@firsatgeldi/mocks";
 import { createMockServer } from "@firsatgeldi/mocks/node";
 import { axeViolations } from "@firsatgeldi/ui/test";
-import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { AnchorHTMLAttributes } from "react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -127,17 +127,20 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     expect(opened).toHaveBeenCalledTimes(1);
   });
 
-  it("design v2: no right column before a product is marked; photos inline under the search box; the confirm panel is the only right column", async () => {
+  it("design v2/v3: no right column before a product is marked; photo limits and privacy note only with the first photo, inline under the search box", async () => {
     const { container } = show(locale);
     await screen.findByText(t("searchAdd.states.emptyTitle"));
     expect(screen.queryByRole("complementary")).toBeNull();
+    // Design v3: nothing about photos before the first one is added.
+    expect(screen.queryByRole("region", { name: t("searchAdd.photos.title") })).toBeNull();
 
-    // Desktop photo section: limits line + one-line privacy note, a picked file as a chip (an unsupported type is rejected on that chip only).
+    // Desktop photo section after the first photo: limits line + one-line privacy note, the file as a chip (an unsupported type is rejected on that chip only).
+    await waitFor(() => expect(container.querySelector('input[type="file"]')).not.toBeNull());
+    const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
+    await userEvent.upload(fileInput, new File(["x"], "urun-videosu.mov", { type: "video/quicktime" }), { applyAccept: false });
     const inline = (await screen.findAllByRole("region", { name: t("searchAdd.photos.title") }))[0] as HTMLElement;
     expect(within(inline).getByText(new RegExp(`^${t("searchAdd.photos.limitsLine", { count: 0, max: 5, types: "", size: "" }).split(" · ")[0]}`))).toBeDefined();
     expect(within(inline).queryByRole("button", { name: t("searchAdd.search.addPhoto") })).toBeNull();
-    const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
-    await userEvent.upload(fileInput, new File(["x"], "urun-videosu.mov", { type: "video/quicktime" }), { applyAccept: false });
     expect(await within(inline).findByText("urun-videosu.mov")).toBeDefined();
     expect(within(inline).getByText(t("searchAdd.photos.rejectedType"))).toBeDefined();
     expect(screen.queryByRole("complementary")).toBeNull();
@@ -146,16 +149,146 @@ describe.each(LOCALES)("Search and Add — %s", (locale) => {
     expect(screen.getByRole("complementary", { name: t("searchAdd.confirm.title") })).toBeDefined();
   });
 
-  it("autocomplete from our catalogue: tiles, list and preview without prices or stores; choosing marks the product", async () => {
+  it("autocomplete from our catalogue: 4+ matches → tiles, list and a compact preview without prices or stores; choosing marks the product", async () => {
     show(locale);
     await userEvent.type(screen.getByRole("combobox"), "ace pro 2");
     expect(await screen.findByText(new RegExp(t("searchAdd.suggest.found", { count: 4 })), undefined, { timeout: 3000 })).toBeDefined();
+    expect(screen.getAllByRole("button", { name: new RegExp(product.name[locale]) }).length).toBeGreaterThan(0);
     const preview = screen.getByRole("complementary", { name: t("searchAdd.suggest.previewLabel") });
-    expect(within(preview).getByText(new RegExp(t("searchAdd.suggest.previewNote")))).toBeDefined();
+    expect(preview.querySelector("[class*='size-(--size-thumb-lg)']")).not.toBeNull();
+    expect(within(preview).getByRole("button", { name: t("searchAdd.suggest.choose") })).toBeDefined();
+    expect(within(preview).queryByText(new RegExp(t("searchAdd.suggest.previewNote")))).toBeNull();
+    expect(within(preview).getAllByRole("definition").length).toBeLessThanOrEqual(4);
     await userEvent.click(screen.getByRole("option", { name: new RegExp(product.name[locale]) }));
     expect(await screen.findByText(t("searchAdd.candidates.marked"))).toBeDefined();
     expect(screen.getByRole("heading", { name: t("searchAdd.candidates.title") })).toBeDefined();
-    expect(screen.getByText(t("searchAdd.understood.title"))).toBeDefined();
+    expect(screen.getByText(t("searchAdd.understood.label"))).toBeDefined();
+  });
+
+  it("autocomplete with 1–3 matches shows the list alone (no tile repeats a product)", async () => {
+    show(locale);
+    await userEvent.type(screen.getByRole("combobox"), "ace pro 2 flash");
+    await screen.findByRole("option", { name: new RegExp(product.name[locale]) }, { timeout: 3000 });
+    expect(screen.queryAllByRole("button", { name: new RegExp(product.name[locale]) })).toHaveLength(0);
+  });
+
+  it("search box (design v3): icon-only photo button, × only with text, always “Ara” (never “Yeniden ara”)", async () => {
+    show(locale);
+    await screen.findByText(t("searchAdd.states.emptyTitle"));
+    const photo = screen.getByRole("button", { name: t("searchAdd.search.addPhoto") });
+    expect(photo.textContent).toBe("");
+    expect(screen.queryByRole("button", { name: t("searchAdd.search.clear") })).toBeNull();
+    await userEvent.type(screen.getByRole("combobox"), "ace pro 2 flash{Escape}");
+    expect(screen.getByRole("button", { name: t("searchAdd.search.clear") })).toBeDefined();
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.search.submit") }));
+    await screen.findByRole("heading", { name: t("searchAdd.candidates.title") });
+    expect(screen.getByRole("button", { name: t("searchAdd.search.submit") })).toBeDefined();
+    expect(screen.queryByText(t("searchAdd.search.again"))).toBeNull();
+  });
+
+  it("empty box: no repeated hint and no catalogue note; the suggestion overlay closes on Esc and on a click outside", async () => {
+    show(locale);
+    await screen.findByText(t("searchAdd.states.emptyTitle"));
+    const box = screen.getByRole("combobox");
+    await userEvent.click(box);
+    expect(screen.queryByText(t("searchAdd.suggest.emptyHint"))).toBeNull();
+    expect(screen.queryByText(t("searchAdd.suggest.sourceNote"))).toBeNull();
+    await userEvent.type(box, "ace pro 2");
+    await screen.findByRole("listbox", undefined, { timeout: 3000 });
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("listbox")).toBeNull();
+    await userEvent.type(box, " ");
+    await screen.findByRole("listbox", undefined, { timeout: 3000 });
+    await userEvent.click(screen.getByRole("heading", { level: 1 }));
+    expect(screen.queryByRole("listbox")).toBeNull();
+  });
+
+  it("“Nasıl anladık” (design v3): one row with a label and chips, no heading; a value applies on one click, then “… değişti · Geri al”", async () => {
+    show(locale);
+    await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
+    expect(screen.queryByRole("heading", { name: t("searchAdd.understood.title") })).toBeNull();
+    const row = screen.getByText(t("searchAdd.understood.label")).parentElement as HTMLElement;
+    const chips = within(row).getAllByRole("button").filter((button) => button.getAttribute("aria-haspopup") === "listbox");
+    expect(chips.length).toBeGreaterThan(0);
+    // The first chip whose menu offers another value.
+    let picked: string | null = null;
+    for (const chip of chips) {
+      await userEvent.click(chip);
+      const other = screen.getAllByRole("option").find((option) => option.getAttribute("aria-selected") === "false");
+      if (other) {
+        picked = chip.querySelector("span")?.textContent ?? null;
+        await userEvent.click(other);
+        break;
+      }
+      await userEvent.keyboard("{Escape}");
+    }
+    expect(picked).not.toBeNull();
+    expect(screen.queryByRole("button", { name: t("searchAdd.understood.apply") })).toBeNull();
+    expect(await screen.findByText(t("searchAdd.understood.changedShort", { label: picked ?? "" }))).toBeDefined();
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.understood.undo") }));
+    await waitFor(() => expect(screen.queryByText(t("searchAdd.understood.changedShort", { label: picked ?? "" }))).toBeNull());
+  });
+
+  it("confirm panel (design v3): actions at the bottom with a line naming what is missing; “Evet, bu” goes to the first missing field", async () => {
+    show(locale);
+    await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
+    const bought = await screen.findByRole("button", { name: t("searchAdd.confirm.bought") });
+    expect(bought.hasAttribute("disabled")).toBe(true);
+    const footer = bought.closest("div.sticky") as HTMLElement;
+    expect(footer).not.toBeNull();
+    expect(within(footer).getByText(t("searchAdd.confirm.missing.price"))).toBeDefined();
+    const actions = within(footer).getAllByRole("button").map((button) => button.textContent);
+    expect(actions).toEqual([t("searchAdd.confirm.wantShort"), t("searchAdd.confirm.bought")]);
+
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.quickConfirm") }));
+    const price = screen.getByLabelText(t("searchAdd.confirm.pricePaid"));
+    expect(document.activeElement).toBe(price);
+    expect(price.getAttribute("aria-invalid")).toBe("true");
+    expect(controller.state.trackedItems).toHaveLength(0);
+
+    await userEvent.type(price, locale === "tr" ? "28.999" : "28,999");
+    await waitFor(() => expect(bought.hasAttribute("disabled")).toBe(false));
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.quickConfirm") }));
+    expect(await screen.findByText(t("searchAdd.success.title"))).toBeDefined();
+    expect(controller.state.trackedItems).toHaveLength(1);
+  });
+
+  it("return window (design v3): the date is the control, the badge turns “senin girdiğin”, the explanation sits behind “?”", async () => {
+    show(locale);
+    await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
+    const date = (await screen.findByLabelText(t("searchAdd.confirm.lastDayLabel"))) as HTMLInputElement;
+    expect(screen.queryByRole("button", { name: t("searchAdd.confirm.changeLastDay") })).toBeNull();
+    const help = screen.getByRole("button", { name: t("searchAdd.confirm.returnHelp") });
+    expect(help.getAttribute("aria-expanded")).toBe("false");
+    await userEvent.click(help);
+    expect(help.getAttribute("aria-expanded")).toBe("true");
+    const next = new Date(`${date.value}T00:00:00Z`);
+    next.setUTCDate(next.getUTCDate() + 3);
+    // Picking a day in the native date picker fires one change: it applies at once.
+    fireEvent.change(date, { target: { value: next.toISOString().slice(0, 10) } });
+    expect(await screen.findByText(t("searchAdd.confirm.userEntered"))).toBeDefined();
+  });
+
+  it("“Diğer” platform: typed platform and seller, no seller check, return last day from the user", async () => {
+    show(locale);
+    await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
+    const platform = await screen.findByRole("combobox", { name: new RegExp(t("searchAdd.confirm.platform")) });
+    const activityBefore = controller.state.activity.length;
+    await userEvent.click(platform);
+    await userEvent.click(screen.getByRole("option", { name: new RegExp(t("searchAdd.confirm.otherPlatform")) }));
+    expect(screen.queryByRole("button", { name: t("searchAdd.confirm.sellerFind") })).toBeNull();
+    expect(screen.getByText(t("searchAdd.confirm.returnUnknown"))).toBeDefined();
+    expect(within(screen.getByRole("button", { name: t("searchAdd.confirm.bought") }).closest("div.sticky") as HTMLElement).getByText(t("searchAdd.confirm.missing.platformName"))).toBeDefined();
+
+    await userEvent.type(screen.getByLabelText(t("searchAdd.confirm.otherPlatformName")), "Mahalle Kamera");
+    await userEvent.type(screen.getByLabelText(t("searchAdd.confirm.seller")), "Ali Usta");
+    await userEvent.type(screen.getByLabelText(t("searchAdd.confirm.pricePaid")), locale === "tr" ? "27.500" : "27,500");
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.bought") }));
+    expect(await screen.findByText(t("searchAdd.success.title"))).toBeDefined();
+    const item = controller.state.trackedItems[0];
+    expect(item).toMatchObject({ platform: null, otherPlatformName: "Mahalle Kamera", sellerName: "Ali Usta", sellerOfferId: null });
+    expect(controller.state.activity.slice(activityBefore).map((row) => row.action)).not.toContain("seller_lookup");
+    expect(controller.state.trackedItemEvents.at(-1)?.data).toMatchObject({ otherPlatformName: "Mahalle Kamera" });
   });
 
   it("signed in: seller by exact name, fact tiles, typed price → hidden teaser → tracking starts only on confirm", async () => {

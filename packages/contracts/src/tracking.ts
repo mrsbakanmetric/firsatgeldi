@@ -100,29 +100,52 @@ export const TeaserResult = z.object({
 });
 export type TeaserResult = z.infer<typeof TeaserResult>;
 
-/** `POST /tracked-items` — BOUGHT | WANT; pricePaid only from the user (database.md §8, R1). */
-export const CreateTrackedItemRequest = z.discriminatedUnion("mode", [
-  z.object({
-    mode: z.literal("BOUGHT"),
-    productId: Id,
-    identifyRequestId: Id.nullable(),
-    platformId: Id,
-    sellerRef: OfferRef.nullable(),
-    pricePaid: Money,
-    pricePaidSource: z.enum(["USER_TYPED", "USER_LINK", "USER_SCREENSHOT"]),
-    orderedOn: CalendarDay,
-    orderStatus: OrderStatus,
-    /** Set only when the user changed the last day ("Son günü değiştir"). */
-    returnDeadline: CalendarDay.nullable(),
-  }),
-  z.object({
-    mode: z.literal("WANT"),
-    productId: Id,
-    identifyRequestId: Id.nullable(),
-    targetPrice: Money.nullable(),
-    trackingDuration: TrackingDuration,
-  }),
-]);
+/** Longest platform or seller name the user may type ("Diğer" platform). */
+const TYPED_NAME_MAX = 80;
+
+/**
+ * `POST /tracked-items` — BOUGHT | WANT; pricePaid only from the user (database.md §8, R1).
+ * "Diğer" platform (modules.md Search and Add step 4, decided 2026-11-14) [ASSUMPTION —
+ * field names; to be written into architecture.md §16.1 by a spec PR]: `platformId` null +
+ * `otherPlatformName` typed; the seller is saved as typed (`sellerName`, no exact-match
+ * check, so no `sellerRef`); the return last day comes only from the user (null = unknown).
+ */
+export const CreateTrackedItemRequest = z
+  .discriminatedUnion("mode", [
+    z.object({
+      mode: z.literal("BOUGHT"),
+      productId: Id,
+      identifyRequestId: Id.nullable(),
+      /** A known platform; null when the user picked "Diğer". */
+      platformId: Id.nullable(),
+      otherPlatformName: z.string().trim().min(1).max(TYPED_NAME_MAX).nullable().optional(),
+      /** Typed seller on a "Diğer" platform, saved as typed. */
+      sellerName: z.string().trim().min(1).max(TYPED_NAME_MAX).nullable().optional(),
+      sellerRef: OfferRef.nullable(),
+      pricePaid: Money,
+      pricePaidSource: z.enum(["USER_TYPED", "USER_LINK", "USER_SCREENSHOT"]),
+      orderedOn: CalendarDay,
+      orderStatus: OrderStatus,
+      /** Set only when the user picked the last day (always the user's on a "Diğer" platform). */
+      returnDeadline: CalendarDay.nullable(),
+    }),
+    z.object({
+      mode: z.literal("WANT"),
+      productId: Id,
+      identifyRequestId: Id.nullable(),
+      targetPrice: Money.nullable(),
+      trackingDuration: TrackingDuration,
+    }),
+  ])
+  .superRefine((request, context) => {
+    if (request.mode !== "BOUGHT") return;
+    const other = Boolean(request.otherPlatformName);
+    // Exactly one: a known platform or a typed "Diğer" platform.
+    if ((request.platformId === null) !== other) context.addIssue({ code: "custom", path: ["platformId"], message: "platformId or otherPlatformName" });
+    // A typed seller only on a "Diğer" platform; there it is never looked up.
+    if (other && request.sellerRef !== null) context.addIssue({ code: "custom", path: ["sellerRef"], message: "no sellerRef on another platform" });
+    if (!other && request.sellerName) context.addIssue({ code: "custom", path: ["sellerName"], message: "sellerName only on another platform" });
+  });
 export type CreateTrackedItemRequest = z.infer<typeof CreateTrackedItemRequest>;
 
 /** The new tracked item (database.md §8 `tracked_items`). */
