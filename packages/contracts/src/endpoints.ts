@@ -12,6 +12,8 @@ import type { PermissionKey } from "./permissions";
 import { AutocompleteQuery, AutocompleteResult, ProductView, SimilarProducts } from "./products";
 import { Me, SearchHistory } from "./session";
 import {
+  CheckNowBulkRequest,
+  CheckNowBulkResult,
   ConfirmContext,
   CreateTrackedItemRequest,
   SellerLookupRequest,
@@ -19,6 +21,9 @@ import {
   TeaserRequest,
   TeaserResult,
   TrackedItemCreated,
+  TrackedItemList,
+  TrackedItemListQuery,
+  TrackedItemsSummary,
 } from "./tracking";
 import { CompleteUploadRequest, CompleteUploadResult, PresignRequest, PresignResult, UploadPolicy, UploadPolicyQuery, UploadView } from "./uploads";
 
@@ -141,6 +146,21 @@ export const ENDPOINTS = {
   createTrackedItem: endpoint({
     method: "POST", path: "/tracked-items", params: null, query: null, body: CreateTrackedItemRequest,
     response: TrackedItemCreated, ...READ, idempotent: true, activity: "tracking.confirm", permission: "tracking.own.write", public: false,
+  }),
+
+  // TRACKED ITEMS (implementation_plan.md Appendix B.3)
+  listTrackedItems: endpoint({
+    method: "GET", path: "/tracked-items", params: null, query: TrackedItemListQuery, body: null,
+    response: TrackedItemList, ...READ, permission: "tracking.own.view", public: false,
+  }),
+  getTrackedItemsSummary: endpoint({
+    method: "GET", path: "/tracked-items/summary", ...NONE, response: TrackedItemsSummary, ...READ,
+    permission: "tracking.own.view", public: false,
+  }),
+  checkNowBulk: endpoint({
+    // Idempotent [ASSUMPTION]: a repeated tap never spends the daily allowance twice.
+    method: "POST", path: "/tracked-items/check-now-bulk", params: null, query: null, body: CheckNowBulkRequest,
+    response: CheckNowBulkResult, ...READ, idempotent: true, activity: "check_now_bulk", permission: "checknow.own.use", public: false,
   }),
 
   // REVEAL AND OFFERS

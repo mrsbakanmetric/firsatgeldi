@@ -8,6 +8,7 @@ export { MOCK_STORAGE_PATH } from "./handlers/identify";
 export * from "./fixtures/catalog";
 export * from "./fixtures/market";
 export * from "./fixtures/users";
+export { SEED_CHECKS_USED_TODAY, seedTrackedItems, TRACKING_SEEDS } from "./fixtures/tracking";
 export { MOCK_SETTINGS, PLAN_LIMITS, SYSTEM_SETTINGS } from "./settings";
 export {
   createMockController,

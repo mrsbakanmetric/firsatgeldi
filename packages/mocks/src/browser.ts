@@ -17,7 +17,7 @@ function sessionStorageOrNull(): ConfigStorage | null {
 }
 
 export async function startMockWorker(): Promise<MockController> {
-  const controller = createMockController({ config: resolveMockConfig(globalThis.location.search, sessionStorageOrNull()) });
+  const controller = createMockController({ config: resolveMockConfig(globalThis.location.search, sessionStorageOrNull()), seedTracking: true });
   const worker = setupWorker(...createHandlers(controller));
   // Requests that are not API calls (pages, assets) go to the network.
   await worker.start({ serviceWorker: { url: MOCK_WORKER_URL }, onUnhandledFrame: "bypass", quiet: true });

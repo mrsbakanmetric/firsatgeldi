@@ -4,6 +4,17 @@ import { DEFAULT_TIME_ZONE } from "./format";
 
 const MS_PER_DAY = 86_400_000;
 
+/**
+ * A return deadline this close is urgent: amber flag, "İadesi yaklaşan" on Tracked Items
+ * (product_design_pattern.md §5.4: amber at ≤ 3 days, otherwise the neutral info style).
+ */
+export const RETURN_URGENT_DAYS = 3;
+
+/** Whole calendar days from `from` to `to` (negative when `to` is earlier). */
+export function daysBetween(from: string, to: string): number {
+  return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / MS_PER_DAY);
+}
+
 /** A calendar day `YYYY-MM-DD` of an instant in the given zone. */
 export function toCalendarDay(instant: Date, timeZone: string = DEFAULT_TIME_ZONE): string {
   // en-CA writes dates as YYYY-MM-DD.

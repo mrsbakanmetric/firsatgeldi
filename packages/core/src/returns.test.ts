@@ -23,3 +23,13 @@ describe("return-window maths", () => {
     expect(returnDeadline("2026-11-08", { days: 15, startType: "ORDER", avgDeliveryDays: null })).toEqual({ day: "2026-11-23", estimated: false });
   });
 });
+
+describe("daysBetween", () => {
+  it("counts calendar days, negative when the second day is earlier", async () => {
+    const { daysBetween, RETURN_URGENT_DAYS } = await import("./returns");
+    expect(daysBetween("2026-11-14", "2026-11-16")).toBe(2);
+    expect(daysBetween("2026-11-14", "2026-11-14")).toBe(0);
+    expect(daysBetween("2026-11-14", "2026-11-01")).toBe(-13);
+    expect(RETURN_URGENT_DAYS).toBe(3);
+  });
+});

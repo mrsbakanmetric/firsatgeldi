@@ -27,4 +27,4 @@ export {
   type ResolvedTheme,
   type ThemePreference,
 } from "./theme";
-export { addCalendarDays, returnDeadline, toCalendarDay, type ReturnDeadline, type ReturnRuleInput } from "./returns";
+export { addCalendarDays, daysBetween, RETURN_URGENT_DAYS, returnDeadline, toCalendarDay, type ReturnDeadline, type ReturnRuleInput } from "./returns";

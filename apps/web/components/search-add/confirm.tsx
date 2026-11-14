@@ -175,9 +175,11 @@ export interface ConfirmProps {
   onChangeProduct: () => void;
   onCreated: (created: Created) => void;
   onAddPhoto: () => void;
+  /** Preselected by a "Takip et" hand-over ("Bunu aldım…" / "Bu ürünü takip et"). */
+  initialMode?: Mode | null;
 }
 
-export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefill, initial, now, framed, onChangeProduct, onCreated, onAddPhoto }: ConfirmProps) {
+export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefill, initial, now, framed, onChangeProduct, onCreated, onAddPhoto, initialMode = null }: ConfirmProps) {
   const productId = candidate.product.id;
   const context = useApiQuery("getConfirmContext", { params: { id: productId } });
   const ctx: ConfirmContext | null = context.data?.data ?? null;
@@ -194,7 +196,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const [showMissing, setShowMissing] = useState(false);
   const otherNameRef = useRef<HTMLInputElement>(null);
   const priceRef = useRef<HTMLInputElement>(null);
-  const [mode, setMode] = useState<Mode>("BOUGHT");
+  const [mode, setMode] = useState<Mode>(initialMode ?? "BOUGHT");
   const [targetText, setTargetText] = useState("");
   const [duration, setDuration] = useState<Duration>("1M");
   const [problem, setProblem] = useState<ReactNode>(null);

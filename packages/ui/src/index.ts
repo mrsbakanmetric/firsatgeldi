@@ -1,15 +1,19 @@
 // Canonical components (pagedesign.md §5). Names are exactly those of the list.
 // Shells (AppShell, AuthShell, AdminShell) live in the web app: they own routing.
 export { AttributeChip, chipClasses, type AttributeChipProps, type AttributeChipTexts } from "./attribute-chip";
+export { CategoryFilter, SortSelect, type CategoryFilterProps, type ChipSelectOption, type SortSelectProps } from "./chip-select";
 export { Avatar, type AvatarProps, type AvatarSize } from "./avatar";
 export { ConfirmPanel, ConfirmSection, type ConfirmPanelProps } from "./confirm-panel";
 export { FactTile, FactTiles, type FactTileProps, type FactVerdict } from "./fact-tile";
+export { FilterChips, type FilterChipOption, type FilterChipsProps } from "./filter-chips";
 export { Flag, type FlagProps, type FlagTone } from "./flag";
 export { FreshnessLine, type FreshnessLineProps } from "./freshness-line";
 export { HiddenOfferCard, type HiddenOfferCardProps, type RevealedSeller } from "./hidden-offer-card";
 export { MoneyDisplay, type MoneyDisplayProps, type MoneySize, type MoneyTone } from "./money-display";
 export { ImagePrivacyNote, MultiImageUpload, type MultiImageUploadProps, type UploadFileState, type UploadFileView } from "./multi-image-upload";
+export { PriceSparkline, type PriceSparklineProps } from "./price-sparkline";
 export { ProductImage, type ProductImageProps, type ProductImageSize } from "./product-image";
+export { ProductRow, type ProductRowColumn, type ProductRowProps } from "./product-row";
 export { SearchField, type SearchFieldProps } from "./search-field";
 export { Button, buttonClasses, type ButtonProps, type ButtonSize, type ButtonVariant } from "./button";
 export { Checkbox, type CheckboxProps } from "./checkbox";
@@ -25,7 +29,9 @@ export { SegmentedChoice, type SegmentedChoiceProps, type SegmentedOption } from
 export { Select, type SelectOption, type SelectProps } from "./select";
 export { Sheet, type SheetProps } from "./sheet";
 export { SkeletonBlock, SkeletonRow, type SkeletonBlockProps, type SkeletonShape, type SkeletonWidth } from "./skeleton-block";
+export { StatTile, StatTiles, type StatTileProps } from "./stat-tile";
 export { StatusBanner, type StatusBannerProps, type StatusTone } from "./status-banner";
+export { StockKey, StockStrip, type StockDay, type StockStripProps } from "./stock-strip";
 export { StepIndicator, type StepIndicatorProps } from "./step-indicator";
 export { Switch, type SwitchProps } from "./switch";
 export { TextField, type TextFieldProps } from "./text-field";

@@ -79,6 +79,12 @@ export const SELLERS = {
   // Trust cases for the rating tile (modules.md seller trust indicator): caution with a reason; no data at all.
   fotoPazari: seller("TEKNOSA", "TK-SLR-3307", "Foto Pazarı", 4.4, 640, { verdict: "CAUTION", reasonKey: "trust.reason.stockOutOften" }),
   yeniDukkan: seller("TEKNOSA", "TK-SLR-9001", "Yeni Kamera Dükkanı", null, null),
+  // Tracked Items rows (design "4 Takip Ettiklerim"): the other products' sellers (mock-only names).
+  modaDeposu: seller("TRENDYOL", "TY-SLR-40518", "Moda Deposu", 4.6, 1204),
+  evTeknik: seller("HEPSIBURADA", "HB-SLR-66120", "Ev Teknik", 4.5, 830),
+  teknosaMagaza: seller("TEKNOSA", "TK-SLR-0001", "Teknosa", 4.6, 15400),
+  sesDunyasi: seller("AMAZON_TR", "AMZ-SLR-S7K2", "Ses Dünyası", 4.7, 2210),
+  kulaklikPazari: seller("HEPSIBURADA", "HB-SLR-71844", "Kulaklık Pazarı", 4.3, 415),
 } as const satisfies Record<string, SellerFixture>;
 
 export type SellerKey = keyof typeof SELLERS;
@@ -143,6 +149,33 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 3_049_000, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: null, deliveryDays: null,
     stockState: "IN_STOCK", warrantyType: "UNKNOWN", stockSinceDaysAgo: 1, priceSinceDaysAgo: 1, checkedMinutesAgo: 15,
     listingPath: "/yeni-kamera-dukkani/insta360-ace-pro-2",
+  }),
+  // Tracked Items rows (design "4 Takip Ettiklerim"): coat 2.999 TL < paid 3.299 TL; vacuum: nothing
+  // cheaper than the paid 30.999 TL (next 31.499 TL); earbuds: cheapest 8.150 TL against a 7.500 TL target.
+  offer("winterCoat", "modaDeposu", {
+    priceMinor: 299_900, previousPriceMinor: 329_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },
+    stockState: "IN_STOCK", warrantyType: "UNKNOWN", stockSinceDaysAgo: 14, priceSinceDaysAgo: 1, checkedMinutesAgo: 12,
+    listingPath: "/moda-deposu/kapusonlu-kislik-mont-p-60411872",
+  }),
+  offer("dysonV15", "teknosaMagaza", {
+    priceMinor: 3_099_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
+    stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 14, priceSinceDaysAgo: 11, checkedMinutesAgo: 6,
+    listingPath: "/dyson-v15-detect-absolute-p-125023",
+  }),
+  offer("dysonV15", "evTeknik", {
+    priceMinor: 3_149_900, previousPriceMinor: 3_199_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 2 },
+    stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 14, priceSinceDaysAgo: 9, checkedMinutesAgo: 6,
+    listingPath: "/ev-teknik/dyson-v15-detect-absolute-p-HBC0000DV15",
+  }),
+  offer("airPodsPro2", "sesDunyasi", {
+    priceMinor: 815_000, previousPriceMinor: 829_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
+    stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 3, priceSinceDaysAgo: 3, checkedMinutesAgo: 9,
+    listingPath: "/dp/B0DAIRPODSP2",
+  }),
+  offer("airPodsPro2", "kulaklikPazari", {
+    priceMinor: 839_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },
+    stockState: "LOW_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 2, priceSinceDaysAgo: 6, checkedMinutesAgo: 9,
+    listingPath: "/kulaklik-pazari/apple-airpods-pro-2-p-HBC0000AP2",
   }),
 ];
 

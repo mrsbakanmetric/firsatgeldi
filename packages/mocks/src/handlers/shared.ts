@@ -20,6 +20,12 @@ export function activeTrackingCount(controller: MockController, userId: string):
   return controller.state.trackedItems.filter((item) => item.userId === userId && item.state === "ACTIVE").length;
 }
 
+/** Today's (Europe/Istanbul) consumed Check Now runs (database.md §9 `check_now_usage`). */
+export function checksUsedToday(controller: MockController, userId: string): number {
+  const today = toCalendarDay(controller.now());
+  return controller.state.checkNowUsage.filter((row) => row.userId === userId && row.consumed && toCalendarDay(new Date(row.createdAt)) === today).length;
+}
+
 /** Plan and allowances (database.md §9); reveals unlimited under the first-release FREE_TOGGLE gate. */
 export function entitlements(controller: MockController, actor: Actor): EntitlementSummary {
   const { user, userId } = requireUser(actor);
@@ -33,7 +39,7 @@ export function entitlements(controller: MockController, actor: Actor): Entitlem
     premiumEndsAt: null,
     tracking: { used: activeTrackingCount(controller, userId), limit: limits.maxActiveTracking },
     reveals: { used: revealsThisMonth, limit: REVEAL_GATE_STAGE === "FREE_TOGGLE" ? null : limits.monthlyRevealLimit },
-    checkNow: { used: 0, limit: limits.dailyCheckLimit },
+    checkNow: { used: checksUsedToday(controller, userId), limit: user.roles.includes("APP_MANAGER") ? null : limits.dailyCheckLimit },
     tokenBalance: user.tokenBalance,
   };
 }

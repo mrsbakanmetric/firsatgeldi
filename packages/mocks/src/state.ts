@@ -5,6 +5,7 @@ import type { ActivityEvent, ApiLocale, StreamEvent } from "@firsatgeldi/contrac
 import type { ProductKey } from "./fixtures/catalog";
 import type { PlatformKey } from "./fixtures/market";
 import type { UserKey } from "./fixtures/users";
+import { seedTrackedItems } from "./fixtures/tracking";
 import { newId } from "./ids";
 import { MOCK_SETTINGS } from "./settings";
 
@@ -71,6 +72,29 @@ export interface TrackedItemRow {
   readonly sellerName?: string | null;
   readonly pricePaidMinor: number | null;
   readonly state: "ACTIVE" | "ENDED" | "EXPIRED";
+  readonly createdAt: string;
+  /** BOUGHT: order day and status (database.md §8 `ordered_at`, `order_status`). */
+  readonly orderedOn?: string | null;
+  readonly orderStatus?: "ORDERED" | "SHIPPED" | "DELIVERED" | null;
+  readonly returnDeadline?: string | null;
+  readonly returnDeadlineStatus?: "ESTIMATED" | "CONFIRMED" | "USER_EDITED" | "UNVERIFIED_DEFAULT" | null;
+  /** WANT: target and duration. */
+  readonly targetPriceMinor?: number | null;
+  readonly trackingDuration?: "1W" | "1M" | "3M" | "UNLIMITED" | null;
+  readonly trackingEndsAt?: string | null;
+  /** Ended tracking (database.md §8 `ended_at`, `end_reason`) and the saving recorded for it. */
+  readonly endedAt?: string | null;
+  readonly endReason?: "USER" | "RETURN_WINDOW" | "TRACKING_DURATION" | "MOVED_TO_BOUGHT" | "ACCOUNT_DELETED" | null;
+  readonly savingMinor?: number | null;
+  /** Seeded row (design "4 Takip Ettiklerim"): its 14-day history comes from the fixture. */
+  readonly seedKey?: string;
+}
+
+/** `check_now_usage` row (database.md §9): consumed = false inside the cache window. */
+export interface CheckNowUsageRow {
+  readonly userId: string;
+  readonly trackedItemId: string | null;
+  readonly consumed: boolean;
   readonly createdAt: string;
 }
 
@@ -159,6 +183,9 @@ export interface MockState {
   readonly sellerLookups: Map<string, number[]>;
   /** Products found through the live sources and saved to the catalogue (architecture.md §11). */
   readonly catalogAdded: Set<string>;
+  readonly checkNowUsage: CheckNowUsageRow[];
+  /** Last finished check per tracked item (`checks`); seeded rows fall back to their fixture age. */
+  readonly lastChecks: Map<string, string>;
 }
 
 export function createMockState(): MockState {
@@ -178,6 +205,8 @@ export function createMockState(): MockState {
     idempotency: new Map(),
     sellerLookups: new Map(),
     catalogAdded: new Set(),
+    checkNowUsage: [],
+    lastChecks: new Map(),
   };
 }
 
@@ -197,15 +226,23 @@ export interface MockController {
 
 export interface MockControllerOptions {
   readonly config?: Partial<MockConfig>;
+  /**
+   * Seeds the signed-in users' tracked items drawn in "4 Takip Ettiklerim" (development;
+   * tests that need them). Off by default so Search and Add tests start with an empty list.
+   */
+  readonly seedTracking?: boolean;
   readonly now?: () => Date;
   readonly schedule?: (task: () => void, ms: number) => void;
 }
 
 export function createMockController(options: MockControllerOptions = {}): MockController {
+  const now = options.now ?? (() => new Date());
+  const state = createMockState();
+  if (options.seedTracking) seedTrackedItems(state, now());
   return {
     config: { ...DEFAULT_MOCK_CONFIG, ...options.config },
-    state: createMockState(),
-    now: options.now ?? (() => new Date()),
+    state,
+    now,
     schedule: options.schedule ?? ((task, ms) => void setTimeout(task, ms)),
   };
 }
