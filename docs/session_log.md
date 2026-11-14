@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-15 (night) · claude.ai
+- **Done:** web review of Search and Add and Tracked Items with the user; design-change PRs #63, #65, #67, #71, #74, #83, #86, #89, #91 (Search and Add v2→v4, app shell v2 footer, Tracked Items v2→v5, tokens 1.10–1.13) and spec PRs #64, #66, #72, #75, #84, #87, #90 — all merged. Canvases were not redrawn (user choice; backlog in `screen_status.md`).
+- **Decided (user), written in docs:** compact UI rules (chips, compact buttons, 48 px search box, overlays close on outside click); no Add product dialog (Search and Add instead); canonical `SearchBox` + `InputSourceHandler`; first result pre-selected, verified with "Evet, bu?"; "Diğer" platform; Tracked Items cards in a two-column grid with ranked hidden-seller price list, green ↓ / red ↑, 7/14-day summary, "Takibi bitir" from the list; want-to-buy record switches to bought.
+- **Open:** #92 (Tracked Items v5 code) merged; its unused-code/text deletion was approved in Claude Code · remove token `size.list-name-min-width` (claude.ai) · two end-of-tracking questions come with My Savings / Product Detail · user proposal to start real data: claude.ai recommends only the Phase 2 data test now (needs a plan-change spec PR and the user's approval).
+- **Next:** user decides: data test in Claude Code and/or Product Detail design here (mockups first, then one coding pass).
+
+---
+
 ## 2026-11-14 (day) · Claude Code
 - **Done:** #54–#58 merged (contract fields, `upload.own.view`, guest polling, seller-lookup limit, `poll` field, catalogue miss + warm-up); plan step 10 Search and Add built on the mock API — #61 open (screen, shell bound to `GET /me`, 10 new `packages/ui` components, mock fixtures and `?mock-photo=`; 564 tests, CI green).
 - **Decided (user), in #61 code as [ASSUMPTION], to be written into `architecture.md` §16.1:** seller-lookup `trust` (INSUFFICIENT → store-rating fallback via `reasonKey`) · `meta.sourcesMissing` · attribute `options` + `matchCritical` · `GET /uploads/policy?purpose=` (IDENTIFY 5 files / 10 MB / 24 h; SUPPORT_ATTACHMENT 3 files / 30 days) · client always sends `IDENTIFY` · bell icon only until the notifications endpoint.
