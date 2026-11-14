@@ -169,7 +169,9 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 | `StockHistory` (full, 14 days + 1 month, change log) | §5.7 | Product Detail |
 | `ConfirmPanel` (mark → confirm, typed seller and price) | §5.1 | Search and Add, Add product dialog step 2, Want to Buy "Aldım, kaydet" |
 | `SegmentedChoice` | §4.3 | order status, ranges, durations, tabs |
-| `MultiImageUpload` + `ImagePrivacyNote` | §5.19, §5.20 | Search and Add, Add product dialog, Bize yaz |
+| `MultiImageUpload` + `ImagePrivacyNote` | §5.19, §5.20 | Search and Add, Bize yaz |
+| `SearchBox` (canonical, one look everywhere) [DECIDED 2026-11-14] | `components.search-box` | Search and Add, Tracked Items, Home, Notifications — same height, icons and buttons (camera icon · × clear · compact "Ara"); only the search handler differs per page (catalogue search vs filtering the page's own list) |
+| `InputSourceHandler` (photo + link intake, generic) [DECIDED 2026-11-14] | — | Used by every `SearchBox`: resolves pasted links and selected photos in one place; pages other than Search and Add hand the input over to Search and Add |
 | `Button` | §4.1, §4.2, §5.36 | every action |
 | `TextField` | §5.36 | every form (Sign-in, Settings, Bize yaz, confirm panel, admin forms) |
 | `Select` | §5.36 | list toolbars (base of `SortSelect`, `PeriodSelect`, `CategoryFilter`), forms |
@@ -258,10 +260,18 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 - **Compact UI (design v2) [DECIDED 2026-11-14]** — same rules as Search and Add v3:
   - Title "Takip ettiklerim" + one meta line "Takipte N/limit · bugün N kontrol hakkı" + compact "Ürün ekle" (`button.compact`).
   - Summary: one thin row of four small figures (caption label, `fs-price` value), not four large tiles.
-  - Search (input 48) + filters as `components.chip` with counts (Tümü · Aldım · Almak istiyorum · Fırsat var · Biten); "Kategori" and "Sırala" are chips that open a `menu` overlay (`components.popover-dismiss`).
+  - `SearchBox` (the same component as Search and Add, with camera and "Ara"): typing filters the list; no match → "Ara ve Ekle'de ara" row; a photo or link opens Search and Add with that input (v3).
+  - Filters as `components.chip` with counts (Tümü · Fırsat var · Biten) — no "Aldım" / "Almak istiyorum" chips (v3); "Kategori" and "Sırala" are chips that open a `menu` overlay (`components.popover-dismiss`).
   - "Görünenleri kontrol et (N)" is `button.compact`.
-  - Rows: image `size.thumb-sm` (48) · flags/name/line · 14-day sparkline · 14-day stock · state + check time. **The whole row is the link to Product Detail; no "Detay" button.**
   - "Biten takipler (N)" collapsed by default; opens in place, rows dimmed.
+- **v3 [DECIDED 2026-11-14]:**
+  - **"Fırsat geldi" group first:** rows with a current deal sit at the top in their own group; the group heading carries the page's single coral "Fırsat geldi" badge; each row shows the saving large in `savings` ("1.250 TL kazanabilirsin") and a "Fırsatı gör" action (primary; opens Product Detail). Row background `savings-subtle`.
+  - **Status badge per row** instead of mode filters: "Takip ediyorsun" (bought) · "Almak istiyorsun" (want to buy).
+  - **Price block with numbers:** current price (`fs-price`, 600) + change "↓ 1.250 TL (%4) · 14 gün"; the 14-day line shows min and max as small labels, the lowest point marked; the user's paid price is a line ending in a small avatar/profile icon with "Sen 28.999 TL"; cheapest and target lines end in short labels ("En ucuz", "Hedef"). Hover/tap shows date + price. No separate legend sentence.
+  - **Stock in plain words:** "Stokta · en az 3 gündür" · "Az kaldı" · "Tükendi · 2 gündür" — no stock bars.
+  - No explanatory sentence about hidden sellers or chart lines (the rule still holds: no seller name and no "Göster" in this list).
+  - **Row ⋯ menu → "Takibi bitir":** bought items open a short dialog (how it ended: İade ettim · Fiyat farkı aldım · Vazgeçtim · optional new price paid) → My Savings; want-to-buy items end on one confirm. Ended rows move to "Biten takipler"; "Geri al" for 7 days.
+  - Rows: image `size.thumb-sm` (48) · status · name/line · price block · stock · check time. **The whole row is the link to Product Detail; no "Detay" button** (the ⋯ menu and "Fırsatı gör" stop propagation).
 - **No Add product dialog [DECIDED 2026-11-14]:** "Ürün ekle" navigates to Search and Add (`/[locale]/ara`); "Takip et" from notifications, recent searches, Keşfet and the product page opens Search and Add with the product already marked and the confirm panel open (mode preselected when known). One flow, one implementation.
 - **States:** empty · empty filter · bulk check (allowance short, progress) · stale row · error · loading.
 - **API:** `GET /tracked-items?filter=&sort=&q=&category=`, `/summary`, `/check-now-bulk`.
