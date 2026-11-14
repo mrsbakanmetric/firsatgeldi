@@ -265,13 +265,23 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
   - "Görünenleri kontrol et (N)" is `button.compact`.
   - "Biten takipler (N)" collapsed by default; opens in place, rows dimmed.
 - **v3 [DECIDED 2026-11-14]:**
-  - **"Fırsat geldi" group first:** rows with a current deal sit at the top in their own group; the group heading carries the page's single coral "Fırsat geldi" badge; each row shows the saving large in `savings` ("1.250 TL kazanabilirsin") and a "Fırsatı gör" action (primary; opens Product Detail). Row background `savings-subtle`.
-  - **Status badge per row** instead of mode filters: "Takip ediyorsun" (bought) · "Almak istiyorsun" (want to buy).
-  - **Price block with numbers:** current price (`fs-price`, 600) + change "↓ 1.250 TL (%4) · 14 gün"; the 14-day line shows min and max as small labels, the lowest point marked; the user's paid price is a line ending in a small avatar/profile icon with "Sen 28.999 TL"; cheapest and target lines end in short labels ("En ucuz", "Hedef"). Hover/tap shows date + price. No separate legend sentence.
-  - **Stock in plain words:** "Stokta · en az 3 gündür" · "Az kaldı" · "Tükendi · 2 gündür" — no stock bars.
-  - No explanatory sentence about hidden sellers or chart lines (the rule still holds: no seller name and no "Göster" in this list).
-  - **Row ⋯ menu → "Takibi bitir":** bought items open a short dialog (how it ended: İade ettim · Fiyat farkı aldım · Vazgeçtim · optional new price paid) → My Savings; want-to-buy items end on one confirm. Ended rows move to "Biten takipler"; "Geri al" for 7 days.
-  - Rows: image `size.thumb-sm` (48) · status · name/line · price block · stock · check time. **The whole row is the link to Product Detail; no "Detay" button** (the ⋯ menu and "Fırsatı gör" stop propagation).
+  - **"Fırsat geldi" group first:** rows with a current deal (bought: a cheaper offer; want-to-buy: cheapest ≤ target) sit at the top in their own group; the group heading carries the page's single coral "Fırsat geldi" badge; row border `savings`, "Fırsatı gör" action (opens Product Detail).
+  - **Row ⋯ menu → "Takibi bitir":** bought items open a short dialog (İade ettim · Fiyat farkı aldım · Vazgeçtim · optional new price paid) → My Savings; want-to-buy items end on one confirm. Ended rows move to "Biten takipler"; "Geri al" for 7 days.
+  - No explanatory sentence about hidden sellers or chart lines (the rule still holds).
+- **Row v4 [DECIDED 2026-11-14]** — columns: image · name · price list · outcome · ⋯
+  - **Image** `size.thumb-lg` (120) square; the **status is an icon on the image's top-left corner** (28 px circle, Tooltip + accessible name): eye on `primary` = "Takip ediyorsun" (bought) · bookmark on `surface` with border = "Almak istiyorsun". No status text badge. Return badge ("İade için N gün", warning) stays above the name for bought items.
+  - **Name** column min 220 px, up to two lines; below it the check time ("5 dk önce kontrol edildi").
+  - **Price list** (one grid: label · stock · price, prices right-aligned in one column):
+    - first row on `surface-alt`: bought → "<platform> · <seller>" (user's own data, shown) + "Aldın" + price paid; want-to-buy → "Hedefin" + target price.
+    - then cheaper offers **by rank only** with a lock icon: "En ucuz satıcı", "2. ucuz satıcı" (max 3 rows; more → "+N satıcı daha" link to Product Detail). Never a seller or platform name before "Göster".
+    - bought only: "Senin satıcın şimdi" — the user's own listing's current price.
+    - stock in words per row: "Stokta" · "Az kaldı" (warning) · "Tükendi".
+    - **colour + arrow vs the reference** (price paid, or target): lower = `savings` + "↓", higher = `danger` + "↑", equal = `text`. Never colour alone.
+    - divider, then summary rows in the same grid (values in the price column): "7 günün en düşüğü", "14 günün en yükseği", "14 günde değişim" (↓/↑ coloured). No line chart in the list (it lives in Product Detail).
+  - **Outcome** column (right): bought with a cheaper offer → "en çok" + "N TL kazanç" (`savings`, `fs-price`) + "Fırsatı gör"; bought without → "Daha ucuzu henüz yok"; want-to-buy → "Hedefe N TL", or "Hedefe ulaştı ✓" + "Fırsatı gör" when reached.
+  - **Mode switch:** when a want-to-buy item is bought ("Aldım, kaydet"), the row becomes a bought row: target removed, first row = platform · seller · price paid, return badge appears; tracking continues without a gap.
+  - On narrow widths the price list shrinks first; the name column keeps its minimum.
+- **SearchBox inline completion** works here too (completes from the user's own tracked item names; Tab / → accepts).
 - **No Add product dialog [DECIDED 2026-11-14]:** "Ürün ekle" navigates to Search and Add (`/[locale]/ara`); "Takip et" from notifications, recent searches, Keşfet and the product page opens Search and Add with the product already marked and the confirm panel open (mode preselected when known). One flow, one implementation.
 - **States:** empty · empty filter · bulk check (allowance short, progress) · stale row · error · loading.
 - **API:** `GET /tracked-items?filter=&sort=&q=&category=`, `/summary`, `/check-now-bulk`.
