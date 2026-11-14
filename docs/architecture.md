@@ -384,6 +384,7 @@ robots.txt (daily cache), ~1–2 req/s per site, `max_concurrency`, identifiable
 | `report-threshold` | on report write | Threshold (3) reached → offer suspended [DECIDED] |
 | `identify` | user input | LLM extraction, candidates, multi-product image; catalogue miss → live sources (hybrid flow, §11) |
 | `catalog-warmup` | `catalog_warmup.run_times` (03:00 and 15:00 Europe/Istanbul [ASSUMPTION]) | Fills the catalogue in a targeted way (§11), at most `catalog_warmup.max_queries_per_run` queries per run; products only — no price or stock [DECIDED 2026-11-14] |
+| `top-drops` | every `home.top_drops.refresh_minutes` (60 [ASSUMPTION]) | Home "Şu an en çok düşenler" [DECIDED 2026-11-15]: per category, products whose current cheapest in-stock price (shipping included) is at least `home.top_drops.min_drop_pct` below the average daily cheapest price of the last `home.top_drops.window_days`; only products with price history on at least `home.top_drops.min_history_days` of those days; our own price checks only — no user data; seller-less. Result cached per category (§14) |
 | `link-resolve` | pasted link, Discover link | Seller, price, product resolution |
 | `index` | catalogue change | Meilisearch |
 | `image-ingest` | new store image | Download store image → `media-process` (catalogue) |
@@ -563,6 +564,7 @@ Event payloads contain no identity and no personal data.
 | Key | TTL | Content |
 |---|---|---|
 | `home:{userId}` | 60 s, cleared by events | Home |
+| `home:top_drops:{categoryId}` · `home:top_drops:all` | until the next `top-drops` run | Ranked seller-less price drops (Home) [DECIDED 2026-11-15] |
 | `offerref:{ref}` | 24 h | Opaque reference mapping |
 | `entitlement:{userId}` | 5 min, cleared by events | Effective plan + remaining allowances + tokens |
 | `checknow:daily:{userId}:{day}` | end of day | Daily check counter (DB is truth) |
@@ -715,7 +717,7 @@ GET  /me/reveals?period=&q=&category=&group=product|event&cursor=   # "Nereye ha
 
 ### HOME, NOTIFICATIONS, SAVINGS, TRUST
 ```
-GET  /home
+GET  /home                              # HomeView (§16.1): summary, Hemen Gözat, return reminder, up to 4 tracked cards, top price drops
 GET  /notifications?type=&q=&category=&unread=&cursor= · PATCH /notifications/:id/read · POST /notifications/read-all · GET /notifications/unread-count
 GET  /savings?period=&q=&category= · PATCH /savings/:id   # correction within 7 days (method incl. NOT_USED → missed deal)
 POST /reports
@@ -804,6 +806,7 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | `POST /products/:id/teaser` | `tracking.own.write` | — | | `teaser` [ASSUMPTION] |
 | `POST /tracked-items` | `tracking.own.write` | — | ✓ | `tracking.confirm` |
 | `GET /tracked-items` · `GET /tracked-items/summary` | `tracking.own.view` | — | | — |
+| `GET /home` | `home.own.view` | — | | — |
 | `POST /tracked-items/check-now-bulk` | `checknow.own.use` | — | ✓ [ASSUMPTION] (a repeated tap never spends the allowance twice) | `check_now_bulk` |
 | `POST /offers/:ref/reveal` | `reveal.own.use` | — | ✓ | `reveal` |
 | `POST /offers/:ref/hide` | `reveal.own.use` | — | | `reveal.hide` [ASSUMPTION] |
@@ -880,6 +883,8 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | `TrackedItemListItem.conclusion` | one of `{ kind: DROPPED, at, price }` ("3 saat önce 25.997 TL'ye düştü") · `{ kind: NO_CHEAPER, days }` · `{ kind: LOWEST_IN_DAYS, days, price }` (buy-or-wait hint) · `null`; the client words it from the catalogue | `modules.md` Price history › conclusion, buy-or-wait hint; shape [ASSUMPTION] |
 | `TrackedItemListItem` | `lastCheckedAt` · `stale` (not checked for `tracking.stale_hours`: "Güncel değil", the deal "doğrulanamadı") · `ended{ at, reason (database.md §8 end_reason), savingRecorded }` or null | `database.md` §8, §18; shape [ASSUMPTION] |
 | `TrackedItemsSummary` | `tracking{ count, bought, want }` (active) · `deals{ count, maxSavingTotal }` · `returnsSoon{ count, nearest }` (return deadline within 3 days, `product_design_pattern.md` §5.4) · `lastCheckedAt`; allowances in `meta.entitlements` | `modules.md` Tracked Items › Summary; shape [ASSUMPTION] |
+| `HomeView` [DECIDED 2026-11-15; shape ASSUMPTION] | `summary` (= `TrackedItemsSummary`) · `featured` (Hemen Gözat: one `TrackedItemListItem` chosen by the `priority` order, with `offers[]` = up to 3 `HiddenOfferView` by rank and `cheaperCount`; null when nothing is tracked) · `returnsSoon{ count, items[{ id, name }] }` (return ≤ 2 days) · `cards[]` (up to `home.tracked_cards` = 4 `TrackedItemListItem`, `priority` order after `featured`; `emphasised: true` on a second item at the same priority level as `featured`) · `topDrops` · `meta.total`, `meta.entitlements`, `meta.sourcesMissing` | `modules.md` Home |
+| `HomeView.topDrops` [DECIDED 2026-11-15; shape ASSUMPTION] | `scope` ∈ `CATEGORIES` (the user's tracked categories) · `GENERAL` (no tracked item, or fewer than `home.top_drops.count` drops in those categories) · `categories[{ id, name }]` · `items[]` (max `home.top_drops.count` = 3, biggest `dropPct` first, the user's own tracked products excluded): `product{ id, name, imageSha256, category }`, `averagePrice`, `currentPrice`, `dropAmount`, `dropPct`, `sellerCount`, `stockState` (of the cheapest offer), `checkedAt` · `null` when nothing qualifies (section hidden). **Never** a seller, platform, listing URL or offer ref | `modules.md` Home › D; hidden-seller test scans it |
 | `CheckNowBulkRequest` / `CheckNowBulkResult` | `{ trackedItemIds[] }` (≥ 1; own active items only, otherwise `NOT_FOUND`) → `{ willCheck[], skippedCached[], remaining }`: `willCheck` in priority order, cut to the remaining daily allowance (one `check_now_usage` row, `consumed = true`, each); `skippedCached` were checked within `check_now.cache_minutes` (row with `consumed = false`); `remaining` after the call, `null` = unlimited (Application Manager). Nothing can be checked → `LIMIT_REACHED`. Each finished check sends `check.finished` | §16; `modules.md` Check Now; `database.md` §9 `check_now_usage`; result fields §16, empty case [ASSUMPTION] |
 | Activity `check_now_bulk` | `metadata{ requested, willCheck, skippedCached }`; outcome `LIMITED` on `LIMIT_REACHED` | `database.md` §14a |
 
