@@ -100,9 +100,7 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     expect(screen.getByText(t("trackedItems.v3.stock.IN_STOCK", { count: 7 }))).toBeDefined();
     expect(screen.getByText(t("trackedItems.v3.stock.OUT_OF_STOCK", { count: 2 }))).toBeDefined();
     expect(screen.queryByRole("img", { name: /gündür|for at least/ })).toBeNull();
-    // No explanation sentences any more — but the rule still holds: no cheaper seller's name, no "Göster".
-    expect(document.body.textContent).not.toContain(t("trackedItems.footnote"));
-    expect(document.body.textContent).not.toContain(t("trackedItems.legend"));
+    // No explanation sentences any more (v3) — but the rule still holds: no cheaper seller's name, no "Göster".
     for (const seller of HIDDEN_SELLERS) expect(document.body.textContent).not.toContain(seller);
     expect(screen.queryByRole("button", { name: t("searchAdd.confirm.reveal") })).toBeNull();
     // Ended rows collapsed.

@@ -48,7 +48,7 @@ import { TrackedRow } from "./row";
 const TYPING_PAUSE_MS = 250;
 const MS_PER_HOUR = 3_600_000;
 /** v3: no "Aldım" / "Almak istiyorum" chips; each row carries its status instead. */
-const FILTERS: readonly TrackedItemFilter[] = ["all", "deal", "ended"];
+const FILTERS = ["all", "deal", "ended"] as const satisfies readonly TrackedItemFilter[];
 const SORTS: readonly TrackedItemSort[] = ["priority", "deadline", "saving"];
 const LOADING_ROWS = 4;
 

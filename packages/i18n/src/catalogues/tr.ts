@@ -353,8 +353,6 @@ export const tr = {
     filters: {
       label: "Filtreler",
       all: "Tümü",
-      bought: "Aldım",
-      want: "Almak istiyorum",
       deal: "Fırsat var",
       ended: "Biten",
     },
@@ -392,7 +390,6 @@ export const tr = {
       daysLeft: { one: "{count} gün kaldı", other: "{count} gün kaldı" },
       flags: {
         deal: "Fırsat geldi",
-        want: "Almak istiyorum",
         returnDays: { one: "İade için {count} gün", other: "İade için {count} gün" },
         returnToday: "İade için son gün",
         stale: "Güncel değil",
@@ -404,22 +401,10 @@ export const tr = {
         cheapest: "En ucuz {cheapest}",
         noData: "Bu dönem için fiyat verisi yok",
       },
-      conclusion: {
-        dropped: "{ago} {price}’ye düştü",
-        noCheaper: { one: "Son {count} günde daha ucuzu çıkmadı", other: "Son {count} günde daha ucuzu çıkmadı" },
-        lowest: { one: "Son {count} günün en düşüğü · {price}", other: "Son {count} günün en düşüğü · {price}" },
-      },
       stock: {
-        IN_STOCK: "Stokta",
-        LOW_STOCK: "Az stok",
-        OUT_OF_STOCK: "Tükendi",
-        since: { one: "{state} · en az {count} gündür", other: "{state} · en az {count} gündür" },
         noData: "Stok verisi yok",
-        CHEAPEST: "En ucuz satıcı",
-        OWN_SELLER: "Aldığın satıcı",
       },
       state: {
-        deal: { one: "{count} satıcıda daha ucuz · en çok {amount}", other: "{count} satıcıda daha ucuz · en çok {amount}" },
         cheapestYours: "Senin fiyatın en ucuz",
         toTarget: "Hedefe {amount} kaldı",
         belowTarget: "Hedefin altında · en ucuz {price}",
@@ -490,8 +475,6 @@ export const tr = {
       signInText: "Takip ettiğin ürünler hesabında saklanır.",
       signIn: "Giriş yap",
     },
-    footnote: "Bu listede satıcı adı ve “Göster” yok; daha ucuz satıcıları Ürün Detayı’nda açarsın.",
-    legend: "Düz çizgi ödediğin fiyat, kesikli çizgi en ucuz fiyat, noktalı çizgi hedef fiyat.",
   },
   // Product Detail is not built yet (implementation_plan.md: Tracked Items comes first, user decision 2026-11-14).
   productDetail: {

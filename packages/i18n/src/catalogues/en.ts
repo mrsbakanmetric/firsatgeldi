@@ -350,8 +350,6 @@ export const en = {
     filters: {
       label: "Filters",
       all: "All",
-      bought: "Bought",
-      want: "Want to buy",
       deal: "Has deal",
       ended: "Ended",
     },
@@ -389,7 +387,6 @@ export const en = {
       daysLeft: { one: "{count} day left", other: "{count} days left" },
       flags: {
         deal: "Deal found",
-        want: "Want to buy",
         returnDays: { one: "{count} day to return", other: "{count} days to return" },
         returnToday: "Last day to return",
         stale: "Not up to date",
@@ -401,22 +398,10 @@ export const en = {
         cheapest: "Cheapest {cheapest}",
         noData: "No price data for this period",
       },
-      conclusion: {
-        dropped: "Dropped to {price} {ago}",
-        noCheaper: { one: "Nothing cheaper in the last {count} day", other: "Nothing cheaper in the last {count} days" },
-        lowest: { one: "Lowest of the last {count} day · {price}", other: "Lowest of the last {count} days · {price}" },
-      },
       stock: {
-        IN_STOCK: "In stock",
-        LOW_STOCK: "Low stock",
-        OUT_OF_STOCK: "Sold out",
-        since: { one: "{state} · for at least {count} day", other: "{state} · for at least {count} days" },
         noData: "No stock data",
-        CHEAPEST: "Cheapest seller",
-        OWN_SELLER: "Your seller",
       },
       state: {
-        deal: { one: "Cheaper at {count} seller · up to {amount}", other: "Cheaper at {count} sellers · up to {amount}" },
         cheapestYours: "Your price is the cheapest",
         toTarget: "{amount} to your target",
         belowTarget: "Below your target · cheapest {price}",
@@ -487,8 +472,6 @@ export const en = {
       signInText: "The products you track are kept in your account.",
       signIn: "Sign in",
     },
-    footnote: "This list shows no seller names and no “Show”; you open cheaper sellers on Product Detail.",
-    legend: "Solid line: the price you paid; dashed: the cheapest price; dotted: your target price.",
   },
   productDetail: {
     title: "Product Detail",
