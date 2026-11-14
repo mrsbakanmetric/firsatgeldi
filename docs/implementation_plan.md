@@ -47,7 +47,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 7 | i18n | Turkish/English catalogues, `/tr` and `/en` routes, money/date formats | ✅ | #25 | 2026-11-13 |
 | 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ✅ | #50 | 2026-11-14 |
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ✅ | #53 · #55 (guest upload status, seller-lookup limit) | 2026-11-14 |
-| 10 | Search and Add | Screen as designed, on mock data | ⬜ | — | — |
+| 10 | Search and Add | Screen as designed, on mock data | 🛠 | #61 | 2026-11-14 |
 | 11 | Product Detail | Screen incl. Want to Buy mode | ⬜ | — | — |
 | 12 | Tracked Items | List + Add product dialog | ⬜ | — | — |
 | 13 | Notifications and Preferences | Page, bell panel, notification preferences | ⬜ | — | — |

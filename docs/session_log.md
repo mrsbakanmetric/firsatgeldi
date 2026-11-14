@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-14 (day) · Claude Code
+- **Done:** #54–#58 merged (contract fields, `upload.own.view`, guest polling, seller-lookup limit, `poll` field, catalogue miss + warm-up); plan step 10 Search and Add built on the mock API — #61 open (screen, shell bound to `GET /me`, 10 new `packages/ui` components, mock fixtures and `?mock-photo=`; 564 tests, CI green).
+- **Decided (user), in #61 code as [ASSUMPTION], to be written into `architecture.md` §16.1:** seller-lookup `trust` (INSUFFICIENT → store-rating fallback via `reasonKey`) · `meta.sourcesMissing` · attribute `options` + `matchCritical` · `GET /uploads/policy?purpose=` (IDENTIFY 5 files / 10 MB / 24 h; SUPPORT_ATTACHMENT 3 files / 30 days) · client always sends `IDENTIFY` · bell icon only until the notifications endpoint.
+- **Open:** "Haber ver" for closed categories has no endpoint (user decides) · step 10 stays 🛠 until the user checks it in the browser (390/1280, light/dark) and performance budgets are measured · "no result" suggestion chips have no data source.
+- **Next:** user reviews and merges #61 → `spec/search-add-contract` writes the new fields and endpoint into §16.1 → small code PR drops the [ASSUMPTION] notes → then plan step 11 (Product Detail), with approval.
+
+---
+
 ## 2026-11-14 (morning) · claude.ai
 - **Done:** reviewed #53–#58 before merge; claude.ai project mirrors refreshed to `main` @ `0cea74a`; #59 opened (prompt rule).
 - **Decided (user), written in docs:** upload status read key `upload.own.view`, action `upload.status`, stream key `account.own.view` (#54) · catalogue miss → "Mağazalarda ara" via `POST /identify`, no new endpoint; catalogue warm-up job twice a day (#58) · prompts asking Claude Code for a plan say Plan mode (#59, `agent_rules.md`).
