@@ -48,8 +48,8 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ✅ | #50 | 2026-11-14 |
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ✅ | #53 · #55 (guest upload status, seller-lookup limit) | 2026-11-14 |
 | 10 | Search and Add | Screen as designed, on mock data | 🛠 | #61 | 2026-11-14 |
+| 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | ⬜ | — | — |
 | 11 | Product Detail | Screen incl. Want to Buy mode | ⬜ | — | — |
-| 12 | Tracked Items | List + Add product dialog | ⬜ | — | — |
 | 13 | Notifications and Preferences | Page, bell panel, notification preferences | ⬜ | — | — |
 | 14 | Home | Screen | ⬜ | — | — |
 | 15 | My Savings | Screen | ⬜ | — | — |
@@ -100,6 +100,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 - Setup (steps 3–9) comes first because every screen is built on it.
 - Basic CI (step 4) comes right after the skeleton so every following PR is checked from the start.
 - Screens follow the screen order of `CLAUDE.md`; Application Manager screens are not here because their design review is still pending.
+- **Exception [DECIDED 2026-11-14] (user decision):** Tracked Items (step 12) is built before Product Detail (step 11); step numbers are kept. Until Product Detail exists, Tracked Items rows link to `/[locale]/takip/[id]`, which shows a "coming soon" page.
 
 **Phase 2** — makes the product really work for users.
 - **Data test (23):** which data the stores really give affects every later decision, so it comes first.
@@ -313,9 +314,9 @@ Endpoints from `architecture.md` §16, tables from `database.md`, components fro
 ### B.3 Tracked Items — `/[locale]/takip` (`pagedesign.md` §8.4)
 | | |
 |---|---|
-| **Endpoints** | `GET /tracked-items?filter=&sort=&q=&category=&cursor=` · `GET /tracked-items/summary` · `POST /tracked-items/check-now-bulk` · Add product dialog reuses B.1 · `GET /me/entitlements` · `GET /me/stream` |
+| **Endpoints** | `GET /tracked-items?filter=&sort=&q=&category=&cursor=` · `GET /tracked-items/summary` · `POST /tracked-items/check-now-bulk` · "Ürün ekle" and "Takip et" open B.1 (product marked, confirm panel open) · `GET /me/entitlements` · `GET /me/stream` |
 | **Tables (Phase 2)** | `tracked_items`, `deals`, `check_now_usage`, `checks`, `product_cheapest_hourly`, `stock_history`, `categories`, `savings_records` |
-| **Components** | `PageTemplate` (List) · `StatTile` ×4 · `SearchField` · `CategoryFilter` · `FilterChips` · `SortSelect` · `AllowanceMeter` · `ProductRow` · `PriceSparkline` · `StockStrip` · `Dialog` (1120 + 360 aside) · `StepIndicator` · `ConfirmPanel` · `EmptyState` · `StatusBanner` · `SkeletonBlock` |
+| **Components** | `PageTemplate` (List) · summary row (4 small figures) · `SearchField` · `FilterChips` · Kategori and Sırala chips with `menu` overlay · `ProductRow` · `PriceSparkline` · `StockStrip` · `EmptyState` · `StatusBanner` · `SkeletonBlock` |
 | **Permission keys** | `tracking.own.view` · `tracking.own.write` · `checknow.own.use` · admin: `admin.tracking.view` |
 
 ### B.4 Notifications and Preferences — `/[locale]/bildirimler` + bell panel (`pagedesign.md` §8.5)
