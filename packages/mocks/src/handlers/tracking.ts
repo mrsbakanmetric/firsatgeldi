@@ -27,6 +27,18 @@ function normalise(name: string): string {
 }
 
 /**
+ * Rating tile verdict (modules.md seller trust indicator): `seller_trust` when it has
+ * enough evidence; otherwise the store rating against `listing.seller_rating_good_min`;
+ * no rating either → INSUFFICIENT without a reason ("henüz yeterli veri yok").
+ */
+function sellerTrust(seller: (typeof SELLERS)[keyof typeof SELLERS]) {
+  if (seller.trust.verdict !== "INSUFFICIENT") return seller.trust;
+  if (seller.rating === null) return { verdict: "INSUFFICIENT" as const, reasonKey: null };
+  const good = seller.rating >= SYSTEM_SETTINGS["listing.seller_rating_good_min"];
+  return { verdict: "INSUFFICIENT" as const, reasonKey: good ? "trust.reason.storeRatingGood" : "trust.reason.storeRatingLow" };
+}
+
+/**
  * Seller lookup limit per signed-in user [DECIDED 2026-11-14]: at most
  * `seller_lookup.rate_limit_per_minute` lookups in any 60 seconds; above it RATE_LIMITED.
  * Refused calls do not count, so the user can try again once the window moves on.
@@ -108,7 +120,7 @@ export function trackingHandlers(controller: MockController) {
       };
     }),
 
-    route(controller, "sellerLookup", ({ params, body, actor, checkedAt, note }) => {
+    route(controller, "sellerLookup", ({ params, body, actor, checkedAt, note, sourcesMissing }) => {
       const { userId } = requireUser(actor);
       const key = productOrThrow(params.id);
       note({ targetType: "product", targetId: PRODUCTS[key].id, metadata: { platformId: body.platformId } });
@@ -125,14 +137,15 @@ export function trackingHandlers(controller: MockController) {
       return {
         data: {
           match: {
-            sellerRef: ref, sellerName: seller.name, sellerRating: seller.rating, sellerRatingCount: seller.ratingCount,
+            sellerRef: ref, sellerName: seller.name, sellerRating: seller.rating, sellerRatingCount: seller.ratingCount, trust: sellerTrust(seller),
             stockState: offer.stockState, warrantyType: offer.warrantyType, listingUrl: own.listingUrl, lastCheckedAt: own.lastCheckedAt,
           },
         },
+        ...(sourcesMissing ? { meta: { sourcesMissing: true } } : {}),
       };
     }),
 
-    route(controller, "teaser", ({ params, body, actor, now, checkedAt, empty, note }) => {
+    route(controller, "teaser", ({ params, body, actor, now, checkedAt, empty, note, sourcesMissing }) => {
       const { userId } = requireUser(actor);
       const key = productOrThrow(params.id);
       const own = ownRef(controller, userId, body.sellerRef);
@@ -152,7 +165,7 @@ export function trackingHandlers(controller: MockController) {
             lastCheckedAt: offers.length ? offers.map((offer) => offer.lastCheckedAt).sort().at(-1) ?? null : null,
           },
         },
-        ...(best ? { meta: { checkedAt: best.lastCheckedAt } } : {}),
+        ...(best || sourcesMissing ? { meta: { ...(best ? { checkedAt: best.lastCheckedAt } : {}), ...(sourcesMissing ? { sourcesMissing: true } : {}) } } : {}),
       };
     }),
 

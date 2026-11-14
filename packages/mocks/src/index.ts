@@ -12,10 +12,12 @@ export { MOCK_SETTINGS, PLAN_LIMITS, SYSTEM_SETTINGS } from "./settings";
 export {
   createMockController,
   DEFAULT_MOCK_CONFIG,
+  MOCK_PHOTOS,
   MOCK_SCENARIOS,
   MOCK_SESSIONS,
   type MockConfig,
   type MockController,
+  type MockPhoto,
   type MockScenario,
   type MockSession,
   type MockState,

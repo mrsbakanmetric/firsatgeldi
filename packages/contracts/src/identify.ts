@@ -23,6 +23,14 @@ export const UnderstoodAttribute = z.object({
   value: z.string().min(1),
   /** 0–1 (database.md §5 `product_attributes.confidence`). */
   confidence: z.number().min(0).max(1),
+  /**
+   * Allowed values from the category template, in the request's language
+   * (database.md §5 `category_templates.fields[].options`); the user may also type a value.
+   * [ASSUMPTION — field; user decision 2026-11-14, to be written into architecture.md §16.1.]
+   */
+  options: z.array(z.string().min(1)),
+  /** Changing it clears the mark (`category_templates.fields[].match_critical`) [ASSUMPTION — field, as above]. */
+  matchCritical: z.boolean(),
 });
 
 /** A short question when one attribute is unsure (design: "Paket doğru mu?"). */

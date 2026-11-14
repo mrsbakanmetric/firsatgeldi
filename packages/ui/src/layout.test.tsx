@@ -41,6 +41,21 @@ describe("PageTemplate", () => {
     const text = container.textContent ?? "";
     expect(text.indexOf("menü")).toBeLessThan(text.indexOf("bölüm"));
   });
+
+  it("is centred in the content width with the template side padding, and its wide rows may shrink (no sideways scroll)", () => {
+    const { container } = render(
+      <PageTemplate kind="flow" title="Ara ve Ekle" summary={<p>özet</p>} side={<p>yan</p>} sideLabel="Onay" sections={<p>bölümler</p>}>
+        <p>içerik</p>
+      </PageTemplate>,
+    );
+    const root = container.querySelector("[data-template]") as HTMLElement;
+    for (const name of ["mx-auto", "w-full", "max-w-(--size-content-max-width)", "md:px-6"]) expect(root.classList).toContain(name);
+    // Every full-width row is a flex item of the wrapping root: without min-w-0 its
+    // content's minimum width pushes the page wider than the window.
+    const rows = [...root.children].filter((child) => child.classList.contains("md:basis-full") && child.classList.contains("flex"));
+    expect(rows.length).toBe(3);
+    for (const row of rows) expect(row.classList).toContain("min-w-0");
+  });
 });
 
 describe("states", () => {

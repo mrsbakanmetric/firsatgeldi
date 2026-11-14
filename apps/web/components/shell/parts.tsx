@@ -15,7 +15,16 @@ export function useTranslator(locale: Locale): Translator {
 }
 
 /** Who is looking at the shell. The session itself arrives with the mock API (plan step 9). */
-export type ShellViewer = { kind: "guest" } | { kind: "user"; initials: string; unreadCount: number; unreadDeal: boolean };
+/**
+ * Who sees the shell. "loading" until the session is read (GET /me): the account
+ * area keeps its place empty, so "Giriş yap" never flashes for a signed-in user.
+ * `unreadCount: null` = no notification count yet (no endpoint before the
+ * Notifications step): the bell shows the icon only.
+ */
+export type ShellViewer =
+  | { kind: "loading" }
+  | { kind: "guest" }
+  | { kind: "user"; initials: string; unreadCount: number | null; unreadDeal: boolean };
 
 export function SkipLink({ t }: { t: Translator }) {
   return (
@@ -103,13 +112,13 @@ export function SiteFooter({ locale, t, variant = "full" }: { locale: Locale; t:
 export function BellButton({ locale, t, unreadCount, unreadDeal, panel, onHero = false }: {
   locale: Locale;
   t: Translator;
-  unreadCount: number;
+  unreadCount: number | null;
   unreadDeal: boolean;
   panel?: ReactNode;
   onHero?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const label = unreadCount > 0 ? t("shell.bell.unread", { count: unreadCount }) : t("shell.bell.label");
+  const label = unreadCount !== null && unreadCount > 0 ? t("shell.bell.unread", { count: unreadCount }) : t("shell.bell.label");
   return (
     <>
       <button
@@ -125,7 +134,7 @@ export function BellButton({ locale, t, unreadCount, unreadDeal, panel, onHero =
         )}
       >
         <Icon icon={Bell} size="lg" />
-        {unreadCount > 0 && (
+        {unreadCount !== null && unreadCount > 0 && (
           <span
             aria-hidden="true"
             className={cn(

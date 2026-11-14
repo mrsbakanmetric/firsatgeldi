@@ -1,6 +1,16 @@
 // Canonical components (pagedesign.md §5). Names are exactly those of the list.
 // Shells (AppShell, AuthShell, AdminShell) live in the web app: they own routing.
+export { AttributeChip, type AttributeChipProps, type AttributeChipTexts } from "./attribute-chip";
 export { Avatar, type AvatarProps, type AvatarSize } from "./avatar";
+export { ConfirmPanel, ConfirmSection, type ConfirmPanelProps } from "./confirm-panel";
+export { FactTile, FactTiles, type FactTileProps, type FactVerdict } from "./fact-tile";
+export { Flag, type FlagProps, type FlagTone } from "./flag";
+export { FreshnessLine, type FreshnessLineProps } from "./freshness-line";
+export { HiddenOfferCard, type HiddenOfferCardProps, type RevealedSeller } from "./hidden-offer-card";
+export { MoneyDisplay, type MoneyDisplayProps, type MoneySize, type MoneyTone } from "./money-display";
+export { ImagePrivacyNote, MultiImageUpload, type MultiImageUploadProps, type UploadFileState, type UploadFileView } from "./multi-image-upload";
+export { ProductImage, type ProductImageProps, type ProductImageSize } from "./product-image";
+export { SearchField, type SearchFieldProps } from "./search-field";
 export { Button, buttonClasses, type ButtonProps, type ButtonVariant } from "./button";
 export { Checkbox, type CheckboxProps } from "./checkbox";
 export { cn, focusRing } from "./cn";

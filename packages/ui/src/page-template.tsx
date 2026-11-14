@@ -84,9 +84,10 @@ export function PageTemplate({
 
       {actions && <div className="order-last flex flex-col gap-3 md:order-none md:flex-row md:items-center">{actions}</div>}
 
-      {summary && <div className="flex flex-col gap-4 md:basis-full">{summary}</div>}
+      {summary && <div className="flex min-w-0 flex-col gap-4 md:basis-full">{summary}</div>}
 
-      <div className="flex flex-col gap-6 md:basis-full md:flex-row md:items-start">
+      {/* min-w-0: the row may shrink to the container, so a wide content region never pushes the page sideways. */}
+      <div className="flex min-w-0 flex-col gap-6 md:basis-full md:flex-row md:items-start">
         {kind === "settings" && sectionMenu && <div className="md:w-(--size-section-menu-width) md:shrink-0">{sectionMenu}</div>}
         {content}
         {side && (
@@ -96,7 +97,7 @@ export function PageTemplate({
         )}
       </div>
 
-      {sections && <div className="flex flex-col gap-6 md:basis-full">{sections}</div>}
+      {sections && <div className="flex min-w-0 flex-col gap-6 md:basis-full">{sections}</div>}
 
       {footnote && <p className="text-caption text-text-muted md:basis-full">{footnote}</p>}
     </div>

@@ -20,7 +20,7 @@ import {
   TeaserResult,
   TrackedItemCreated,
 } from "./tracking";
-import { CompleteUploadRequest, CompleteUploadResult, PresignRequest, PresignResult, UploadView } from "./uploads";
+import { CompleteUploadRequest, CompleteUploadResult, PresignRequest, PresignResult, UploadPolicy, UploadPolicyQuery, UploadView } from "./uploads";
 
 /** API prefix (architecture.md §15.4). */
 export const API_PREFIX = "/api/v1";
@@ -85,6 +85,11 @@ export const ENDPOINTS = {
   autocomplete: endpoint({
     method: "GET", path: "/search/autocomplete", params: null, query: AutocompleteQuery, body: null,
     response: AutocompleteResult, ...READ, activity: "search", permission: "search.use", public: true,
+  }),
+  getUploadPolicy: endpoint({
+    // [ASSUMPTION — endpoint] limits stated before an upload; a read, no activity row.
+    method: "GET", path: "/uploads/policy", params: null, query: UploadPolicyQuery, body: null,
+    response: UploadPolicy, ...READ, permission: "upload.own.create", public: true,
   }),
   presignUploads: endpoint({
     method: "POST", path: "/uploads/presign", params: null, query: null, body: PresignRequest,

@@ -2,7 +2,7 @@
 import { addCalendarDays, toCalendarDay } from "@firsatgeldi/core";
 import { http, HttpResponse } from "msw";
 import type { ApiLocale } from "@firsatgeldi/contracts";
-import { ATTRIBUTE_LABELS, type ProductFixture, PRODUCT_LIST, PRODUCTS, SIMILAR } from "../fixtures/catalog";
+import { ATTRIBUTE_LABELS, BULK_SCREENSHOT, CATEGORIES, MATCH_CRITICAL_ATTRIBUTES, type ProductFixture, PRODUCT_LIST, PRODUCTS, SIMILAR } from "../fixtures/catalog";
 import { listingUrl, offerByListingUrl, OFFERS, PLATFORM_LIST, PLATFORMS, SELLERS } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { ORDER_SCREENSHOT_EXTRACTION } from "../fixtures/users";
@@ -11,7 +11,7 @@ import { MockApiError, route } from "../route";
 import { MOCK_SETTINGS, SYSTEM_SETTINGS } from "../settings";
 import type { IdentifyRequestRow, MockController, UploadRow } from "../state";
 import { money, productAttributes, productSummary, variantLine } from "../views";
-import { matchProducts } from "./catalog";
+import { inCatalog, matchProducts } from "./catalog";
 import { emit, fold, sameActor, scrubPersonalData, tokens } from "./shared";
 
 const MS_PER_MINUTE = 60_000;
@@ -41,12 +41,38 @@ function candidatesFor(products: readonly ProductFixture[], locale: ApiLocale, m
   }));
 }
 
+const unique = (values: readonly (string | null)[]): string[] => [...new Set(values.filter((value): value is string => value !== null))];
+
+/** Allowed values from the category template (database.md §5 `category_templates.fields[].options`), in the request language. */
+function templateOptions(product: ProductFixture, key: string, locale: ApiLocale): string[] {
+  const sameCategory = PRODUCT_LIST.filter((item) => item.category.id === product.category.id);
+  const sameBrand = sameCategory.filter((item) => item.brand === product.brand);
+  switch (key) {
+    case "type":
+      return unique(Object.values(CATEGORIES).filter((item) => item.supported).map((item) => pick(item.name, locale)));
+    case "brand":
+      return unique(sameCategory.map((item) => item.brand));
+    case "model":
+      return unique(sameBrand.map((item) => item.model));
+    case "generation":
+      return unique(sameBrand.map((item) => (item.generation ? pick(item.generation, locale) : null)));
+    case "color":
+      return unique(product.colors.map((color) => pick(color, locale)));
+    default:
+      return [];
+  }
+}
+
 /** Understood attributes without bundle: the bundle is asked as a question when the family has several. */
 function understoodFor(product: ProductFixture, locale: ApiLocale, overrides: Record<string, string>) {
   const confidence = 0.9;
   return productAttributes(product, locale)
     .filter((attribute) => attribute.key !== "bundle")
-    .map((attribute) => ({ ...attribute, value: overrides[attribute.key] ?? attribute.value, confidence }));
+    .map((attribute) => {
+      const value = overrides[attribute.key] ?? attribute.value;
+      const options = templateOptions(product, attribute.key, locale);
+      return { ...attribute, value, confidence, options: options.includes(value) ? options : [value, ...options], matchCritical: MATCH_CRITICAL_ATTRIBUTES.has(attribute.key) };
+    });
 }
 
 interface Resolution {
@@ -75,8 +101,28 @@ function resolveText(text: string, locale: ApiLocale): Resolution {
   return { lead: close[0] ?? null, exact: [], close };
 }
 
+/** A screen with several products (design case C): one item per product, each marked and confirmed in turn. */
+function bulkItems(locale: ApiLocale) {
+  return BULK_SCREENSHOT.map((entry, index) => ({
+    id: String(index + 1),
+    label: pick(entry.label, locale),
+    candidates: candidatesFor([PRODUCTS[entry.key]], locale, "EXACT", null),
+  }));
+}
+
+function isBulk(controller: MockController, row: IdentifyRequestRow): boolean {
+  return row.uploadIds.some((id) => controller.state.uploads.get(id)?.recognised === "bulk");
+}
+
 function resultFor(controller: MockController, row: IdentifyRequestRow, locale: ApiLocale, empty: boolean, link: ReturnType<typeof detectLink>) {
+  if (!empty && isBulk(controller, row)) {
+    return { requestId: row.id, understood: [], questions: [], candidates: [], items: bulkItems(locale), similarCount: 0, link };
+  }
   const resolution = empty ? { lead: null, exact: [], close: [] } : withCorrections(resolveFor(controller, row, row.text ?? "", locale), row, locale);
+  // Found through the live sources → cleaned and saved to the catalogue (architecture.md §11 "Catalogue miss").
+  for (const product of [...resolution.exact, ...resolution.close]) {
+    if (!inCatalog(controller, product)) controller.state.catalogAdded.add(product.key);
+  }
   const lead = resolution.lead;
   const family = lead ? familyOf(lead) : [];
   const bundles = family.filter((product) => product.bundle !== null);
@@ -156,6 +202,24 @@ function ownUpload(controller: MockController, id: string, actor: UploadRow["own
 export function identifyHandlers(controller: MockController) {
   const { state } = controller;
   return [
+    // Registered before `GET /uploads/:id`, so "policy" is never read as an upload id.
+    route(controller, "getUploadPolicy", ({ query }) => {
+      const support = query.purpose === "SUPPORT_ATTACHMENT";
+      return {
+        data: {
+          purpose: query.purpose,
+          maxFiles: support ? SYSTEM_SETTINGS["support.max_attachments"] : SYSTEM_SETTINGS["media.max_images_per_request"],
+          maxBytes: SYSTEM_SETTINGS["media.max_bytes"],
+          acceptedTypes: ["image/jpeg", "image/png", "image/webp", "image/heic"],
+          retention: query.purpose === "AVATAR"
+            ? null
+            : support
+              ? { amount: SYSTEM_SETTINGS["support.attachment_retention_days"], unit: "DAYS" as const }
+              : { amount: SYSTEM_SETTINGS["media.private_retention_hours"], unit: "HOURS" as const },
+        },
+      };
+    }),
+
     route(controller, "presignUploads", ({ body, actor, now, origin, note }) => {
       const maxFiles = SYSTEM_SETTINGS["media.max_images_per_request"];
       if (body.files.length > maxFiles) throw new MockApiError("VALIDATION", { params: { max: maxFiles } });
@@ -167,7 +231,7 @@ export function identifyHandlers(controller: MockController) {
       const uploads = body.files.map((file, position) => {
         const upload: UploadRow = {
           id: newId(), batchId, owner: actor, purpose: body.purpose, position, declaredMime: file.mime, declaredBytes: file.bytes,
-          status: "PRESIGNED", rejectReason: null, expiresAt, purgeAt,
+          status: "PRESIGNED", rejectReason: null, recognised: controller.config.photo, expiresAt, purgeAt,
         };
         state.uploads.set(upload.id, upload);
         return {
@@ -213,7 +277,8 @@ export function identifyHandlers(controller: MockController) {
       const upload = ownUpload(controller, params.id, actor);
       note({ targetType: "upload", targetId: upload.id, metadata: { status: upload.status } });
       const extracted =
-        upload.status === "READY" && upload.purpose === "ORDER_SCREENSHOT"
+        // The server recognises an order screen in any identification photo (user decision 2026-11-14).
+        upload.status === "READY" && (upload.purpose === "ORDER_SCREENSHOT" || (upload.purpose === "IDENTIFY" && upload.recognised === "order"))
           ? (() => {
               const seller = SELLERS[ORDER_SCREENSHOT_EXTRACTION.seller];
               const offer = OFFERS.find((item) => item.seller === ORDER_SCREENSHOT_EXTRACTION.seller);
@@ -242,14 +307,16 @@ export function identifyHandlers(controller: MockController) {
       };
       state.identifyRequests.set(row.id, row);
       const source = body.link ? "LINK" : body.uploadIds ? "PHOTO" : "SEARCH_BOX";
+      const savedBefore = state.catalogAdded.size;
       const result = resultFor(controller, row, locale, empty, detectLink(row.link));
+      const savedFromLiveSources = state.catalogAdded.size - savedBefore;
       if (body.text) {
         state.searchEvents.push({
           id: newId(), userId: actor.kind === "user" ? actor.userId : null, anonId: actor.kind === "guest" ? actor.anonId : null,
           queryRaw: scrubPersonalData(body.text), locale, source, resultCount: result.candidates.length, occurredAt: now.toISOString(),
         });
       }
-      note({ targetType: "identify_request", targetId: row.id, metadata: { source, candidateCount: result.candidates.length } });
+      note({ targetType: "identify_request", targetId: row.id, metadata: { source, candidateCount: result.candidates.length, savedFromLiveSources } });
       return { data: result };
     }),
 

@@ -2,11 +2,36 @@
 import { z } from "zod";
 import { CalendarDay, Id, Money, Timestamp } from "./common";
 
+/**
+ * Search and Add always sends IDENTIFY: one photo field takes products, labels and
+ * order screens alike; the server recognises an order screen and fills
+ * `UploadView.extracted` (user decision 2026-11-14). ORDER_SCREENSHOT stays for
+ * callers that know the purpose in advance.
+ */
 export const UploadPurpose = z.enum(["IDENTIFY", "ORDER_SCREENSHOT", "AVATAR", "SUPPORT_ATTACHMENT"]);
 /** Accepted types: JPEG, PNG, WebP, HEIC (database.md §14b rules). */
 export const UploadMime = z.enum(["image/jpeg", "image/png", "image/webp", "image/heic"]);
 export const UploadStatus = z.enum(["PRESIGNED", "UPLOADED", "PROCESSING", "READY", "REJECTED", "EXPIRED", "DELETED"]);
 export const UploadRejectReason = z.enum(["TYPE", "SIZE", "DIMENSIONS", "DECODE", "UNSAFE"]);
+
+/**
+ * `GET /uploads/policy?purpose=` — the limits a client states before an upload
+ * (product_design_pattern.md §5.19, §5.20): number of files, size per file,
+ * accepted types and how long the image is kept. Values come from settings
+ * (`media.*`, `support.max_attachments`, `support.attachment_retention_days`);
+ * screen texts never type them [ASSUMPTION — endpoint; user decision 2026-11-14,
+ * to be written into architecture.md §16 / §16.1 by a spec PR].
+ */
+export const UploadPolicyQuery = z.object({ purpose: UploadPurpose });
+export const UploadPolicy = z.object({
+  purpose: UploadPurpose,
+  maxFiles: z.number().int().positive(),
+  maxBytes: z.number().int().positive(),
+  acceptedTypes: z.array(UploadMime).min(1),
+  /** IDENTIFY / ORDER_SCREENSHOT: hours (`media.private_retention_hours`); SUPPORT_ATTACHMENT: days. */
+  retention: z.object({ amount: z.number().int().positive(), unit: z.enum(["HOURS", "DAYS"]) }).nullable(),
+});
+export type UploadPolicy = z.infer<typeof UploadPolicy>;
 
 /** `POST /uploads/presign` { purpose, files: [{ mime, bytes }] }; count and size limits are settings, checked by the server. */
 export const PresignRequest = z.object({

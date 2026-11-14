@@ -50,10 +50,21 @@ export interface SellerFixture {
   readonly name: string;
   readonly rating: number | null;
   readonly ratingCount: number | null;
+  /** `seller_trust` (database.md, computed daily): verdict + reason key; INSUFFICIENT falls back to the store rating. */
+  readonly trust: { readonly verdict: "GOOD" | "CAUTION" | "INSUFFICIENT"; readonly reasonKey: string | null };
 }
 
-function seller(platformKey: PlatformKey, externalId: string, name: string, rating: number | null, ratingCount: number | null): SellerFixture {
-  return { id: uuidFor(`seller:${platformKey}:${externalId}`), platform: platformKey, externalId, name, rating, ratingCount };
+const INSUFFICIENT = { verdict: "INSUFFICIENT", reasonKey: null } as const;
+
+function seller(
+  platformKey: PlatformKey,
+  externalId: string,
+  name: string,
+  rating: number | null,
+  ratingCount: number | null,
+  trust: SellerFixture["trust"] = INSUFFICIENT,
+): SellerFixture {
+  return { id: uuidFor(`seller:${platformKey}:${externalId}`), platform: platformKey, externalId, name, rating, ratingCount, trust };
 }
 
 export const SELLERS = {
@@ -64,7 +75,10 @@ export const SELLERS = {
   // Hidden cheaper sellers (mock-only names).
   aksiyonMarket: seller("TRENDYOL", "TY-SLR-90311", "Aksiyon Market", 4.8, 5320),
   lensDeposu: seller("AMAZON_TR", "AMZ-SLR-A1Q9", "Lens Deposu", 4.5, 911),
-  teknikDukkan: seller("MEDIAMARKT", "MM-SLR-0042", "Teknik Dükkan", 4.2, 310),
+  teknikDukkan: seller("MEDIAMARKT", "MM-SLR-0042", "Teknik Dükkan", 4.2, 310, { verdict: "GOOD", reasonKey: "trust.reason.consistent" }),
+  // Trust cases for the rating tile (modules.md seller trust indicator): caution with a reason; no data at all.
+  fotoPazari: seller("TEKNOSA", "TK-SLR-3307", "Foto Pazarı", 4.4, 640, { verdict: "CAUTION", reasonKey: "trust.reason.stockOutOften" }),
+  yeniDukkan: seller("TEKNOSA", "TK-SLR-9001", "Yeni Kamera Dükkanı", null, null),
 } as const satisfies Record<string, SellerFixture>;
 
 export type SellerKey = keyof typeof SELLERS;
@@ -118,6 +132,17 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 3_025_000, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 4_900, deliveryDays: { min: 4, max: 6 },
     stockState: "OUT_OF_STOCK", warrantyType: "IMPORTER", stockSinceDaysAgo: 2, priceSinceDaysAgo: 15, checkedMinutesAgo: 50,
     listingPath: "/hizli-elektronik/insta360-ace-pro-2-p-55012998",
+  }),
+  // Trust cases (not cheaper than the price paid, so they never enter the teaser).
+  offer("acePro2FlashPrint", "fotoPazari", {
+    priceMinor: 2_999_000, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },
+    stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 5, priceSinceDaysAgo: 5, checkedMinutesAgo: 20,
+    listingPath: "/foto-pazari/insta360-ace-pro-2-flash-print",
+  }),
+  offer("acePro2FlashPrint", "yeniDukkan", {
+    priceMinor: 3_049_000, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: null, deliveryDays: null,
+    stockState: "IN_STOCK", warrantyType: "UNKNOWN", stockSinceDaysAgo: 1, priceSinceDaysAgo: 1, checkedMinutesAgo: 15,
+    listingPath: "/yeni-kamera-dukkani/insta360-ace-pro-2",
   }),
 ];
 

@@ -6,7 +6,7 @@
 // see the normal navigation with "Giriş yap"; on the Landing Page they see the
 // guest navigation with "Giriş yap" + "Ücretsiz başla".
 import type { Locale } from "@firsatgeldi/i18n";
-import { buttonClasses, cn, focusRing, Icon, Menu, Tooltip } from "@firsatgeldi/ui";
+import { buttonClasses, cn, focusRing, Icon, Menu, SkeletonBlock, Tooltip } from "@firsatgeldi/ui";
 import { CirclePlus, Compass, House, List, LogIn, Search, UserRound, Wallet, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -111,7 +111,12 @@ export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut
             </>
           )}
 
-          {signedIn ? (
+          {viewer.kind === "loading" ? (
+            // Same place as the account controls, nothing readable: no "Giriş yap" flash while the session loads.
+            <span aria-hidden="true" data-testid="session-placeholder" className="flex h-(--size-touch-target-min) w-16 shrink-0 items-center">
+              <SkeletonBlock shape="pill" />
+            </span>
+          ) : signedIn ? (
             <>
               <BellButton locale={locale} t={t} unreadCount={viewer.unreadCount} unreadDeal={viewer.unreadDeal} panel={bellPanel} />
               <div className="hidden md:flex">
@@ -149,7 +154,11 @@ export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut
           {APP_NAV.filter((entry) => (TAB_BAR_IDS as readonly string[]).includes(entry.id)).map((entry) => (
             <TabLink key={entry.id} href={hrefFor(entry.route, locale)} icon={NAV_ICON[entry.id]} label={t(entry.label)} active={entry.id === current} />
           ))}
-          {signedIn ? (
+          {viewer.kind === "loading" ? (
+            <span aria-hidden="true" className={tabClasses(false)}>
+              <SkeletonBlock shape="pill" width="1/2" />
+            </span>
+          ) : signedIn ? (
             <Menu
               label={t("shell.profileMenu.button")}
               items={profileMenuItems(locale, t, pathname, onSignOut)}
