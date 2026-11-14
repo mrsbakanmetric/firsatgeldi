@@ -7,7 +7,7 @@ import { Id, Timestamp } from "./common";
 /**
  * Activity actions (database.md §14a `activity_events.action`). Listed there:
  * search, identify, upload, upload.status [DECIDED 2026-11-14], tracking.confirm,
- * reveal, offer.go, check_now_bulk … `seller_lookup`, `teaser` and `reveal.hide` are
+ * reveal, offer.go, check_now_bulk, tracking.end … `seller_lookup`, `teaser` and `reveal.hide` are
  * [ASSUMPTION] names for Search and Add actions the docs do not name yet.
  */
 export const ACTIVITY_ACTIONS = [
@@ -22,6 +22,9 @@ export const ACTIVITY_ACTIONS = [
   "reveal.hide",
   "offer.go",
   "check_now_bulk",
+  "tracking.end",
+  /** "Geri al" after ending tracking [ASSUMPTION — action name]. */
+  "tracking.restore",
 ] as const;
 export const ActivityAction = z.enum(ACTIVITY_ACTIONS);
 export type ActivityAction = z.infer<typeof ActivityAction>;

@@ -290,6 +290,43 @@ export const tr = {
   },
   // Tracked Items (design "4 Takip Ettiklerim" v2; modules.md Tracked Items; pagedesign.md §8.4).
   trackedItems: {
+    v3: {
+      status: { BOUGHT: "Takip ediyorsun", WANT: "Almak istiyorsun" },
+      dealGroup: "Fırsat olan ürünler",
+      canSave: "{amount} kazanabilirsin",
+      seeDeal: "Fırsatı gör",
+      change: {
+        down: { one: "↓ {amount} (%{percent}) · {count} gün", other: "↓ {amount} (%{percent}) · {count} gün" },
+        up: { one: "↑ {amount} (%{percent}) · {count} gün", other: "↑ {amount} (%{percent}) · {count} gün" },
+        same: { one: "Değişmedi · {count} gün", other: "Değişmedi · {count} gün" },
+      },
+      chart: {
+        min: "En düşük {price}",
+        max: "En yüksek {price}",
+        paid: "Sen {price}",
+        cheapest: "En ucuz",
+        target: "Hedef {price}",
+        readout: "{day} · {price}",
+      },
+      stock: {
+        IN_STOCK: { one: "Stokta · en az {count} gündür", other: "Stokta · en az {count} gündür" },
+        LOW_STOCK: "Az kaldı",
+        OUT_OF_STOCK: { one: "Tükendi · {count} gündür", other: "Tükendi · {count} gündür" },
+      },
+      more: "Diğer işlemler",
+      end: "Takibi bitir",
+      endTitle: "Takibi bitir",
+      endQuestion: "Nasıl sonuçlandı?",
+      endOptions: { RETURN_REBUY: "İade ettim", PRICE_DIFFERENCE: "Fiyat farkı aldım", NONE: "Vazgeçtim" },
+      newPrice: "Yeni ödediğin fiyat (isteğe bağlı)",
+      newPriceHelp: "Yazarsan kazancın Kazancım’a kaydedilir.",
+      wantEndText: "{name} için fiyat takibi durur. 7 gün içinde geri alabilirsin.",
+      ended: "{name} takibi bitti",
+      endedSaving: "{amount} Kazancım’a kaydedildi",
+      restore: "Geri al",
+      restored: "{name} yeniden takipte",
+      searchAdd: "“{query}” için Ara ve Ekle’de ara",
+    },
     title: "Takip ettiklerim",
     trackingCount: "Takipte {used}/{limit}",
     trackingCountUnlimited: "Takipte {used}",
@@ -316,8 +353,6 @@ export const tr = {
     filters: {
       label: "Filtreler",
       all: "Tümü",
-      bought: "Aldım",
-      want: "Almak istiyorum",
       deal: "Fırsat var",
       ended: "Biten",
     },
@@ -355,7 +390,6 @@ export const tr = {
       daysLeft: { one: "{count} gün kaldı", other: "{count} gün kaldı" },
       flags: {
         deal: "Fırsat geldi",
-        want: "Almak istiyorum",
         returnDays: { one: "İade için {count} gün", other: "İade için {count} gün" },
         returnToday: "İade için son gün",
         stale: "Güncel değil",
@@ -367,22 +401,10 @@ export const tr = {
         cheapest: "En ucuz {cheapest}",
         noData: "Bu dönem için fiyat verisi yok",
       },
-      conclusion: {
-        dropped: "{ago} {price}’ye düştü",
-        noCheaper: { one: "Son {count} günde daha ucuzu çıkmadı", other: "Son {count} günde daha ucuzu çıkmadı" },
-        lowest: { one: "Son {count} günün en düşüğü · {price}", other: "Son {count} günün en düşüğü · {price}" },
-      },
       stock: {
-        IN_STOCK: "Stokta",
-        LOW_STOCK: "Az stok",
-        OUT_OF_STOCK: "Tükendi",
-        since: { one: "{state} · en az {count} gündür", other: "{state} · en az {count} gündür" },
         noData: "Stok verisi yok",
-        CHEAPEST: "En ucuz satıcı",
-        OWN_SELLER: "Aldığın satıcı",
       },
       state: {
-        deal: { one: "{count} satıcıda daha ucuz · en çok {amount}", other: "{count} satıcıda daha ucuz · en çok {amount}" },
         cheapestYours: "Senin fiyatın en ucuz",
         toTarget: "Hedefe {amount} kaldı",
         belowTarget: "Hedefin altında · en ucuz {price}",
@@ -453,8 +475,6 @@ export const tr = {
       signInText: "Takip ettiğin ürünler hesabında saklanır.",
       signIn: "Giriş yap",
     },
-    footnote: "Bu listede satıcı adı ve “Göster” yok; daha ucuz satıcıları Ürün Detayı’nda açarsın.",
-    legend: "Düz çizgi ödediğin fiyat, kesikli çizgi en ucuz fiyat, noktalı çizgi hedef fiyat.",
   },
   // Product Detail is not built yet (implementation_plan.md: Tracked Items comes first, user decision 2026-11-14).
   productDetail: {

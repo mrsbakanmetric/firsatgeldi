@@ -1,8 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Package } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
-import { CategoryFilter, FilterChips, PriceSparkline, ProductImage, ProductRow, SortSelect, StatTile, StatTiles, StockKey, StockStrip } from "./index";
+import { CategoryFilter, FilterChips, PriceSparkline, ProductImage, ProductRow, SearchBox, SortSelect, StatTile, StatTiles, StockKey, StockStrip } from "./index";
 import { axeViolations } from "./test/axe";
 
 describe("StatTiles (design v2 summary row)", () => {
@@ -99,16 +99,23 @@ describe("SortSelect and CategoryFilter (chip + menu overlay)", () => {
 });
 
 describe("PriceSparkline and StockStrip", () => {
-  it("draws paid solid with the hollow purchase point, cheapest dashed, target dotted; states the values in words", () => {
-    const { container, rerender } = render(<PriceSparkline cheapest={[300, 290, null, 280]} paid={295} paidIndex={1} label="Ödediğin 295, en ucuz 280" />);
-    expect(screen.getByRole("img", { name: "Ödediğin 295, en ucuz 280" })).toBeDefined();
-    const solid = container.querySelector("line.stroke-chart-paid");
-    expect(solid?.getAttribute("stroke-dasharray")).toBeNull();
-    // A day without data splits the cheapest line: one dashed segment + one single point.
-    expect(container.querySelectorAll("polyline.stroke-chart-best")).toHaveLength(1);
-    expect(container.querySelector("polyline")?.getAttribute("stroke-dasharray")).not.toBeNull();
-    expect(container.querySelector("circle.fill-surface")).not.toBeNull();
-    rerender(<PriceSparkline cheapest={[300, 280]} target={250} label="Hedef 250, en ucuz 280" />);
+  it("v3: paid solid ending in “Sen …”, cheapest dashed with min/max labels and the lowest point; target dotted; hover reads day and price", async () => {
+    const labels = { min: "En düşük 280", max: "En yüksek 300", cheapest: "En ucuz", paid: "Sen 295" };
+    const { container, rerender } = render(
+      <PriceSparkline cheapest={[300, 290, null, 280]} paid={295} labels={labels} readout={(index, value) => `gün ${index} · ${value}`} label="Ödediğin 295, en ucuz 280" />,
+    );
+    const chart = screen.getByRole("img", { name: "Ödediğin 295, en ucuz 280" });
+    expect(container.querySelector("line.stroke-chart-paid")?.getAttribute("stroke-dasharray")).toBeNull();
+    expect(container.querySelector("polyline.stroke-chart-best")?.getAttribute("stroke-dasharray")).not.toBeNull();
+    expect(screen.getByText("En düşük 280")).toBeDefined();
+    expect(screen.getByText("En yüksek 300")).toBeDefined();
+    expect(screen.getByTestId("lowest-point")).toBeDefined();
+    expect(screen.getAllByText("Sen 295").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("En ucuz").length).toBeGreaterThan(0);
+    chart.getBoundingClientRect = () => ({ left: 0, width: 300, top: 0, height: 64, right: 300, bottom: 64, x: 0, y: 0, toJSON: () => ({}) });
+    fireEvent.pointerMove(chart, { clientX: 0 });
+    expect(screen.getByRole("status").textContent).toBe("gün 0 · 300");
+    rerender(<PriceSparkline cheapest={[300, 280]} target={250} labels={{ min: "a", max: "b", cheapest: "En ucuz", target: "Hedef 250" }} readout={() => ""} label="Hedef 250, en ucuz 280" />);
     expect(container.querySelector("line.stroke-text")?.getAttribute("stroke-dasharray")).not.toBeNull();
     expect(container.querySelector("line.stroke-chart-paid")).toBeNull();
   });
@@ -131,7 +138,7 @@ describe("PriceSparkline and StockStrip", () => {
 });
 
 describe("ProductRow", () => {
-  it("the whole row is one link (no separate Detay button); ended rows are dimmed", async () => {
+  it("the whole row opens its link (no separate Detay button); actions sit above the link; ended rows are dimmed", async () => {
     const { container, rerender } = render(
       <ul>
         <li>
@@ -149,7 +156,49 @@ describe("ProductRow", () => {
     expect(link.getAttribute("href")).toBe("/tr/takip/1");
     expect(screen.queryByRole("button")).toBeNull();
     expect(await axeViolations(container)).toEqual([]);
-    rerender(<ProductRow href="/tr/takip/1" image={null} title="Biten" dimmed />);
-    expect(screen.getByRole("link", { name: /Biten/ }).className).toContain("opacity-(--component-button-disabled-opacity)");
+    // The title link is stretched over the row (::after covers it).
+    expect(link.className).toContain("after:absolute");
+    const onMore = vi.fn();
+    rerender(<ProductRow href="/tr/takip/1" image={null} title="Biten" dimmed tone="deal" actions={<button type="button" onClick={onMore}>⋯</button>} />);
+    const row = screen.getByRole("link", { name: /Biten/ }).closest("div") as HTMLElement;
+    expect(row.className).toContain("bg-savings-subtle");
+    expect(row.querySelector("[class*='opacity-(--component-button-disabled-opacity)']")).not.toBeNull();
+    const more = screen.getByRole("button", { name: "⋯" });
+    expect(more.parentElement?.className).toContain("z-(--z-index-raised)");
+    await userEvent.click(more);
+    expect(onMore).toHaveBeenCalled();
+  });
+});
+
+describe("SearchBox (canonical: one look everywhere, only the handler differs)", () => {
+  const texts = { label: "Ara", submitLabel: "Ara", addPhotoLabel: "Fotoğraf ekle", clearLabel: "Aramayı temizle" };
+
+  it("48 px box, camera icon, × only with text, compact “Ara”; Enter and “Ara” call the page's handler", async () => {
+    const onSubmit = vi.fn();
+    const onAddPhoto = vi.fn();
+    const { rerender } = render(<SearchBox {...texts} value="" onValueChange={vi.fn()} onSubmit={onSubmit} onAddPhoto={onAddPhoto} />);
+    expect(screen.getByLabelText("Ara", { selector: "input" }).closest("div.border")?.className).toContain("min-h-(--component-search-box-min-height)");
+    expect(screen.queryByRole("button", { name: "Aramayı temizle" })).toBeNull();
+    rerender(<SearchBox {...texts} value="dyson" onValueChange={vi.fn()} onSubmit={onSubmit} onAddPhoto={onAddPhoto} />);
+    await userEvent.type(screen.getByLabelText("Ara", { selector: "input" }), "{Enter}");
+    await userEvent.click(screen.getByRole("button", { name: "Ara" }));
+    expect(onSubmit).toHaveBeenCalledTimes(2);
+    await userEvent.click(screen.getByRole("button", { name: "Fotoğraf ekle" }));
+    expect(onAddPhoto).toHaveBeenCalled();
+  });
+
+  it("the overlay closes on the camera, “Ara”, Esc and a press outside", async () => {
+    const onOverlayClose = vi.fn();
+    render(
+      <main>
+        <p>dışarısı</p>
+        <SearchBox {...texts} value="ace" onValueChange={vi.fn()} onSubmit={vi.fn()} onAddPhoto={vi.fn()} overlay={<p>öneriler</p>} overlayOpen onOverlayClose={onOverlayClose} />
+      </main>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Fotoğraf ekle" }));
+    await userEvent.click(screen.getByRole("button", { name: "Ara" }));
+    await userEvent.keyboard("{Escape}");
+    await userEvent.click(screen.getByText("dışarısı"));
+    expect(onOverlayClose.mock.calls.length).toBeGreaterThanOrEqual(4);
   });
 });

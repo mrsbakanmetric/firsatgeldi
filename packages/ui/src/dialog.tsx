@@ -25,9 +25,11 @@ export interface DialogProps {
   /** Right panel: the selected item and the primary action. */
   aside?: ReactNode;
   children: ReactNode;
+  /** compact = as wide as its content (short confirmations, e.g. "Takibi bitir"); default = size.modal-width. */
+  size?: "default" | "compact";
 }
 
-export function Dialog({ open, onClose, title, description, icon, closeLabel, steps, aside, children }: DialogProps) {
+export function Dialog({ open, onClose, title, description, icon, closeLabel, steps, aside, children, size = "default" }: DialogProps) {
   const mounted = useMounted();
   const id = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -51,8 +53,10 @@ export function Dialog({ open, onClose, title, description, icon, closeLabel, st
           aria-describedby={description ? `${id}-description` : undefined}
           tabIndex={-1}
           className={cn(
-            "pointer-events-auto flex h-full w-full flex-col overflow-hidden bg-surface shadow-lg outline-none",
+            "pointer-events-auto flex w-full flex-col overflow-hidden bg-surface shadow-lg outline-none",
             "rounded-t-xl md:h-auto md:max-h-full md:max-w-(--size-modal-width) md:rounded-xl",
+            // Below breakpoint.md a compact dialog is a bottom sheet of its own height; from it, as wide as its content.
+            size === "compact" ? "max-h-full md:w-fit" : "h-full",
           )}
         >
           <div className="flex items-start gap-4 border-b border-divider p-6">

@@ -12,7 +12,8 @@ import { MockApiError, route } from "../route";
 import { MOCK_SETTINGS, SYSTEM_SETTINGS } from "../settings";
 import type { MockController, TrackedItemRow } from "../state";
 import { money, totalMinor } from "../views";
-import { checksUsedToday, emit, entitlements, fold, requireUser, tokens } from "./shared";
+import { newId } from "../ids";
+import { activeTrackingCount, checksUsedToday, emit, entitlements, fold, requireUser, tokens } from "./shared";
 import { cheaperOffers } from "./tracking";
 
 const MS_PER_MINUTE = 60_000;
@@ -24,6 +25,14 @@ interface ViewContext {
   readonly locale: "tr" | "en";
   /** "stale" scenario: rows marked `staleInScenario` were last checked long ago. */
   readonly sourcesMissing: boolean;
+}
+
+const MS_PER_DAY = 86_400_000;
+
+/** "Geri al" works for `tracking.restore_days` after ending; null once that has passed. */
+function restorableUntil(endedAt: string, now: Date): string | null {
+  const until = Date.parse(endedAt) + SYSTEM_SETTINGS["tracking.restore_days"] * MS_PER_DAY;
+  return now.getTime() < until ? new Date(until).toISOString() : null;
 }
 
 function lastCheckedAt(controller: MockController, item: TrackedItemRow, context: ViewContext): string | null {
@@ -114,7 +123,7 @@ function view(controller: MockController, item: TrackedItemRow, context: ViewCon
     conclusion: active ? conclusionOf(item, context.now, cheapest) : null,
     lastCheckedAt: checked,
     stale,
-    ended: active || !item.endedAt ? null : { at: item.endedAt, reason: item.endReason ?? "USER", savingRecorded: item.savingMinor ? money(item.savingMinor) : null },
+    ended: active || !item.endedAt ? null : { at: item.endedAt, reason: item.endReason ?? "USER", savingRecorded: item.savingMinor ? money(item.savingMinor) : null, restorableUntil: restorableUntil(item.endedAt, context.now) },
   };
 }
 
@@ -219,6 +228,49 @@ export function trackedItemHandlers(controller: MockController) {
         },
         meta: { entitlements: entitlements(controller, actor) },
       };
+    }),
+
+    route(controller, "endTracking", ({ params, body, actor, now, note }) => {
+      const { userId } = requireUser(actor);
+      const index = state.trackedItems.findIndex((item) => item.id === params.id && item.userId === userId);
+      const row = state.trackedItems[index];
+      if (!row) throw new MockApiError("NOT_FOUND");
+      if (row.state !== "ACTIVE") throw new MockApiError("VALIDATION", { fields: { id: "errors.validation" } });
+      // Want-to-buy items end on one confirm: no method, no price.
+      if (row.mode === "WANT" && (body.method !== null || body.reboughtPrice !== null)) throw new MockApiError("VALIDATION", { fields: { method: "errors.validation" } });
+      const endedAt = now.toISOString();
+      const paid = row.pricePaidMinor;
+      const rebought = body.reboughtPrice?.amount ?? null;
+      // A saving only when the user says how it ended and the new price is lower (database.md §8 savings_records).
+      const saving = row.mode === "BOUGHT" && body.method && paid !== null && rebought !== null && rebought < paid ? paid - rebought : null;
+      if (saving !== null && body.method && paid !== null && rebought !== null) {
+        state.savingsRecords.push({
+          id: newId(), userId, trackedItemId: row.id, method: body.method, pricePaidMinor: paid, priceReboughtMinor: rebought, savingMinor: saving, recordedAt: endedAt, voidedAt: null,
+        });
+      }
+      state.trackedItems[index] = { ...row, state: "ENDED", endedAt, endReason: "USER", savingMinor: saving };
+      state.trackedItemEvents.push({ id: newId(), trackedItemId: row.id, type: "ENDED", actor: "USER", createdAt: endedAt, data: { method: body.method, saving } });
+      note({ targetType: "tracked_item", targetId: row.id, metadata: { mode: row.mode, method: body.method, saving } });
+      return { data: { id: row.id, state: "ENDED", endedAt, saving: saving === null ? null : money(saving), restorableUntil: restorableUntil(endedAt, now) ?? endedAt } };
+    }),
+
+    route(controller, "restoreTracking", ({ params, actor, now, note }) => {
+      const { userId } = requireUser(actor);
+      const index = state.trackedItems.findIndex((item) => item.id === params.id && item.userId === userId);
+      const row = state.trackedItems[index];
+      if (!row) throw new MockApiError("NOT_FOUND");
+      if (row.state === "ACTIVE" || !row.endedAt || restorableUntil(row.endedAt, now) === null) throw new MockApiError("VALIDATION", { fields: { id: "errors.validation" } });
+      if (state.trackedItems.some((item) => item.userId === userId && item.productKey === row.productKey && item.mode === row.mode && item.state === "ACTIVE")) {
+        throw new MockApiError("ALREADY_TRACKING");
+      }
+      const limit = entitlements(controller, actor).tracking.limit;
+      if (limit !== null && activeTrackingCount(controller, userId) >= limit) throw new MockApiError("LIMIT_REACHED", { params: { limit } });
+      // The saving recorded at the end is voided (not deleted): My Savings totals skip it.
+      for (const record of state.savingsRecords) if (record.trackedItemId === row.id && record.voidedAt === null) record.voidedAt = now.toISOString();
+      state.trackedItems[index] = { ...row, state: "ACTIVE", endedAt: null, endReason: null, savingMinor: null };
+      state.trackedItemEvents.push({ id: newId(), trackedItemId: row.id, type: "RESTORED", actor: "USER", createdAt: now.toISOString(), data: {} });
+      note({ targetType: "tracked_item", targetId: row.id, metadata: { mode: row.mode } });
+      return { data: { id: row.id, state: "ACTIVE" } };
     }),
 
     route(controller, "checkNowBulk", ({ body, actor, now, locale, note }) => {
