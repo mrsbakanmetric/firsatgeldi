@@ -97,6 +97,25 @@ describe("MultiImageUpload", () => {
     expect(await axeViolations(container)).toEqual([]);
   });
 
+  it.each(["panel", "inline"] as const)("%s: a rejected file never shows its preview (no broken image), a ready file does", (layout) => {
+    const files = [
+      { id: "1", name: "kutu.png", previewUrl: "blob:kutu", state: "ready" as const, status: "Hazır" },
+      { id: "2", name: "video.mov", previewUrl: "blob:video", state: "rejected" as const, status: "Desteklenmeyen dosya" },
+    ];
+    const common = { title: "Fotoğraflar", limits: "JPEG, PNG", files, removeLabel: (name: string) => `${name} kaldır`, progressLabel: "Yükleniyor", onRemove: vi.fn(), note: null };
+    render(
+      layout === "inline" ? (
+        <MultiImageUpload {...common} layout="inline" />
+      ) : (
+        <MultiImageUpload {...common} countLabel="1 / 5" addLabel="Fotoğraf ekle" canAdd accept="image/png" onAdd={vi.fn()} />
+      ),
+    );
+    const [ready, rejected] = screen.getAllByTestId("file-thumb");
+    expect(ready?.querySelector("img")?.getAttribute("src")).toBe("blob:kutu");
+    expect(rejected?.querySelector("img")).toBeNull();
+    expect(rejected?.className).toContain("border-danger");
+  });
+
   it("inline (design v2): file chips, one limits line and the one-line privacy note; no add control or file input of its own", async () => {
     const onRemove = vi.fn();
     const { container } = render(

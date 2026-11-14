@@ -86,10 +86,7 @@ function PanelUpload({ title, countLabel, limits, files, addLabel, removeLabel, 
         <ul className="flex flex-col gap-2">
           {files.map((file) => (
             <li key={file.id} className="flex items-center gap-3">
-              {/* The name is read next to it; the thumbnail is decorative for assistive technology. */}
-              <span aria-hidden="true" className="flex size-(--size-thumb-sm) shrink-0 items-center justify-center overflow-hidden rounded-md bg-surface-alt">
-                {file.previewUrl ? <img src={file.previewUrl} alt={file.name} className="size-full object-cover" /> : <Icon icon={ImagePlus} className="text-text-muted" />}
-              </span>
+              <FileThumb file={file} className="rounded-md" />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="truncate text-body-sm text-text">{file.name}</span>
                 {file.state === "uploading" && <Progress label={progressLabel} value={file.progress ?? 0} />}
@@ -138,15 +135,7 @@ function InlineUpload({ title, limits, files, removeLabel, progressLabel, onRemo
             const rejected = file.state === "rejected";
             return (
               <li key={file.id} className={cn("flex min-w-0 items-center gap-2 rounded-md border py-1 pl-1", rejected ? "border-danger bg-danger-subtle" : "border-border bg-surface")}>
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "flex size-(--size-thumb-sm) shrink-0 items-center justify-center overflow-hidden rounded-sm",
-                    rejected ? "border-(length:--border-width-strong) border-dashed border-danger" : "bg-surface-alt",
-                  )}
-                >
-                  {file.previewUrl && !rejected ? <img src={file.previewUrl} alt={file.name} className="size-full object-cover" /> : <Icon icon={rejected ? TriangleAlert : ImagePlus} size="sm" className={rejected ? "text-danger" : "text-text-muted"} />}
-                </span>
+                <FileThumb file={file} className="rounded-sm" />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span className="truncate text-caption font-semibold text-text">{file.name}</span>
                   {file.state === "uploading" && <Progress label={progressLabel} value={file.progress ?? 0} />}
@@ -168,6 +157,34 @@ function InlineUpload({ title, limits, files, removeLabel, progressLabel, onRemo
       <p className="text-caption text-text-muted">{limits}</p>
       {note}
     </section>
+  );
+}
+
+/**
+ * A file's thumbnail. A rejected file never shows its preview (a video or broken
+ * file would render as a broken image): a dashed danger frame with a warning icon.
+ * The name is read next to it, so the thumbnail is decorative for assistive technology.
+ */
+function FileThumb({ file, className }: { file: UploadFileView; className: string }) {
+  const rejected = file.state === "rejected";
+  return (
+    <span
+      aria-hidden="true"
+      data-testid="file-thumb"
+      className={cn(
+        "flex size-(--size-thumb-sm) shrink-0 items-center justify-center overflow-hidden",
+        rejected ? "border-(length:--border-width-strong) border-dashed border-danger" : "bg-surface-alt",
+        className,
+      )}
+    >
+      {rejected ? (
+        <Icon icon={TriangleAlert} size="sm" className="text-danger" />
+      ) : file.previewUrl ? (
+        <img src={file.previewUrl} alt={file.name} className="size-full object-cover" />
+      ) : (
+        <Icon icon={ImagePlus} className="text-text-muted" />
+      )}
+    </span>
   );
 }
 
