@@ -7,9 +7,10 @@ export const BASE_URL = "http://mock.test";
 /** A fixed "now" so dates in assertions are stable. */
 export const NOW = new Date("2026-11-14T09:00:00.000Z");
 
-export function createTestApi() {
+export function createTestApi(options: { seedTracking?: boolean } = {}) {
   let now = NOW;
   const { server, controller } = createMockServer({
+    ...options,
     now: () => now,
     // Run simulated background work (image processing) at once.
     schedule: (task) => task(),

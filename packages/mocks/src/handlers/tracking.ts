@@ -54,7 +54,7 @@ function takeSellerLookup(controller: MockController, userId: string): void {
 }
 
 /** Offers cheaper than the price paid, the user's own offer excluded, cheapest first. */
-function cheaperOffers(productKey: ProductKey, pricePaidMinor: number, ownOfferId: string | null): OfferFixture[] {
+export function cheaperOffers(productKey: ProductKey, pricePaidMinor: number, ownOfferId: string | null): OfferFixture[] {
   return offersFor(productKey)
     .filter((offer) => offer.id !== ownOfferId && offer.stockState !== "OUT_OF_STOCK" && totalMinor(offer) < pricePaidMinor)
     .sort((a, b) => totalMinor(a) - totalMinor(b));
@@ -201,11 +201,21 @@ export function trackingHandlers(controller: MockController) {
           }
         }
       }
+      const endsAt = body.mode === "WANT" ? trackingEndsAt(now, body.trackingDuration) : null;
       state.trackedItems.push({
         id, userId, productKey: key, mode: body.mode, platform: platformKey, otherPlatformName, sellerOfferId,
         sellerName: body.mode === "BOUGHT" ? (body.sellerName ?? null) : null,
         pricePaidMinor: body.mode === "BOUGHT" ? body.pricePaid.amount : null, state: "ACTIVE", createdAt,
+        orderedOn: body.mode === "BOUGHT" ? body.orderedOn : null,
+        orderStatus: body.mode === "BOUGHT" ? body.orderStatus : null,
+        returnDeadline: deadline?.day ?? null,
+        returnDeadlineStatus: deadline?.status ?? null,
+        targetPriceMinor: body.mode === "WANT" ? (body.targetPrice?.amount ?? null) : null,
+        trackingDuration: body.mode === "WANT" ? body.trackingDuration : null,
+        trackingEndsAt: endsAt,
       });
+      // The first check runs right after confirming ("ilk kontrol az önce yapıldı").
+      state.lastChecks.set(id, createdAt);
       state.trackedItemEvents.push({
         id: newId(), trackedItemId: id, type: "CREATED", actor: "USER", createdAt,
         data: { mode: body.mode, plan: user.plan, ...(otherPlatformName ? { otherPlatformName } : {}) },
@@ -217,7 +227,7 @@ export function trackingHandlers(controller: MockController) {
           id, productId: product.id, mode: body.mode, state: "ACTIVE",
           returnDeadline: deadline?.day ?? null, returnDeadlineStatus: deadline?.status ?? null,
           noWithdrawalRight: product.category.noWithdrawalRight,
-          trackingEndsAt: body.mode === "WANT" ? trackingEndsAt(now, body.trackingDuration) : null,
+          trackingEndsAt: endsAt,
           createdAt,
         },
       };

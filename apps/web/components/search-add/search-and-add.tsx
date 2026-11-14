@@ -9,13 +9,16 @@
 // Phone: photos in their panel under the box; a "Onaya geç" bar opens the
 // confirm panel as a sheet. Five states: loading, empty, error (input kept), stale (confirm
 // panel), success. Guests search and mark freely; sign-in comes at confirmation.
-import type { ApiError, IdentifyAnswer, IdentifyResult, ProductSummary } from "@firsatgeldi/contracts";
+import type { ApiError, IdentifyAnswer, IdentifyResult, ProductSummary, ProductView } from "@firsatgeldi/contracts";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
 import { Button, buttonClasses, cn, EmptyState, focusRing, Icon, MoneyDisplay, PageTemplate, ProductImage, Sheet, SkeletonBlock, SkeletonRow, StatusBanner, StepIndicator } from "@firsatgeldi/ui";
 import { Camera, CircleCheck, Link2, Package, PencilLine, SearchX } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type RefObject, useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 import { useApiMutation, useSession } from "../../lib/api/hooks";
+import { useApiClient } from "../../lib/api/provider";
+import { type HandoffMode, readHandoff, trackedItemsHref } from "../../lib/handoff";
 import { UPLOAD_TIMEOUT_TEXT } from "../../lib/api/uploads";
 import { useTranslator } from "../shell/parts";
 import { type Created, GuestConfirm, type Prefill, SignedInConfirm } from "./confirm";
@@ -34,6 +37,35 @@ const STEP_COUNT = 3;
 
 function stepNames(t: Translator) {
   return [t("searchAdd.steps.find"), t("searchAdd.steps.mark"), t("searchAdd.steps.confirm")] as const;
+}
+
+/** The product of a "Takip et" hand-over as a marked candidate (GET /products/:id; no price, no store). */
+function candidateOf(product: ProductView): Candidate {
+  return {
+    product: {
+      id: product.id,
+      name: product.title,
+      imageSha256: product.images[0] ?? null,
+      category: product.category,
+      brand: product.brand,
+      generation: product.attributes.find((attribute) => attribute.key === "generation")?.value ?? null,
+      colors: [],
+      bundles: [],
+      storeCount: product.storeCount,
+    },
+    variantLine: product.variantLine,
+    match: "EXACT",
+    difference: null,
+  };
+}
+
+/**
+ * Below breakpoint.md the confirm panel is the sheet; from it, the right column, which is
+ * always open while a product is marked. Read from the theme (token), never a literal width.
+ */
+function isPhoneWidth(): boolean {
+  const width = getComputedStyle(document.documentElement).getPropertyValue("--breakpoint-md").trim();
+  return width !== "" && globalThis.matchMedia?.(`(min-width: ${width})`).matches === false;
 }
 
 /** A result that holds only one candidate (restored after sign-in, or one bulk item). */
@@ -73,6 +105,10 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
   const lastIdentify = useRef<{ body: IdentifyBody; markProductId: string | null } | null>(null);
   const lastAnswer = useRef<{ body: IdentifyAnswer; change: AttributeChange | null } | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  /** "Ürün ekle" / "Takip et" hand-over: preselected mode, and Tracked Items after confirming. */
+  const [handoff, setHandoff] = useState<{ mode: HandoffMode | null; backToTracking: boolean }>({ mode: null, backToTracking: false });
+  const client = useApiClient();
+  const router = useRouter();
 
   const identify = useApiMutation("identify");
   const answer = useApiMutation("answerIdentify");
@@ -119,6 +155,22 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
       setMarked(draft.candidate);
       setInitial({ pricePaid: draft.pricePaid, orderedOn: draft.orderedOn });
       clearDraft();
+      return;
+    }
+    const handedOver = readHandoff(globalThis.location.search);
+    setHandoff({ mode: handedOver.mode, backToTracking: handedOver.backToTracking });
+    if (handedOver.productId) {
+      // "Takip et": the product is marked and the confirm panel opens (on phones as the sheet).
+      void client.call("getProduct", { params: { id: handedOver.productId } }).then(
+        ({ data }) => {
+          const candidate = candidateOf(data);
+          setQuery(data.title);
+          setResult(singleResult(null, "", [candidate]));
+          setMarked(candidate);
+          setSheetOpen(isPhoneWidth());
+        },
+        (failure: ApiError) => setError({ error: failure, kind: "suggest" }),
+      );
       return;
     }
     const handed = params.get(QUERY_PARAM)?.trim();
@@ -173,6 +225,11 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
   const onCreated = (done: Created) => {
     clearDraft();
     setSheetOpen(false);
+    // Opened from Tracked Items or a "Takip et": back to the list, which names the new item.
+    if (handoff.backToTracking && !bulk) {
+      router.push(trackedItemsHref(locale, done.item.id));
+      return;
+    }
     if (bulk) {
       const states = bulk.states.map((state, index) => (index === bulk.current ? "done" : state)) as BulkState[];
       const next = nextOpen(states, bulk.current);
@@ -257,6 +314,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
         onChangeProduct={() => (setMarked(null), setSheetOpen(false))}
         onCreated={onCreated}
         onAddPhoto={pickPhoto}
+        initialMode={handoff.mode}
       />
     ) : (
       <GuestConfirm t={t} candidate={marked} framed={framed} signInHref={signInHref} onSignIn={keepDraft} onChangeProduct={() => (setMarked(null), setSheetOpen(false))} />

@@ -17,7 +17,8 @@ vi.stubEnv("NEXT_PUBLIC_API_MOCKING", "off");
 vi.mock("next/link", () => ({
   default: ({ href, ...props }: AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => <a href={href} {...props} />,
 }));
-vi.mock("next/navigation", () => ({ usePathname: () => "/tr/ara" }));
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ usePathname: () => "/tr/ara", useRouter: () => ({ push }) }));
 
 const { server, controller } = createMockServer({ schedule: (task) => task() });
 const { Providers } = await import("../providers");
@@ -402,5 +403,36 @@ describe("app shell session", () => {
       </Providers>,
     );
     expect((await screen.findAllByRole("link", { name: t("shell.signIn") })).length).toBeGreaterThan(0);
+  });
+});
+
+describe.each(LOCALES)("Search and Add — hand-over from Tracked Items and “Takip et” — %s", (locale) => {
+  const t = createTranslator(locale);
+  afterEach(() => {
+    globalThis.history.replaceState(null, "", "/");
+    push.mockClear();
+  });
+
+  it("“Takip et”: the product is marked, the confirm panel is open in the preselected mode; after confirming → Tracked Items", async () => {
+    const target = PRODUCTS.goProHero13;
+    globalThis.history.replaceState(null, "", `/${locale}/ara?urun=${target.id}&mod=istiyorum`);
+    show(locale);
+    expect(await screen.findByText(t("searchAdd.candidates.marked"))).toBeDefined();
+    const start = await screen.findByRole("button", { name: t("searchAdd.confirm.startTracking") });
+    // Want mode preselected: no price-paid field.
+    expect(screen.queryByLabelText(new RegExp(t("searchAdd.confirm.pricePaid")))).toBeNull();
+    await userEvent.click(start);
+    await waitFor(() => expect(push).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`^/${locale}/(takip|tracking)\\?eklendi=[0-9a-f-]{36}$`))));
+    expect(controller.state.trackedItems.at(-1)).toMatchObject({ productKey: "goProHero13", mode: "WANT" });
+  });
+
+  it("opened from “Ürün ekle” (?donus=takip): the normal search, then back to Tracked Items instead of the success screen", async () => {
+    globalThis.history.replaceState(null, "", `/${locale}/ara?donus=takip`);
+    show(locale);
+    await typeAndChoose(locale, "ace pro 2 flash", product.name[locale]);
+    await userEvent.click(await screen.findByRole("button", { name: t("searchAdd.confirm.wantShort") }));
+    await userEvent.click(await screen.findByRole("button", { name: t("searchAdd.confirm.startTracking") }));
+    await waitFor(() => expect(push).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText(t("searchAdd.success.title"))).toBeNull();
   });
 });

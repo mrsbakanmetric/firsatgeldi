@@ -1,6 +1,6 @@
 // Confirm and tracking (architecture.md §16 CONFIRM AND TRACKING; database.md §6, §8).
 import { z } from "zod";
-import { CalendarDay, Id, Money, StockState, Timestamp, WarrantyType } from "./common";
+import { CalendarDay, CategoryRef, Cursor, Id, ImageSha256, Money, StockState, Timestamp, WarrantyType } from "./common";
 import { HiddenOfferView, OfferRef } from "./offers";
 
 /** Return rule of a platform (database.md §6 `platform_return_rules`). */
@@ -161,3 +161,115 @@ export const TrackedItemCreated = z.object({
   createdAt: Timestamp,
 });
 export type TrackedItemCreated = z.infer<typeof TrackedItemCreated>;
+
+// ── Tracked Items list (architecture.md §16 CONFIRM AND TRACKING; modules.md Tracked Items;
+// pagedesign.md §8.4). Field shapes below are [ASSUMPTION — to be written into
+// architecture.md §16.1 by a spec PR]. Cheaper sellers appear only as counts and
+// amounts: no seller, platform, offer id or link of a cheaper offer (CLAUDE.md product rule 3).
+
+export const TrackedItemState = z.enum(["ACTIVE", "ENDED", "EXPIRED"]);
+/** database.md §8 `tracked_items.end_reason`. */
+export const EndReason = z.enum(["USER", "RETURN_WINDOW", "TRACKING_DURATION", "MOVED_TO_BOUGHT", "ACCOUNT_DELETED"]);
+export const ReturnDeadlineStatus = z.enum(["ESTIMATED", "CONFIRMED", "USER_EDITED", "UNVERIFIED_DEFAULT"]);
+
+/** List filters with counts (modules.md Tracked Items › Filters). */
+export const TrackedItemFilter = z.enum(["all", "bought", "want", "deal", "ended"]);
+export type TrackedItemFilter = z.infer<typeof TrackedItemFilter>;
+/** Sorting [DECIDED]: priority (Home priority order) · return date · saving. */
+export const TrackedItemSort = z.enum(["priority", "deadline", "saving"]);
+export type TrackedItemSort = z.infer<typeof TrackedItemSort>;
+
+/** `GET /tracked-items?filter=&sort=&q=&category=&cursor=` (architecture.md §16). */
+export const TrackedItemListQuery = z.object({
+  filter: TrackedItemFilter.optional(),
+  sort: TrackedItemSort.optional(),
+  q: z.string().trim().max(TYPED_NAME_MAX).optional(),
+  category: Id.optional(),
+  cursor: Cursor.optional(),
+});
+
+/** Days shown by the compact price and stock history in lists (modules.md Price and Stock History). */
+export const COMPACT_HISTORY_DAYS = 14;
+
+/** One-sentence conclusion of the compact price history; worded by the client from the catalogue. */
+export const PriceConclusion = z.discriminatedUnion("kind", [
+  /** "3 saat önce 25.997 TL'ye düştü". */
+  z.object({ kind: z.literal("DROPPED"), at: Timestamp, price: Money }),
+  /** "Son 14 günde daha ucuzu çıkmadı". */
+  z.object({ kind: z.literal("NO_CHEAPER"), days: z.number().int().positive() }),
+  /** Buy-or-wait hint: "Son 30 günün en düşüğü · 8.150 TL". */
+  z.object({ kind: z.literal("LOWEST_IN_DAYS"), days: z.number().int().positive(), price: Money }),
+]);
+export type PriceConclusion = z.infer<typeof PriceConclusion>;
+
+/** One row of Tracked Items. */
+export const TrackedItemListItem = z.object({
+  id: Id,
+  mode: TrackingMode,
+  state: TrackedItemState,
+  product: z.object({ id: Id, name: z.string().min(1), imageSha256: ImageSha256.nullable(), category: CategoryRef }),
+  /** BOUGHT: the user's own purchase — own seller and platform are visible (architecture.md §6.1). */
+  purchase: z
+    .object({
+      pricePaid: Money,
+      /** A known platform's name, or the name typed for "Diğer". */
+      platformName: z.string().min(1),
+      sellerName: z.string().min(1).nullable(),
+      orderedOn: CalendarDay,
+      orderStatus: OrderStatus,
+    })
+    .nullable(),
+  /** WANT: target and tracking duration. */
+  want: z.object({ targetPrice: Money.nullable(), trackingDuration: TrackingDuration, trackingEndsAt: Timestamp.nullable() }).nullable(),
+  returnDeadline: CalendarDay.nullable(),
+  returnDeadlineStatus: ReturnDeadlineStatus.nullable(),
+  /** Cheapest current price (shipping included), seller unnamed. */
+  cheapest: Money.nullable(),
+  /** Open deal: "N satıcıda daha ucuz · en çok X" — counts only. */
+  deal: z.object({ cheaperCount: z.number().int().positive(), maxSaving: Money }).nullable(),
+  /** Cheapest price per day, oldest first, `COMPACT_HISTORY_DAYS` entries; null = no data that day. Kuruş. */
+  priceHistory: z.object({ from: CalendarDay, cheapest: z.array(z.number().int().nonnegative().nullable()).length(COMPACT_HISTORY_DAYS) }),
+  /** Stock per day of the cheapest offer when a deal exists, otherwise of the seller bought from. */
+  stockHistory: z.object({ subject: z.enum(["CHEAPEST", "OWN_SELLER"]), days: z.array(StockState.nullable()).length(COMPACT_HISTORY_DAYS) }),
+  conclusion: PriceConclusion.nullable(),
+  lastCheckedAt: Timestamp.nullable(),
+  /** Not checked for `tracking.stale_hours`: "Güncel değil", the deal "doğrulanamadı". */
+  stale: z.boolean(),
+  ended: z.object({ at: Timestamp, reason: EndReason, savingRecorded: Money.nullable() }).nullable(),
+});
+export type TrackedItemListItem = z.infer<typeof TrackedItemListItem>;
+
+/** List data + counts for the filter and category chips (counts follow the search and the other choice). */
+export const TrackedItemList = z.object({
+  items: z.array(TrackedItemListItem),
+  facets: z.object({
+    filters: z.record(TrackedItemFilter, z.number().int().nonnegative()),
+    categories: z.array(z.object({ id: Id, name: z.string().min(1), count: z.number().int().nonnegative() })),
+  }),
+});
+export type TrackedItemList = z.infer<typeof TrackedItemList>;
+
+/** `GET /tracked-items/summary` — the four figures (modules.md Tracked Items › Summary); allowances in `meta.entitlements`. */
+export const TrackedItemsSummary = z.object({
+  tracking: z.object({ count: z.number().int().nonnegative(), bought: z.number().int().nonnegative(), want: z.number().int().nonnegative() }),
+  deals: z.object({ count: z.number().int().nonnegative(), maxSavingTotal: Money.nullable() }),
+  returnsSoon: z.object({ count: z.number().int().nonnegative(), nearest: CalendarDay.nullable() }),
+  lastCheckedAt: Timestamp.nullable(),
+});
+export type TrackedItemsSummary = z.infer<typeof TrackedItemsSummary>;
+
+/** `POST /tracked-items/check-now-bulk` { trackedItemIds[] } (architecture.md §16; modules.md Check Now). */
+export const CheckNowBulkRequest = z.object({ trackedItemIds: z.array(Id).min(1) });
+
+/**
+ * → { willCheck, skippedCached, remaining }: `willCheck` in priority order, cut to the
+ * remaining daily allowance; `skippedCached` were checked within `check_now.cache_minutes`
+ * (no allowance used); `remaining` after this call (null = unlimited). Each finished check
+ * arrives as the live-update event `check.finished`.
+ */
+export const CheckNowBulkResult = z.object({
+  willCheck: z.array(Id),
+  skippedCached: z.array(Id),
+  remaining: z.number().int().nonnegative().nullable(),
+});
+export type CheckNowBulkResult = z.infer<typeof CheckNowBulkResult>;

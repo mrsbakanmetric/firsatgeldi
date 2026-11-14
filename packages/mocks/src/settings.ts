@@ -10,6 +10,7 @@ export const SYSTEM_SETTINGS = {
   "reveal.open_hours": 168,
   "reveal.price_watch_minutes": 60,
   "tracking.stale_hours": 6,
+  "check_now.cache_minutes": 5,
   "return.default_rule": { days: 14, startType: "DELIVERY", avgDeliveryDays: null },
   "media.max_bytes": 10 * MEGABYTE,
   "media.max_images_per_request": 5,
@@ -42,4 +43,6 @@ export const MOCK_SETTINGS = {
   processingMs: 600,
   /** Stale scenario: checks are moved back by this many times `tracking.stale_hours`. */
   staleFactor: 2,
+  /** Simulated time of one Check Now run before `check.finished`. */
+  checkMs: 900,
 } as const;

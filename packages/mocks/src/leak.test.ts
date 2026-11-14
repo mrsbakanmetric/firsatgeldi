@@ -124,6 +124,15 @@ beforeAll(async () => {
       },
     }),
   );
+  // Tracked Items: deals appear as counts and amounts only.
+  for (const locale of ["tr", "en"] as const) {
+    t.useLocale(locale);
+    await capture("listTrackedItems", () => api.call("listTrackedItems", {}));
+    await capture("listTrackedItems", () => api.call("listTrackedItems", { query: { filter: "deal", sort: "saving" } }));
+    await capture("getTrackedItemsSummary", () => api.call("getTrackedItemsSummary", {}));
+  }
+  const listed = (await api.call("listTrackedItems", {})).data.items.map((item) => item.id);
+  await capture("checkNowBulk", () => api.call("checkNowBulk", { body: { trackedItemIds: listed } }));
   // Hide and go before a reveal: the answers (and errors) must not name the seller.
   await capture("hideOffer", () => api.call("hideOffer", { params: { ref: teaserRefs[1] ?? "" } }));
   await capture("goToOffer", () => api.call("goToOffer", { params: { ref: teaserRefs[0] ?? "" } }));
