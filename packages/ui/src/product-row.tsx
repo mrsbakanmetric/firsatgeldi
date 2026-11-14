@@ -32,8 +32,14 @@ export interface ProductRowProps {
   actions?: ReactNode;
   /** deal = a current deal (savings border). */
   tone?: "default" | "deal";
-  /** columns = name grows (default); priceList = name keeps a quarter, a "fill" column shrinks first. */
-  layout?: "columns" | "priceList";
+  /**
+   * columns = name grows (default); priceList = the name keeps size.list-name-min-width, a "fill"
+   * column shrinks first; card = a card of the Tracked Items grid (design v5): header (image ·
+   * name · flags · line · actions top-right), the columns stacked at full width, then `footer`.
+   */
+  layout?: "columns" | "priceList" | "card";
+  /** Card layout: the strip at the bottom of the card (styled by the caller). */
+  footer?: ReactNode;
   /** Ended tracking: dimmed. */
   dimmed?: boolean;
   className?: string;
@@ -48,9 +54,42 @@ const WIDTH_CLASSES: Record<ProductRowColumn["width"], string> = {
   fill: "md:min-w-0",
 };
 
-export function ProductRow({ href, image, flags, title, line, columns = [], actions, tone = "default", layout = "columns", dimmed = false, className }: ProductRowProps) {
-  const priceList = layout === "priceList";
+export function ProductRow({ href, image, flags, title, line, columns = [], actions, tone = "default", layout = "columns", footer, dimmed = false, className }: ProductRowProps) {
   const Link = useLinkComponent();
+  const priceList = layout === "priceList";
+  if (layout === "card") {
+    return (
+      <div
+        className={cn(
+          "relative flex h-full flex-col overflow-hidden rounded-lg border has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary",
+          tone === "deal" ? "border-(length:--border-width-strong) border-savings bg-surface" : "border-border bg-surface hover:border-text-muted",
+          className,
+        )}
+      >
+        <div className={cn("flex items-start gap-3 p-3", dimmed && "opacity-(--component-button-disabled-opacity)")}>
+          {image}
+          <span className="flex min-w-0 flex-1 flex-col gap-1">
+            {/* The stretched link: its ::after covers the whole card. */}
+            <Link href={href} className="line-clamp-2 text-body-sm font-semibold text-text outline-none after:absolute after:inset-0 after:rounded-lg">
+              {title}
+            </Link>
+            {flags && <span className="flex flex-wrap gap-1">{flags}</span>}
+            {line && <span className="text-caption text-text-muted">{line}</span>}
+          </span>
+          {actions && <span className="relative z-(--z-index-raised) flex shrink-0 items-center gap-2">{actions}</span>}
+        </div>
+        {/* The body takes the spare height, so the footer always closes the card. */}
+        <div className={cn("flex flex-1 flex-col gap-2 px-3 pb-3", dimmed && "opacity-(--component-button-disabled-opacity)")}>
+          {columns.map((column) => (
+            <div key={column.key} className="flex min-w-0 flex-col gap-1">
+              {column.content}
+            </div>
+          ))}
+        </div>
+        {footer}
+      </div>
+    );
+  }
   return (
     <div
       className={cn(

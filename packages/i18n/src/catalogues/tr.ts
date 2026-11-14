@@ -290,6 +290,14 @@ export const tr = {
   },
   // Tracked Items (design "4 Takip Ettiklerim" v2; modules.md Tracked Items; pagedesign.md §8.4).
   trackedItems: {
+    v5: {
+      lowest: "{count}g en düşük {price}",
+      highest: "{count}g en yüksek {price}",
+      change: "{count}g değişim",
+      maxGain: "En çok kazanç",
+      toTarget: "Hedefe kalan {amount}",
+      notifyHint: "Hedefe inince haber veririz",
+    },
     v4: {
       bought: "Aldın",
       target: "Hedefin",

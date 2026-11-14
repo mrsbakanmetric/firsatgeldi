@@ -6,12 +6,14 @@ import { cn } from "./cn";
 import { Icon } from "./icon";
 
 /** sm = compact lists and side columns · md = main lists · lg = compact previews (autocomplete) · fill = fills its column. */
-export type ProductImageSize = "sm" | "md" | "lg" | "fill";
+export type ProductImageSize = "sm" | "md" | "lg" | "card" | "fill";
 
 const SIZE_CLASSES: Record<ProductImageSize, string> = {
   sm: "size-(--size-thumb-sm)",
   md: "size-(--size-thumb-md)",
   lg: "size-(--size-thumb-lg)",
+  /** Tracked Items card (design v5). */
+  card: "size-(--size-thumb-card)",
   fill: "aspect-square w-full",
 };
 

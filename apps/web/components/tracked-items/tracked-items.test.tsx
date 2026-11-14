@@ -67,7 +67,7 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
   const t = createTranslator(locale);
   const name = (key: keyof typeof PRODUCTS) => PRODUCTS[key].name[locale];
 
-  it("v4: deal group first (one coral badge); status icon on a 120 px image; price list by rank with stock in words; outcome; no explanation sentences", async () => {
+  it("v5 card grid with the v4 content: deal group first (one coral badge); status icon on an 84 px image; price table by rank; summary line; footer strip", async () => {
     const { container } = show(locale);
     await screen.findByText(name("acePro2FlashPrint"));
     const tl = (tr: string, en: string) => (locale === "tr" ? tr : en);
@@ -81,7 +81,10 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     const group = screen.getByRole("region", { name: new RegExp(t("trackedItems.row.flags.deal")) });
     expect(container.querySelectorAll(".bg-accent")).toHaveLength(1);
     expect(within(group).getAllByRole("listitem")).toHaveLength(3);
-    expect(within(group).getByText(t("trackedItems.v4.gain", { amount: tl("3.002 TL", "TL 3,002") }))).toBeDefined();
+    // Footer strip on savings-subtle: "En çok kazanç" + amount, "Fırsatı gör".
+    expect(within(group).getAllByText(t("trackedItems.v5.maxGain"))).toHaveLength(2);
+    const gain = within(group).getByText(tl("3.002 TL", "TL 3,002"));
+    expect(gain.closest("div.bg-savings-subtle")).not.toBeNull();
     expect(within(group).getByText(t("trackedItems.v4.reached"))).toBeDefined();
     expect(within(group).getAllByRole("link", { name: t("trackedItems.v3.seeDeal") })).toHaveLength(3);
     expect(group.querySelector(".border-savings")).not.toBeNull();
@@ -90,7 +93,9 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     expect(rowLinks()).toHaveLength(6);
     expect(screen.getAllByRole("img", { name: t("trackedItems.v3.status.BOUGHT") })).toHaveLength(4);
     expect(screen.getAllByRole("img", { name: t("trackedItems.v3.status.WANT") })).toHaveLength(2);
-    expect(container.querySelector("[class*='size-(--size-thumb-lg)']")).not.toBeNull();
+    expect(container.querySelector("[class*='size-(--size-thumb-card)']")).not.toBeNull();
+    // Two-column grid from breakpoint.md; cards fill their grid cell (one height per row).
+    expect(group.querySelector("ul")?.className).toContain("md:grid-cols-2");
 
     // Price list of the coat: own row first, three cheaper by rank with a lock, "+2 satıcı daha", summary.
     const coat = screen.getByRole("link", { name: name("winterCoat") }).closest("li") as HTMLElement;
@@ -103,7 +108,9 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     expect(within(coat).getAllByRole("img", { name: t("trackedItems.v4.hidden") })).toHaveLength(3);
     expect(within(coat).getByRole("link", { name: t("trackedItems.v4.more", { count: 2 }) })).toBeDefined();
     expect(within(coat).getAllByText(t("trackedItems.v4.stock.LOW_STOCK")).length).toBeGreaterThan(0);
-    expect(within(table).getByText(t("trackedItems.v4.lowest", { count: 7 }))).toBeDefined();
+    // Summary as one thin line under the table.
+    expect(within(coat).getByText(t("trackedItems.v5.lowest", { count: 7, price: tl("2.999 TL", "TL 2,999") }))).toBeDefined();
+    expect(within(coat).getByText(t("trackedItems.v5.highest", { count: 14, price: tl("3.399 TL", "TL 3,399") }))).toBeDefined();
     // Lower than paid: green with ↓ and a word for assistive technology.
     expect(within(table).getAllByText(t("trackedItems.v4.lower")).length).toBeGreaterThan(0);
 
@@ -113,7 +120,8 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     expect(within(dyson).getByText(tl("31.299 TL", "TL 31,299")).closest("span")?.className).toContain("text-danger");
     expect(within(dyson).getByText(t("trackedItems.v4.noCheaper"))).toBeDefined();
     // AirPods: target not reached.
-    expect(screen.getByText(t("trackedItems.v4.toTarget", { amount: tl("650 TL", "TL 650") }))).toBeDefined();
+    expect(screen.getByText(t("trackedItems.v5.toTarget", { amount: tl("650 TL", "TL 650") }))).toBeDefined();
+    expect(screen.getByText(t("trackedItems.v5.notifyHint"))).toBeDefined();
     // X4: own listing sold out.
     const x4 = screen.getByRole("link", { name: name("x4") }).closest("li") as HTMLElement;
     expect(within(x4).getByText(t("trackedItems.v4.stock.OUT_OF_STOCK"))).toBeDefined();
