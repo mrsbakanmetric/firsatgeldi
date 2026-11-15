@@ -321,7 +321,6 @@ export const en = {
       status: { BOUGHT: "You're tracking", WANT: "You want to buy" },
       dealGroup: "Products with a deal",
       seeDeal: "See the deal",
-      more: "More actions",
       end: "End tracking",
       endTitle: "End tracking",
       endQuestion: "How did it end?",
@@ -373,11 +372,6 @@ export const en = {
       priority: "Priority",
       deadline: "Return date",
       saving: "Saving",
-    },
-    columns: {
-      product: "Product",
-      price: "Price · 14 days",
-      state: "Status",
     },
     row: {
       noTarget: "No target price",

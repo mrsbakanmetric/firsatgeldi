@@ -1,6 +1,6 @@
 "use client";
 
-// "Takibi bitir" from the row ⋯ menu (pagedesign.md §8.4 v3; modules.md Tracked Items
+// "Takibi bitir" from the button in the card's footer strip (pagedesign.md §8.4 v6; modules.md Tracked Items
 // "End tracking from the list"): a bought item asks how it ended — İade ettim ·
 // Fiyat farkı aldım · Vazgeçtim — with an optional new price paid (a saving goes to My
 // Savings); a want-to-buy item ends on one confirm. "Geri al" works for 7 days.

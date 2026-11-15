@@ -1,9 +1,9 @@
 "use client";
 
-// ProductRow (pagedesign.md §5; §8.4 design v2–v3): image · status · name/line ·
-// data columns · actions. The whole row opens its link (the title link is stretched
-// over the row), and actions inside it — "Fırsatı gör", the ⋯ menu — sit above that
-// link, so pressing them never opens the row. Columns keep the same share of the
+// ProductRow (pagedesign.md §5; §8.4 design v2–v6): image · status · name/line ·
+// data columns. The whole row opens its link (the title link is stretched over the
+// row); buttons inside the card footer are raised above that link by the caller, so
+// pressing them never opens the row. Columns keep the same share of the
 // row on every row, so values line up down the list; below breakpoint.md the data
 // columns wrap under the name. A row with a deal has a `savings` border (v4).
 // Layout "priceList" (Tracked Items Row v4): the name column keeps
@@ -28,14 +28,12 @@ export interface ProductRowProps {
   title: string;
   line?: ReactNode;
   columns?: readonly ProductRowColumn[];
-  /** Buttons and menus that must not open the row (⋯, "Fırsatı gör"). */
-  actions?: ReactNode;
   /** deal = a current deal (savings border). */
   tone?: "default" | "deal";
   /**
    * columns = name grows (default); priceList = the name keeps size.list-name-min-width, a "fill"
    * column shrinks first; card = a card of the Tracked Items grid (design v5): header (image ·
-   * name · flags · line · actions top-right), the columns stacked at full width, then `footer`.
+   * name · flags · line), the columns stacked at full width, then `footer`.
    */
   layout?: "columns" | "priceList" | "card";
   /** Card layout: the strip at the bottom of the card (styled by the caller). */
@@ -54,7 +52,7 @@ const WIDTH_CLASSES: Record<ProductRowColumn["width"], string> = {
   fill: "md:min-w-0",
 };
 
-export function ProductRow({ href, image, flags, title, line, columns = [], actions, tone = "default", layout = "columns", footer, dimmed = false, className }: ProductRowProps) {
+export function ProductRow({ href, image, flags, title, line, columns = [], tone = "default", layout = "columns", footer, dimmed = false, className }: ProductRowProps) {
   const Link = useLinkComponent();
   const priceList = layout === "priceList";
   if (layout === "card") {
@@ -76,7 +74,6 @@ export function ProductRow({ href, image, flags, title, line, columns = [], acti
             {flags && <span className="flex flex-wrap gap-1">{flags}</span>}
             {line && <span className="text-caption text-text-muted">{line}</span>}
           </span>
-          {actions && <span className="relative z-(--z-index-raised) flex shrink-0 items-center gap-2">{actions}</span>}
         </div>
         {/* The body takes the spare height, so the footer always closes the card. */}
         <div className={cn("flex flex-1 flex-col gap-2 px-3 pb-3", dimmed && "opacity-(--component-button-disabled-opacity)")}>
@@ -131,7 +128,6 @@ export function ProductRow({ href, image, flags, title, line, columns = [], acti
           ))}
         </span>
       )}
-      {actions && <span className="relative z-(--z-index-raised) flex shrink-0 items-center gap-2 self-end md:self-center">{actions}</span>}
     </div>
   );
 }

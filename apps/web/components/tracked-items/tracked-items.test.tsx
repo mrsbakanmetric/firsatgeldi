@@ -92,7 +92,7 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     // Six active rows; status as an icon on the image (accessible name), no status text badge.
     expect(rowLinks()).toHaveLength(6);
     // v6: no ⋯ menu; every active card shows "Takibi bitir" as a visible button.
-    expect(screen.queryByRole("button", { name: t("trackedItems.v3.more") })).toBeNull();
+    expect(document.querySelector("[aria-haspopup='menu']")).toBeNull();
     expect(screen.getAllByRole("button", { name: t("trackedItems.v3.end") })).toHaveLength(6);
     expect(screen.getAllByRole("img", { name: t("trackedItems.v3.status.BOUGHT") })).toHaveLength(4);
     expect(screen.getAllByRole("img", { name: t("trackedItems.v3.status.WANT") })).toHaveLength(2);
@@ -143,7 +143,7 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     await screen.findByText(name("airPodsPro2"));
     const row = screen.getByRole("link", { name: name("airPodsPro2") }).closest("li") as HTMLElement;
     // v6: visible buttons in the card footer, no ⋯ menu.
-    expect(within(row).queryByRole("button", { name: t("trackedItems.v3.more") })).toBeNull();
+    expect(row.querySelector("[aria-haspopup='menu']")).toBeNull();
     const item = within(row).getByRole("link", { name: t("trackedItems.v4.markBought") });
     const tracked = controller.state.trackedItems.find((entry) => entry.productKey === "airPodsPro2");
     expect(item.getAttribute("href")).toBe(`/${locale}/${locale === "tr" ? "ara" : "search"}?urun=${PRODUCTS.airPodsPro2.id}&takip=${tracked?.id ?? ""}&mod=aldim`);
