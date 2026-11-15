@@ -61,7 +61,7 @@ function show(locale: Locale) {
 
 /** One title link per row (the stretched row link); "Fırsatı gör" links to the same page but is its own action. */
 const rowLinks = () =>
-  screen.getAllByRole("link").filter((link) => /\/(takip|tracking)\/[0-9a-f-]{36}$/.test(link.getAttribute("href") ?? "") && !link.className.includes("z-(--z-index-raised)"));
+  screen.getAllByRole("link").filter((link) => /\/(takip|tracking)\/[0-9a-f-]{36}$/.test(link.getAttribute("href") ?? "") && !link.closest('[class*="z-(--z-index-raised)"]'));
 
 describe.each(LOCALES)("Tracked Items — %s", (locale) => {
   const t = createTranslator(locale);
@@ -91,6 +91,9 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
 
     // Six active rows; status as an icon on the image (accessible name), no status text badge.
     expect(rowLinks()).toHaveLength(6);
+    // v6: no ⋯ menu; every active card shows "Takibi bitir" as a visible button.
+    expect(screen.queryByRole("button", { name: t("trackedItems.v3.more") })).toBeNull();
+    expect(screen.getAllByRole("button", { name: t("trackedItems.v3.end") })).toHaveLength(6);
     expect(screen.getAllByRole("img", { name: t("trackedItems.v3.status.BOUGHT") })).toHaveLength(4);
     expect(screen.getAllByRole("img", { name: t("trackedItems.v3.status.WANT") })).toHaveLength(2);
     expect(container.querySelector("[class*='size-(--size-thumb-card)']")).not.toBeNull();
@@ -139,11 +142,11 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     show(locale);
     await screen.findByText(name("airPodsPro2"));
     const row = screen.getByRole("link", { name: name("airPodsPro2") }).closest("li") as HTMLElement;
-    await userEvent.click(within(row).getByRole("button", { name: t("trackedItems.v3.more") }));
-    const item = screen.getByRole("menuitem", { name: t("trackedItems.v4.markBought") });
+    // v6: visible buttons in the card footer, no ⋯ menu.
+    expect(within(row).queryByRole("button", { name: t("trackedItems.v3.more") })).toBeNull();
+    const item = within(row).getByRole("link", { name: t("trackedItems.v4.markBought") });
     const tracked = controller.state.trackedItems.find((entry) => entry.productKey === "airPodsPro2");
     expect(item.getAttribute("href")).toBe(`/${locale}/${locale === "tr" ? "ara" : "search"}?urun=${PRODUCTS.airPodsPro2.id}&takip=${tracked?.id ?? ""}&mod=aldim`);
-    await userEvent.keyboard("{Escape}");
 
     const box = screen.getByRole("textbox", { name: t("trackedItems.search.label") }) as HTMLInputElement;
     await userEvent.type(box, "dys");
@@ -152,15 +155,14 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     expect(box.value).toBe(name("dysonV15"));
   });
 
-  it("⋯ → “Takibi bitir” (bought): how it ended + new price → saving to My Savings; the row moves to ended; “Geri al” brings it back", async () => {
+  it("“Takibi bitir” in the card footer (bought): how it ended + new price → saving to My Savings; the row moves to ended; “Geri al” brings it back", async () => {
     show(locale);
     await screen.findByText(name("dysonV15"));
     const row = screen.getByRole("link", { name: name("dysonV15") }).closest("li") as HTMLElement;
-    const more = within(row).getByRole("button", { name: t("trackedItems.v3.more") });
-    // The menu button is not inside the row link: pressing it never opens the row.
-    expect(more.closest("a")).toBeNull();
-    await userEvent.click(more);
-    await userEvent.click(screen.getByRole("menuitem", { name: t("trackedItems.v3.end") }));
+    const end = within(row).getByRole("button", { name: t("trackedItems.v3.end") });
+    // The button is not inside the row link: pressing it never opens the row.
+    expect(end.closest("a")).toBeNull();
+    await userEvent.click(end);
     const dialog = screen.getByRole("dialog", { name: t("trackedItems.v3.endTitle") });
     const confirm = within(dialog).getByRole("button", { name: t("trackedItems.v3.end") });
     expect(confirm.hasAttribute("disabled")).toBe(true);
@@ -178,12 +180,11 @@ describe.each(LOCALES)("Tracked Items — %s", (locale) => {
     expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.restore", outcome: "OK" });
   });
 
-  it("⋯ → “Takibi bitir” (want to buy): one confirm, no questions", async () => {
+  it("“Takibi bitir” in the card footer (want to buy): one confirm, no questions", async () => {
     show(locale);
     await screen.findByText(name("airPodsPro2"));
     const row = screen.getByRole("link", { name: name("airPodsPro2") }).closest("li") as HTMLElement;
-    await userEvent.click(within(row).getByRole("button", { name: t("trackedItems.v3.more") }));
-    await userEvent.click(screen.getByRole("menuitem", { name: t("trackedItems.v3.end") }));
+    await userEvent.click(within(row).getByRole("button", { name: t("trackedItems.v3.end") }));
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).queryByRole("button", { name: t("trackedItems.v3.endOptions.RETURN_REBUY") })).toBeNull();
     expect(within(dialog).getByText(t("trackedItems.v3.wantEndText", { name: name("airPodsPro2") }))).toBeDefined();

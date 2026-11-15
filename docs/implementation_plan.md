@@ -102,6 +102,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 - Screens follow the screen order of `CLAUDE.md`; Application Manager screens are not here because their design review is still pending.
 - **Exception [DECIDED 2026-11-14] (user decision):** Tracked Items (step 12) is built before Product Detail (step 11); step numbers are kept. Until Product Detail exists, Tracked Items rows link to `/[locale]/takip/[id]`, which shows a "coming soon" page.
 - **Exception [DECIDED 2026-11-15] (user decision):** Home (step 14) is built before Product Detail (step 11), right after Tracked Items; step numbers are kept. Until Product Detail exists, Home links to a product (cards, "Fırsatı gör", "Ürünü gör") go to the same "coming soon" page. This exception is for Phase 1 only: the Phase 2 connecting order and the backend build order do not change.
+- **Exception [DECIDED 2026-11-15] (user decision):** Product Detail (step 11) stays one plan step but ships in three PRs — contract + mock API + hidden-seller tests · bought mode screen · want-to-buy mode + Takibi bitir + edge cases. The step is ✅ only after the third.
 
 **Phase 2** — makes the product really work for users.
 - **Data test (23):** which data the stores really give affects every later decision, so it comes first.

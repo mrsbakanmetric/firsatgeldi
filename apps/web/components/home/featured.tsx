@@ -3,8 +3,10 @@
 // Hemen Gözat (design "3 Ana Sayfa" v2; modules.md Home › B; pagedesign.md §8.1): image 120
 // with the status icon, flags, name, check time and "En çok kazanç" on the right; two columns
 // — the 14-day price chart (PriceHistory) | the ranked price table of Tracked Items with each
-// hidden offer's "Göster" (seller and store open in place); a footer with the page's one coral
-// action "Fırsatı gör", the return details link, the allowance and "Şimdi kontrol et".
+// hidden offer's "Göster" (seller and store open in place), both columns ending on one line; a
+// footer with the page's one coral action "Fırsatı gör", the return details link, the allowance
+// and "Şimdi kontrol et" — without a deal or return link there is no footer row and the
+// allowance and "Şimdi kontrol et" sit under the check time (design §3, 2026-11-15).
 // The "Fırsat geldi" flag is neutral here (the coral element is "Fırsatı gör"). A savings
 // border while a deal is open.
 import { type HiddenOfferView, type HomeFeatured, type RevealedOfferView, toMajorUnits } from "@firsatgeldi/contracts";
@@ -155,8 +157,10 @@ function Offers({ t, locale, item, href, staleHours }: { t: Translator; locale: 
   const onGo = (offer: HiddenOfferView) => go.mutate({ params: { ref: offer.ref } }, { onSuccess: ({ data }) => data.status === "OK" && globalThis.open(data.url, "_blank", "noopener,noreferrer") });
 
   const cell = "py-2 pr-3 align-middle";
+  // The column ends with the chart column (design §3): the grid stretches it and the
+  // "+N" link and caption are pinned to its bottom.
   return (
-    <div className="flex min-w-0 flex-col gap-2">
+    <div className="flex h-full min-w-0 flex-col gap-2">
       {problem && <StatusBanner tone="danger">{problem}</StatusBanner>}
       <div className="overflow-hidden rounded-md border border-border">
         <table aria-label={t("home.offers.label")} className="w-full border-collapse text-body-sm text-text">
@@ -233,12 +237,14 @@ function Offers({ t, locale, item, href, staleHours }: { t: Translator; locale: 
           </tbody>
         </table>
       </div>
-      {item.cheaperCount > item.offers.length && (
-        <Link href={href} className="self-start text-caption font-semibold text-primary underline underline-offset-4">
-          {t("home.offers.more", { count: item.cheaperCount - item.offers.length })}
-        </Link>
-      )}
-      <p className="text-caption text-text-muted">{t("home.offers.caption")}</p>
+      <div className="mt-auto flex flex-col gap-2">
+        {item.cheaperCount > item.offers.length && (
+          <Link href={href} className="self-start text-caption font-semibold text-primary underline underline-offset-4">
+            {t("home.offers.more", { count: item.cheaperCount - item.offers.length })}
+          </Link>
+        )}
+        <p className="text-caption text-text-muted">{t("home.offers.caption")}</p>
+      </div>
     </div>
   );
 }
@@ -290,6 +296,43 @@ export function Featured({ t, locale, item, now, remaining }: FeaturedProps) {
     headline = <span className="text-body-sm font-semibold text-text">{t("home.featured.cheapestNow")}</span>;
   }
 
+  const checkControls = (
+    <span className="flex flex-wrap items-center gap-3">
+      <span role="status" className="text-caption text-text-muted">
+        {checking
+          ? t("home.featured.checking")
+          : checkNote?.kind === "cached"
+            ? t("home.featured.checkCached")
+            : checkedNow
+              ? t("home.featured.checkDone")
+              : checkNote?.kind === "error"
+                ? checkNote.text
+                : remaining === null
+                  ? null
+                  : remaining === 0
+                    ? t("home.featured.checksNone")
+                    : t("home.featured.checksLeft", { count: remaining })}
+      </span>
+      <Button
+        variant="secondary"
+        size="compact"
+        icon={RefreshCw}
+        loading={check.isPending || checking}
+        disabled={remaining === 0}
+        onClick={() => {
+          setCheckNote(null);
+          check.mutate({ params: { id: item.id }, idempotencyKey: globalThis.crypto.randomUUID() });
+        }}
+      >
+        {t("home.featured.checkNow")}
+      </Button>
+    </span>
+  );
+  const returnLink = item.mode === "BOUGHT" && item.returnDeadline !== null;
+  // A footer row only with content on its left too (design §3 "no idle rows"); otherwise the
+  // allowance and "Şimdi kontrol et" join the check time in the header.
+  const footerRow = deal !== null || returnLink;
+
   return (
     <section
       aria-labelledby="featured-title"
@@ -337,6 +380,7 @@ export function Featured({ t, locale, item, now, remaining }: FeaturedProps) {
                 {item.stale ? t("trackedItems.row.staleAge", { ago: ago(t, item.lastCheckedAt, now) }) : checkedAgo(t, item.lastCheckedAt, now)}
               </FreshnessLine>
             )}
+            {!footerRow && checkControls}
           </div>
         </div>
         {headline && <div className="flex shrink-0 flex-col md:items-end">{headline}</div>}
@@ -349,50 +393,23 @@ export function Featured({ t, locale, item, now, remaining }: FeaturedProps) {
         <Offers t={t} locale={locale} item={item} href={href} staleHours={staleHours} />
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 border-t border-divider pt-4">
-        {deal && (
-          <Link href={href} className={buttonClasses("deal", "gap-2")}>
-            {t("home.featured.seeDeal")}
-            <Icon icon={ArrowRight} />
-          </Link>
-        )}
-        {item.mode === "BOUGHT" && item.returnDeadline && (
-          <Link href={`${href}#iade`} className="inline-flex min-h-(--size-touch-target-min) items-center gap-1 text-body-sm font-semibold text-primary">
-            {t("home.featured.returnPage")}
-            <Icon icon={ArrowRight} size="sm" />
-          </Link>
-        )}
-        <span className="flex flex-wrap items-center gap-3 md:ml-auto">
-          <span role="status" className="text-caption text-text-muted">
-            {checking
-              ? t("home.featured.checking")
-              : checkNote?.kind === "cached"
-                ? t("home.featured.checkCached")
-                : checkedNow
-                  ? t("home.featured.checkDone")
-                  : checkNote?.kind === "error"
-                    ? checkNote.text
-                    : remaining === null
-                      ? null
-                      : remaining === 0
-                        ? t("home.featured.checksNone")
-                        : t("home.featured.checksLeft", { count: remaining })}
-          </span>
-          <Button
-            variant="secondary"
-            size="compact"
-            icon={RefreshCw}
-            loading={check.isPending || checking}
-            disabled={remaining === 0}
-            onClick={() => {
-              setCheckNote(null);
-              check.mutate({ params: { id: item.id }, idempotencyKey: globalThis.crypto.randomUUID() });
-            }}
-          >
-            {t("home.featured.checkNow")}
-          </Button>
-        </span>
-      </div>
+      {footerRow && (
+        <div className="flex flex-wrap items-center gap-4 border-t border-divider pt-4">
+          {deal && (
+            <Link href={href} className={buttonClasses("deal", "gap-2")}>
+              {t("home.featured.seeDeal")}
+              <Icon icon={ArrowRight} />
+            </Link>
+          )}
+          {returnLink && (
+            <Link href={`${href}#iade`} className="inline-flex min-h-(--size-touch-target-min) items-center gap-1 text-body-sm font-semibold text-primary">
+              {t("home.featured.returnPage")}
+              <Icon icon={ArrowRight} size="sm" />
+            </Link>
+          )}
+          <span className="md:ml-auto">{checkControls}</span>
+        </div>
+      )}
     </section>
   );
 }
