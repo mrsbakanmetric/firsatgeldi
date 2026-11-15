@@ -47,18 +47,19 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 7 | i18n | Turkish/English catalogues, `/tr` and `/en` routes, money/date formats | ✅ | #25 | 2026-11-13 |
 | 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ✅ | #50 | 2026-11-14 |
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ✅ | #53 · #55 (guest upload status, seller-lookup limit) | 2026-11-14 |
-| 10 | Search and Add | Screen as designed, on mock data | 🛠 | #61 · #68 (v3) · #79 (v4) | 2026-11-14 |
-| 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | 🛠 | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5) · #106 (v6) | 2026-11-14 |
-| 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | 🛠 | #99 (v2 + shared CatalogueSearchBox) · #106 (layout rules) | 2026-11-15 |
-| 11 | Product Detail | Screen incl. Want to Buy mode — three PRs (user decision 2026-11-15) | 🛠 | PR 1: contract + mock API + hidden-seller tests | 2026-11-15 |
+| 10 | Search and Add | Screen as designed, on mock data | ✅ | #61 · #68 (v3) · #79 (v4) | 2026-11-15 |
+| 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | ✅ | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5) · #106 (v6) | 2026-11-15 |
+| 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | ✅ | #99 (v2 + shared CatalogueSearchBox) · #106 (layout rules) | 2026-11-15 |
+| 11 | Product Detail | Screen incl. Want to Buy mode — three PRs (user decision 2026-11-15) | 🛠 | #108 (PR 1: contract + mock API + hidden-seller tests) | 2026-11-15 |
+| 20 | Sign-in and Sign-up | Screen, with mock sign-in — right after step 11 (user decision 2026-11-15) | ⬜ | — | — |
+| 19 | Settings and Account | Screen (user and Application Manager variants), incl. the Profile section — after step 20 (user decision 2026-11-15) | ⬜ | — | — |
+| 21a | My Profile | The user's own profile page `/profil` only — after step 19 (user decision 2026-11-15) | ⬜ | — | — |
 | 13 | Notifications and Preferences | Page, bell panel, notification preferences | ⬜ | — | — |
 | 15 | My Savings | Screen | ⬜ | — | — |
 | 16 | Packages and Premium | Screen | ⬜ | — | — |
 | 17 | Landing Page + SEO product page | Both pages | ⬜ | — | — |
 | 18 | Legal Pages + Help and FAQ | Pages | ⬜ | — | — |
-| 19 | Settings and Account | Screen (user and Application Manager variants) | ⬜ | — | — |
-| 20 | Sign-in and Sign-up | Screen, with mock sign-in | ⬜ | — | — |
-| 21 | Discover and Profile | Screens | ⬜ | — | — |
+| 21 | Discover and Profile | Discover and other users' profiles (the own profile page is step 21a) | ⬜ | — | — |
 | 22 | Phase 1 closing check | All screens checked together in both languages, both themes, both widths | ⬜ | — | — |
 
 ### Phase 2 — Real data
@@ -103,6 +104,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 - **Exception [DECIDED 2026-11-14] (user decision):** Tracked Items (step 12) is built before Product Detail (step 11); step numbers are kept. Until Product Detail exists, Tracked Items rows link to `/[locale]/takip/[id]`, which shows a "coming soon" page.
 - **Exception [DECIDED 2026-11-15] (user decision):** Home (step 14) is built before Product Detail (step 11), right after Tracked Items; step numbers are kept. Until Product Detail exists, Home links to a product (cards, "Fırsatı gör", "Ürünü gör") go to the same "coming soon" page. This exception is for Phase 1 only: the Phase 2 connecting order and the backend build order do not change.
 - **Exception [DECIDED 2026-11-15] (user decision):** Product Detail (step 11) stays one plan step but ships in three PRs — contract + mock API + hidden-seller tests · bought mode screen · want-to-buy mode + Takibi bitir + edge cases. The step is ✅ only after the third.
+- **Exception [DECIDED 2026-11-15] (user decision):** after Product Detail (step 11) come Sign-in and Sign-up (20) → Settings and Account (19, with its Profile section) → My Profile (21a: only the user's own profile page `/profil`; other users' profiles and Discover stay in step 21) → then Notifications and Preferences (13) and the earlier order. Step numbers are kept. This exception is for Phase 1 only: the Phase 2 connecting order and the backend build order do not change, and sign-in is still connected to real data last (step 39).
 
 **Phase 2** — makes the product really work for users.
 - **Data test (23):** which data the stores really give affects every later decision, so it comes first.
