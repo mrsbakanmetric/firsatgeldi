@@ -16,10 +16,10 @@ import {
   type StockSubject,
   type TrackedItemDetail,
 } from "@firsatgeldi/contracts";
-import { addCalendarDays, buyOrWaitHint, daysBetween, formatDate, formatMoney, historyTiles, localeFromAcceptLanguage, returnDeadline, toCalendarDay } from "@firsatgeldi/core";
+import { addCalendarDays, buyOrWaitHint, crossStoreRating, daysBetween, formatDate, formatMoney, historyTiles, localeFromAcceptLanguage, returnDeadline, toCalendarDay } from "@firsatgeldi/core";
 import { http, HttpResponse } from "msw";
 import { PRODUCTS } from "../fixtures/catalog";
-import { CALENDAR_TEXT, EARLIER_HISTORY, fill, PRICE_DIFFERENCE_TEXT, PRODUCT_RATINGS } from "../fixtures/detail";
+import { CALENDAR_TEXT, EARLIER_HISTORY, fill, PRICE_DIFFERENCE_TEXT, RATINGS_READ_MINUTES_AGO } from "../fixtures/detail";
 import { type OfferFixture, offersFor, PLATFORMS, productKeyOf, SELLERS } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { seedByKey, stockCodeToState } from "../fixtures/tracking";
@@ -331,14 +331,16 @@ export function productDetailHandlers(controller: MockController) {
     route(controller, "getProductRatings", ({ params, checkedAt }) => {
       const key = productKeyOf(params.id);
       if (!key) throw new MockApiError("NOT_FOUND");
-      const rating = PRODUCT_RATINGS[key];
-      if (!rating) return { data: { average: null, storeCount: 0, few: false, readAt: null } };
+      // One figure on the shared 5-point scale (core `crossStoreRating`) [ASSUMPTION — to be checked in the data test].
+      const rating = crossStoreRating(offersFor(key).flatMap((offer) => (offer.productRating ? [offer.productRating] : [])));
+      const read = RATINGS_READ_MINUTES_AGO[key];
+      if (!rating || read === undefined) return { data: { average: null, storeCount: 0, few: false, readAt: null } };
       return {
         data: {
           average: { value: rating.value, scale: rating.scale, count: rating.count },
-          storeCount: rating.storeCount,
+          storeCount: rating.stores,
           few: rating.count < SYSTEM_SETTINGS["ratings.min_count"],
-          readAt: checkedAt(rating.readMinutesAgo),
+          readAt: checkedAt(read),
         },
       };
     }),

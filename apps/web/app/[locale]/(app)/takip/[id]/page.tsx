@@ -1,28 +1,11 @@
-import { createTranslator, isLocale, localizedPath } from "@firsatgeldi/i18n";
-import { buttonClasses, EmptyState, PageTemplate } from "@firsatgeldi/ui";
-import { Hourglass } from "lucide-react";
-import Link from "next/link";
+import { isLocale } from "@firsatgeldi/i18n";
 import { notFound } from "next/navigation";
+import { ProductDetail } from "../../../../../components/product-detail/product-detail";
 
-// Product Detail — not built yet: Tracked Items comes first (user decision 2026-11-14,
-// docs/implementation_plan.md). Rows already link here; until the screen step this
-// page says "coming soon" and leads back to the list.
+// Product Detail — design "2 Ürün Detayı v2" (docs/screen_status.md), on the mock API in Phase 1.
+// Bought mode in this step's PR 2; want-to-buy mode follows in PR 3 (implementation_plan.md step 11).
 export default async function ProductDetailPage({ params }: PageProps<"/[locale]/takip/[id]">) {
-  const { locale } = await params;
+  const { locale, id } = await params;
   if (!isLocale(locale)) notFound();
-  const t = createTranslator(locale);
-  return (
-    <PageTemplate kind="detail" title={t("productDetail.title")}>
-      <EmptyState
-        icon={Hourglass}
-        title={t("productDetail.soonTitle")}
-        description={t("productDetail.soonText")}
-        action={
-          <Link href={localizedPath("/takip", locale)} className={buttonClasses("secondary")}>
-            {t("productDetail.back")}
-          </Link>
-        }
-      />
-    </PageTemplate>
-  );
+  return <ProductDetail locale={locale} id={id} />;
 }

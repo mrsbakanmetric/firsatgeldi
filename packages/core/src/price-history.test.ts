@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buyOrWaitHint, historyTiles } from "./price-history";
+import { buyOrWaitHint, crossStoreRating, historyTiles } from "./price-history";
 
 const rule = { shortDays: 30, longDays: 180, minDataDays: 14 };
 const flat = (days: number, value: number) => Array.from({ length: days }, () => value);
@@ -38,5 +38,22 @@ describe("buyOrWaitHint", () => {
   it("only 14 days of data: a short-window statement, never a 6-month one", () => {
     const history = [...Array.from({ length: 166 }, () => null), ...flat(13, 3000), 2600];
     expect(buyOrWaitHint(history, 2600, "WANT", rule)).toEqual({ kind: "LOWEST_IN_DAYS", days: 30 });
+  });
+});
+
+describe("crossStoreRating", () => {
+  it("one figure on the shared 5-point scale, weighted by count; a 10-point store counts as its share", () => {
+    expect(
+      crossStoreRating([
+        { value: 4.6, scale: 5, count: 1_240 },
+        { value: 4.4, scale: 5, count: 310 },
+        { value: 8.8, scale: 10, count: 900 },
+        { value: 4.5, scale: 5, count: 1_400 },
+      ]),
+    ).toEqual({ value: 4.5, scale: 5, count: 3_850, stores: 4 });
+  });
+
+  it("no counted rating → null", () => {
+    expect(crossStoreRating([{ value: 4, scale: 5, count: null }])).toBeNull();
   });
 });

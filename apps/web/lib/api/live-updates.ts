@@ -17,11 +17,17 @@ export function invalidateFor(queryClient: QueryClient, event: StreamEvent): Pro
     case "upload.rejected":
       return queryClient.invalidateQueries({ queryKey: apiQueryKey("getUpload", { params: { id: event.data.uploadId } }) });
     case "check.finished":
-      // Tracked Items rows and summary, Home, and the remaining checks ("az önce").
+      // Tracked Items rows and summary, Home, Product Detail, and the remaining checks ("az önce").
       return Promise.all([
         queryClient.invalidateQueries({ queryKey: apiQueryKey("listTrackedItems") }),
         queryClient.invalidateQueries({ queryKey: apiQueryKey("getTrackedItemsSummary") }),
         queryClient.invalidateQueries({ queryKey: apiQueryKey("getHome") }),
+        // Product Detail: the item, its offers and both histories.
+        queryClient.invalidateQueries({ queryKey: apiQueryKey("getTrackedItem") }),
+        queryClient.invalidateQueries({ queryKey: apiQueryKey("getTrackedItemOffers") }),
+        queryClient.invalidateQueries({ queryKey: apiQueryKey("getPriceHistory") }),
+        queryClient.invalidateQueries({ queryKey: apiQueryKey("getStockHistory") }),
+        queryClient.invalidateQueries({ queryKey: apiQueryKey("getEntitlements") }),
       ]).then(() => undefined);
   }
 }

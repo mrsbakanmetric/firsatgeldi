@@ -9,19 +9,19 @@
 // allowance and "Şimdi kontrol et" sit under the check time (design §3, 2026-11-15).
 // The "Fırsat geldi" flag is neutral here (the coral element is "Fırsatı gör"). A savings
 // border while a deal is open.
-import { type HiddenOfferView, type HomeFeatured, type RevealedOfferView, toMajorUnits } from "@firsatgeldi/contracts";
+import { type HiddenOfferView, type HomeFeatured, toMajorUnits } from "@firsatgeldi/contracts";
 import { addCalendarDays, daysBetween, formatNumber, priceChartModel, RETURN_URGENT_DAYS, toCalendarDay } from "@firsatgeldi/core";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
-import { Button, buttonClasses, cn, Flag, FreshnessLine, Icon, PriceHistory, ProductImage, StatusBanner } from "@firsatgeldi/ui";
-import { ArrowRight, Check, Clock, ExternalLink, Lock, Package, RefreshCw, Zap } from "lucide-react";
+import { Button, buttonClasses, cn, Flag, FreshnessLine, Icon, PriceHistory, StatusBanner } from "@firsatgeldi/ui";
+import { ArrowRight, Check, Clock, ExternalLink, Lock, Zap } from "lucide-react";
 import Link from "next/link";
-import { type ReactNode, useState } from "react";
-import { errorMessage } from "../../lib/api/errors";
-import { useApiMutation } from "../../lib/api/hooks";
+import type { ReactNode } from "react";
 import { ago, checkedAgo, money } from "../search-add/format";
-import { imageUrl } from "../catalogue-search/catalogue-search-box";
+import { CheckNowControls } from "../tracked-items/check-now";
 import { shortDay } from "../tracked-items/format";
-import { Price, StatusIcon, StockWord, tl } from "../tracked-items/parts";
+import { TrackedHeader } from "../tracked-items/header";
+import { useOfferActions } from "../tracked-items/offer-actions";
+import { Price, StockWord, tl } from "../tracked-items/parts";
 
 /** Grid lines of the Hemen Gözat chart (design v2: four labelled lines). */
 const CHART_GRID_LINES = 4;
@@ -126,42 +126,16 @@ function Chart({ t, locale, item }: { t: Translator; locale: Locale; item: HomeF
 
 /** The ranked price table (Tracked Items v4) with "Göster" per hidden offer; the seller opens in place. */
 function Offers({ t, locale, item, href, staleHours }: { t: Translator; locale: Locale; item: HomeFeatured; href: string; staleHours: number | null }) {
-  const [revealed, setRevealed] = useState<Record<string, RevealedOfferView>>({});
-  const [problem, setProblem] = useState<string | null>(null);
-  const onError = (error: unknown) => setProblem(errorMessage(t, error));
-  const reveal = useApiMutation("revealOffer", { onError });
-  const hide = useApiMutation("hideOffer", { onError });
-  const go = useApiMutation("goToOffer", { onError });
+  const actions = useOfferActions(t);
   const reference = item.purchase?.pricePaid.amount ?? item.want?.targetPrice?.amount ?? null;
   const own = item.purchase;
-
-  const onReveal = (offer: HiddenOfferView) => {
-    setProblem(null);
-    reveal.mutate(
-      { params: { ref: offer.ref }, idempotencyKey: globalThis.crypto.randomUUID() },
-      { onSuccess: ({ data }) => (data.allowed ? setRevealed((current) => ({ ...current, [offer.ref]: data.offer })) : setProblem(t("errors.limitReached"))) },
-    );
-  };
-  const onHide = (offer: HiddenOfferView) =>
-    hide.mutate(
-      { params: { ref: offer.ref } },
-      {
-        onSuccess: () =>
-          setRevealed((current) => {
-            const next = { ...current };
-            delete next[offer.ref];
-            return next;
-          }),
-      },
-    );
-  const onGo = (offer: HiddenOfferView) => go.mutate({ params: { ref: offer.ref } }, { onSuccess: ({ data }) => data.status === "OK" && globalThis.open(data.url, "_blank", "noopener,noreferrer") });
 
   const cell = "py-2 pr-3 align-middle";
   // The column ends with the chart column (design §3): the grid stretches it and the
   // "+N" link and caption are pinned to its bottom.
   return (
     <div className="flex h-full min-w-0 flex-col gap-2">
-      {problem && <StatusBanner tone="danger">{problem}</StatusBanner>}
+      {actions.problem && <StatusBanner tone="danger">{actions.problem}</StatusBanner>}
       <div className="overflow-hidden rounded-md border border-border">
         <table aria-label={t("home.offers.label")} className="w-full border-collapse text-body-sm text-text">
           <tbody>
@@ -185,7 +159,7 @@ function Offers({ t, locale, item, href, staleHours }: { t: Translator; locale: 
               <td className={cell} />
             </tr>
             {item.offers.map((offer) => {
-              const shown = revealed[offer.ref];
+              const shown = actions.shown(offer.ref);
               const saving = reference !== null && offer.price.amount + (offer.shippingCost?.amount ?? 0) < reference ? reference - offer.price.amount - (offer.shippingCost?.amount ?? 0) : null;
               return (
                 <tr key={offer.ref} className="border-t border-divider">
@@ -218,15 +192,15 @@ function Offers({ t, locale, item, href, staleHours }: { t: Translator; locale: 
                   <td className={cn(cell, "text-right")}>
                     {shown ? (
                       <span className="flex flex-col items-end gap-1">
-                        <Button size="compact" icon={ExternalLink} loading={go.isPending && go.variables.params.ref === offer.ref} onClick={() => onGo(offer)}>
+                        <Button size="compact" icon={ExternalLink} loading={actions.going(offer.ref)} onClick={() => actions.go(offer)}>
                           {t("searchAdd.confirm.goToStore")}
                         </Button>
-                        <Button variant="ghost" size="compact" onClick={() => onHide(offer)}>
+                        <Button variant="ghost" size="compact" onClick={() => actions.hide(offer)}>
                           {t("searchAdd.confirm.hide")}
                         </Button>
                       </span>
                     ) : (
-                      <Button variant="secondary" size="compact" loading={reveal.isPending && reveal.variables.params.ref === offer.ref} onClick={() => onReveal(offer)}>
+                      <Button variant="secondary" size="compact" loading={actions.revealing(offer.ref)} onClick={() => actions.reveal(offer)}>
                         {t("searchAdd.confirm.reveal")}
                       </Button>
                     )}
@@ -264,15 +238,6 @@ export function Featured({ t, locale, item, now, remaining }: FeaturedProps) {
   const left = item.returnDeadline ? daysBetween(today, item.returnDeadline) : null;
   const deal = item.deal && !item.stale ? item.deal : null;
   const staleHours = item.stale && item.lastCheckedAt ? Math.max(1, Math.floor((now - Date.parse(item.lastCheckedAt)) / MS_PER_HOUR)) : null;
-  const [checkNote, setCheckNote] = useState<{ kind: "checking" | "cached"; at: number } | { kind: "error"; text: string } | null>(null);
-  const check = useApiMutation("checkNow", {
-    onSuccess: ({ data }) => setCheckNote({ kind: data.status === "CACHED" ? "cached" : "checking", at: Date.now() }),
-    onError: (error) => setCheckNote({ kind: "error", text: errorMessage(t, error) }),
-  });
-  // The check finished once the item's check time is later than the request (live update refreshes Home).
-  const checking = checkNote?.kind === "checking" && !(item.lastCheckedAt && Date.parse(item.lastCheckedAt) >= checkNote.at - 1000);
-  const checkedNow = checkNote?.kind === "checking" && !checking;
-
   let headline: ReactNode;
   if (deal && item.mode === "BOUGHT") {
     headline = (
@@ -296,38 +261,7 @@ export function Featured({ t, locale, item, now, remaining }: FeaturedProps) {
     headline = <span className="text-body-sm font-semibold text-text">{t("home.featured.cheapestNow")}</span>;
   }
 
-  const checkControls = (
-    <span className="flex flex-wrap items-center gap-3">
-      <span role="status" className="text-caption text-text-muted">
-        {checking
-          ? t("home.featured.checking")
-          : checkNote?.kind === "cached"
-            ? t("home.featured.checkCached")
-            : checkedNow
-              ? t("home.featured.checkDone")
-              : checkNote?.kind === "error"
-                ? checkNote.text
-                : remaining === null
-                  ? null
-                  : remaining === 0
-                    ? t("home.featured.checksNone")
-                    : t("home.featured.checksLeft", { count: remaining })}
-      </span>
-      <Button
-        variant="secondary"
-        size="compact"
-        icon={RefreshCw}
-        loading={check.isPending || checking}
-        disabled={remaining === 0}
-        onClick={() => {
-          setCheckNote(null);
-          check.mutate({ params: { id: item.id }, idempotencyKey: globalThis.crypto.randomUUID() });
-        }}
-      >
-        {t("home.featured.checkNow")}
-      </Button>
-    </span>
-  );
+  const checkControls = <CheckNowControls t={t} item={item} remaining={remaining} />;
   const returnLink = item.mode === "BOUGHT" && item.returnDeadline !== null;
   // A footer row only with content on its left too (design §3 "no idle rows"); otherwise the
   // allowance and "Şimdi kontrol et" join the check time in the header.
@@ -338,53 +272,44 @@ export function Featured({ t, locale, item, now, remaining }: FeaturedProps) {
       aria-labelledby="featured-title"
       className={cn("flex flex-col gap-5 rounded-lg bg-surface p-4 shadow-md md:p-6", deal ? "border-(length:--border-width-strong) border-savings" : "border border-border")}
     >
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="flex min-w-0 gap-4 md:gap-5">
-          <span className="relative shrink-0">
-            <ProductImage src={imageUrl(item.product.imageSha256)} size="lg" fallbackIcon={Package} />
-            <StatusIcon t={t} mode={item.mode} />
-          </span>
-          <div className="flex min-w-0 flex-col gap-2">
-            <span className="text-caption font-semibold text-text-muted uppercase">
-              {t("home.featured.label")}
-            </span>
-            {(deal || (left !== null && left >= 0) || item.stale) && (
-              <div className="flex flex-wrap gap-2">
-                {deal && (
-                  // Neutral on Home: "Fırsatı gör" is the surface's one coral element.
-                  <Flag tone="neutral" icon={Zap}>
-                    {t("trackedItems.row.flags.deal")}
-                  </Flag>
-                )}
-                {left !== null && left >= 0 && item.returnDeadline && (
-                  <Flag tone={left <= RETURN_URGENT_DAYS ? "warning" : "info"} icon={Clock}>
-                    {left === 0
-                      ? t("home.featured.returnToday", { date: shortDay(item.returnDeadline, locale) })
-                      : t("home.featured.returnFlag", { count: left, date: shortDay(item.returnDeadline, locale) })}
-                  </Flag>
-                )}
-                {item.stale && (
-                  <Flag tone="warning" icon={Clock}>
-                    {t("trackedItems.row.flags.stale")}
-                  </Flag>
-                )}
-              </div>
+      <TrackedHeader t={t} item={item} aside={headline}>
+        <span className="text-caption font-semibold text-text-muted uppercase">
+          {t("home.featured.label")}
+        </span>
+        {(deal || (left !== null && left >= 0) || item.stale) && (
+          <div className="flex flex-wrap gap-2">
+            {deal && (
+              // Neutral on Home: "Fırsatı gör" is the surface's one coral element.
+              <Flag tone="neutral" icon={Zap}>
+                {t("trackedItems.row.flags.deal")}
+              </Flag>
             )}
-            <h2 id="featured-title" className="text-h2 text-text">
-              <Link href={href} className="hover:underline">
-                {item.product.name}
-              </Link>
-            </h2>
-            {item.lastCheckedAt && (
-              <FreshnessLine stale={item.stale}>
-                {item.stale ? t("trackedItems.row.staleAge", { ago: ago(t, item.lastCheckedAt, now) }) : checkedAgo(t, item.lastCheckedAt, now)}
-              </FreshnessLine>
+            {left !== null && left >= 0 && item.returnDeadline && (
+              <Flag tone={left <= RETURN_URGENT_DAYS ? "warning" : "info"} icon={Clock}>
+                {left === 0
+                  ? t("home.featured.returnToday", { date: shortDay(item.returnDeadline, locale) })
+                  : t("home.featured.returnFlag", { count: left, date: shortDay(item.returnDeadline, locale) })}
+              </Flag>
             )}
-            {!footerRow && checkControls}
+            {item.stale && (
+              <Flag tone="warning" icon={Clock}>
+                {t("trackedItems.row.flags.stale")}
+              </Flag>
+            )}
           </div>
-        </div>
-        {headline && <div className="flex shrink-0 flex-col md:items-end">{headline}</div>}
-      </div>
+        )}
+        <h2 id="featured-title" className="text-h2 text-text">
+          <Link href={href} className="hover:underline">
+            {item.product.name}
+          </Link>
+        </h2>
+        {item.lastCheckedAt && (
+          <FreshnessLine stale={item.stale}>
+            {item.stale ? t("trackedItems.row.staleAge", { ago: ago(t, item.lastCheckedAt, now) }) : checkedAgo(t, item.lastCheckedAt, now)}
+          </FreshnessLine>
+        )}
+        {!footerRow && checkControls}
+      </TrackedHeader>
 
       {item.stale && item.deal && <StatusBanner tone="warning">{t("home.featured.unverified")}</StatusBanner>}
 

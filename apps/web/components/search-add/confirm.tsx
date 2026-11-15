@@ -170,7 +170,7 @@ function ratingTile(t: Translator, locale: Locale, match: Match): { label: strin
   if (match.trust.verdict === "GOOD") return { label: t("searchAdd.confirm.trust"), value: t("searchAdd.confirm.trustGood"), verdict: "good", ...(reasonText ? { note: reasonText } : {}) };
   if (match.trust.verdict === "CAUTION") return { label: t("searchAdd.confirm.trust"), value: t("searchAdd.confirm.trustCaution"), verdict: "bad", ...(reasonText ? { note: reasonText } : {}) };
   if (match.sellerRating !== null && (reason === "trust.reason.storeRatingGood" || reason === "trust.reason.storeRatingLow")) {
-    const value = t("searchAdd.confirm.ratingValue", { rating: formatNumber(match.sellerRating, locale, RATING_DIGITS) });
+    const value = t("searchAdd.confirm.ratingValue", { rating: formatNumber(match.sellerRating.value, locale, RATING_DIGITS), scale: match.sellerRating.scale });
     return { label: t("searchAdd.confirm.rating"), value, verdict: reason === "trust.reason.storeRatingGood" ? "good" : "bad" };
   }
   return { label: t("searchAdd.confirm.rating"), value: t("searchAdd.confirm.noData"), verdict: "neutral" };

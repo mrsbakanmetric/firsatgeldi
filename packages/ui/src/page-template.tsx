@@ -4,6 +4,9 @@
 //   title (+ badge, caption) · page actions · summary · toolbar · content · side column · footnote
 // Below breakpoint.md everything is one column; page actions go full width
 // after the content (canvas 0, phone shell).
+// Detail (Product Detail v2): `header` is a card that carries the page's h1 in place of the title
+// row, and the content and the side column end on the same bottom line (design §3 "columns end
+// together"): both stretch, and their last block fills the height.
 import type { ReactNode } from "react";
 import { cn } from "./cn";
 
@@ -12,6 +15,8 @@ export type PageTemplateKind = "list" | "detail" | "flow" | "summary" | "setting
 export interface PageTemplateProps {
   kind: PageTemplateKind;
   title: string;
+  /** Detail: a header card holding the page's h1 (the `title` row is then not drawn). */
+  header?: ReactNode;
   /** Next to the title, e.g. the plan badge. */
   badge?: ReactNode;
   /** One muted line under the title: freshness, counts, reset times. */
@@ -47,6 +52,7 @@ const SIDE_WIDTH_CLASSES: Record<PageTemplateKind, string> = {
 export function PageTemplate({
   kind,
   title,
+  header,
   badge,
   caption,
   actions,
@@ -60,6 +66,7 @@ export function PageTemplate({
   children,
   className,
 }: PageTemplateProps) {
+  const stretch = kind === "detail" && Boolean(side);
   const content = (
     <div className="flex min-w-0 flex-1 flex-col gap-5">
       {toolbar && <div className="flex flex-wrap items-center gap-3">{toolbar}</div>}
@@ -74,20 +81,24 @@ export function PageTemplate({
       data-template={kind}
       className={cn("mx-auto flex w-full max-w-(--size-content-max-width) flex-col gap-6 px-4 py-6 md:flex-row md:flex-wrap md:items-start md:px-6 md:py-8", className)}
     >
-      <div className="flex min-w-0 flex-col gap-1 md:flex-1">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-h1 text-text">{title}</h1>
-          {badge}
+      {header ? (
+        <div className="flex min-w-0 flex-col gap-3 md:basis-full">{header}</div>
+      ) : (
+        <div className="flex min-w-0 flex-col gap-1 md:flex-1">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-h1 text-text">{title}</h1>
+            {badge}
+          </div>
+          {caption && <p className="text-body-sm text-text-muted">{caption}</p>}
         </div>
-        {caption && <p className="text-body-sm text-text-muted">{caption}</p>}
-      </div>
+      )}
 
       {actions && <div className="order-last flex flex-col gap-3 md:order-none md:flex-row md:items-center">{actions}</div>}
 
       {summary && <div className="flex min-w-0 flex-col gap-4 md:basis-full">{summary}</div>}
 
       {/* min-w-0: the row may shrink to the container, so a wide content region never pushes the page sideways. */}
-      <div className="flex min-w-0 flex-col gap-6 md:basis-full md:flex-row md:items-start">
+      <div className={cn("flex min-w-0 flex-col gap-6 md:basis-full md:flex-row", stretch ? "md:items-stretch" : "md:items-start")}>
         {kind === "settings" && sectionMenu && <div className="md:w-(--size-section-menu-width) md:shrink-0">{sectionMenu}</div>}
         {content}
         {side && (

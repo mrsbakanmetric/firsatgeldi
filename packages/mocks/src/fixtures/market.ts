@@ -133,6 +133,7 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 2_899_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
     stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 12, priceSinceDaysAgo: 9, checkedMinutesAgo: 6,
     listingPath: "/insta360-ace-pro-2-flash-print-bundle-p-HBC00007K2P9",
+    productRating: { value: 4.5, scale: 5, count: 1_400 },
   }),
   offer("acePro2FlashPrint", "aksiyonMarket", {
     priceMinor: 2_599_700, previousPriceMinor: 2_799_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 2 },
@@ -151,6 +152,8 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 2_949_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: null, deliveryDays: null,
     stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 20, priceSinceDaysAgo: 20, checkedMinutesAgo: 35,
     listingPath: "/tr-tr/product/_insta360-ace-pro-2-flash-print-1243321.html",
+    // A 10-point store: brought to 5 only for the cross-store average (8,8 / 10 → 4,4).
+    productRating: { value: 8.8, scale: 10, count: 900 },
   }),
   offer("acePro2FlashPrint", "hizliElektronik", {
     priceMinor: 3_025_000, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 4_900, deliveryDays: { min: 4, max: 6 },
@@ -190,11 +193,13 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 815_000, previousPriceMinor: 829_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
     stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 3, priceSinceDaysAgo: 3, checkedMinutesAgo: 9,
     listingPath: "/dp/B0DAIRPODSP2",
+    productRating: { value: 4.7, scale: 5, count: 8 },
   }),
   offer("airPodsPro2", "kulaklikPazari", {
     priceMinor: 839_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },
     stockState: "LOW_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 2, priceSinceDaysAgo: 6, checkedMinutesAgo: 9,
     listingPath: "/kulaklik-pazari/apple-airpods-pro-2-p-HBC0000AP2",
+    productRating: { value: 4.7, scale: 5, count: 4 },
   }),
   // Design v4: five offers cheaper than the coat's 3.299 TL → three by rank + "+2 satıcı daha".
   ...([
