@@ -383,7 +383,8 @@ Profile menu ──► Paketim · Ayarlar (Bildirimler, Güvenlik, Arama geçmi�
 Landing search ──► Search and Add (guest) ──confirm──► Sign-in ──► back to Confirm
 Landing "Ücretsiz başla" / showcase action ──► Sign-up ──► Home (new user)
 Product page "Bu ürünü takip et" / "Bunu aldım…" ──► Sign-in ──► Search and Add, product marked, confirm panel (Almak istiyorum / Aldım)
-Product page "Göster" (guest) ──► Sign-in ──► Product page with allowance prompt
+Product page "Göster" (guest) ──► Sign-in ──► Product page ──"Göster"──► "önce takip et" ──► Search and Add (product marked)
+Untracked product anywhere (top drops, search result, Keşfet, "Senin için") ──► Product page /urun/[slug] │ already tracked ──► Product Detail [DECIDED 2026-11-15]
 Footer / "Haklarını bil" / "?" ──► Help (store picker ──► guide) · contextual panel ──► "Yardım merkezinde aç"
 Help "Bize yaz" ──► request number ──► Taleplerim ──► reply notification + email
 Keşfet "Takip et" (product) ──► Search and Add, product marked, confirm panel · "Göster" ──► reveal gate
