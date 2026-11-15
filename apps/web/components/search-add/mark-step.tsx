@@ -12,7 +12,7 @@ import { AttributeChip, Button, cn, focusRing, Icon, ProductImage, SegmentedChoi
 import { Check, ChevronDown, Package, RotateCcw } from "lucide-react";
 import { useId, useState } from "react";
 import { useApiQuery } from "../../lib/api/hooks";
-import { imageUrl } from "./search-box";
+import { imageUrl } from "../catalogue-search/catalogue-search-box";
 
 export type Candidate = IdentifyResult["candidates"][number];
 

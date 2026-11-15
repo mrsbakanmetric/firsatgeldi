@@ -2,7 +2,7 @@
 // list with filters/sort/search/category and their counts, the four summary
 // figures, and the bulk "Görünenleri kontrol et". Cheaper sellers appear only as
 // counts and amounts; the route's output schema strips anything else.
-import { COMPACT_HISTORY_DAYS, type PriceConclusion, type TrackedItemFilter, type TrackedItemListItem, type TrackedItemSort } from "@firsatgeldi/contracts";
+import { COMPACT_HISTORY_DAYS, type PriceConclusion, type TrackedItemFilter, type TrackedItemListItem, type TrackedItemSort, type TrackedItemsSummary } from "@firsatgeldi/contracts";
 import { addCalendarDays, daysBetween, RETURN_URGENT_DAYS, toCalendarDay } from "@firsatgeldi/core";
 import { PRODUCTS } from "../fixtures/catalog";
 import { type OfferFixture, offersFor, PLATFORMS, SELLERS } from "../fixtures/market";
@@ -10,7 +10,7 @@ import { pick } from "../fixtures/text";
 import { seedByKey, stockCodeToState } from "../fixtures/tracking";
 import { MockApiError, route } from "../route";
 import { MOCK_SETTINGS, SYSTEM_SETTINGS } from "../settings";
-import type { MockController, TrackedItemRow } from "../state";
+import type { Actor, MockController, TrackedItemRow } from "../state";
 import { money, totalMinor } from "../views";
 import { newId } from "../ids";
 import { activeTrackingCount, checksUsedToday, emit, entitlements, fold, requireUser, tokens } from "./shared";
@@ -20,7 +20,7 @@ const MS_PER_MINUTE = 60_000;
 const MS_PER_HOUR = 3_600_000;
 const KURUS = 100;
 
-interface ViewContext {
+export interface ViewContext {
   readonly now: Date;
   readonly locale: "tr" | "en";
   /** "stale" scenario: rows marked `staleInScenario` were last checked long ago. */
@@ -51,7 +51,7 @@ function lastCheckedAt(controller: MockController, item: TrackedItemRow, context
 }
 
 /** In-stock offers, cheapest total first. */
-function availableOffers(item: TrackedItemRow) {
+export function availableOffers(item: TrackedItemRow) {
   return offersFor(item.productKey)
     .filter((offer) => offer.stockState !== "OUT_OF_STOCK")
     .sort((a, b) => totalMinor(a) - totalMinor(b));
@@ -98,7 +98,7 @@ function conclusionOf(item: TrackedItemRow, now: Date, cheapest: number | null):
   return { kind: "LOWEST_IN_DAYS", days: seed.conclusion.days, price: money(cheapest) };
 }
 
-function view(controller: MockController, item: TrackedItemRow, context: ViewContext): TrackedItemListItem {
+export function view(controller: MockController, item: TrackedItemRow, context: ViewContext): TrackedItemListItem {
   const product = PRODUCTS[item.productKey];
   const active = item.state === "ACTIVE";
   const offers = availableOffers(item);
@@ -157,7 +157,7 @@ function matchesQuery(item: TrackedItemListItem, query: string | undefined): boo
   return words.every((word) => haystack.includes(word));
 }
 
-function daysLeft(item: TrackedItemListItem, today: string): number | null {
+export function daysLeft(item: TrackedItemListItem, today: string): number | null {
   return item.returnDeadline ? daysBetween(today, item.returnDeadline) : null;
 }
 
@@ -165,7 +165,7 @@ function daysLeft(item: TrackedItemListItem, today: string): number | null {
  * Priority = Home priority order (modules.md Home › Hemen Gözat): (1) open deal, nearest
  * return deadline first · (2) return ≤ 3 days · (3) target price reached · (4) most recent change.
  */
-function priorityKey(item: TrackedItemListItem, today: string): [number, number, number] {
+export function priorityKey(item: TrackedItemListItem, today: string): [number, number, number] {
   const left = daysLeft(item, today) ?? Number.POSITIVE_INFINITY;
   const changed = item.conclusion?.kind === "DROPPED" ? Date.parse(item.conclusion.at) : Date.parse(item.lastCheckedAt ?? "1970-01-01T00:00:00Z");
   if (item.deal && item.mode === "BOUGHT") return [0, left, -changed];
@@ -174,7 +174,7 @@ function priorityKey(item: TrackedItemListItem, today: string): [number, number,
   return [3, 0, -changed];
 }
 
-function compare(sort: TrackedItemSort, today: string) {
+export function compare(sort: TrackedItemSort, today: string) {
   return (a: TrackedItemListItem, b: TrackedItemListItem): number => {
     if (sort === "deadline") return (daysLeft(a, today) ?? Number.POSITIVE_INFINITY) - (daysLeft(b, today) ?? Number.POSITIVE_INFINITY);
     if (sort === "saving") return (b.deal?.maxSaving.amount ?? -1) - (a.deal?.maxSaving.amount ?? -1);
@@ -183,8 +183,50 @@ function compare(sort: TrackedItemSort, today: string) {
   };
 }
 
-function userItems(controller: MockController, userId: string, context: ViewContext): TrackedItemListItem[] {
+export function userItems(controller: MockController, userId: string, context: ViewContext): TrackedItemListItem[] {
   return controller.state.trackedItems.filter((item) => item.userId === userId).map((item) => view(controller, item, context));
+}
+
+/** The four figures of Tracked Items (also Home's summary line) from the active items. */
+export function summaryOf(items: readonly TrackedItemListItem[], now: Date): TrackedItemsSummary {
+  const today = toCalendarDay(now);
+  const deals = items.filter((item) => item.deal);
+  const soon = items
+    .map((item) => item.returnDeadline)
+    .filter((day): day is string => day !== null && daysBetween(today, day) >= 0 && daysBetween(today, day) <= RETURN_URGENT_DAYS)
+    .sort();
+  const checks = items.map((item) => item.lastCheckedAt).filter((at): at is string => at !== null).sort();
+  const savingTotal = deals.reduce((sum, item) => sum + (item.deal?.maxSaving.amount ?? 0), 0);
+  return {
+    tracking: { count: items.length, bought: items.filter((item) => item.mode === "BOUGHT").length, want: items.filter((item) => item.mode === "WANT").length },
+    deals: { count: deals.length, maxSavingTotal: deals.length ? money(savingTotal) : null },
+    returnsSoon: { count: soon.length, nearest: soon[0] ?? null },
+    lastCheckedAt: checks.at(-1) ?? null,
+  };
+}
+
+/**
+ * One Check Now on one item (modules.md Check Now): checked within `check_now.cache_minutes`
+ * → CACHED, no allowance used; otherwise one allowance, and `check.finished` when done.
+ * Both write a `check_now_usage` row; nothing left → LIMIT_REACHED.
+ */
+export function checkOne(controller: MockController, actor: Actor, userId: string, row: TrackedItemRow, item: TrackedItemListItem, now: Date): { status: "CHECKING" | "CACHED"; remaining: number | null } {
+  const { state } = controller;
+  const limit = entitlements(controller, actor).checkNow.limit;
+  const remaining = limit === null ? null : Math.max(0, limit - checksUsedToday(controller, userId));
+  const fresh = item.lastCheckedAt !== null && now.getTime() - Date.parse(item.lastCheckedAt) < SYSTEM_SETTINGS["check_now.cache_minutes"] * MS_PER_MINUTE;
+  if (fresh) {
+    state.checkNowUsage.push({ userId, trackedItemId: row.id, consumed: false, createdAt: now.toISOString() });
+    return { status: "CACHED", remaining };
+  }
+  if (remaining === 0) throw new MockApiError("LIMIT_REACHED", { params: { limit: limit ?? 0 } });
+  state.checkNowUsage.push({ userId, trackedItemId: row.id, consumed: true, createdAt: now.toISOString() });
+  controller.schedule(() => {
+    const checkedAt = controller.now().toISOString();
+    state.lastChecks.set(row.id, checkedAt);
+    emit(controller, actor, { type: "check.finished", data: { trackedItemId: row.id, checkedAt } });
+  }, MOCK_SETTINGS.checkMs);
+  return { status: "CHECKING", remaining: remaining === null ? null : remaining - 1 };
 }
 
 const FILTERS: readonly TrackedItemFilter[] = ["all", "bought", "want", "deal", "ended"];
@@ -224,23 +266,7 @@ export function trackedItemHandlers(controller: MockController) {
     route(controller, "getTrackedItemsSummary", ({ actor, now, locale, empty, sourcesMissing }) => {
       const { userId } = requireUser(actor);
       const items = (empty ? [] : userItems(controller, userId, { now, locale, sourcesMissing })).filter((item) => item.state === "ACTIVE");
-      const today = toCalendarDay(now);
-      const deals = items.filter((item) => item.deal);
-      const soon = items
-        .map((item) => item.returnDeadline)
-        .filter((day): day is string => day !== null && daysBetween(today, day) >= 0 && daysBetween(today, day) <= RETURN_URGENT_DAYS)
-        .sort();
-      const checks = items.map((item) => item.lastCheckedAt).filter((at): at is string => at !== null).sort();
-      const savingTotal = deals.reduce((sum, item) => sum + (item.deal?.maxSaving.amount ?? 0), 0);
-      return {
-        data: {
-          tracking: { count: items.length, bought: items.filter((item) => item.mode === "BOUGHT").length, want: items.filter((item) => item.mode === "WANT").length },
-          deals: { count: deals.length, maxSavingTotal: deals.length ? money(savingTotal) : null },
-          returnsSoon: { count: soon.length, nearest: soon[0] ?? null },
-          lastCheckedAt: checks.at(-1) ?? null,
-        },
-        meta: { entitlements: entitlements(controller, actor) },
-      };
+      return { data: summaryOf(items, now), meta: { entitlements: entitlements(controller, actor) } };
     }),
 
     route(controller, "endTracking", ({ params, body, actor, now, note }) => {
@@ -313,6 +339,16 @@ export function trackedItemHandlers(controller: MockController) {
       state.trackedItemEvents.push({ id: newId(), trackedItemId: row.id, type: "RESTORED", actor: "USER", createdAt: now.toISOString(), data: {} });
       note({ targetType: "tracked_item", targetId: row.id, metadata: { mode: row.mode } });
       return { data: { id: row.id, state: "ACTIVE" } };
+    }),
+
+    route(controller, "checkNow", ({ params, actor, now, locale, note }) => {
+      const { userId } = requireUser(actor);
+      const row = state.trackedItems.find((item) => item.id === params.id && item.userId === userId);
+      // Another user's item does not exist for this user (RLS); ended items are not checked.
+      if (!row || row.state !== "ACTIVE") throw new MockApiError("NOT_FOUND");
+      const result = checkOne(controller, actor, userId, row, view(controller, row, { now, locale, sourcesMissing: false }), now);
+      note({ targetType: "tracked_item", targetId: row.id, metadata: { cached: result.status === "CACHED" } });
+      return { data: result };
     }),
 
     route(controller, "checkNowBulk", ({ body, actor, now, locale, note }) => {

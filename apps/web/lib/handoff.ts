@@ -20,6 +20,8 @@ export const HANDOFF_PARAMS = {
 export type HandoffMode = "BOUGHT" | "WANT";
 const MODE_VALUES: Record<HandoffMode, string> = { BOUGHT: "aldim", WANT: "istiyorum" };
 const BACK_TO_TRACKING = "takip";
+/** Search and Add reads `q` on arrival (the same parameter as its own search). */
+const SEARCH_QUERY = "q";
 
 export interface Handoff {
   readonly productId: string | null;
@@ -31,8 +33,10 @@ export interface Handoff {
 }
 
 /** Search and Add, optionally with a product marked (confirm panel open) and a mode. */
-export function searchAddHref(locale: Locale, options: { productId?: string; mode?: HandoffMode; backToTracking?: boolean; convertId?: string } = {}): string {
+export function searchAddHref(locale: Locale, options: { productId?: string; mode?: HandoffMode; backToTracking?: boolean; convertId?: string; query?: string } = {}): string {
   const params = new URLSearchParams();
+  // Typed text or a recent search: Search and Add searches it on arrival.
+  if (options.query) params.set(SEARCH_QUERY, options.query.trim());
   if (options.productId) params.set(HANDOFF_PARAMS.product, options.productId);
   if (options.convertId) params.set(HANDOFF_PARAMS.convert, options.convertId);
   if (options.mode) params.set(HANDOFF_PARAMS.mode, MODE_VALUES[options.mode]);

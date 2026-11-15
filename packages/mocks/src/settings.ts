@@ -24,6 +24,13 @@ export const SYSTEM_SETTINGS = {
   "seller_lookup.rate_limit_per_minute": 10,
   "listing.seller_rating_good_min": 4.0,
   "tokens.welcome_gift": 3,
+  /** Home (database.md §18 [DECIDED 2026-11-15]; values [ASSUMPTION]). */
+  "home.tracked_cards": 4,
+  "home.top_drops.count": 3,
+  "home.top_drops.window_days": 30,
+  "home.top_drops.min_drop_pct": 10,
+  "home.top_drops.min_history_days": 14,
+  "home.top_drops.refresh_minutes": 60,
 } as const;
 
 /** Plan limits (database.md §9 `plans`); reveals are unlimited while the first-release gate is FREE_TOGGLE. */

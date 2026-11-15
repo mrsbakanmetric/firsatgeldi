@@ -7,6 +7,7 @@ import { ActivityAction } from "./activity";
 import { EntitlementSummary } from "./envelope";
 import { Cursor, Id, ImageSha256, ImageVariant } from "./common";
 import { IdentifyAnswer, IdentifyRequest, IdentifyResult } from "./identify";
+import { HomeView } from "./home";
 import { GoResult, HideResult, OfferRef, RevealResult } from "./offers";
 import type { PermissionKey } from "./permissions";
 import { AutocompleteQuery, AutocompleteResult, ProductView, SimilarProducts } from "./products";
@@ -14,6 +15,7 @@ import { Me, SearchHistory } from "./session";
 import {
   CheckNowBulkRequest,
   CheckNowBulkResult,
+  CheckNowResult,
   ConfirmContext,
   CreateTrackedItemRequest,
   EndTrackingRequest,
@@ -161,6 +163,11 @@ export const ENDPOINTS = {
     method: "GET", path: "/tracked-items/summary", ...NONE, response: TrackedItemsSummary, ...READ,
     permission: "tracking.own.view", public: false,
   }),
+  checkNow: endpoint({
+    // Idempotent [ASSUMPTION]: a repeated tap never spends the daily allowance twice.
+    method: "POST", path: "/tracked-items/:id/check-now", params: IdParams, query: null, body: null,
+    response: CheckNowResult, ...READ, idempotent: true, activity: "check_now", permission: "checknow.own.use", public: false,
+  }),
   checkNowBulk: endpoint({
     // Idempotent [ASSUMPTION]: a repeated tap never spends the daily allowance twice.
     method: "POST", path: "/tracked-items/check-now-bulk", params: null, query: null, body: CheckNowBulkRequest,
@@ -178,6 +185,11 @@ export const ENDPOINTS = {
     // [ASSUMPTION — endpoint] "Geri al" within 7 days of ending (Tracked Items v3).
     method: "POST", path: "/tracked-items/:id/restore", params: IdParams, query: null, body: null,
     response: RestoreTrackingResult, ...READ, idempotent: true, activity: "tracking.restore", permission: "tracking.own.write", public: false,
+  }),
+
+  // HOME (modules.md Home; architecture.md §16.1 HomeView). Hemen Gözat carries hidden offers.
+  getHome: endpoint({
+    method: "GET", path: "/home", ...NONE, response: HomeView, ...READ, returnsOffers: true, permission: "home.own.view", public: false,
   }),
 
   // REVEAL AND OFFERS

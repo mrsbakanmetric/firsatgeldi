@@ -1,16 +1,17 @@
 "use client";
 
-// Input step search box + autocomplete (design "1 Ara ve Ekle", AutoComplete
-// A–D, compact UI v3; modules.md Search and Add "Autocomplete"): the box is
-// 48 px with an icon-only photo button, × only while there is text and a
-// compact "Ara". While typing, an overlay opens under the box (it never pushes
-// the page) with every match in a scrollable list and a compact preview of the
-// active one; the first matches also appear as image tiles, only from 4 matches
-// on. ↑/↓ move, Enter chooses; Esc, a click outside, the camera and "Ara"
-// close it (design v4). The first suggestion that starts with the typed text
-// completes it inline in muted colour; Tab or → accepts (design v4). Our own
-// catalogue only — no prices, no stores. A pasted store link is detected;
-// nothing found → "mağazalarda ara".
+// CatalogueSearchBox (pagedesign.md §5 [DECIDED 2026-11-15]): the one catalogue search,
+// used by Search and Add and Home (and every later catalogue search). Built from the
+// approved Search and Add design ("1 Ara ve Ekle", AutoComplete A–D, compact UI v3–v4):
+// the box is 48 px with an icon-only photo button, × only while there is text and a
+// compact "Ara". While typing, an overlay opens under the box (it never pushes the page)
+// with every match in a scrollable list and a compact preview of the active one; the
+// first matches also appear as image tiles, only from 4 matches on. ↑/↓ move, Enter
+// chooses; Esc, a click outside, the camera and "Ara" close it. The first suggestion
+// that starts with the typed text completes it inline in muted colour; Tab or → accepts.
+// Our own catalogue only — no prices, no stores. A pasted store link is detected;
+// nothing found → "mağazalarda ara". Pages choose only what a pick, a submit, a link and
+// a photo do (Search and Add: mark in place; Home: hand over to Search and Add).
 import { type ApiError, type IdentifyResult, imagePath, type ProductSummary } from "@firsatgeldi/contracts";
 import type { Translator } from "@firsatgeldi/i18n";
 import { Button, chipClasses, cn, focusRing, Icon, ProductImage, SearchBox, SkeletonBlock } from "@firsatgeldi/ui";

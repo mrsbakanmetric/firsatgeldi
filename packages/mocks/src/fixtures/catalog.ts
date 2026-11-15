@@ -34,6 +34,10 @@ export const CATEGORIES = {
   phoneAccessory: category("phone-accessory", text("Telefon aksesuarı", "Phone accessory")),
   // Not a launch category yet (design case H "Bu kategori henüz desteklenmiyor").
   perfume: category("perfume", text("Parfüm", "Perfume"), { supported: false }),
+  // Home "Şu an en çok düşenler" general list (design "3 Ana Sayfa" v2, States 1).
+  smartwatch: category("smartwatch", text("Akıllı saat", "Smartwatch")),
+  airFryer: category("air-fryer", text("Fritöz", "Air fryer")),
+  eReader: category("e-reader", text("E-okuyucu", "E-reader")),
 } as const;
 
 /** Attribute labels (category template translations, architecture.md §19). */
@@ -219,6 +223,23 @@ export const PRODUCTS = {
   sauvage: product("dior-sauvage-edp-100", {
     name: text("Dior Sauvage Eau de Parfum 100 ml", "Dior Sauvage Eau de Parfum 100 ml"), category: CATEGORIES.perfume, brand: "Dior",
     model: "Sauvage EDP", family: "dior-sauvage", bundle: text("100 ml", "100 ml"), colors: [], storeCount: 9,
+  }),
+  // Home "Şu an en çok düşenler" (design "3 Ana Sayfa" v2): products nobody in the fixtures tracks.
+  speedProMax: product("philips-speedpro-max-aqua", {
+    name: text("Philips SpeedPro Max Aqua", "Philips SpeedPro Max Aqua"), category: CATEGORIES.stickVacuum, brand: "Philips", model: "SpeedPro Max Aqua",
+    family: "philips-speedpro-max", colors: [text("Mavi", "Blue")], storeCount: 7,
+  }),
+  galaxyWatch7: product("samsung-galaxy-watch7-44", {
+    name: text("Samsung Galaxy Watch7 · 44 mm", "Samsung Galaxy Watch7 · 44 mm"), category: CATEGORIES.smartwatch, brand: "Samsung", model: "Galaxy Watch7",
+    family: "samsung-galaxy-watch7", generation: gen(7), bundle: text("44 mm", "44 mm"), colors: [text("Yeşil", "Green")], storeCount: 9,
+  }),
+  airfryerXxl: product("philips-airfryer-xxl-hd9870", {
+    name: text("Philips Airfryer XXL HD9870", "Philips Airfryer XXL HD9870"), category: CATEGORIES.airFryer, brand: "Philips", model: "HD9870",
+    family: "philips-airfryer-xxl", colors: [black], storeCount: 11,
+  }),
+  kindlePaperwhite: product("kindle-paperwhite-16", {
+    name: text("Kindle Paperwhite 16 GB", "Kindle Paperwhite 16 GB"), category: CATEGORIES.eReader, brand: "Amazon", model: "Kindle Paperwhite",
+    family: "kindle-paperwhite", bundle: text("16 GB", "16 GB"), colors: [black], storeCount: 6,
   }),
 } as const satisfies Record<string, ProductFixture>;
 

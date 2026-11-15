@@ -2,7 +2,7 @@
 // CLAUDE.md product rule 3): before "Göster" no response body, error message,
 // image URL or live-update event carries a cheaper seller's identity — seller
 // name, seller or offer id, external id, platform name/code/domain or listing URL.
-import { ApiError, ENDPOINTS, type EndpointName, HiddenOfferView, imagePath } from "@firsatgeldi/contracts";
+import { ApiError, ENDPOINTS, type EndpointName, HiddenOfferView, type HomeView, imagePath, TOP_DROP_ITEM_KEYS } from "@firsatgeldi/contracts";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PRODUCTS } from "./fixtures/catalog";
 import { listingUrl, OFFERS, PLATFORMS, SELLERS, type SellerKey } from "./fixtures/market";
@@ -74,6 +74,10 @@ function leaks(scan: readonly Capture[]): string[] {
 }
 
 let teaserRefs: string[] = [];
+const homes: HomeView[] = [];
+/** Every seller and platform we know: none may appear in "Şu an en çok düşenler", whatever the product. */
+const allSellerSecrets = Object.values(SELLERS).flatMap((seller) => [seller.name, seller.id, seller.externalId]);
+const allPlatformSecrets = Object.values(PLATFORMS).flatMap((platform) => [platform.name, platform.code, platform.domain, platform.id]);
 let ownRef = "";
 
 beforeAll(async () => {
@@ -132,6 +136,17 @@ beforeAll(async () => {
     await capture("getTrackedItemsSummary", () => api.call("getTrackedItemsSummary", {}));
   }
   const listed = (await api.call("listTrackedItems", {})).data.items.map((item) => item.id);
+  // Home: Hemen Gözat lists hidden offers by rank; "Şu an en çok düşenler" is seller-less in every scenario.
+  for (const locale of ["tr", "en"] as const) {
+    t.useLocale(locale);
+    for (const scenario of ["success", "stale", "empty", "no-deal", "drops-general"] as const) {
+      controller.config = { ...controller.config, scenario };
+      const home = (await capture("getHome", () => api.call("getHome", {}))) as { data: HomeView } | undefined;
+      if (home) homes.push(home.data);
+    }
+  }
+  controller.config = { ...controller.config, scenario: "success" };
+  await capture("checkNow", () => api.call("checkNow", { params: { id: listed[0] ?? "" } }));
   await capture("checkNowBulk", () => api.call("checkNowBulk", { body: { trackedItemIds: listed } }));
   // Hide and go before a reveal: the answers (and errors) must not name the seller.
   await capture("hideOffer", () => api.call("hideOffer", { params: { ref: teaserRefs[1] ?? "" } }));
@@ -163,6 +178,20 @@ describe("hidden-seller rule — before Göster", () => {
 
   it("no response body or error message carries a hidden identity", () => {
     expect(leaks(captures)).toEqual([]);
+  });
+
+  it("Home: Hemen Gözat offers by rank only; \"Şu an en çok düşenler\" names no seller, platform, link or ref", () => {
+    expect(homes.length).toBe(10);
+    const featured = homes.find((home) => home.featured?.offers.length)?.featured;
+    expect(featured?.offers.map((offer) => offer.rank)).toEqual([1, 2]);
+    const drops = homes.map((home) => home.topDrops).filter((entry) => entry !== null);
+    expect(drops.length).toBe(10);
+    for (const entry of drops) {
+      const text = JSON.stringify(entry);
+      for (const secret of [...allSellerSecrets, ...allPlatformSecrets]) expect(text).not.toContain(secret);
+      expect(text).not.toMatch(/https?:\/\/|"ref"|"offerId"|"sellerName"|"platformName"|"listingUrl"/);
+      for (const item of entry.items) expect(Object.keys(item)).toEqual(TOP_DROP_ITEM_KEYS);
+    }
   });
 
   it("image URLs carry only a content address and a variant", () => {

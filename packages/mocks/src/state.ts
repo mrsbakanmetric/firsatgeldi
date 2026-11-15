@@ -11,7 +11,12 @@ import { MOCK_SETTINGS } from "./settings";
 
 export const MOCK_SESSIONS = ["guest", "user", "secondUser", "manager"] as const;
 export type MockSession = (typeof MOCK_SESSIONS)[number];
-export const MOCK_SCENARIOS = ["success", "loading", "empty", "error", "stale"] as const;
+/**
+ * Home only: no-deal = no item has a deal (Hemen Gözat shows the nearest return) ·
+ * drops-general = nothing dropped in the user's categories (general list + note) ·
+ * drops-none = nothing qualifies (the section is hidden).
+ */
+export const MOCK_SCENARIOS = ["success", "loading", "empty", "error", "stale", "no-deal", "drops-general", "drops-none"] as const;
 export type MockScenario = (typeof MOCK_SCENARIOS)[number];
 /**
  * What the mock "recognises" in an uploaded photo (no image recognition in Phase 1):
