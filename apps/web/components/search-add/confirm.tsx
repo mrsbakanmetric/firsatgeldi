@@ -49,7 +49,7 @@ import { useApiMutation, useApiQuery } from "../../lib/api/hooks";
 import { errorMessage } from "../../lib/api/errors";
 import { checkedAgo, formatDay, money, parsePrice, priceInput } from "./format";
 import type { Candidate } from "./mark-step";
-import { imageUrl } from "./search-box";
+import { imageUrl } from "../catalogue-search/catalogue-search-box";
 import { Teaser } from "./teaser";
 
 /** Pause after the last price keystroke before the teaser is asked. */

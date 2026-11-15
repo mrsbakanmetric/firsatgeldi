@@ -470,13 +470,6 @@ export const en = {
       deals: { one: "{count} deal", other: "{count} deals" },
       checked: "all checked {ago}",
     },
-    search: {
-      label: "Search or add a product",
-      placeholder: "Product name, store link or photo",
-      recent: "Your recent searches",
-      results: "Matching products",
-      noResults: "No matching product in the catalogue · press Search and we'll look in the stores",
-    },
     steps: {
       label: "How it works",
       add: { title: "Add", text: "Type its name, paste the link or take a photo." },

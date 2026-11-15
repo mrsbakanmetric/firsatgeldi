@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // Home on the mock API (design "3 Ana Sayfa" v2; implementation_plan.md steps 10–21 definition
 // of done): every text from the catalogue in tr and en; greeting + summary line; the search box
-// with recent searches and inline tiles; Hemen Gözat (chart, ranked prices with "Göster", the
+// (the shared CatalogueSearchBox, tested with Search and Add in catalogue-search/); Hemen Gözat (chart, ranked prices with "Göster", the
 // page's one coral "Fırsatı gör", "Şimdi kontrol et"); the return reminder; four small cards
 // with the emphasised second urgent item and one outcome width; "Şu an en çok düşenler" on
 // shared rows; the states (new user, general list, hidden section, stale, error, loading, guest);
@@ -158,20 +158,6 @@ describe.each(LOCALES)("Home — %s", (locale) => {
     expect(await within(featured).findByText(t("home.featured.checkCached"))).toBeDefined();
     expect(controller.state.checkNowUsage.at(-1)).toMatchObject({ consumed: false });
     expect(controller.state.activity.at(-1)).toMatchObject({ action: "check_now", outcome: "OK" });
-  });
-
-  it("search box: recent searches as chips; typing shows tiles that hand over with the product marked; Enter hands the text over", async () => {
-    show(locale);
-    await screen.findByRole("region", { name: name("acePro2FlashPrint") });
-    const box = screen.getByRole("textbox", { name: t("home.search.label") });
-    await userEvent.type(box, "insta360 ace pro 2");
-    const results = await screen.findByRole("region", { name: t("home.search.results") });
-    const tiles = await within(results).findAllByRole("link");
-    expect(tiles.length).toBeGreaterThan(0);
-    expect(tiles.length).toBeLessThanOrEqual(3);
-    expect(tiles[0]?.getAttribute("href")).toMatch(new RegExp(`^${searchPath(locale)}\\?urun=[0-9a-f-]{36}$`));
-    await userEvent.type(box, "{Enter}");
-    expect(push).toHaveBeenCalledWith(`${searchPath(locale)}?q=insta360+ace+pro+2`);
   });
 
   it("new user: welcome, the search box, three steps and the general top drops", async () => {

@@ -15,7 +15,7 @@ import { Check, Package } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ago, checkedAgo, money } from "../search-add/format";
-import { imageUrl } from "../search-add/search-box";
+import { imageUrl } from "../catalogue-search/catalogue-search-box";
 import { StatusIcon, tl } from "../tracked-items/parts";
 
 function line(t: Translator, locale: Locale, item: HomeCard, today: string): string {

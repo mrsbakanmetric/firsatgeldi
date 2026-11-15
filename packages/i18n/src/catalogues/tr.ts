@@ -473,13 +473,6 @@ export const tr = {
       deals: { one: "{count} fırsat", other: "{count} fırsat" },
       checked: "tümü {ago} kontrol edildi",
     },
-    search: {
-      label: "Ürün ara veya ekle",
-      placeholder: "Ürün adı, mağaza linki veya fotoğraf",
-      recent: "Son aramaların",
-      results: "Eşleşen ürünler",
-      noResults: "Katalogda eşleşen ürün yok · Ara’ya basınca mağazalarda ararız",
-    },
     steps: {
       label: "Nasıl çalışır",
       add: { title: "Ekle", text: "Adını yaz, linki yapıştır veya fotoğrafını çek." },

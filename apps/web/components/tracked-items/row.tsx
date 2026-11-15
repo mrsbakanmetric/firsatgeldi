@@ -19,7 +19,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { searchAddHref } from "../../lib/handoff";
 import { ago, checkedAgo, money } from "../search-add/format";
-import { imageUrl } from "../search-add/search-box";
+import { imageUrl } from "../catalogue-search/catalogue-search-box";
 import { shortDay } from "./format";
 import { Price, StatusIcon, StockWord, tl } from "./parts";
 

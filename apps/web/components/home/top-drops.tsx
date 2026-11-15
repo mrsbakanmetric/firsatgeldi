@@ -16,7 +16,7 @@ import { ArrowDown, Info, Lock, Package } from "lucide-react";
 import Link from "next/link";
 import { searchAddHref } from "../../lib/handoff";
 import { checkedAgo, money } from "../search-add/format";
-import { imageUrl } from "../search-add/search-box";
+import { imageUrl } from "../catalogue-search/catalogue-search-box";
 
 export function TopDropsSection({ t, locale, drops, now }: { t: Translator; locale: Locale; drops: TopDrops; now: number }) {
   const latest = drops.items.map((item) => item.checkedAt).sort().at(-1);

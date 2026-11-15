@@ -17,7 +17,7 @@ import { type ReactNode, useState } from "react";
 import { errorMessage } from "../../lib/api/errors";
 import { useApiMutation } from "../../lib/api/hooks";
 import { ago, checkedAgo, money } from "../search-add/format";
-import { imageUrl } from "../search-add/search-box";
+import { imageUrl } from "../catalogue-search/catalogue-search-box";
 import { shortDay } from "../tracked-items/format";
 import { Price, StatusIcon, StockWord, tl } from "../tracked-items/parts";
 

@@ -28,7 +28,7 @@ import { formatDay, money, useNow } from "./format";
 import { type AttributeChange, BulkList, type BulkState, type Candidate, Candidates, Understood } from "./mark-step";
 import { PhotoArea, PhotoWatchers } from "./photos";
 import { isLink, PhotoInput, takeHandedFiles } from "../input-source/input-source";
-import { CatalogueSearchBox, imageUrl } from "./search-box";
+import { CatalogueSearchBox, imageUrl } from "../catalogue-search/catalogue-search-box";
 import { usePhotos } from "./use-photos";
 
 type IdentifyBody = { text?: string; uploadIds?: string[]; link?: string };
