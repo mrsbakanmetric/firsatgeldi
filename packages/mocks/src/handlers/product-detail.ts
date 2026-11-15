@@ -19,7 +19,7 @@ import {
 import { addCalendarDays, buyOrWaitHint, crossStoreRating, daysBetween, formatDate, formatMoney, historyTiles, localeFromAcceptLanguage, returnDeadline, toCalendarDay } from "@firsatgeldi/core";
 import { http, HttpResponse } from "msw";
 import { PRODUCTS } from "../fixtures/catalog";
-import { CALENDAR_TEXT, EARLIER_HISTORY, fill, PRICE_DIFFERENCE_TEXT, RATINGS_READ_MINUTES_AGO } from "../fixtures/detail";
+import { CALENDAR_TEXT, EARLIER_HISTORY, fill, FREQUENT_RETURNS, PRICE_DIFFERENCE_TEXT, RATINGS_READ_MINUTES_AGO } from "../fixtures/detail";
 import { type OfferFixture, offersFor, PLATFORMS, productKeyOf, SELLERS } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { seedByKey, stockCodeToState } from "../fixtures/tracking";
@@ -147,6 +147,7 @@ function detailOf(controller: MockController, row: TrackedItemRow, context: View
     request: request ? { kind: request.kind, since: request.since, outcome: request.outcome } : null,
     targetHints: row.mode === "WANT" ? { lowest30Days: lowest30 === null ? null : money(lowest30), lowest6Months: lowest180 === null ? null : money(lowest180) } : null,
     feedback: feedback ? { priceDifferenceGiven: feedback.priceDifferenceGiven, returnSmooth: feedback.returnSmooth } : null,
+    frequentReturns: active && row.mode === "BOUGHT" && row.seedKey ? (FREQUENT_RETURNS[row.seedKey] ?? null) : null,
   };
 }
 

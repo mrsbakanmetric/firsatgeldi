@@ -1,11 +1,13 @@
 // @vitest-environment jsdom
-// Product Detail, bought mode, on the mock API (design "2 Ürün Detayı v2"; implementation_plan.md
-// step 11, PR 2): every text from the catalogue in tr and en; the header card with visible actions
+// Product Detail on the mock API (design "2 Ürün Detayı v2" Main, Want, End and the flows/states
+// boards; implementation_plan.md step 11): every text from the catalogue in tr and en; the header card with visible actions
 // (no ⋯) and the page's one coral element; the shared price chart with ranges, the dimmed part before
 // tracking, four tiles and the buy-or-wait hint; steps with "Yaptım ✓" and request tracking; the
 // price-difference message; offers by rank until Göster, store ratings on the store's scale after it;
 // the own seller row; stock history; reports; ending and "Geri al"; the five states; the hidden-seller
-// rule on the rendered page; axe.
+// rule on the rendered page; axe. Want to buy: target, suggestions, duration, "Aldım, kaydet". The
+// full "Takibi bitir" (prefill, live saving, buyer questions) and the flows A–H.
+import { toCalendarDay } from "@firsatgeldi/core";
 import { createTranslator, LOCALES, type Locale } from "@firsatgeldi/i18n";
 import { OFFERS, PRODUCTS, SELLERS, seedTrackedItems } from "@firsatgeldi/mocks";
 import { createMockServer } from "@firsatgeldi/mocks/node";
@@ -25,6 +27,7 @@ vi.mock("next/navigation", () => ({ usePathname: () => "/tr/takip/x", useRouter:
 const { server, controller } = createMockServer({ schedule: (task) => task(), seedTracking: true });
 const { Providers } = await import("../providers");
 const { ProductDetail } = await import("./product-detail");
+const { shortDay } = await import("../tracked-items/format");
 
 const writeText = vi.fn<(text: string) => Promise<void>>(() => Promise.resolve());
 Object.defineProperty(globalThis.navigator, "clipboard", { value: { writeText }, configurable: true });
@@ -35,6 +38,10 @@ function reseed() {
   controller.state.lastChecks.clear();
   controller.state.steps.clear();
   controller.state.requests.clear();
+  controller.state.feedback.clear();
+  controller.state.reveals.length = 0;
+  controller.state.stockAlerts.length = 0;
+  controller.state.priceRechecked.clear();
   seedTrackedItems(controller.state, new Date());
 }
 
@@ -199,10 +206,12 @@ describe.each(LOCALES)("Product Detail (bought) — %s", (locale) => {
     const dialog = screen.getByRole("dialog", { name: t("trackedItems.v3.endTitle") });
     await userEvent.click(within(dialog).getByRole("button", { name: t("trackedItems.v3.endOptions.NONE") }));
     await userEvent.click(within(dialog).getByRole("button", { name: t("trackedItems.v3.end") }));
-    await screen.findByText(t("productDetail.end.ended"));
+    const ended = t("productDetail.ended.USER", { date: shortDay(toCalendarDay(new Date()), locale) });
+    await screen.findByText(ended);
     expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.end", outcome: "OK" });
+    expect(screen.queryByRole("region", { name: t("productDetail.steps.title") })).toBeNull();
     await userEvent.click(screen.getByRole("button", { name: t("trackedItems.v3.restore") }));
-    await waitFor(() => expect(screen.queryByText(t("productDetail.end.ended"))).toBeNull());
+    await waitFor(() => expect(screen.queryByText(ended)).toBeNull());
     expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.restore", outcome: "OK" });
   });
 
@@ -233,7 +242,7 @@ describe.each(LOCALES)("Product Detail (bought) — %s", (locale) => {
     await screen.findByText(t("productDetail.states.notFoundTitle"));
   });
 
-  it("loading: a skeleton with a label; a guest is asked to sign in; want-to-buy waits for PR 3", async () => {
+  it("loading: a skeleton with a label; a guest is asked to sign in", async () => {
     controller.config = { ...controller.config, scenario: "loading" };
     show(locale, idOf("acePro2FlashPrint"));
     expect(await screen.findByRole("status", { name: t("productDetail.states.loading") })).toBeDefined();
@@ -241,9 +250,165 @@ describe.each(LOCALES)("Product Detail (bought) — %s", (locale) => {
     controller.config = { ...controller.config, scenario: "success", session: "guest" };
     show(locale, idOf("acePro2FlashPrint"));
     await screen.findByText(t("home.states.signInTitle"));
+  });
+});
+
+
+describe.each(LOCALES)("Product Detail (want to buy, Takibi bitir, flows) — %s", (locale) => {
+  const t = createTranslator(locale);
+  const name = (key: keyof typeof PRODUCTS) => PRODUCTS[key].name[locale];
+  const tl = (tr: string, en: string) => (locale === "tr" ? tr : en);
+  const today = () => shortDay(toCalendarDay(new Date()), locale);
+
+  it("want: target flags and line, “Hedefe kalan”, target card with suggestions and duration, “Aldım, kaydet”, offers vs the cheapest", async () => {
+    const id = idOf("airPodsPro2", "WANT");
+    const { container } = show(locale, id);
+    const header = await screen.findByRole("region", { name: name("airPodsPro2") });
+    expect(within(header).getByText(t("productDetail.header.wantFlag"))).toBeDefined();
+    expect(plain(header.textContent)).toContain(plain(t("productDetail.header.target", { price: tl("7.500 TL", "TL 7,500") })));
+    expect(plain(header.textContent)).toContain(plain(t("productDetail.header.wantTarget", { price: tl("7.500 TL", "TL 7,500") })));
+    expect(within(header).getByText(t("productDetail.header.toTarget"))).toBeDefined();
+    expect(within(header).getByText(tl("650 TL", "TL 650")).className).toContain("text-display");
+    // Target not reached: no coral element, no calendar.
+    expect(container.querySelectorAll(".bg-accent")).toHaveLength(0);
+    expect(within(header).queryByRole("link", { name: t("productDetail.header.calendar") })).toBeNull();
+
+    const target = screen.getByRole("region", { name: t("productDetail.target.title") });
+    expect((within(target).getByLabelText(t("productDetail.target.field")) as HTMLInputElement).value).toBe(tl("7.500", "7,500"));
+    const duration = within(target).getByRole("group", { name: t("productDetail.target.duration") });
+    expect(within(duration).getByRole("button", { name: t("searchAdd.confirm.durations.1M") }).getAttribute("aria-pressed")).toBe("true");
+    const buy = screen.getByRole("region", { name: t("productDetail.buy.title") });
+    expect(within(buy).getByRole("link", { name: t("trackedItems.v4.markBought") }).getAttribute("href")).toContain(id);
+
+    const offers = await screen.findByRole("region", { name: t("productDetail.offers.titleWant", { count: 2 }) });
+    expect(within(offers).getByText(t("productDetail.offers.cheapestTag"))).toBeDefined();
+    expect(within(offers).getByText(t("productDetail.offers.above", { amount: tl("249 TL", "TL 249") }))).toBeDefined();
+    expect(plain(offers.textContent)).not.toContain(t("productDetail.offers.own"));
+    expect(screen.queryByRole("region", { name: t("productDetail.steps.title") })).toBeNull();
+    for (const seller of HIDDEN_SELLERS) expect(document.body.textContent).not.toContain(seller);
+    expect(await axeViolations(container)).toEqual([]);
+
+    // One tap on a suggestion sets the target; the duration changes in place; both are logged.
+    await userEvent.click(within(target).getByRole("button", { name: (accessible) => plain(accessible) === t("productDetail.target.chip30", { amount: tl("8.150 TL", "TL 8,150") }) }));
+    await within(target).findByText(t("productDetail.target.saved"));
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.edit", outcome: "OK" });
+    await userEvent.click(within(duration).getByRole("button", { name: t("searchAdd.confirm.durations.3M") }));
+    await within(target).findByText(t("productDetail.target.durationSaved"));
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.extend", metadata: { duration: "3M" } });
+  });
+
+  it("want, target reached: “Hedefe ulaştı ✓” and the one coral flag; flow B — sold out at “Mağazaya git”: stock alert and the next offer, hidden", async () => {
+    const { container } = show(locale, idOf("osmoPocket3", "WANT"));
+    const header = await screen.findByRole("region", { name: name("osmoPocket3") });
+    expect(within(header).getByText(t("productDetail.header.reached"))).toBeDefined();
+    expect(container.querySelectorAll(".bg-accent")).toHaveLength(1);
+    const offers = await screen.findByRole("region", { name: t("productDetail.offers.titleWant", { count: 2 }) });
+    await userEvent.click(within(offers).getAllByRole("button", { name: t("searchAdd.confirm.reveal") })[0] as HTMLElement);
+    await userEvent.click(await within(offers).findByRole("button", { name: t("searchAdd.confirm.goToStore") }));
+    await within(offers).findByText(t("productDetail.go.gone"));
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "offer.go", outcome: "OK" });
+    expect(within(offers).getByText(t("productDetail.go.nextRow", { rank: t("trackedItems.v4.rank", { rank: 2 }) }))).toBeDefined();
+    await userEvent.click(within(offers).getByRole("button", { name: t("productDetail.go.notify") }));
+    await within(offers).findByText(t("productDetail.go.notified"));
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "offer.notify_back_in_stock", outcome: "OK" });
+    expect(document.body.textContent).not.toContain(SELLERS.goruntuMarket.name);
+  });
+
+  it("flow A — the price moved at “Mağazaya git”: old → new price, the new saving, “Yeni fiyatla mağazaya git”; nothing opened", async () => {
+    const open = vi.spyOn(globalThis, "open").mockImplementation(() => null);
+    show(locale, idOf("acePro2FlashPrint"));
+    const offers = await screen.findByRole("region", { name: t("productDetail.offers.title", { count: 2 }) });
+    await userEvent.click(within(offers).getAllByRole("button", { name: t("searchAdd.confirm.reveal") })[1] as HTMLElement);
+    await userEvent.click(await within(offers).findByRole("button", { name: t("searchAdd.confirm.goToStore") }));
+    await within(offers).findByRole("link", { name: t("productDetail.go.goNew") });
+    expect(plain(offers.textContent)).toContain(plain(t("productDetail.go.changed", { from: tl("27.199 TL", "TL 27,199"), to: tl("27.599 TL", "TL 27,599") })));
+    expect(plain(offers.textContent)).toContain(plain(t("productDetail.go.changedSaving", { amount: tl("1.350 TL", "TL 1,350") })));
+    expect(open).not.toHaveBeenCalled();
+    open.mockRestore();
+  });
+
+  it("“Takibi bitir”: prefilled from the offer opened with Göster, live saving, then the status line, “Geri al” note and the two buyer questions", async () => {
+    show(locale, idOf("acePro2FlashPrint"));
+    const offers = await screen.findByRole("region", { name: t("productDetail.offers.title", { count: 2 }) });
+    await userEvent.click(within(offers).getAllByRole("button", { name: t("searchAdd.confirm.reveal") })[1] as HTMLElement);
+    await within(offers).findByText(SELLERS.lensDeposu.name);
+    const header = screen.getByRole("region", { name: name("acePro2FlashPrint") });
+    await userEvent.click(within(header).getByRole("button", { name: t("trackedItems.v3.end") }));
+    const dialog = screen.getByRole("dialog", { name: t("trackedItems.v3.endTitle") });
+    expect(within(dialog).getByRole("button", { name: t("trackedItems.v3.endOptions.RETURN_REBUY") }).getAttribute("aria-pressed")).toBe("true");
+    const price = within(dialog).getByLabelText(t("trackedItems.v3.newPrice")) as HTMLInputElement;
+    // 27.199 TL + 50 TL shipping: what the user pays at that offer.
+    expect(price.value).toBe(tl("27.249", "27,249"));
+    expect(within(dialog).getByText(t("trackedItems.v3.prefillRevealed"))).toBeDefined();
+    expect(within(dialog).getByText(tl("1.750 TL", "TL 1,750"))).toBeDefined();
+    await userEvent.clear(price);
+    await userEvent.type(price, tl("26.000", "26,000"));
+    expect(within(dialog).getByText(tl("2.999 TL", "TL 2,999"))).toBeDefined();
+    await userEvent.click(within(dialog).getByRole("button", { name: t("trackedItems.v3.end") }));
+
+    await screen.findByText(`${t("productDetail.ended.USER", { date: today() })}${t("common.listSeparator")}${t("productDetail.ended.saving", { amount: tl("2.999 TL", "TL 2,999") })}`);
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.end", metadata: { method: "RETURN_REBUY", saving: 299_900 } });
+    expect(plain(document.body.textContent)).toContain(plain(t("productDetail.ended.restoreNote", { count: 7 })));
+    expect(document.getElementById("saticilar")).toBeNull();
+    expect(screen.getByRole("region", { name: t("productDetail.history.title") })).toBeDefined();
+
+    const questions = screen.getByRole("region", { name: t("productDetail.feedback.title") });
+    const send = within(questions).getByRole("button", { name: t("productDetail.feedback.send") }) as HTMLButtonElement;
+    expect(send.disabled).toBe(true);
+    await userEvent.click(within(within(questions).getByRole("group", { name: t("productDetail.feedback.priceDifference") })).getByRole("button", { name: t("productDetail.feedback.priceDifferenceOption.NOT_ASKED") }));
+    await userEvent.click(within(within(questions).getByRole("group", { name: t("productDetail.feedback.returnSmooth") })).getByRole("button", { name: t("productDetail.feedback.returnSmoothOption.YES") }));
+    await userEvent.click(send);
+    await screen.findByText(t("productDetail.feedback.thanks"));
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "feedback.create", metadata: { priceDifferenceGiven: "NOT_ASKED", returnSmooth: "YES" } });
+  });
+
+  it("flows D, F: a high return rate is noted at step 1; without a right of withdrawal the steps are price difference → end, under a note", async () => {
+    show(locale, idOf("dysonV15"));
+    const steps = await screen.findByRole("region", { name: t("productDetail.steps.title") });
+    expect(within(steps).getByText(t("productDetail.steps.frequentReturns", { count: 4, months: 3 }))).toBeDefined();
     cleanup();
-    controller.config = { ...controller.config, session: "user" };
-    show(locale, idOf("airPodsPro2", "WANT"));
-    await screen.findByText(t("productDetail.soonTitle"));
+    const ace = controller.state.trackedItems.find((item) => item.productKey === "acePro2FlashPrint" && item.mode === "BOUGHT");
+    const phone = { ...(ace as NonNullable<typeof ace>), id: crypto.randomUUID(), productKey: "iphone16" as const, sellerOfferId: null, seedKey: "phone-test" };
+    controller.state.trackedItems.push(phone);
+    show(locale, phone.id);
+    const phoneSteps = await screen.findByRole("region", { name: t("productDetail.steps.title") });
+    expect(within(phoneSteps).getByText(t("productDetail.steps.noWithdrawal"))).toBeDefined();
+    expect(within(phoneSteps).getAllByRole("listitem").map((item) => within(item).getAllByText(/./)[1]?.textContent)).toEqual([t("productDetail.steps.priceDifference"), t("productDetail.steps.end")]);
+  });
+
+  it("flow E: “Teslim aldın mı?” while the last day is estimated; “Evet, bugün” fixes it and is logged", async () => {
+    show(locale, idOf("x4"));
+    const header = await screen.findByRole("region", { name: name("x4") });
+    expect(plain(header.textContent)).toContain(t("productDetail.header.estimated"));
+    const prompt = within(header).getByRole("region", { name: t("productDetail.delivery.title") });
+    await userEvent.click(within(prompt).getByRole("button", { name: t("productDetail.delivery.today") }));
+    await waitFor(() => expect(within(header).queryByRole("region", { name: t("productDetail.delivery.title") })).toBeNull());
+    expect(controller.state.activity.at(-1)).toMatchObject({ action: "tracking.delivered", metadata: { answer: "TODAY" } });
+    expect(plain(header.textContent)).not.toContain(t("productDetail.header.estimated"));
+  });
+
+  it("flow G: no checks left — the button is disabled, “Hakkın bitti · yarın tekrar”, automatic checks go on", async () => {
+    const user = controller.state.checkNowUsage[0];
+    for (let index = 0; index < 3; index += 1) controller.state.checkNowUsage.push({ ...(user as NonNullable<typeof user>) });
+    show(locale, idOf("acePro2FlashPrint"));
+    const header = await screen.findByRole("region", { name: name("acePro2FlashPrint") });
+    await within(header).findByText(t("productDetail.header.checksOut"));
+    expect((within(header).getByRole("button", { name: t("home.featured.checkNow") }) as HTMLButtonElement).disabled).toBe(true);
+    expect(plain(header.textContent)).toContain(plain(t("productDetail.header.autoChecks", { ago: "" })).trim().split(" ")[0] ?? "-");
+  });
+
+  it("flow H: the return window closed — the reason, no offers or Göster, the history readable; the buyer questions can be skipped", async () => {
+    const index = controller.state.trackedItems.findIndex((item) => item.productKey === "acePro2FlashPrint" && item.mode === "BOUGHT");
+    const row = controller.state.trackedItems[index] as (typeof controller.state.trackedItems)[number];
+    controller.state.trackedItems[index] = { ...row, state: "EXPIRED", endReason: "RETURN_WINDOW", endedAt: new Date(Date.now() - 8 * 86_400_000).toISOString() };
+    show(locale, row.id);
+    await screen.findByRole("region", { name: t("productDetail.history.title") });
+    expect(plain(document.body.textContent)).toContain(plain(t("productDetail.ended.historyNote")));
+    expect(screen.queryByRole("button", { name: t("trackedItems.v3.restore") })).toBeNull();
+    expect(screen.queryByRole("button", { name: t("searchAdd.confirm.reveal") })).toBeNull();
+    expect(screen.queryByRole("button", { name: t("trackedItems.v3.end") })).toBeNull();
+    const questions = screen.getByRole("region", { name: t("productDetail.feedback.title") });
+    await userEvent.click(within(questions).getByRole("button", { name: t("productDetail.feedback.skip") }));
+    expect(screen.queryByRole("region", { name: t("productDetail.feedback.title") })).toBeNull();
   });
 });

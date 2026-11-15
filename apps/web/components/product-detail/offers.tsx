@@ -8,16 +8,43 @@
 // summary (trust · instalments · campaign) that opens; the fake-discount note; the reveal time left
 // and the commission note. The user's own seller is the reference row under the grid. A seller and a
 // platform appear only after Göster — from the reveal answer or an offer the server lists as revealed.
-import type { DetailOffer, DetailOffers, OfferSummary, Rating, RevealedOfferView, TrackedItemDetail } from "@firsatgeldi/contracts";
+// Want to buy: "En ucuz N satıcı", each card's difference to the cheapest ("en ucuz" · "+752 TL"), no
+// reference row. "Mağazaya git" re-checks first (flows A–B): a moved price is stated with "Yeni
+// fiyatla mağazaya git" and "Sıradaki satıcıya bak"; a sold-out offer offers "Stoğa gelince haber
+// ver" and the next offer, still hidden, with its own Göster.
+import type { DetailOffer, DetailOffers, GoResult, HiddenOfferView, OfferSummary, Rating, RevealedOfferView, TrackedItemDetail } from "@firsatgeldi/contracts";
 import { formatNumber } from "@firsatgeldi/core";
 import type { Locale, Translator } from "@firsatgeldi/i18n";
-import { cn, FreshnessLine, HiddenOfferCard, Icon, StatusBanner } from "@firsatgeldi/ui";
+import { Button, buttonClasses, cn, FreshnessLine, HiddenOfferCard, Icon, StatusBanner } from "@firsatgeldi/ui";
 import { ChevronDown, ExternalLink, Star } from "lucide-react";
 import { useState } from "react";
+import { errorMessage } from "../../lib/api/errors";
+import { useApiMutation } from "../../lib/api/hooks";
 import { ago, checkedAgo, money } from "../search-add/format";
-import { useOfferActions } from "../tracked-items/offer-actions";
+import type { useOfferActions } from "../tracked-items/offer-actions";
 import { Price } from "../tracked-items/parts";
 import { OFFERS_ANCHOR } from "./header";
+
+type OfferActions = ReturnType<typeof useOfferActions>;
+/** What "Mağazaya git" found instead of opening the store. */
+type GoOutcome = Exclude<GoResult, { status: "OK" }>;
+
+const cardId = (rank: number) => `offer-rank-${rank}`;
+
+function rankLabel(t: Translator, rank: number): string {
+  return rank === 1 ? t("trackedItems.v4.rankFirst") : t("trackedItems.v4.rank", { rank });
+}
+
+function totalOf(offer: Pick<HiddenOfferView, "price" | "shippingCost">): number {
+  return offer.price.amount + (offer.shippingCost?.amount ?? 0);
+}
+
+/** "Sıradaki satıcıya bak": brings the next card into view and moves focus to it. */
+function showCard(rank: number) {
+  const card = globalThis.document?.getElementById(cardId(rank));
+  card?.scrollIntoView({ behavior: "smooth", block: "center" });
+  card?.focus();
+}
 
 const RATING_DIGITS = { minimumFractionDigits: 1, maximumFractionDigits: 1 } as const;
 const MS_PER_DAY = 86_400_000;
@@ -89,21 +116,130 @@ function Summary({ t, locale, summary }: { t: Translator; locale: Locale; summar
   );
 }
 
-function Card({ t, locale, item, offer, shown, actions, now, wide }: { t: Translator; locale: Locale; item: TrackedItemDetail; offer: DetailOffer; shown: RevealedOfferView | null; actions: ReturnType<typeof useOfferActions>; now: number; wide: boolean }) {
+/** The re-check answer under the card's top row (design flows A–B). */
+function Outcome({ t, locale, item, offer, outcome, actions }: { t: Translator; locale: Locale; item: TrackedItemDetail; offer: DetailOffer; outcome: GoOutcome; actions: OfferActions }) {
+  const [notified, setNotified] = useState(false);
+  const [problem, setProblem] = useState<string | null>(null);
+  const notify = useApiMutation("notifyBackInStock", { onSuccess: () => setNotified(true), onError: (error) => setProblem(errorMessage(t, error)) });
+  const next = outcome.next;
+  const paid = item.purchase?.pricePaid.amount ?? null;
+  if (outcome.status === "PRICE_CHANGED") {
+    const saving = paid === null ? null : paid - (outcome.price.amount + (offer.shippingCost?.amount ?? 0));
+    return (
+      <StatusBanner
+        tone="warning"
+        action={
+          <span className="flex flex-wrap gap-2">
+            <a href={outcome.url} target="_blank" rel="noopener noreferrer" className={buttonClasses("primary", undefined, "compact")}>
+              {t("productDetail.go.goNew")}
+            </a>
+            {next && (
+              <Button variant="secondary" size="compact" onClick={() => showCard(next.rank)}>
+                {t("productDetail.go.next")}
+              </Button>
+            )}
+          </span>
+        }
+      >
+        {[
+          t("productDetail.go.changed", { from: money(offer.price, locale), to: money(outcome.price, locale) }),
+          saving === null ? null : saving > 0 ? t("productDetail.go.changedSaving", { amount: money({ amount: saving, currency: outcome.price.currency }, locale) }) : t("productDetail.go.changedNoSaving"),
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      </StatusBanner>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      <StatusBanner
+        tone="warning"
+        title={t("productDetail.go.gone")}
+        action={
+          notified ? undefined : (
+            <Button variant="secondary" size="compact" loading={notify.isPending} onClick={() => notify.mutate({ params: { ref: offer.ref } })}>
+              {t("productDetail.go.notify")}
+            </Button>
+          )
+        }
+      >
+        {notified ? t("productDetail.go.notified") : t("productDetail.go.goneText")}
+      </StatusBanner>
+      {problem && <StatusBanner tone="danger">{problem}</StatusBanner>}
+      {next && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-surface-alt px-3 py-2">
+          <span className="flex min-w-0 flex-col">
+            <span className="text-body-sm font-semibold text-text">{t("productDetail.go.nextRow", { rank: rankLabel(t, next.rank) })}</span>
+            <span className="text-caption text-text-muted">
+              {[money(next.price, locale), paid !== null && paid > totalOf(next) ? t("trackedItems.v4.gain", { amount: money({ amount: paid - totalOf(next), currency: next.price.currency }, locale) }) : null]
+                .filter(Boolean)
+                .join(t("common.listSeparator"))}
+            </span>
+          </span>
+          {actions.shown(next.ref) ? (
+            <Button variant="secondary" size="compact" onClick={() => showCard(next.rank)}>
+              {t("productDetail.go.next")}
+            </Button>
+          ) : (
+            <Button variant="secondary" size="compact" loading={actions.revealing(next.ref)} onClick={() => actions.reveal(next)}>
+              {t("searchAdd.confirm.reveal")}
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Card({
+  t,
+  locale,
+  item,
+  offer,
+  shown,
+  actions,
+  now,
+  wide,
+  cheapestTotal,
+  outcome,
+  onOutcome,
+}: {
+  t: Translator;
+  locale: Locale;
+  item: TrackedItemDetail;
+  offer: DetailOffer;
+  shown: RevealedOfferView | null;
+  actions: OfferActions;
+  now: number;
+  wide: boolean;
+  /** Want to buy: the cheapest offer's total, the base of "+752 TL". */
+  cheapestTotal: number | null;
+  outcome: GoOutcome | null;
+  onOutcome: (result: GoResult) => void;
+}) {
   const reference = item.purchase?.pricePaid.amount ?? null;
-  const total = offer.price.amount + (offer.shippingCost?.amount ?? 0);
+  const total = totalOf(offer);
   const difference = reference !== null ? reference - total : null;
+  const above = cheapestTotal !== null ? total - cheapestTotal : null;
   // Not checked for `tracking.stale_hours` (the server says so per item): the age is stated.
   const stale = item.stale;
   const revealDays = shown ? Math.max(1, Math.ceil((Date.parse(shown.revealExpiresAt) - now) / MS_PER_DAY)) : 0;
   return (
-    <li className={cn("flex", wide && "md:col-span-2")}>
+    <li id={cardId(offer.rank)} tabIndex={-1} className={cn("flex scroll-mt-(--size-header-height)", wide && "md:col-span-2")}>
       <HiddenOfferCard
         layout="detail"
         className="w-full"
-        hiddenLabel={offer.rank === 1 ? t("trackedItems.v4.rankFirst") : t("trackedItems.v4.rank", { rank: offer.rank })}
+        hiddenLabel={rankLabel(t, offer.rank)}
         price={<span className="text-price-lg text-text">{money(offer.price, locale)}</span>}
-        saving={difference !== null && difference > 0 ? <Price t={t} locale={locale} value={{ amount: difference, currency: "TRY" }} change="down" /> : null}
+        saving={
+          difference !== null && difference > 0 ? (
+            <Price t={t} locale={locale} value={{ amount: difference, currency: "TRY" }} change="down" />
+          ) : above === null ? null : above <= 0 ? (
+            <span className="text-body-sm font-semibold text-savings">{t("productDetail.offers.cheapestTag")}</span>
+          ) : (
+            <span className="text-body-sm font-semibold text-text-muted">{t("productDetail.offers.above", { amount: money({ amount: above, currency: offer.price.currency }, locale) })}</span>
+          )
+        }
         details={details(t, locale, offer, now)}
         freshness={<FreshnessLine stale={stale}>{stale ? t("trackedItems.row.staleAge", { ago: ago(t, offer.lastCheckedAt, now) }) : checkedAgo(t, offer.lastCheckedAt, now)}</FreshnessLine>}
         revealLabel={t("searchAdd.confirm.reveal")}
@@ -116,7 +252,7 @@ function Card({ t, locale, item, offer, shown, actions, now, wide }: { t: Transl
                 rating: null,
                 platformName: shown.platformName,
                 goLabel: t("searchAdd.confirm.goToStore"),
-                onGo: () => actions.go(offer),
+                onGo: () => actions.go(offer, onOutcome),
                 going: actions.going(offer.ref),
                 hideLabel: t("searchAdd.confirm.hide"),
                 onHide: () => actions.hide(offer),
@@ -124,6 +260,7 @@ function Card({ t, locale, item, offer, shown, actions, now, wide }: { t: Transl
             : null
         }
       >
+        {outcome && <Outcome t={t} locale={locale} item={item} offer={offer} outcome={outcome} actions={actions} />}
         {shown && (shown.productRating || shown.sellerRating || shown.reviewsUrl) && (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md border border-border px-3 py-2 text-body-sm">
             {shown.productRating && (
@@ -157,17 +294,20 @@ function Card({ t, locale, item, offer, shown, actions, now, wide }: { t: Transl
   );
 }
 
-export function OffersSection({ t, locale, item, offers, now }: { t: Translator; locale: Locale; item: TrackedItemDetail; offers: DetailOffers; now: number }) {
-  const actions = useOfferActions(t);
+export function OffersSection({ t, locale, item, offers, actions, now }: { t: Translator; locale: Locale; item: TrackedItemDetail; offers: DetailOffers; actions: OfferActions; now: number }) {
+  const [outcomes, setOutcomes] = useState<Record<string, GoOutcome>>({});
   const list = offers.offers;
   const own = offers.own;
+  const want = item.mode === "WANT";
+  const first = list[0];
+  const cheapestTotal = want && first ? totalOf(first) : null;
   return (
     <section id={OFFERS_ANCHOR} aria-labelledby="of-title" className="flex scroll-mt-(--size-header-height) flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="of-title" className="text-h2 text-text">
-          {t("productDetail.offers.title", { count: list.length })}
+          {t(want ? "productDetail.offers.titleWant" : "productDetail.offers.title", { count: list.length })}
         </h2>
-        <span className="text-caption text-text-muted">{t("productDetail.offers.caption")}</span>
+        <span className="text-caption text-text-muted">{t(want ? "productDetail.offers.captionWant" : "productDetail.offers.caption")}</span>
       </div>
       {actions.problem && <StatusBanner tone="danger">{actions.problem}</StatusBanner>}
       {offers.underReview > 0 && <StatusBanner tone="warning">{t("productDetail.offers.underReview", { count: offers.underReview })}</StatusBanner>}
@@ -183,6 +323,14 @@ export function OffersSection({ t, locale, item, offers, now }: { t: Translator;
             actions={actions}
             now={now}
             wide={list.length % 2 === 1 && index === list.length - 1}
+            cheapestTotal={cheapestTotal}
+            outcome={outcomes[offer.ref] ?? null}
+            onOutcome={(result) =>
+              setOutcomes((current) => {
+                const rest = Object.fromEntries(Object.entries(current).filter(([ref]) => ref !== offer.ref));
+                return result.status === "OK" ? rest : { ...rest, [offer.ref]: result };
+              })
+            }
           />
         ))}
       </ul>

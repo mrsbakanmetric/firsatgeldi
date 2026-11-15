@@ -250,6 +250,8 @@ export interface MockState {
   readonly reports: ReportRow[];
   /** "Stoğa gelince haber ver" subscriptions (user + offer). */
   readonly stockAlerts: { readonly userId: string; readonly offerId: string; readonly createdAt: string }[];
+  /** "Mağazaya git": price re-checks already shown per user and offer (`userId:offerId`), so the next press goes through. */
+  readonly priceRechecked: Set<string>;
 }
 
 export function createMockState(): MockState {
@@ -277,6 +279,7 @@ export function createMockState(): MockState {
     feedback: new Map(),
     reports: [],
     stockAlerts: [],
+    priceRechecked: new Set(),
   };
 }
 

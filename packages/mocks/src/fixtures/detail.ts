@@ -40,6 +40,14 @@ export const RATINGS_READ_MINUTES_AGO: Readonly<Partial<Record<ProductKey, numbe
  * "Merhaba, 1 Kasım 2026'da 28.999 TL'ye aldığım … ürününün fiyatı şu an 25.997 TL. Aradaki
  * 3.002 TL farkın iadesini rica ederim." It goes to the user's own seller and never names another.
  */
+/**
+ * The user's own high return rate at the store bought from (design flows D, "Sık iade uyarısı"), by
+ * seed; the real API computes it (Trust and Accuracy). Absent = not high.
+ */
+export const FREQUENT_RETURNS: Readonly<Record<string, { readonly count: number; readonly months: number }>> = {
+  "dyson-v15": { count: 4, months: 3 },
+};
+
 export const PRICE_DIFFERENCE_TEXT: Localized = text(
   "Merhaba, {date} tarihinde {paid} fiyatla aldığım {product} ürününün fiyatı şu an {now}. Aradaki {difference} farkın iadesini rica ederim.",
   "Hello, I bought {product} on {date} for {paid}. Its price is now {now}. I kindly ask for a refund of the {difference} difference.",

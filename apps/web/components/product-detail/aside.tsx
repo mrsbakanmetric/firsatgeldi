@@ -6,7 +6,9 @@
 // ("İade talebi açtım" / "Fiyat farkı istedim" → "Yanıt bekleniyor", then the answer); step 2 warns
 // until step 1 is done; "Takibi bitir" is done by the header button. Then the ready price-difference
 // message to the seller bought from, with "Mesajı kopyala". No explanation sentences. The last card
-// fills to the chart column's bottom, its action pinned to the card bottom (design §3).
+// fills to the chart column's bottom, its action pinned to the card bottom (design §3). Without a
+// right of withdrawal the steps are price difference → end, under a one-line note (flows F); a high
+// return rate at the store bought from is noted at step 1 (flows D).
 import type { ActionStep, TrackedItemDetail } from "@firsatgeldi/contracts";
 import { daysBetween, toCalendarDay } from "@firsatgeldi/core";
 import type { Locale, Translator } from "@firsatgeldi/i18n";
@@ -46,6 +48,11 @@ function Steps({ t, item, now, last, onChanged }: { t: Translator; item: Tracked
       <h2 id="st-title" className="text-h3 text-text">
         {t("productDetail.steps.title")}
       </h2>
+      {item.noWithdrawalRight && (
+        <p role="note" className="rounded-md bg-info-subtle px-3 py-2 text-caption text-info">
+          {t("productDetail.steps.noWithdrawal")}
+        </p>
+      )}
       {problem && <StatusBanner tone="danger">{problem}</StatusBanner>}
       <ol className="flex flex-col gap-3">
         {steps.map((entry, index) => (
@@ -64,6 +71,11 @@ function Steps({ t, item, now, last, onChanged }: { t: Translator; item: Tracked
           >
             {(entry.step === "RETURN_REQUEST" || entry.step === "PRICE_DIFFERENCE") && (
               <>
+                {index === 0 && item.frequentReturns && (
+                  <p role="note" className="rounded-md bg-warning-subtle px-3 py-2 text-caption text-on-warning-subtle">
+                    {t("productDetail.steps.frequentReturns", { count: item.frequentReturns.count, months: item.frequentReturns.months })}
+                  </p>
+                )}
                 {entry.step === "RETURN_REQUEST" && returnPage && item.purchase && (
                   <a href={returnPage} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 self-start text-body-sm font-semibold text-primary">
                     {t("productDetail.steps.returnPage", { platform: item.purchase.platformName })}

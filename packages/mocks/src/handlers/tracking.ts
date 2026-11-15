@@ -65,6 +65,13 @@ export function cheaperOffers(productKey: ProductKey, pricePaidMinor: number, ow
     .sort((a, b) => totalMinor(a) - totalMinor(b));
 }
 
+/** Want-to-buy: every offer in stock, cheapest first (shipping included). */
+export function rankedForWant(productKey: ProductKey): OfferFixture[] {
+  return offersFor(productKey)
+    .filter((offer) => offer.stockState !== "OUT_OF_STOCK")
+    .sort((a, b) => totalMinor(a) - totalMinor(b));
+}
+
 function ownRef(controller: MockController, userId: string, ref: string | null | undefined): RefTarget | null {
   if (!ref) return null;
   const target = controller.state.refs.get(ref);
@@ -298,13 +305,23 @@ export function trackingHandlers(controller: MockController) {
       const revealed = reveal?.action === "REVEAL" && reveal.expiresAt !== null && reveal.expiresAt > now.toISOString();
       if (!revealed) throw new MockApiError("FORBIDDEN");
       note({ targetType: "offer", targetId: offer.id, metadata: { rank: target.rank }, containsHiddenSeller: true });
-      // Re-check before leaving (architecture.md §6.3 price protection).
-      if (offer.stockState === "OUT_OF_STOCK") {
-        const next = target.pricePaidMinor === null ? undefined : cheaperOffers(target.productKey, target.pricePaidMinor, offer.id)[0];
-        const nextRef = next ? refFor(state, userId, target.productKey, next, 1, target.pricePaidMinor) : null;
-        return { data: { status: "GONE", next: next && nextRef ? fullOffer({ now, checkedAt }, next, nextRef, 1, target.pricePaidMinor) : null } };
+      // Re-check before leaving (architecture.md §6.3 price protection; design flows A–B).
+      const url = fullOffer({ now, checkedAt }, offer, params.ref, target.rank, target.pricePaidMinor).listingUrl;
+      // The offer that takes the next place keeps its rank ("Sıradaki · 2. ucuz satıcı"), hidden.
+      const nextOf = () => {
+        const ranked = target.pricePaidMinor === null ? rankedForWant(target.productKey) : cheaperOffers(target.productKey, target.pricePaidMinor, null);
+        const next = ranked.filter((item) => item.id !== offer.id)[target.rank - 1];
+        if (!next) return null;
+        const rank = target.rank + 1;
+        return fullOffer({ now, checkedAt }, next, refFor(state, userId, target.productKey, next, rank, target.pricePaidMinor), rank, target.pricePaidMinor);
+      };
+      if (offer.stockState === "OUT_OF_STOCK" || offer.recheck?.kind === "GONE") return { data: { status: "GONE", next: nextOf() } };
+      const seen = `${userId}:${offer.id}`;
+      if (offer.recheck?.kind === "PRICE" && !state.priceRechecked.has(seen)) {
+        state.priceRechecked.add(seen);
+        return { data: { status: "PRICE_CHANGED", price: money(offer.recheck.priceMinor), url, next: nextOf() } };
       }
-      return { data: { status: "OK", url: fullOffer({ now, checkedAt }, offer, params.ref, target.rank, target.pricePaidMinor).listingUrl } };
+      return { data: { status: "OK", url } };
     }),
   ];
 }

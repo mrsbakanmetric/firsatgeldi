@@ -15,7 +15,18 @@ import { useApiMutation } from "../../lib/api/hooks";
 /** A check counts as finished when the item's check time is this close to the request, or later. */
 const CLOCK_SKEW_MS = 1000;
 
-export function CheckNowControls({ t, item, remaining }: { t: Translator; item: Pick<TrackedItemListItem, "id" | "lastCheckedAt">; remaining: number | null }) {
+export function CheckNowControls({
+  t,
+  item,
+  remaining,
+  exhausted,
+}: {
+  t: Translator;
+  item: Pick<TrackedItemListItem, "id" | "lastCheckedAt">;
+  remaining: number | null;
+  /** The line shown when no allowance is left (default "Bugün kontrol hakkın kalmadı"). */
+  exhausted?: string;
+}) {
   const [note, setNote] = useState<{ kind: "checking" | "cached"; at: number } | { kind: "error"; text: string } | null>(null);
   const check = useApiMutation("checkNow", {
     onSuccess: ({ data }) => setNote({ kind: data.status === "CACHED" ? "cached" : "checking", at: Date.now() }),
@@ -34,7 +45,7 @@ export function CheckNowControls({ t, item, remaining }: { t: Translator; item: 
           : remaining === null
             ? null
             : remaining === 0
-              ? t("home.featured.checksNone")
+              ? (exhausted ?? t("home.featured.checksNone"))
               : t("home.featured.checksLeft", { count: remaining });
   return (
     <span className="flex flex-wrap items-center gap-3">
