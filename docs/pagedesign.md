@@ -149,7 +149,7 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 | `ProductRow` (image · name/line · data columns · action) | §3 alignment, §5.30 | Tracked Items, Home, My Savings, Packages, Notifications |
 | `StatTile` | §3 | Tracked Items, My Savings, Packages |
 | `HeroBlock` (`hero-surface`) | §2 | Home (deal), My Savings, Sign-in |
-| `Flag` / `ModeBadge` ("Aldım" · "Almak istiyorum" · "Takipte değil") | §5.29 | rows, previews, dialogs |
+| `Flag` / `ModeBadge` ("Aldım" · "Almak istiyorum" · "Takipte değil") | §5.29 | rows, previews, dialogs; the buy-or-wait hint (design §5.15) is a `Flag` in the info style [DECIDED 2026-11-15] |
 | `PriceSparkline` (paid solid · cheapest dashed · target dotted) | §5.x charts | Tracked Items, Home, bell preview |
 | `StockStrip` (14 boxes; in / low / out by fill + colour) | §5 stock | Tracked Items, Product Detail |
 | `HiddenOfferCard` + "Göster" gate | Hidden Seller | Product Detail, Home, teaser |
@@ -161,12 +161,14 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 | `Dialog`, `Sheet` | §5.28, §5.25 | overlays |
 | `StepIndicator` | §5.24 | Flow template, dialogs |
 | `SkeletonBlock` | §5.23 | loading state of every page |
-| `StatusBanner` (info / warning / danger) | §6 | stale, limit, error states |
+| `StatusBanner` (info / warning / danger) | §6 | stale, limit, error states; also the in-page result line after an action, with its undo ("Takip bitti · 2.250 TL Kazancım'a yazıldı · Geri al") — no separate toast component [DECIDED 2026-11-15] |
 | `EmptyState` (title · one sentence · one primary action) | §6 | empty state of every list and page |
 | `MoneyDisplay` | §5.9 | every price, saving and amount |
 | `FreshnessLine` ("N dk önce kontrol edildi", "en az", "tahmini") | §5.5, §5.13 | next to every price and stock value |
 | `PriceHistory` (full chart) | §5.6, §5.12 | Product Detail, bell preview (14-day) |
 | `StockHistory` (full, 14 days + 1 month, change log) | §5.7 | Product Detail |
+| `StepTick` ("Yaptım ✓", reversible) [DECIDED 2026-11-15] | design §5.11 | Product Detail action steps |
+| `HelpPanel` (contextual "?" help, opens as `Sheet`) [DECIDED 2026-11-15] | design §5.16, §5.25 | next to concepts users may not know (withdrawal right, price difference, "tahmini", hidden seller) |
 | `ConfirmPanel` (mark → confirm, typed seller and price) | §5.1 | Search and Add, Add product dialog step 2, Want to Buy "Aldım, kaydet" |
 | `SegmentedChoice` | §4.3 | order status, ranges, durations, tabs |
 | `MultiImageUpload` + `ImagePrivacyNote` | §5.19, §5.20 | Search and Add, Bize yaz |
