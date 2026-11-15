@@ -732,7 +732,7 @@ POST /content/consents                 # { versionIds[] }
 GET  /help/search?q=&topic=
 GET  /help/stores?q=                  # store picker: logo, rule, source_state, read_at (public)
 POST /content/:slug/feedback          # { helpful }
-GET  /public/products/:slug            # SEO product page data (seller-less)
+GET  /public/products/:slug            # SEO product page data (seller-less); signed-in caller: + `trackedItemId` of their own active tracking of the product (client redirects to Product Detail) [DECIDED 2026-11-15; field ASSUMPTION]
 GET  /public/stats                     # landing aggregate figures + weekly showcase total (hidden below threshold)
 GET  /public/deals?category=&limit=3   # deal showcase: anonymous examples of the last 7 days (no user/seller)
 POST /support-requests · GET /support-requests/mine · POST /support-requests/:id/messages

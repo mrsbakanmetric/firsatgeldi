@@ -182,7 +182,7 @@ These rules apply to every screen and are not repeated in each module.
 - Up to `home.top_drops.count` (3) products whose current cheapest price dropped the most against the average cheapest price of the last `home.top_drops.window_days` (30) days, at least `home.top_drops.min_drop_pct` (10 %) and in stock [values ASSUMPTION].
 - **Source:** our own price checks only (job `top-drops`); no user data, nobody's tracking or purchases are revealed.
 - **Scope:** the user's tracked categories first; the user's own tracked products are excluded. Fewer than 3 qualify, or nothing is tracked yet → the general list across all categories, labelled "Genel" (with a one-line note when the user has categories). Nothing qualifies → the section is hidden.
-- Card: image · category · name (two-line area, so every card aligns) · "↓ %N düştü" · "Ortalama X TL" → current price · "Fark Y TL" · "N satıcıda · en ucuzu gizli · <stock> · kargo dahil" · check time in the section caption · **"Takip et"** → Search and Add with the product marked and the confirm panel open (same hand-over as Discover).
+- Card: image · category · name (two-line area, so every card aligns) · "↓ %N düştü" · "Ortalama X TL" → current price · "Fark Y TL" · "N satıcıda · en ucuzu gizli · <stock> · kargo dahil" · check time in the section caption · the card itself opens the product page `/[locale]/urun/[slug]` (Landing Page › Product pages) [DECIDED 2026-11-15] · **"Takip et"** → Search and Add with the product marked and the confirm panel open (same hand-over as Discover).
 - **Hidden-seller rule:** no seller, platform, listing link or Göster in this section.
 
 ### Rules
@@ -813,6 +813,8 @@ All editable from a **dedicated admin screen** (Package Settings and Requests).
 - Product name, image + thumbnails, brand and category, key attributes, package/variant chips, "Şu an N satıcıda, en düşük X TL" with check time and highest price, 90-day hint.
 - Seller rows by **rank only** ("1. satıcı") with price and stock — **seller and platform hidden**; "Göster" on each row leads a guest to sign-in (no seller identity in the page source) [DECIDED 2026-11-12].
 - Actions: **Bu ürünü takip et** (primary, want-to-buy) and **Bunu aldım, ucuzlarsa haber ver** (bought) → sign-in → Search and Add with the product marked, confirm panel open and the mode preselected [DECIDED 2026-11-14].
+- **One product page for untracked products [DECIDED 2026-11-15] (user):** signed-in users open this same page for any product they do not track — a card or tile in Home "Şu an en çok düşenler", search results, Discover, Notifications "Senin için". If the user already actively tracks the product, the page redirects to their Product Detail (`/[locale]/takip/[id]`). Product Detail stays the page of tracked products only.
+- **"Göster" on this page [DECIDED 2026-11-15] (user):** every reveal belongs to a tracked item (`database.md` §9 `offer_reveals.tracked_item_id`), so a hidden seller is never revealed here. Guest → sign-in; signed-in → "Satıcıyı görmek için önce takip et" + Search and Add with the product marked and the confirm panel open. Rules and schema unchanged.
 - Price history of the daily lowest price (30 d / 90 d / 1 y), seller-less, with Now · Period high · Average · Change.
 - Benzer ürünler (4, with images) and Sık sorulanlar (also structured data).
 - Rendered on the server; no seller identity in the page source (the leak test covers these pages).
