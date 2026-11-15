@@ -47,5 +47,19 @@ export const StockState = z.enum(["IN_STOCK", "LOW_STOCK", "OUT_OF_STOCK"]);
 /** Warranty types (database.md §6 `offers.warranty_type`). */
 export const WarrantyType = z.enum(["DISTRIBUTOR", "IMPORTER", "UNKNOWN"]);
 
+/**
+ * A rating as the store shows it: kept on the store's own scale ("4,6 / 5", "9,4 / 10"),
+ * never converted [DECIDED 2026-11-15] (modules.md Ratings › After Göster). `count` = number
+ * of ratings, null when the store does not show it. Shape [ASSUMPTION — shape].
+ */
+export const Rating = z
+  .object({
+    value: z.number().nonnegative(),
+    scale: z.number().int().positive(),
+    count: z.number().int().nonnegative().nullable(),
+  })
+  .refine((rating) => rating.value <= rating.scale, { message: "value above scale", path: ["value"] });
+export type Rating = z.infer<typeof Rating>;
+
 /** Opaque cursor for paged lists (architecture.md §15.2 `meta.nextCursor`). */
 export const Cursor = z.string().min(1);

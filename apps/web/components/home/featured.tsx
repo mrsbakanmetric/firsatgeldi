@@ -201,7 +201,7 @@ function Offers({ t, locale, item, href, staleHours }: { t: Translator; locale: 
                       )}
                       <span className="text-caption text-text-muted">
                         {shown && shown.sellerRating !== null
-                          ? [t("searchAdd.confirm.revealedRating", { rating: formatNumber(shown.sellerRating, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) }), offerMeta(t, locale, offer)].join(t("common.listSeparator"))
+                          ? [t("searchAdd.confirm.revealedRating", { rating: formatNumber(shown.sellerRating.value, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }), scale: shown.sellerRating.scale }), offerMeta(t, locale, offer)].join(t("common.listSeparator"))
                           : offerMeta(t, locale, offer)}
                       </span>
                     </span>

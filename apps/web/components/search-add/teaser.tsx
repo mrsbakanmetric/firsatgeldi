@@ -80,7 +80,7 @@ export function Teaser({ t, locale, teaser, now, stale, onError }: { t: Translat
               shown
                 ? {
                     sellerName: shown.sellerName,
-                    rating: shown.sellerRating === null ? null : t("searchAdd.confirm.revealedRating", { rating: formatNumber(shown.sellerRating, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) }),
+                    rating: shown.sellerRating === null ? null : t("searchAdd.confirm.revealedRating", { rating: formatNumber(shown.sellerRating.value, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }), scale: shown.sellerRating.scale }),
                     platformName: shown.platformName,
                     goLabel: t("searchAdd.confirm.goToStore"),
                     onGo: () => onGo(offer),

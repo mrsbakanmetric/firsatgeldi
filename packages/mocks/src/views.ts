@@ -3,7 +3,7 @@
 // field the view does not define, exactly as the real API does (architecture.md §6.1).
 import type { ApiLocale } from "@firsatgeldi/contracts";
 import { ATTRIBUTE_LABELS, PRODUCTS, type ProductFixture, type ProductKey } from "./fixtures/catalog";
-import { listingUrl, type OfferFixture, PLATFORMS, SELLERS } from "./fixtures/market";
+import { listingUrl, type OfferFixture, PLATFORMS, type SellerFixture, SELLERS } from "./fixtures/market";
 import { pick } from "./fixtures/text";
 import { opaqueRef } from "./ids";
 import type { RouteContext } from "./route";
@@ -64,6 +64,12 @@ export function productView(product: ProductFixture, locale: ApiLocale) {
   };
 }
 
+/** The seller rating as the store shows it; a seller without a store scale uses its 5-point rating. */
+export function storeRatingOf(seller: SellerFixture) {
+  if (seller.storeRating) return seller.storeRating;
+  return seller.rating === null ? null : { value: seller.rating, scale: 5, count: seller.ratingCount };
+}
+
 export function totalMinor(offer: OfferFixture): number {
   return offer.priceMinor + (offer.shippingMinor ?? 0);
 }
@@ -105,7 +111,10 @@ export function fullOffer(context: Pick<RouteContext<never>, "now" | "checkedAt"
     sellerId: seller.id,
     sellerExternalId: seller.externalId,
     sellerName: seller.name,
-    sellerRating: seller.rating,
+    // Store ratings on the store's own scale, never converted (modules.md Ratings › After Göster).
+    sellerRating: storeRatingOf(seller),
+    productRating: offer.productRating ?? null,
+    reviewsUrl: offer.productRating ? `${listingUrl(offer)}#reviews` : null,
     platformCode: platform.code,
     platformName: platform.name,
     platformDomain: platform.domain,

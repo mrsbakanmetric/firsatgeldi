@@ -120,9 +120,47 @@ export interface CheckNowUsageRow {
 export interface TrackedItemEventRow {
   readonly id: string;
   readonly trackedItemId: string;
-  readonly type: "CREATED" | "ENDED" | "RESTORED" | "BOUGHT";
+  readonly type:
+    | "CREATED"
+    | "ENDED"
+    | "RESTORED"
+    | "BOUGHT"
+    | "PRICE_EDITED"
+    | "DEADLINE_EDITED"
+    | "ORDER_STATUS_EDITED"
+    | "TARGET_EDITED"
+    | "DELIVERED"
+    | "STEP_TICKED"
+    | "STEP_UNTICKED"
+    | "REQUEST_UPDATED"
+    | "EXTENDED";
   readonly data: Readonly<Record<string, unknown>>;
   readonly actor: "USER" | "SYSTEM" | "ADMIN";
+  readonly createdAt: string;
+}
+
+/** Request tracking of one item ("Fiyat farkı istedim" / "İade talebi açtım", modules.md Return Window). */
+export interface TrackingRequestRow {
+  readonly kind: "PRICE_DIFFERENCE" | "RETURN";
+  readonly since: string;
+  readonly outcome: "GIVEN" | "REFUSED" | "COUPON" | null;
+}
+
+/** `buyer_feedback` row (database.md): the two optional questions, one answer per item. */
+export interface BuyerFeedbackRow {
+  readonly priceDifferenceGiven: "YES" | "NO" | "NOT_ASKED" | null;
+  readonly returnSmooth: "YES" | "PROBLEM" | "NOT_DONE" | null;
+  readonly createdAt: string;
+}
+
+/** `reports` row (Trust and Accuracy): a wrong price on an offer, or a different product. */
+export interface ReportRow {
+  readonly id: string;
+  readonly userId: string;
+  readonly trackedItemId: string;
+  readonly offerId: string | null;
+  readonly kind: "WRONG_PRICE" | "DIFFERENT_PRODUCT";
+  readonly note: string | null;
   readonly createdAt: string;
 }
 
@@ -205,6 +243,13 @@ export interface MockState {
   readonly savingsRecords: SavingsRecordRow[];
   /** Last finished check per tracked item (`checks`); seeded rows fall back to their fixture age. */
   readonly lastChecks: Map<string, string>;
+  /** Product Detail: ticked action steps, request tracking and buyer answers per tracked item. */
+  readonly steps: Map<string, Set<"RETURN_REQUEST" | "PRICE_DIFFERENCE" | "REORDER" | "END">>;
+  readonly requests: Map<string, TrackingRequestRow>;
+  readonly feedback: Map<string, BuyerFeedbackRow>;
+  readonly reports: ReportRow[];
+  /** "Stoğa gelince haber ver" subscriptions (user + offer). */
+  readonly stockAlerts: { readonly userId: string; readonly offerId: string; readonly createdAt: string }[];
 }
 
 export function createMockState(): MockState {
@@ -227,6 +272,11 @@ export function createMockState(): MockState {
     checkNowUsage: [],
     savingsRecords: [],
     lastChecks: new Map(),
+    steps: new Map(),
+    requests: new Map(),
+    feedback: new Map(),
+    reports: [],
+    stockAlerts: [],
   };
 }
 

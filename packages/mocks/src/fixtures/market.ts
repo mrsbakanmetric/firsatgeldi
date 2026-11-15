@@ -50,6 +50,11 @@ export interface SellerFixture {
   readonly name: string;
   readonly rating: number | null;
   readonly ratingCount: number | null;
+  /**
+   * The seller rating as the store shows it, on the store's own scale (Product Detail after "Göster";
+   * never converted). Unset → the 5-point `rating` above. The seller lookup still uses `rating`.
+   */
+  readonly storeRating?: { readonly value: number; readonly scale: number; readonly count: number | null };
   /** `seller_trust` (database.md, computed daily): verdict + reason key; INSUFFICIENT falls back to the store rating. */
   readonly trust: { readonly verdict: "GOOD" | "CAUTION" | "INSUFFICIENT"; readonly reasonKey: string | null };
 }
@@ -73,7 +78,8 @@ export const SELLERS = {
   // Design case J "karışık": rating 3,1 / 5, out of stock, importer warranty.
   hizliElektronik: seller("TRENDYOL", "TY-SLR-77102", "Hızlı Elektronik Dünyası", 3.1, 87),
   // Hidden cheaper sellers (mock-only names).
-  aksiyonMarket: seller("TRENDYOL", "TY-SLR-90311", "Aksiyon Market", 4.8, 5320),
+  // Product Detail v2 after "Göster": "Satıcı puanı 9,4 · 12.400 değerlendirme" (a 10-point store scale).
+  aksiyonMarket: { ...seller("TRENDYOL", "TY-SLR-90311", "Aksiyon Market", 4.8, 5320), storeRating: { value: 9.4, scale: 10, count: 12_400 } },
   lensDeposu: seller("AMAZON_TR", "AMZ-SLR-A1Q9", "Lens Deposu", 4.5, 911),
   teknikDukkan: seller("MEDIAMARKT", "MM-SLR-0042", "Teknik Dükkan", 4.2, 310, { verdict: "GOOD", reasonKey: "trust.reason.consistent" }),
   // Trust cases for the rating tile (modules.md seller trust indicator): caution with a reason; no data at all.
@@ -112,6 +118,10 @@ export interface OfferFixture {
   readonly priceSinceDaysAgo: number;
   readonly checkedMinutesAgo: number;
   readonly listingPath: string;
+  /** Product Detail summary line and ratings (modules.md Ratings, Installments); unset = not read. */
+  readonly installmentsMax?: number;
+  readonly campaign?: { readonly kind: "BASKET" | "COUPON" | "BANK"; readonly amountMinor: number | null };
+  readonly productRating?: { readonly value: number; readonly scale: number; readonly count: number | null };
 }
 
 function offer(productKey: ProductKey, sellerKey: SellerKey, values: Omit<OfferFixture, "id" | "product" | "seller">): OfferFixture {
@@ -128,11 +138,14 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 2_599_700, previousPriceMinor: 2_799_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 2 },
     stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 3, priceSinceDaysAgo: 1, checkedMinutesAgo: 4,
     listingPath: "/insta360/ace-pro-2-flash-print-p-871233019",
+    // Product Detail v2: "Peşin fiyatına en çok 6 taksit · Kart kampanyası olabilir"; "4,6 bu üründe · 1.240 değerlendirme".
+    installmentsMax: 6, campaign: { kind: "BANK", amountMinor: null }, productRating: { value: 4.6, scale: 5, count: 1_240 },
   }),
   offer("acePro2FlashPrint", "lensDeposu", {
     priceMinor: 2_719_900, previousPriceMinor: 2_849_900, claimedOldPriceMinor: 3_499_900, shippingMinor: 5_000, deliveryDays: { min: 3, max: 3 },
     stockState: "LOW_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 1, priceSinceDaysAgo: 2, checkedMinutesAgo: 4,
     listingPath: "/dp/B0DACEPRO2FP",
+    installmentsMax: 3, productRating: { value: 4.4, scale: 5, count: 310 },
   }),
   offer("acePro2FlashPrint", "teknikDukkan", {
     priceMinor: 2_949_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: null, deliveryDays: null,

@@ -2,12 +2,25 @@
 // CLAUDE.md product rule 3): before "Göster" no response body, error message,
 // image URL or live-update event carries a cheaper seller's identity — seller
 // name, seller or offer id, external id, platform name/code/domain or listing URL.
-import { ApiError, ENDPOINTS, type EndpointName, HiddenOfferView, type HomeView, imagePath, TOP_DROP_ITEM_KEYS } from "@firsatgeldi/contracts";
+import {
+  ApiError,
+  type DetailOffers,
+  ENDPOINTS,
+  type EndpointName,
+  HiddenOfferView,
+  HistoryRange,
+  type HomeView,
+  imagePath,
+  type PriceDifferenceMessage,
+  REVEALED_ONLY_FIELDS,
+  TOP_DROP_ITEM_KEYS,
+} from "@firsatgeldi/contracts";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PRODUCTS } from "./fixtures/catalog";
 import { listingUrl, OFFERS, PLATFORMS, SELLERS, type SellerKey } from "./fixtures/market";
 import { USERS } from "./fixtures/users";
-import { createTestApi, NOW } from "./test/harness";
+import { calendarPath } from "./handlers/product-detail";
+import { BASE_URL, createTestApi, NOW } from "./test/harness";
 import { fullOffer } from "./views";
 
 const t = createTestApi();
@@ -79,6 +92,8 @@ const homes: HomeView[] = [];
 const allSellerSecrets = Object.values(SELLERS).flatMap((seller) => [seller.name, seller.id, seller.externalId]);
 const allPlatformSecrets = Object.values(PLATFORMS).flatMap((platform) => [platform.name, platform.code, platform.domain, platform.id]);
 let ownRef = "";
+const detailOffers: DetailOffers[] = [];
+const messages: PriceDifferenceMessage[] = [];
 
 beforeAll(async () => {
   t.server.listen({ onUnhandledFrame: "error" });
@@ -146,6 +161,32 @@ beforeAll(async () => {
     }
   }
   controller.config = { ...controller.config, scenario: "success" };
+  // Product Detail: every read and write of the page, in both languages and the offer scenarios.
+  const detailId = listed[0] ?? "";
+  for (const locale of ["tr", "en"] as const) {
+    t.useLocale(locale);
+    await capture("getTrackedItem", () => api.call("getTrackedItem", { params: { id: detailId } }));
+    for (const scenario of ["success", "stale", "empty"] as const) {
+      controller.config = { ...controller.config, scenario };
+      const answer = (await capture("getTrackedItemOffers", () => api.call("getTrackedItemOffers", { params: { id: detailId } }))) as { data: DetailOffers } | undefined;
+      if (answer) detailOffers.push(answer.data);
+    }
+    controller.config = { ...controller.config, scenario: "success" };
+    for (const range of HistoryRange.options) await capture("getPriceHistory", () => api.call("getPriceHistory", { params: { id: detailId }, query: { range } }));
+    for (const range of ["14d", "1m"] as const) await capture("getStockHistory", () => api.call("getStockHistory", { params: { id: detailId }, query: { range } }));
+    const message = (await capture("getPriceDifferenceMessage", () => api.call("getPriceDifferenceMessage", { params: { id: detailId }, query: { locale } }))) as { data: PriceDifferenceMessage } | undefined;
+    if (message) messages.push(message.data);
+    await capture("getProductRatings", () => api.call("getProductRatings", { params: { id: product.id } }));
+  }
+  await capture("updateTrackedItem", () => api.call("updateTrackedItem", { params: { id: detailId }, body: { orderStatus: "SHIPPED" } }));
+  await capture("answerDelivered", () => api.call("answerDelivered", { params: { id: detailId }, body: { answer: "NOT_YET", day: null } }));
+  await capture("tickStep", () => api.call("tickStep", { params: { id: detailId, step: "RETURN_REQUEST" }, body: { done: true } }));
+  await capture("updateRequest", () => api.call("updateRequest", { params: { id: detailId }, body: { kind: "PRICE_DIFFERENCE", outcome: null } }));
+  await capture("notifyBackInStock", () => api.call("notifyBackInStock", { params: { ref: teaserRefs[0] ?? "" } }));
+  await capture("createReport", () => api.call("createReport", { body: { trackedItemId: detailId, kind: "WRONG_PRICE", offerRef: teaserRefs[1] ?? "", note: null } }));
+  const calendar = await fetch(`${BASE_URL}${calendarPath(detailId)}`);
+  captures.push({ source: "getCalendar", text: await calendar.text(), offerChannel: true });
+  called.add("getCalendar");
   await capture("checkNow", () => api.call("checkNow", { params: { id: listed[0] ?? "" } }));
   await capture("checkNowBulk", () => api.call("checkNowBulk", { body: { trackedItemIds: listed } }));
   // Hide and go before a reveal: the answers (and errors) must not name the seller.
@@ -194,6 +235,24 @@ describe("hidden-seller rule — before Göster", () => {
     }
   });
 
+  it("Product Detail: offers by rank only until Göster; the message goes to the user's own seller and names nobody else", () => {
+    expect(detailOffers).toHaveLength(6);
+    const listed = detailOffers.flatMap((answer) => answer.offers);
+    expect(listed.length).toBeGreaterThan(0);
+    for (const offer of listed) {
+      expect(offer.revealed).toBe(false);
+      for (const field of REVEALED_ONLY_FIELDS) expect(Object.keys(offer)).not.toContain(field);
+    }
+    expect(detailOffers[0]?.offers.map((offer) => offer.rank)).toEqual([1, 2]);
+    // The user's own purchase is visible: seller and store.
+    expect(detailOffers[0]?.own).toMatchObject({ sellerName: SELLERS[OWN_SELLER].name, platformName: PLATFORMS.HEPSIBURADA.name });
+    expect(messages).toHaveLength(2);
+    for (const message of messages) {
+      expect(message.recipient).toBe(SELLERS[OWN_SELLER].name);
+      expect(message.text).not.toBeNull();
+    }
+  });
+
   it("image URLs carry only a content address and a variant", () => {
     const images = captures.filter((item) => item.source === "image URL");
     expect(images.length).toBeGreaterThan(0);
@@ -222,6 +281,19 @@ describe("hidden-seller rule — after Göster", () => {
 
     const again = await api.call("teaser", { params: { id: product.id }, body: { pricePaid, sellerRef: ownRef } });
     expect(leaks([{ source: "teaser after reveal", text: JSON.stringify(again), offerChannel: true }])).toEqual([]);
+
+    // Product Detail lists the revealed offer with its seller, store ratings on the store's scale and the link — only that one.
+    const detail = (await api.call("listTrackedItems", {})).data.items[0]?.id ?? "";
+    const { data: offers } = await api.call("getTrackedItemOffers", { params: { id: detail } });
+    const [first, second] = offers.offers;
+    if (!first?.revealed) throw new Error("the revealed offer is not shown as revealed");
+    expect(first.sellerName).toBe(SELLERS.aksiyonMarket.name);
+    expect(first.sellerRating).toEqual({ value: 9.4, scale: 10, count: 12_400 });
+    expect(first.productRating).toEqual({ value: 4.6, scale: 5, count: 1_240 });
+    expect(second?.revealed).toBe(false);
+    expect(JSON.stringify(second)).not.toContain(SELLERS.lensDeposu.name);
+    const others = hiddenOffers.filter((offer) => offer.seller !== "aksiyonMarket").map((offer) => SELLERS[offer.seller].name);
+    for (const name of others) expect(JSON.stringify(offers)).not.toContain(name);
   });
 
   it("a second user cannot use the first user's refs and sees no identity", async () => {

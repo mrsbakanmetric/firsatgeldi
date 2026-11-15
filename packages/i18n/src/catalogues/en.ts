@@ -232,7 +232,7 @@ export const en = {
       deliveryRange: "Delivered in {min}–{max} days",
       reveal: "Show",
       teaserNote: "Savings include shipping. Show is free for now.",
-      revealedRating: "Seller rating {rating} / 5",
+      revealedRating: "Seller rating {rating} / {scale}",
       goToStore: "Go to store",
       hide: "Hide",
       bought: "Yes, I bought this",

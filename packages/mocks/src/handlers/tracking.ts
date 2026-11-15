@@ -31,7 +31,7 @@ function normalise(name: string): string {
  * enough evidence; otherwise the store rating against `listing.seller_rating_good_min`;
  * no rating either → INSUFFICIENT without a reason ("henüz yeterli veri yok").
  */
-function sellerTrust(seller: (typeof SELLERS)[keyof typeof SELLERS]) {
+export function sellerTrust(seller: (typeof SELLERS)[keyof typeof SELLERS]) {
   if (seller.trust.verdict !== "INSUFFICIENT") return seller.trust;
   if (seller.rating === null) return { verdict: "INSUFFICIENT" as const, reasonKey: null };
   const good = seller.rating >= SYSTEM_SETTINGS["listing.seller_rating_good_min"];
@@ -68,12 +68,12 @@ function ownRef(controller: MockController, userId: string, ref: string | null |
   return target;
 }
 
-function latestReveal(controller: MockController, userId: string, offerId: string) {
+export function latestReveal(controller: MockController, userId: string, offerId: string) {
   return controller.state.reveals.filter((row) => row.userId === userId && row.offerId === offerId).at(-1);
 }
 
 /** A ref of a ranked (cheaper) offer; the user's own seller ref (rank 0) is never revealed. */
-function hiddenRef(controller: MockController, userId: string, ref: string): RefTarget {
+export function hiddenRef(controller: MockController, userId: string, ref: string): RefTarget {
   const target = ownRef(controller, userId, ref);
   if (!target || target.rank < 1) throw new MockApiError("NOT_FOUND");
   return target;
@@ -85,7 +85,7 @@ function offerOf(target: RefTarget): OfferFixture {
   return offer;
 }
 
-function trackingEndsAt(now: Date, duration: "1W" | "1M" | "3M" | "UNLIMITED"): string | null {
+export function trackingEndsAt(now: Date, duration: "1W" | "1M" | "3M" | "UNLIMITED"): string | null {
   if (duration === "UNLIMITED") return null;
   const end = new Date(now);
   const step = DURATION[duration];
