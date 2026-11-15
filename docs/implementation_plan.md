@@ -50,7 +50,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 10 | Search and Add | Screen as designed, on mock data | ✅ | #61 · #68 (v3) · #79 (v4) | 2026-11-15 |
 | 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | ✅ | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5) · #106 (v6) | 2026-11-15 |
 | 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | ✅ | #99 (v2 + shared CatalogueSearchBox) · #106 (layout rules) | 2026-11-15 |
-| 11 | Product Detail | Screen incl. Want to Buy mode — three PRs (user decision 2026-11-15) | 🛠 | #108 (PR 1: contract + mock API + hidden-seller tests) · #110 (PR 2: bought mode screen) | 2026-11-16 |
+| 11 | Product Detail | Screen incl. Want to Buy mode — three PRs (user decision 2026-11-15) | ✅ | #108 (PR 1: contract + mock API + hidden-seller tests) · #110 (PR 2: bought mode screen) · #111 (PR 3: want to buy, full "Takibi bitir", flows) | 2026-11-16 |
 | 20 | Sign-in and Sign-up | Screen, with mock sign-in — right after step 11 (user decision 2026-11-15) | ⬜ | — | — |
 | 19 | Settings and Account | Screen (user and Application Manager variants), incl. the Profile section — after step 20 (user decision 2026-11-15) | ⬜ | — | — |
 | 21a | My Profile | The user's own profile page `/profil` only — after step 19 (user decision 2026-11-15) | ⬜ | — | — |
