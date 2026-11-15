@@ -512,7 +512,7 @@ Index `(product_id, finished_at DESC)` — "checked within the last 5 min?" come
 Constraints: **partial U `(user_id, product_id, mode) WHERE state='ACTIVE'`** (no duplicate add [DECIDED]). Indexes `(user_id, state, return_deadline)`, `(product_id, state)`. The active-tracking count cannot exceed the plan limit (service + lock, §9).
 
 ### `tracked_item_events` (append-only)
-id · tracked_item_id · type (`CREATED`,`PRICE_EDITED`,`DEADLINE_EDITED`,`DELIVERED`,`STEP_TICKED`,`STEP_UNTICKED`,`EXTENDED`,`ENDED`…) · data jsonb · actor CHECK (`USER`,`SYSTEM`,`ADMIN`) · created_at. Feeds the detail change log and the audit trail.
+id · tracked_item_id · type (`CREATED`,`PRICE_EDITED`,`DEADLINE_EDITED`,`DELIVERED`,`STEP_TICKED`,`STEP_UNTICKED`,`EXTENDED`,`ENDED`,`RESTORED` ("Geri al"),`BOUGHT` (want-to-buy switched to bought in place)…; `RESTORED` and `BOUGHT` [ASSUMPTION] names, `architecture.md` §16.1) · data jsonb · actor CHECK (`USER`,`SYSTEM`,`ADMIN`) · created_at. Feeds the detail change log and the audit trail.
 
 ### `deals` (deal lifecycle)
 | Column | Type | N | Description |
@@ -775,7 +775,7 @@ The application role has `INSERT` only; `UPDATE`/`DELETE` closed by database pri
 | session_id | uuid | ✓ | |
 | device_hash / ip_hash | text | ✓ | Salted hash; raw values never stored |
 | platform | text | | CHECK (`WEB`,`MOBILE`) |
-| action | text | | e.g. `auth.sign_in`, `search`, `identify`, `upload`, `upload.status` (upload status read, guests included [DECIDED 2026-11-14]), `seller_lookup` · `teaser` · `reveal.hide` [ASSUMPTION] (`architecture.md` §16.1), `tracking.confirm`, `tracking.end`, `reveal`, `offer.go`, `check_now`, `check_now_bulk`, `report.create`, `link.submit`, `package.request`, `savings.edit`, `settings.change`, `consent.accept` |
+| action | text | | e.g. `auth.sign_in`, `search`, `identify`, `upload`, `upload.status` (upload status read, guests included [DECIDED 2026-11-14]), `seller_lookup` · `teaser` · `reveal.hide` · `tracking.restore` ("Geri al") · `tracking.bought` ("Aldım, kaydet") [ASSUMPTION] (`architecture.md` §16.1), `tracking.confirm`, `tracking.end`, `reveal`, `offer.go`, `check_now`, `check_now_bulk`, `report.create`, `link.submit`, `package.request`, `savings.edit`, `settings.change`, `consent.accept` |
 | target_type / target_id | text / uuid | ✓ | |
 | metadata | jsonb | ✓ | Action-specific summary (no full email/phone; `contains_hidden_seller=true` when a seller identity is present) |
 | contains_hidden_seller | boolean | | Readable only with `admin.offers.view_hidden_seller` |
@@ -969,6 +969,7 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `notify.urgent_return_days` | 2 | |
 | `notify.list_days` | 30 [DECIDED 2026-11-13] | Notification list shows the last N days; rows are kept (§16) |
 | `tracking.stale_hours` | 6 [ASSUMPTION] | Tracked Items: a row not checked for this long shows "Güncel değil" |
+| `tracking.restore_days` | 7 | Tracked Items: "Geri al" after "Takibi bitir" works this many days (`modules.md` Tracked Items, 7 days [DECIDED 2026-11-14]); key name [ASSUMPTION] (`architecture.md` §16.1) |
 | `history.max_range_months` | 12 [ASSUMPTION] | History Explorer: maximum date range per query |
 | `want.default_duration` | `1M` | |
 | `want.notable_drop_pct` / `.notable_drop_minor` | — | |
