@@ -196,7 +196,7 @@ Small pill with icon + short text. Vocabulary is fixed: deal found (coral, bolt)
 - Not shown for unlimited allowances (Premium reveals, Application Manager).
 - Final visual design is made with the Product Detail and Tracked Items drafts (`modules.md` Appendix E); this section fixes its information content.
 
-### 5.11 Step tick ("Yaptım ✓")
+### 5.11 Step tick ("Yaptım ✓", `StepTick`)
 - Ordered action steps (return/cancel → re-buy → end tracking) each carry a ghost "Yaptım" control; ticking turns it into an emerald check "Yaptım ✓" and the step text becomes muted.
 - Steps are numbered; the next un-ticked step is the visually current one.
 - A later step stays usable before an earlier one is ticked, but shows the related amber warning next to it ("önce iade talebini oluştur").
@@ -218,7 +218,7 @@ Small pill with icon + short text. Vocabulary is fixed: deal found (coral, bolt)
 - In want-to-buy mode, a one-line info hint based on history and the campaign calendar (e.g. "Son 30 günün en düşüğüne yakın", "Kampanya dönemi yaklaşıyor").
 - Phrased as information, never as an instruction or a promise; shown only when history is sufficient.
 
-### 5.16 Contextual help panel
+### 5.16 Contextual help panel (`HelpPanel`)
 - A small "?" ghost control next to a concept the user may not know (withdrawal right, price difference, "tahmini", hidden seller) opens a side/bottom panel with a short explanation and a link to the full Help and FAQ article.
 - The panel never covers the action it explains on phones without a clear close control; keyboard and screen-reader accessible.
 
