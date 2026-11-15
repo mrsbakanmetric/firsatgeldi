@@ -441,23 +441,6 @@ function Rows({ t, locale, items, now, onEnd, onRestore, restoringId }: RowsProp
   );
 }
 
-/** Column titles from breakpoint.md, lined up with the row columns (decorative: each row says its values). */
-function ColumnHeads({ t }: { t: Translator }) {
-  return (
-    <div aria-hidden="true" className="hidden gap-4 px-3 text-caption text-text-muted md:flex">
-      {/* v4 columns: image + name · price list · outcome · ⋯ */}
-      {/* Image (size.thumb-lg) + name (size.list-name-min-width), as in the rows. */}
-      <span className="flex shrink-0 gap-3">
-        <span className="w-(--size-thumb-lg)">{t("trackedItems.columns.product")}</span>
-        <span className="w-(--size-list-name-min-width)" />
-      </span>
-      <span className="min-w-0 flex-1">{t("trackedItems.columns.price")}</span>
-      <span className="w-1/5 shrink-0">{t("trackedItems.columns.state")}</span>
-      {/* Same width as the row's ⋯ button (button.compact, icon only). */}
-      <span className="min-w-(--component-button-compact-height-touch) shrink-0 md:pointer-fine:min-w-(--component-button-compact-height)" />
-    </div>
-  );
-}
 
 /** Loading (design States 6): skeleton rows with the same column sizes. */
 function Loading({ t }: { t: Translator }) {

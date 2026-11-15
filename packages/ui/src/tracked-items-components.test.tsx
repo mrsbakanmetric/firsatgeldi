@@ -138,7 +138,7 @@ describe("PriceSparkline and StockStrip", () => {
 });
 
 describe("ProductRow", () => {
-  it("the whole row opens its link (no separate Detay button); actions sit above the link; ended rows are dimmed", async () => {
+  it("the whole row opens its link (no separate Detay button); ended rows are dimmed", async () => {
     const { container, rerender } = render(
       <ul>
         <li>
@@ -158,15 +158,10 @@ describe("ProductRow", () => {
     expect(await axeViolations(container)).toEqual([]);
     // The title link is stretched over the row (::after covers it).
     expect(link.className).toContain("after:absolute");
-    const onMore = vi.fn();
-    rerender(<ProductRow href="/tr/takip/1" image={null} title="Biten" dimmed tone="deal" actions={<button type="button" onClick={onMore}>⋯</button>} />);
+    rerender(<ProductRow href="/tr/takip/1" image={null} title="Biten" dimmed tone="deal" />);
     const row = screen.getByRole("link", { name: /Biten/ }).closest("div") as HTMLElement;
     expect(row.className).toContain("border-savings");
     expect(row.querySelector("[class*='opacity-(--component-button-disabled-opacity)']")).not.toBeNull();
-    const more = screen.getByRole("button", { name: "⋯" });
-    expect(more.parentElement?.className).toContain("z-(--z-index-raised)");
-    await userEvent.click(more);
-    expect(onMore).toHaveBeenCalled();
   });
 });
 
@@ -204,7 +199,7 @@ describe("SearchBox (canonical: one look everywhere, only the handler differs)",
 });
 
 describe("ProductRow card layout (Tracked Items v5)", () => {
-  it("header with the title link stretched over the card, actions top-right above it, columns at full width, the footer last", () => {
+  it("header with the title link stretched over the card, columns at full width, the footer last", () => {
     render(
       <ul>
         <li>
@@ -214,7 +209,6 @@ describe("ProductRow card layout (Tracked Items v5)", () => {
             image={<ProductImage src={null} size="card" fallbackIcon={Package} />}
             title="Insta360 X4"
             columns={[{ key: "prices", width: "fill", content: <table aria-label="Fiyatlar" /> }]}
-            actions={<button type="button">⋯</button>}
             footer={<div>alt şerit</div>}
             tone="deal"
           />
@@ -225,7 +219,6 @@ describe("ProductRow card layout (Tracked Items v5)", () => {
     const card = link.closest("div.h-full") as HTMLElement;
     expect(card.className).toContain("border-savings");
     expect(link.className).toContain("line-clamp-2");
-    expect(screen.getByRole("button", { name: "⋯" }).parentElement?.className).toContain("z-(--z-index-raised)");
     expect(card.lastElementChild?.textContent).toBe("alt şerit");
     expect(card.querySelector("[class*='size-(--size-thumb-card)']")).not.toBeNull();
   });

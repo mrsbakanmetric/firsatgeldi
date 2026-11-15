@@ -324,7 +324,6 @@ export const tr = {
       status: { BOUGHT: "Takip ediyorsun", WANT: "Almak istiyorsun" },
       dealGroup: "Fırsat olan ürünler",
       seeDeal: "Fırsatı gör",
-      more: "Diğer işlemler",
       end: "Takibi bitir",
       endTitle: "Takibi bitir",
       endQuestion: "Nasıl sonuçlandı?",
@@ -376,11 +375,6 @@ export const tr = {
       priority: "Öncelik",
       deadline: "İade tarihi",
       saving: "Kazanç",
-    },
-    columns: {
-      product: "Ürün",
-      price: "Fiyat · 14 gün",
-      state: "Durum",
     },
     row: {
       noTarget: "Hedef fiyat yok",
