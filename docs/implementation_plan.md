@@ -49,7 +49,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ✅ | #53 · #55 (guest upload status, seller-lookup limit) | 2026-11-14 |
 | 10 | Search and Add | Screen as designed, on mock data | 🛠 | #61 · #68 (v3) · #79 (v4) | 2026-11-14 |
 | 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | 🛠 | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5) | 2026-11-14 |
-| 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | ⬜ | — | — |
+| 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | 🛠 | #99 (v2 + shared CatalogueSearchBox) | 2026-11-15 |
 | 11 | Product Detail | Screen incl. Want to Buy mode | ⬜ | — | — |
 | 13 | Notifications and Preferences | Page, bell panel, notification preferences | ⬜ | — | — |
 | 15 | My Savings | Screen | ⬜ | — | — |

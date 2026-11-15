@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-15 (day) · Claude Code
+- **Done:** plan change — Home before Product Detail in Phase 1 only (#98); plan step 14 Home v2 on the mock API (#99): Hemen Gözat with the new canonical `PriceHistory` chart and ranked prices with Göster, return reminder, 4 small cards, seller-less "Şu an en çok düşenler" (rule in `packages/core`), all states, tr/en; `GET /home`, `POST /tracked-items/:id/check-now`, activity `check_now`; hidden-seller leak test on every Home scenario; Home search = shared `CatalogueSearchBox` moved to `components/catalogue-search/` with shared tests on both pages (#100 rule; Home's own search logic removed with two-step approval).
+- **Decided (user):** Home before Product Detail, Phase 1 only (#98) · Hemen Gözat "Şimdi kontrol et" uses the single-item endpoint · tokens `size.card-outcome-width`, `size.chart-summary-height`, status icon 28 px (#97).
+- **Open:** [ASSUMPTION] fields to write into `architecture.md` §16.1 — `HomeView`/`topDrops` shapes, `protectedTotal`, `topDrops.hasTrackedCategories`, `topDrops.windowDays`, `CheckNowResult` (plus the earlier Tracked Items v3–v4 fields) · user's visual check of Home at 390/1280 light/dark · "İade bilgisini aç" goes to Product Detail until it exists · Hemen Gözat label letter spacing has no token · performance budgets not measured.
+- **Next:** spec PR writing the Home and Tracked Items contract fields into §16.1, then plan step 11 (Product Detail), with approval.
+
+---
+
 ## 2026-11-15 (night) · claude.ai
 - **Done:** web review of Search and Add and Tracked Items with the user; design-change PRs #63, #65, #67, #71, #74, #83, #86, #89, #91 (Search and Add v2→v4, app shell v2 footer, Tracked Items v2→v5, tokens 1.10–1.13) and spec PRs #64, #66, #72, #75, #84, #87, #90 — all merged. Canvases were not redrawn (user choice; backlog in `screen_status.md`).
 - **Decided (user), written in docs:** compact UI rules (chips, compact buttons, 48 px search box, overlays close on outside click); no Add product dialog (Search and Add instead); canonical `SearchBox` + `InputSourceHandler`; first result pre-selected, verified with "Evet, bu?"; "Diğer" platform; Tracked Items cards in a two-column grid with ranked hidden-seller price list, green ↓ / red ↑, 7/14-day summary, "Takibi bitir" from the list; want-to-buy record switches to bought.
