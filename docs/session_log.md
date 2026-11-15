@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-15 (late morning) · Claude Code
+- **Done:** #102 merged — Home and Tracked Items contract fields written into `architecture.md` §16.1 and `database.md` (actions `tracking.restore`/`tracking.bought`, events RESTORED/BOUGHT, setting `tracking.restore_days`); #106: layout rules of #104 on Tracked Items (v6: no ⋯, visible footer buttons; ended cards "Geri al" in the strip) and Home (Hemen Gözat columns end together; no idle footer row) — #106.
+- **Decided (user):** error code name `VALIDATION` (#102) · Hemen Gözat label letter spacing not applied (`build_status.md`) · layout-rules PR before Product Detail · "Geri al" result line = `StatusBanner`, buy-or-wait hint = info `Flag`, `StepTick` + `HelpPanel` canonical (#105) · ratings keep the store's scale `{ value, scale }`, never converted (#105, `modules.md`) · top-drop cards not clickable until the product page exists · Product Detail in three PRs, one plan step (`implementation_plan.md`).
+- **Open:** deletion of the code and text unused after v6 (`trackedItems.v3.more`, card `actions` slot, `ColumnHeads`) waits for the user's two-step approval · rating `{ value, scale }` and the other Product Detail fields go into `architecture.md` §16.1 after the contract PR · visual check and performance budgets of steps 10, 12, 14.
+- **Next:** user merges #106 → Product Detail PR 1 (contract + mock API + hidden-seller tests), with approval.
+
+---
+
 ## 2026-11-15 (day) · Claude Code
 - **Done:** plan change — Home before Product Detail in Phase 1 only (#98); plan step 14 Home v2 on the mock API (#99): Hemen Gözat with the new canonical `PriceHistory` chart and ranked prices with Göster, return reminder, 4 small cards, seller-less "Şu an en çok düşenler" (rule in `packages/core`), all states, tr/en; `GET /home`, `POST /tracked-items/:id/check-now`, activity `check_now`; hidden-seller leak test on every Home scenario; Home search = shared `CatalogueSearchBox` moved to `components/catalogue-search/` with shared tests on both pages (#100 rule; Home's own search logic removed with two-step approval).
 - **Decided (user):** Home before Product Detail, Phase 1 only (#98) · Hemen Gözat "Şimdi kontrol et" uses the single-item endpoint · tokens `size.card-outcome-width`, `size.chart-summary-height`, status icon 28 px (#97).

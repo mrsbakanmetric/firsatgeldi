@@ -48,8 +48,8 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 8 | App shell | `AppShell`, `AuthShell`, `AdminShell`, page templates, overlays, base components | ✅ | #50 | 2026-11-14 |
 | 9 | Mock API and fixtures | In-browser mock server, sample data from the designs, hidden-seller rule | ✅ | #53 · #55 (guest upload status, seller-lookup limit) | 2026-11-14 |
 | 10 | Search and Add | Screen as designed, on mock data | 🛠 | #61 · #68 (v3) · #79 (v4) | 2026-11-14 |
-| 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | 🛠 | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5) | 2026-11-14 |
-| 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | 🛠 | #99 (v2 + shared CatalogueSearchBox) | 2026-11-15 |
+| 12 | Tracked Items | List; "Ürün ekle" opens Search and Add (no Add product dialog, #72) — built before step 11 (user decision 2026-11-14) | 🛠 | #76 (v2) · #85 (v3) · #88 (v4) · #92 (v5) · #106 (v6) | 2026-11-14 |
+| 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | 🛠 | #99 (v2 + shared CatalogueSearchBox) · #106 (layout rules) | 2026-11-15 |
 | 11 | Product Detail | Screen incl. Want to Buy mode | ⬜ | — | — |
 | 13 | Notifications and Preferences | Page, bell panel, notification preferences | ⬜ | — | — |
 | 15 | My Savings | Screen | ⬜ | — | — |
@@ -102,6 +102,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 - Screens follow the screen order of `CLAUDE.md`; Application Manager screens are not here because their design review is still pending.
 - **Exception [DECIDED 2026-11-14] (user decision):** Tracked Items (step 12) is built before Product Detail (step 11); step numbers are kept. Until Product Detail exists, Tracked Items rows link to `/[locale]/takip/[id]`, which shows a "coming soon" page.
 - **Exception [DECIDED 2026-11-15] (user decision):** Home (step 14) is built before Product Detail (step 11), right after Tracked Items; step numbers are kept. Until Product Detail exists, Home links to a product (cards, "Fırsatı gör", "Ürünü gör") go to the same "coming soon" page. This exception is for Phase 1 only: the Phase 2 connecting order and the backend build order do not change.
+- **Exception [DECIDED 2026-11-15] (user decision):** Product Detail (step 11) stays one plan step but ships in three PRs — contract + mock API + hidden-seller tests · bought mode screen · want-to-buy mode + Takibi bitir + edge cases. The step is ✅ only after the third.
 
 **Phase 2** — makes the product really work for users.
 - **Data test (23):** which data the stores really give affects every later decision, so it comes first.

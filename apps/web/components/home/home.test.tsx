@@ -196,6 +196,17 @@ describe.each(LOCALES)("Home — %s", (locale) => {
     expect(within(featured).getByText(t("home.featured.cheapestNow"))).toBeDefined();
     expect(container.querySelectorAll(".bg-accent")).toHaveLength(0);
     expect(within(featured).queryByRole("button", { name: t("searchAdd.confirm.reveal") })).toBeNull();
+    // A return link on the left: the footer row stays, "Şimdi kontrol et" on its right.
+    expect(within(featured).getByRole("button", { name: t("home.featured.checkNow") }).closest(".border-t")).not.toBeNull();
+  });
+
+  it("no deal and no return link: no idle footer row — “Şimdi kontrol et” sits under the check time", async () => {
+    controller.config = { ...controller.config, scenario: "no-deal" };
+    controller.state.trackedItems.forEach((row, index) => (controller.state.trackedItems[index] = { ...row, returnDeadline: null }));
+    show(locale);
+    const featured = await screen.findByRole("region", { name: name("dysonV15") });
+    expect(within(featured).queryByText(t("home.featured.returnPage"))).toBeNull();
+    expect(within(featured).getByRole("button", { name: t("home.featured.checkNow") }).closest(".border-t")).toBeNull();
   });
 
   it("stale: a warning that some stores did not answer; the stale card says its age and that its deal is not verified", async () => {
