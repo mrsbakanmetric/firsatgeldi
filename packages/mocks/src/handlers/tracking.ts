@@ -7,10 +7,12 @@ import { newId } from "../ids";
 import { MockApiError, route } from "../route";
 import { REVEAL_GATE_STAGE, SYSTEM_SETTINGS } from "../settings";
 import type { MockController, RefTarget } from "../state";
-import { fullOffer, money, refFor, totalMinor } from "../views";
+import { fullOffer, money, refFor, storeRatingOf, totalMinor } from "../views";
 import { activeTrackingCount, entitlements, fold, requireUser } from "./shared";
 
 const MS_PER_HOUR = 3_600_000;
+/** `listing.seller_rating_good_min` is stated on a 5-point scale. */
+const RATING_THRESHOLD_SCALE = 5;
 const MS_PER_MINUTE = 60_000;
 const DAYS_PER_WEEK = 7;
 /** Tracking durations (database.md §8 `tracking_duration`): weeks or calendar months. */
@@ -33,8 +35,11 @@ function normalise(name: string): string {
  */
 export function sellerTrust(seller: (typeof SELLERS)[keyof typeof SELLERS]) {
   if (seller.trust.verdict !== "INSUFFICIENT") return seller.trust;
-  if (seller.rating === null) return { verdict: "INSUFFICIENT" as const, reasonKey: null };
-  const good = seller.rating >= SYSTEM_SETTINGS["listing.seller_rating_good_min"];
+  const rating = storeRatingOf(seller);
+  if (rating === null) return { verdict: "INSUFFICIENT" as const, reasonKey: null };
+  // The threshold is set on a 5-point scale; the comparison uses the share of the store's scale
+  // (the rating itself is always shown on the store's scale, never converted).
+  const good = rating.value / rating.scale >= SYSTEM_SETTINGS["listing.seller_rating_good_min"] / RATING_THRESHOLD_SCALE;
   return { verdict: "INSUFFICIENT" as const, reasonKey: good ? "trust.reason.storeRatingGood" : "trust.reason.storeRatingLow" };
 }
 
@@ -171,7 +176,7 @@ export function trackingHandlers(controller: MockController) {
       return {
         data: {
           match: {
-            sellerRef: ref, sellerName: seller.name, sellerRating: seller.rating, sellerRatingCount: seller.ratingCount, trust: sellerTrust(seller),
+            sellerRef: ref, sellerName: seller.name, sellerRating: storeRatingOf(seller), trust: sellerTrust(seller),
             stockState: offer.stockState, warrantyType: offer.warrantyType, listingUrl: own.listingUrl, lastCheckedAt: own.lastCheckedAt,
           },
         },

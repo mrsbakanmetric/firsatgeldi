@@ -26,10 +26,13 @@ export const EARLIER_HISTORY: Readonly<Record<string, EarlierHistory>> = {
   },
 };
 
-/** Seller-less product rating across stores (modules.md Ratings › Before Göster). */
-export const PRODUCT_RATINGS: Readonly<Partial<Record<ProductKey, { value: number; scale: number; count: number; storeCount: number; readMinutesAgo: number }>>> = {
-  acePro2FlashPrint: { value: 4.5, scale: 5, count: 3_850, storeCount: 4, readMinutesAgo: 120 },
-  airPodsPro2: { value: 4.7, scale: 5, count: 12, storeCount: 2, readMinutesAgo: 300 },
+/**
+ * When the stores' product ratings were last read ("2 saat önce okundu"); the figure itself is
+ * computed from each offer's `productRating` (fixtures/market.ts) with `crossStoreRating`.
+ */
+export const RATINGS_READ_MINUTES_AGO: Readonly<Partial<Record<ProductKey, number>>> = {
+  acePro2FlashPrint: 120,
+  airPodsPro2: 300,
 };
 
 /**

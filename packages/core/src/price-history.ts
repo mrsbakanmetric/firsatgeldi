@@ -72,3 +72,27 @@ export function buyOrWaitHint(history: readonly (number | null)[], current: numb
   const order = mode === "WANT" ? [lowestLong, aboveLong, lowestShort] : [lowestLong, lowestShort, aboveLong];
   return order.find((hint) => hint !== null) ?? null;
 }
+
+export interface StoreRating {
+  readonly value: number;
+  readonly scale: number;
+  readonly count: number | null;
+}
+
+/** The shared scale of the cross-store product rating ("4,5 / 5"). */
+export const CROSS_STORE_SCALE = 5;
+
+/**
+ * One product rating across stores, seller-less (modules.md Ratings › Before Göster): on the shared
+ * 5-point scale, weighted by each store's rating count. A store on another scale is brought to 5
+ * only for this average; each store's own rating is shown after "Göster" on its own scale
+ * [ASSUMPTION — user decision 2026-11-15, to be checked in the data test]. Stores without a count
+ * are left out. One decimal, as shown.
+ */
+export function crossStoreRating(ratings: readonly StoreRating[]): { value: number; scale: number; count: number; stores: number } | null {
+  const counted = ratings.filter((rating): rating is StoreRating & { count: number } => rating.count !== null && rating.count > 0 && rating.scale > 0);
+  const count = counted.reduce((sum, rating) => sum + rating.count, 0);
+  if (count === 0) return null;
+  const weighted = counted.reduce((sum, rating) => sum + (rating.value / rating.scale) * CROSS_STORE_SCALE * rating.count, 0);
+  return { value: Math.round((weighted / count) * 10) / 10, scale: CROSS_STORE_SCALE, count, stores: counted.length };
+}

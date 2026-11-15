@@ -170,7 +170,10 @@ export type PriceDifferenceMessage = z.infer<typeof PriceDifferenceMessage>;
 
 /**
  * `GET /products/:id/ratings` — one product-level figure across stores, no store names
- * ("4 mağazada 3.850 değerlendirme · ortalama 4,5 ★"); `few` under `ratings.min_count`.
+ * ("4 mağazada 3.850 değerlendirme · ortalama 4,5 ★"); `few` under `ratings.min_count`. `average`
+ * is on the shared 5-point scale ("4,5 / 5"): a store on another scale is brought to 5 only for this
+ * average; each store's own rating appears after "Göster" on its own scale [ASSUMPTION — user
+ * decision 2026-11-15, to be checked in the data test].
  */
 export const ProductRatings = z.object({
   average: Rating.nullable(),

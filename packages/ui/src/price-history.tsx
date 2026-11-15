@@ -8,7 +8,8 @@
 // "Fark X TL" pill; direct end labels (name + value); a legend row; summary tiles under it.
 // Hover or tap reads out the day and the price. Lines differ by pattern as well as colour.
 // The numbers (grid, steps, summary) come from `priceChartModel` in packages/core; every
-// text is given by the caller. Product Detail adds the range choice later.
+// text is given by the caller. Product Detail (design v2) adds the range choice (outside, by the
+// caller), the part before tracking started drawn dimmed with a "Takip başladı" marker, and four tiles.
 import { type CSSProperties, type PointerEvent, type ReactNode, useState } from "react";
 import { cn } from "./cn";
 
@@ -42,8 +43,8 @@ export interface PriceHistoryTile {
 export interface PriceHistoryProps {
   /** "Fiyat · son 14 gün". */
   title: string;
-  /** "2 Kas – bugün". */
-  range: string;
+  /** "2 Kas – bugün"; Product Detail adds the buy-or-wait hint beside it. */
+  range: ReactNode;
   /** Cheapest price per day, oldest first; null = no data that day. */
   cheapest: readonly (number | null)[];
   /** Value range and grid from `priceChartModel`; grid labels already formatted ("29.000"). */
@@ -67,10 +68,18 @@ export interface PriceHistoryProps {
   readout: (index: number, value: number) => string;
   /** The whole chart in one sentence for assistive technology. */
   label: string;
+  /**
+   * Product Detail: the day tracking started. Days before it (another user's tracking) are drawn
+   * dimmed; a marker with `label` ("1 Kas · Aldın") stands at that day; the gap fill starts there.
+   */
+  trackingStart?: { index: number; label: string; legend: string } | null;
   className?: string;
 }
 
-export function PriceHistory({ title, range, cheapest, min, max, grid, dates, steps, reference, cheapestEnd, gap, legend, tiles, readout, label, className }: PriceHistoryProps) {
+/** Tile grids: three in Hemen Gözat, four on Product Detail (two per row on phones). */
+const TILE_COLUMNS: Record<number, string> = { 3: "grid-cols-3", 4: "grid-cols-2 md:grid-cols-4" };
+
+export function PriceHistory({ title, range, cheapest, min, max, grid, dates, steps, reference, cheapestEnd, gap, legend, tiles, readout, label, trackingStart = null, className }: PriceHistoryProps) {
   const [hover, setHover] = useState<number | null>(null);
   const span = max - min || 1;
   const last = Math.max(1, cheapest.length - 1);
@@ -78,9 +87,13 @@ export function PriceHistory({ title, range, cheapest, min, max, grid, dates, st
   const y = (value: number) => PAD + ((max - value) / span) * (VIEW - PAD * 2);
 
   const known = cheapest.map((value, index) => ({ value, index })).filter((entry): entry is { value: number; index: number } => entry.value !== null);
-  const line = known.map((entry) => `${x(entry.index).toFixed(1)},${y(entry.value).toFixed(1)}`).join(" ");
+  const start = trackingStart && trackingStart.index > 0 && trackingStart.index < cheapest.length ? trackingStart.index : 0;
+  const points = (entries: readonly { value: number; index: number }[]) => entries.map((entry) => `${x(entry.index).toFixed(1)},${y(entry.value).toFixed(1)}`).join(" ");
+  // Before tracking: dimmed; from the start day on: the live line.
+  const before = points(known.filter((entry) => entry.index <= start));
+  const line = points(known.filter((entry) => entry.index >= start));
   const lastKnown = known.at(-1) ?? null;
-  const firstKnown = known[0] ?? null;
+  const firstKnown = known.find((entry) => entry.index >= start) ?? null;
 
   // The gap between the reference and the cheapest line, where the cheapest is lower.
   const fill =
@@ -88,7 +101,7 @@ export function PriceHistory({ title, range, cheapest, min, max, grid, dates, st
       ? [
           `${x(firstKnown.index).toFixed(1)},${y(reference.value).toFixed(1)}`,
           `${x(lastKnown.index).toFixed(1)},${y(reference.value).toFixed(1)}`,
-          ...[...known].reverse().map((entry) => `${x(entry.index).toFixed(1)},${y(Math.min(entry.value, reference.value)).toFixed(1)}`),
+          ...known.filter((entry) => entry.index >= start).reverse().map((entry) => `${x(entry.index).toFixed(1)},${y(Math.min(entry.value, reference.value)).toFixed(1)}`),
         ].join(" ")
       : null;
   const middle = known[Math.floor(known.length / 2)] ?? null;
@@ -160,13 +173,19 @@ export function PriceHistory({ title, range, cheapest, min, max, grid, dates, st
                   className={cn("stroke-2", reference.kind === "paid" ? "stroke-chart-paid" : "stroke-text")}
                 />
               )}
-              {known.length > 1 && <polyline points={line} fill="none" strokeDasharray={DASHED} strokeLinejoin="round" vectorEffect="non-scaling-stroke" className="stroke-chart-best stroke-2" />}
+              {start > 0 && (
+                <>
+                  <polyline points={before} fill="none" strokeDasharray={DASHED} strokeLinejoin="round" vectorEffect="non-scaling-stroke" className="stroke-text-muted stroke-2 opacity-(--component-button-disabled-opacity)" data-testid="price-before" />
+                  <line x1={x(start)} x2={x(start)} y1={0} y2={VIEW} vectorEffect="non-scaling-stroke" className="stroke-text-muted stroke-1" data-testid="tracking-start" />
+                </>
+              )}
+              {known.filter((entry) => entry.index >= start).length > 1 && <polyline points={line} fill="none" strokeDasharray={DASHED} strokeLinejoin="round" vectorEffect="non-scaling-stroke" className="stroke-chart-best stroke-2" />}
               {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={0} y2={VIEW} vectorEffect="non-scaling-stroke" className="stroke-chart-grid stroke-1" />}
             </svg>
             {/* Points and labels are HTML so they stay round and readable however the chart stretches. */}
             {steps.map((step) => {
               const value = cheapest[step.index];
-              if (value === null || value === undefined || step.index === lastKnown?.index) return null;
+              if (value === null || value === undefined || step.index === lastKnown?.index || step.index < start) return null;
               return (
                 <span key={step.index}>
                   <Point left={x(step.index)} top={y(value)} className="border-(length:--border-width-strong) border-chart-best bg-surface" testId="step-point" />
@@ -180,6 +199,14 @@ export function PriceHistory({ title, range, cheapest, min, max, grid, dates, st
               );
             })}
             {lastKnown && <Point left={x(lastKnown.index)} top={y(lastKnown.value)} large className="border-(length:--border-width-strong) border-surface bg-chart-best" />}
+            {start > 0 && trackingStart && (
+              <span
+                style={{ "--x": `${x(start).toFixed(1)}%` } as Vars}
+                className="absolute top-0 left-(--x) ml-1 text-caption font-semibold whitespace-nowrap text-text-muted"
+              >
+                {trackingStart.label}
+              </span>
+            )}
             {gap && pillTop !== null && (
               <span
                 style={{ "--y": `${pillTop.toFixed(1)}%` } as Vars}
@@ -252,10 +279,16 @@ export function PriceHistory({ title, range, cheapest, min, max, grid, dates, st
             {legend.gap}
           </li>
         )}
+        {start > 0 && trackingStart && (
+          <li className="inline-flex items-center gap-1">
+            <LegendLine kind="before" />
+            {trackingStart.legend}
+          </li>
+        )}
       </ul>
 
       {tiles.length > 0 && (
-        <dl className="grid grid-cols-3 gap-2">
+        <dl className={cn("grid gap-2", TILE_COLUMNS[tiles.length] ?? "grid-cols-3")}>
           {tiles.map((tile) => (
             <div key={tile.label} className={cn("flex min-w-0 flex-col rounded-md px-3 py-2", tile.tone === "saving" ? "bg-savings-subtle text-on-primary-subtle" : "bg-surface-alt")}>
               <dt className={cn("text-caption", tile.tone === "saving" ? "text-on-primary-subtle" : "text-text-muted")}>{tile.label}</dt>
@@ -277,7 +310,7 @@ function EndLabel({ end, tone }: { end: PriceHistoryEnd; tone: string }) {
   );
 }
 
-function LegendLine({ kind }: { kind: "paid" | "target" | "cheapest" }) {
+function LegendLine({ kind }: { kind: "paid" | "target" | "cheapest" | "before" }) {
   return (
     <svg viewBox="0 0 16 8" preserveAspectRatio="none" aria-hidden="true" className="h-2 w-4 shrink-0">
       <line
@@ -286,8 +319,11 @@ function LegendLine({ kind }: { kind: "paid" | "target" | "cheapest" }) {
         y1={4}
         y2={4}
         vectorEffect="non-scaling-stroke"
-        {...(kind === "cheapest" ? { strokeDasharray: DASHED } : kind === "target" ? { strokeDasharray: DOTTED } : {})}
-        className={cn("stroke-2", kind === "cheapest" ? "stroke-chart-best" : kind === "paid" ? "stroke-chart-paid" : "stroke-text")}
+        {...(kind === "cheapest" || kind === "before" ? { strokeDasharray: DASHED } : kind === "target" ? { strokeDasharray: DOTTED } : {})}
+        className={cn(
+          "stroke-2",
+          kind === "cheapest" ? "stroke-chart-best" : kind === "paid" ? "stroke-chart-paid" : kind === "before" ? "stroke-text-muted opacity-(--component-button-disabled-opacity)" : "stroke-text",
+        )}
       />
     </svg>
   );

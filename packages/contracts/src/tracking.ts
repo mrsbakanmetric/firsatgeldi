@@ -1,6 +1,6 @@
 // Confirm and tracking (architecture.md §16 CONFIRM AND TRACKING; database.md §6, §8).
 import { z } from "zod";
-import { CalendarDay, CategoryRef, Cursor, Id, ImageSha256, Money, StockState, Timestamp, WarrantyType } from "./common";
+import { CalendarDay, CategoryRef, Cursor, Id, ImageSha256, Money, Rating, StockState, Timestamp, WarrantyType } from "./common";
 import { HiddenOfferView, OfferRef } from "./offers";
 
 /** Return rule of a platform (database.md §6 `platform_return_rules`). */
@@ -65,14 +65,16 @@ export const SellerTrust = z.object({
 });
 export type SellerTrust = z.infer<typeof SellerTrust>;
 
-/** The user's own seller: identity visible (architecture.md §6.1, column "Seller bought from"). */
+/**
+ * The user's own seller: identity visible (architecture.md §6.1, column "Seller bought from").
+ * `sellerRating` keeps the store's own scale with its count [DECIDED 2026-11-15] (user).
+ */
 export const SellerLookupResult = z.object({
   match: z
     .object({
       sellerRef: OfferRef,
       sellerName: z.string().min(1),
-      sellerRating: z.number().min(0).max(5).nullable(),
-      sellerRatingCount: z.number().int().nonnegative().nullable(),
+      sellerRating: Rating.nullable(),
       trust: SellerTrust,
       stockState: StockState,
       warrantyType: WarrantyType,

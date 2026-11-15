@@ -34,6 +34,8 @@ export { SkeletonBlock, SkeletonRow, type SkeletonBlockProps, type SkeletonShape
 export { StatTile, StatTiles, type StatTileProps } from "./stat-tile";
 export { StatusBanner, type StatusBannerProps, type StatusTone } from "./status-banner";
 export { StockKey, StockStrip, type StockDay, type StockStripProps } from "./stock-strip";
+export { StockHistory, type StockHistoryBlock, type StockHistoryProps } from "./stock-history";
+export { StepTick, type StepTickProps } from "./step-tick";
 export { StepIndicator, type StepIndicatorProps } from "./step-indicator";
 export { Switch, type SwitchProps } from "./switch";
 export { TextField, type TextFieldProps } from "./text-field";

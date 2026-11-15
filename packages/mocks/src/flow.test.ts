@@ -170,7 +170,7 @@ describe("confirm, teaser and tracking", () => {
 
   it("seller lookup finds only an exact name on the chosen platform", async () => {
     const own = await lookupOwnSeller();
-    expect(own).toMatchObject({ sellerName: "Kamera Dünyası", sellerRating: 4.7, stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR" });
+    expect(own).toMatchObject({ sellerName: "Kamera Dünyası", sellerRating: { value: 4.7, scale: 5, count: 2140 }, stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR" });
     const partial = await api.call("sellerLookup", { params: { id: product.id }, body: { platformId: PLATFORMS.HEPSIBURADA.id, name: "Kamera" } });
     expect(partial.data.match).toBeNull();
   });

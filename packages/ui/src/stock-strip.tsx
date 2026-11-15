@@ -36,16 +36,17 @@ export function StockStrip({ days, label, className }: StockStripProps) {
 }
 
 /** The visible key of the three states (§5.7: "A visible key explains the three states"). */
-export function StockKey({ labels, className }: { labels: { inStock: string; low: string; out: string }; className?: string }) {
-  const entries = [
-    { day: "IN_STOCK" as const, text: labels.inStock },
-    { day: "LOW_STOCK" as const, text: labels.low },
-    { day: "OUT_OF_STOCK" as const, text: labels.out },
+export function StockKey({ labels, className }: { labels: { inStock: string; low: string; out: string; /** "Veri yok" where blank days appear. */ none?: string }; className?: string }) {
+  const entries: { day: StockDay; text: string }[] = [
+    { day: "IN_STOCK", text: labels.inStock },
+    { day: "LOW_STOCK", text: labels.low },
+    { day: "OUT_OF_STOCK", text: labels.out },
+    ...(labels.none ? [{ day: null, text: labels.none }] : []),
   ];
   return (
     <span className={cn("inline-flex flex-wrap items-center gap-x-3 gap-y-1", className)}>
       {entries.map((entry) => (
-        <span key={entry.day} className="inline-flex items-center gap-1">
+        <span key={entry.day ?? "none"} className="inline-flex items-center gap-1">
           <Box day={entry.day} className="w-3" />
           <span>{entry.text}</span>
         </span>
