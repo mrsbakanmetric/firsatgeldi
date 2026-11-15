@@ -3,6 +3,8 @@ import { buildPath, ENDPOINTS, imagePath } from "./endpoints";
 import { TOP_DROP_ITEM_KEYS, TopDropItem, TopDrops } from "./home";
 import { HiddenOfferView, REVEALED_ONLY_FIELDS } from "./offers";
 import { PERMISSION_KEYS, seedPermissions } from "./permissions";
+import { CreateReportRequest, DetailHiddenOffer, OfferSummary, StockSubject } from "./product-detail";
+import { Rating } from "./common";
 
 const definitions = Object.entries(ENDPOINTS);
 
@@ -58,6 +60,27 @@ describe("hidden-seller views", () => {
       expect(TOP_DROP_ITEM_KEYS as string[]).not.toContain(field);
       expect(Object.keys(TopDrops.shape)).not.toContain(field);
     }
+  });
+});
+
+describe("Product Detail views", () => {
+  it("a hidden offer on Product Detail defines no identity field; its summary line names nobody", () => {
+    for (const field of REVEALED_ONLY_FIELDS) expect(Object.keys(DetailHiddenOffer.shape)).not.toContain(field);
+    expect(Object.keys(OfferSummary.shape)).toEqual(["trust", "installments", "campaign"]);
+    // Stock rows refer to a cheaper seller by rank only.
+    expect(StockSubject.options.map((option) => Object.keys(option.shape))).toEqual([["kind", "rank"], ["kind"]]);
+  });
+
+  it("ratings keep the store's scale and never exceed it", () => {
+    expect(Rating.safeParse({ value: 9.4, scale: 10, count: 12_400 }).success).toBe(true);
+    expect(Rating.safeParse({ value: 9.4, scale: 5, count: null }).success).toBe(false);
+  });
+
+  it("a wrong-price report names an offer by its ref; a different-product report names none", () => {
+    const base = { trackedItemId: "00000000-0000-4000-8000-000000000000", note: null };
+    expect(CreateReportRequest.safeParse({ ...base, kind: "WRONG_PRICE", offerRef: "abcdefghijklmnopqrst" }).success).toBe(true);
+    expect(CreateReportRequest.safeParse({ ...base, kind: "WRONG_PRICE", offerRef: null }).success).toBe(false);
+    expect(CreateReportRequest.safeParse({ ...base, kind: "DIFFERENT_PRODUCT", offerRef: "abcdefghijklmnopqrst" }).success).toBe(false);
   });
 });
 

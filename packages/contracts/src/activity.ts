@@ -28,6 +28,24 @@ export const ACTIVITY_ACTIONS = [
   "tracking.restore",
   /** "Aldım, kaydet" on a want-to-buy item [ASSUMPTION — action name]. */
   "tracking.bought",
+  // Product Detail (implementation_plan.md Appendix B.2). `report.create` is listed in database.md §14a;
+  // the others are [ASSUMPTION — action names] until database.md §14a lists them.
+  /** Price paid, order status, last day or target corrected. */
+  "tracking.edit",
+  /** "Teslim aldın mı?" answered. */
+  "tracking.delivered",
+  /** An action step ticked or unticked ("Yaptım ✓"). */
+  "tracking.step",
+  /** Request tracking: "Fiyat farkı istedim" / "İade talebi açtım" and the outcome. */
+  "tracking.request",
+  /** Want-to-buy tracking extended. */
+  "tracking.extend",
+  /** The two optional buyer questions answered. */
+  "feedback.create",
+  /** "Yanlış fiyat bildir" / "Farklı ürün bildir". */
+  "report.create",
+  /** "Stoğa gelince haber ver" on an offer. */
+  "offer.notify_back_in_stock",
 ] as const;
 export const ActivityAction = z.enum(ACTIVITY_ACTIONS);
 export type ActivityAction = z.infer<typeof ActivityAction>;

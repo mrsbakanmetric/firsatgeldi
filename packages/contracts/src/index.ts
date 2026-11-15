@@ -9,6 +9,7 @@ export * from "./home";
 export * from "./identify";
 export * from "./offers";
 export * from "./permissions";
+export * from "./product-detail";
 export * from "./products";
 export * from "./session";
 export * from "./stream";

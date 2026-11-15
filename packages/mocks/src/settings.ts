@@ -31,6 +31,13 @@ export const SYSTEM_SETTINGS = {
   "home.top_drops.min_drop_pct": 10,
   "home.top_drops.min_history_days": 14,
   "home.top_drops.refresh_minutes": 60,
+  /** Product Detail (modules.md Ratings, Trust and Accuracy; database.md §18). */
+  "ratings.min_count": 20,
+  "report.suspend_threshold": 3,
+  /** Buy-or-wait hint windows and minimum evidence (modules.md Price history) [ASSUMPTION — keys and values]. */
+  "history.hint_short_days": 30,
+  "history.hint_long_days": 180,
+  "history.hint_min_days": 14,
 } as const;
 
 /** Plan limits (database.md §9 `plans`); reveals are unlimited while the first-release gate is FREE_TOGGLE. */

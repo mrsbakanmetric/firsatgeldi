@@ -2,11 +2,12 @@
 import { catalogHandlers } from "./handlers/catalog";
 import { homeHandlers } from "./handlers/home";
 import { identifyHandlers } from "./handlers/identify";
+import { productDetailHandlers } from "./handlers/product-detail";
 import { streamHandlers } from "./handlers/stream";
 import { trackedItemHandlers } from "./handlers/tracked-items";
 import { trackingHandlers } from "./handlers/tracking";
 import type { MockController } from "./state";
 
 export function createHandlers(controller: MockController) {
-  return [...catalogHandlers(controller), ...identifyHandlers(controller), ...trackingHandlers(controller), ...trackedItemHandlers(controller), ...homeHandlers(controller), ...streamHandlers(controller)];
+  return [...catalogHandlers(controller), ...identifyHandlers(controller), ...trackingHandlers(controller), ...trackedItemHandlers(controller), ...productDetailHandlers(controller), ...homeHandlers(controller), ...streamHandlers(controller)];
 }

@@ -2,7 +2,7 @@
 // is built: identity fields are NOT defined in HiddenOfferView, and output
 // validation (z.object strips unknown keys) removes anything extra.
 import { z } from "zod";
-import { Money, StockState, Timestamp, WarrantyType } from "./common";
+import { Money, Rating, StockState, Timestamp, WarrantyType } from "./common";
 
 /** Opaque offer reference (architecture.md §6.2): base64url, not enumerable, not valid for another user. */
 export const OfferRef = z.string().regex(/^[A-Za-z0-9_-]{16,}$/);
@@ -42,10 +42,17 @@ export type HiddenOfferView = z.infer<typeof HiddenOfferView>;
 /** Allowance used for a reveal (database.md §9 `offer_reveals.gate`). */
 export const RevealGate = z.enum(["FREE_TOGGLE", "PREMIUM", "MONTHLY_FREE", "TOKEN", "ADMIN"]);
 
-/** After "Göster" (architecture.md §6.1, column `RevealedOfferView`). */
+/**
+ * After "Göster" (architecture.md §6.1, column `RevealedOfferView`). Ratings keep the store's
+ * scale (modules.md Ratings › After Göster, [DECIDED 2026-11-15]): `sellerRating` = the seller's
+ * rating at the store, `productRating` = this product's rating at that store, `reviewsUrl` =
+ * "Yorumları mağazada oku" (review texts are never copied). The three are [ASSUMPTION — fields].
+ */
 export const RevealedOfferView = HiddenOfferView.extend({
   sellerName: z.string().min(1),
-  sellerRating: z.number().min(0).max(5).nullable(),
+  sellerRating: Rating.nullable(),
+  productRating: Rating.nullable(),
+  reviewsUrl: z.url().nullable(),
   platformName: z.string().min(1),
   /** Our outbound link; shown with the commission note. */
   listingUrl: z.url(),
@@ -56,7 +63,7 @@ export const RevealedOfferView = HiddenOfferView.extend({
 export type RevealedOfferView = z.infer<typeof RevealedOfferView>;
 
 /** Names of the identity fields that exist only in RevealedOfferView (used by the leak test). */
-export const REVEALED_ONLY_FIELDS = ["sellerName", "sellerRating", "platformName", "listingUrl", "commissionNote", "revealExpiresAt", "gateUsed"] as const;
+export const REVEALED_ONLY_FIELDS = ["sellerName", "sellerRating", "productRating", "reviewsUrl", "platformName", "listingUrl", "commissionNote", "revealExpiresAt", "gateUsed"] as const;
 
 /** `POST /offers/:ref/reveal` → RevealedOfferView | { allowed: false, reason, options } (architecture.md §6.3, §16). */
 export const RevealResult = z.discriminatedUnion("allowed", [

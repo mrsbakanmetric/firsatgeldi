@@ -234,7 +234,7 @@ export const tr = {
       deliveryRange: "{min}–{max} günde teslim",
       reveal: "Göster",
       teaserNote: "Kazanç kargo dahil hesaplandı. Göster şimdilik ücretsiz.",
-      revealedRating: "Satıcı puanı {rating} / 5",
+      revealedRating: "Satıcı puanı {rating} / {scale}",
       goToStore: "Mağazaya git",
       hide: "Gizle",
       bought: "Evet, bunu aldım",

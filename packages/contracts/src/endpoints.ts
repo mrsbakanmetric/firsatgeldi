@@ -5,10 +5,35 @@
 import { z } from "zod";
 import { ActivityAction } from "./activity";
 import { EntitlementSummary } from "./envelope";
-import { Cursor, Id, ImageSha256, ImageVariant } from "./common";
+import { ApiLocale, Cursor, Id, ImageSha256, ImageVariant } from "./common";
 import { IdentifyAnswer, IdentifyRequest, IdentifyResult } from "./identify";
 import { HomeView } from "./home";
 import { GoResult, HideResult, OfferRef, RevealResult } from "./offers";
+import {
+  CreateReportRequest,
+  CreateReportResult,
+  DeliveredRequest,
+  DeliveredResult,
+  DetailOffers,
+  ExtendRequest,
+  ExtendResult,
+  FeedbackRequest,
+  FeedbackResult,
+  HistoryRange,
+  NotifyBackInStockResult,
+  PriceDifferenceMessage,
+  PriceHistoryDetail,
+  ProductRatings,
+  StepParams,
+  StepRequest,
+  StepResult,
+  StockHistoryDetail,
+  StockHistoryRange,
+  TrackedItemDetail,
+  UpdateRequestRequest,
+  UpdateRequestResult,
+  UpdateTrackedItemRequest,
+} from "./product-detail";
 import type { PermissionKey } from "./permissions";
 import { AutocompleteQuery, AutocompleteResult, ProductView, SimilarProducts } from "./products";
 import { Me, SearchHistory } from "./session";
@@ -135,6 +160,11 @@ export const ENDPOINTS = {
     method: "GET", path: "/products/:id/similar", params: IdParams, query: null, body: null,
     response: SimilarProducts, ...READ, permission: "catalog.view", public: true,
   }),
+  getProductRatings: endpoint({
+    // Seller-less aggregate across stores (modules.md Ratings › Before Göster); public like the product.
+    method: "GET", path: "/products/:id/ratings", params: IdParams, query: null, body: null,
+    response: ProductRatings, ...READ, permission: "catalog.view", public: true,
+  }),
 
   // CONFIRM AND TRACKING
   getConfirmContext: endpoint({
@@ -185,6 +215,66 @@ export const ENDPOINTS = {
     // [ASSUMPTION — endpoint] "Geri al" within 7 days of ending (Tracked Items v3).
     method: "POST", path: "/tracked-items/:id/restore", params: IdParams, query: null, body: null,
     response: RestoreTrackingResult, ...READ, idempotent: true, activity: "tracking.restore", permission: "tracking.own.write", public: false,
+  }),
+
+  // PRODUCT DETAIL (implementation_plan.md Appendix B.2; modules.md Product Detail). Registered after
+  // the list routes, so `/tracked-items/summary` is never read as an id. Shapes [ASSUMPTION].
+  getTrackedItem: endpoint({
+    method: "GET", path: "/tracked-items/:id", params: IdParams, query: null, body: null,
+    response: TrackedItemDetail, ...READ, permission: "tracking.own.view", public: false,
+  }),
+  getTrackedItemOffers: endpoint({
+    method: "GET", path: "/tracked-items/:id/offers", params: IdParams, query: null, body: null,
+    response: DetailOffers, ...READ, returnsOffers: true, permission: "tracking.own.view", public: false,
+  }),
+  getPriceHistory: endpoint({
+    method: "GET", path: "/tracked-items/:id/price-history", params: IdParams, query: z.object({ range: HistoryRange }), body: null,
+    response: PriceHistoryDetail, ...READ, permission: "tracking.own.view", public: false,
+  }),
+  getStockHistory: endpoint({
+    method: "GET", path: "/tracked-items/:id/stock-history", params: IdParams, query: z.object({ range: StockHistoryRange }), body: null,
+    response: StockHistoryDetail, ...READ, permission: "tracking.own.view", public: false,
+  }),
+  getPriceDifferenceMessage: endpoint({
+    method: "GET", path: "/tracked-items/:id/price-difference-message", params: IdParams, query: z.object({ locale: ApiLocale }), body: null,
+    response: PriceDifferenceMessage, ...READ, permission: "tracking.own.view", public: false,
+  }),
+  getCalendar: endpoint({
+    // "Takvime ekle": the last return day as an .ics file, reminder one day before (modules.md v1 helpers).
+    method: "GET", path: "/tracked-items/:id/calendar.ics", params: IdParams, query: null, body: null,
+    response: null, ...READ, kind: "binary", permission: "tracking.own.view", public: false,
+  }),
+  updateTrackedItem: endpoint({
+    method: "PATCH", path: "/tracked-items/:id", params: IdParams, query: null, body: UpdateTrackedItemRequest,
+    response: TrackedItemDetail, ...READ, activity: "tracking.edit", permission: "tracking.own.write", public: false,
+  }),
+  answerDelivered: endpoint({
+    method: "POST", path: "/tracked-items/:id/delivered", params: IdParams, query: null, body: DeliveredRequest,
+    response: DeliveredResult, ...READ, activity: "tracking.delivered", permission: "tracking.own.write", public: false,
+  }),
+  tickStep: endpoint({
+    method: "POST", path: "/tracked-items/:id/steps/:step", params: StepParams, query: null, body: StepRequest,
+    response: StepResult, ...READ, activity: "tracking.step", permission: "tracking.own.write", public: false,
+  }),
+  updateRequest: endpoint({
+    method: "PATCH", path: "/tracked-items/:id/request", params: IdParams, query: null, body: UpdateRequestRequest,
+    response: UpdateRequestResult, ...READ, activity: "tracking.request", permission: "tracking.own.write", public: false,
+  }),
+  extendTracking: endpoint({
+    method: "POST", path: "/tracked-items/:id/extend", params: IdParams, query: null, body: ExtendRequest,
+    response: ExtendResult, ...READ, idempotent: true, activity: "tracking.extend", permission: "tracking.own.write", public: false,
+  }),
+  sendFeedback: endpoint({
+    method: "POST", path: "/tracked-items/:id/feedback", params: IdParams, query: null, body: FeedbackRequest,
+    response: FeedbackResult, ...READ, idempotent: true, activity: "feedback.create", permission: "feedback.own.write", public: false,
+  }),
+  createReport: endpoint({
+    method: "POST", path: "/reports", params: null, query: null, body: CreateReportRequest,
+    response: CreateReportResult, ...READ, idempotent: true, activity: "report.create", permission: "report.own.create", public: false,
+  }),
+  notifyBackInStock: endpoint({
+    method: "POST", path: "/offers/:ref/notify-back-in-stock", params: RefParams, query: null, body: null,
+    response: NotifyBackInStockResult, ...READ, idempotent: true, activity: "offer.notify_back_in_stock", permission: "tracking.own.write", public: false,
   }),
 
   // HOME (modules.md Home; architecture.md §16.1 HomeView). Hemen Gözat carries hidden offers.
