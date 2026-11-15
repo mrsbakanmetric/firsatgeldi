@@ -178,7 +178,7 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 | `Select` | §5.36 | list toolbars (base of `SortSelect`, `PeriodSelect`, `CategoryFilter`), forms |
 | `Switch` | §5.36 | Settings (notification types × channels, privacy), admin settings |
 | `Checkbox` | §5.36 | consent and terms, admin bulk selection |
-| `Menu` | §5.36 | profile menu, row "more" actions, admin actions |
+| `Menu` | §5.36 | profile menu only (no ⋯ action menus, §6 rule 6b) |
 | `Tooltip` | §5.36 | labels of icon-only buttons, supplementary hints |
 | `Avatar` | §5.34, §5.36 | top bar profile button, person rows, profile header, admin user rows |
 | `Icon` | §5.36 | everywhere an icon appears |
@@ -194,7 +194,9 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 3. **Hidden seller.** A cheaper seller's name, rating, platform and link never appear before "Göster" — not in lists, previews, notifications, history or spending views; refer by rank ("en ucuz satıcı", "2. ucuz satıcı"). The user's own seller is always shown.
 4. **Product image everywhere** a product is mentioned; category illustration if missing (design §5.30).
 5. **Every list is searchable; every product list has a category filter** (chips with counts, or a select with counts). Empty result → "Bu aramayla eşleşen … yok" + "Filtreyi temizle".
-6. **Alignment.** Side-by-side blocks of the same kind align row by row; list rows share column widths with their header (design §3).
+6. **Alignment.** Side-by-side blocks of the same kind align row by row; list rows share column widths with their header; side-by-side columns and blocks end on the same bottom line, the shorter side stretching (design §3) [DECIDED 2026-11-15].
+6a. **No idle rows** — small actions sit beside the title, price or heading they belong to; a footer row only when it has content on both sides (design §3) [DECIDED 2026-11-15].
+6b. **No ⋯ menus** — every item and page action is a visible button (design §5.36) [DECIDED 2026-11-15].
 7. **Freshness.** Every price and stock value shows when it was checked; durations say "en az"; estimates say "tahmini".
 8. **One primary action per block**; labels are verb + object; targets ≥ 44 px.
 9. **Five states drawn** for every page (§7), light and dark, long Turkish and English strings.
@@ -254,6 +256,12 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 
 ### 8.3 Product Detail — `/[locale]/takip/[id]`
 - **Shell/template:** AppShell · Detail.
+- **Design v2 [DECIDED 2026-11-15]** (canvas "2 Ürün Detayı v2"; replaces the v1 regions below where they differ):
+  - **Header card** = the Home Hemen Gözat header: image 120 with the status icon · flags ("Fırsat geldi" is the page's one coral element — no "Fırsatı gör" here; return badge; "Takvime ekle") · name · variant line · seller-less rating line · purchase line (want: target line) · check time · right: "En çok kazanç" amount (want: "Hedefe kalan") + "Satıcıları gör". Action row inside the card: **Takibi bitir** (secondary) · Yanlış fiyat bildir · Farklı ürün bildir (ghost) on the left, allowance + "Şimdi kontrol et" on the right. No ⋯ menu, no dark hero block.
+  - **Two columns that end together:** price history (shared `PriceHistory` of Home + range chips 2 hafta … Tümü; pre-tracking part dimmed with "Takip başladı"; four tiles right under the legend: 30 günün en düşüğü · en yükseği · ortalama · değişim; buy-or-wait hint chip; the chart column sets the height, nothing is pushed apart inside it) | aside: bought → "Kazancı almak için" steps (no explanation sentences) + price-difference message; want → "Hedef fiyat" title and the price field on one row, suggestion chips side by side ("30 gün ↓ 25.997" · "6 ay ↓ 24.899"), duration, then "Almaya karar verince" + **Aldım, kaydet** (no caption under it). The aside's last card fills to the chart column's bottom with its action pinned to the card bottom.
+  - **Offer cards** (two columns, equal height, odd last spans): top row = rank (lock) or revealed seller + platform · price + difference · **Göster** (revealed: **Mağazaya git** + Gizle) — actions on the top row; info lines: stock in words · shipping · warranty, then check time; one-line expandable summary (trust · installments · campaign); fake-discount note; after Göster: product rating at that store + count, seller rating + count, "Yorumları mağazada oku", reveal time left + commission note. Own seller as a reference row under the grid.
+  - **Stock history** boxes stay (14 days + 1 month side by side, key, change log).
+  - **Takibi bitir** opens a Dialog: İade ettim, yeniden aldım · Fiyat farkı aldım · Vazgeçtim; new price (prefilled from the revealed offer, editable) with live saving; afterwards a status toast with "Geri al" (7 days) and the two optional buyer questions.
 - **Regions:** product image 96 + name + purchase line → deal hero + price history | action steps + price-difference message → hidden offers grid (≤ 2 columns) → stock history 14 days + 1 month → help.
 - **Added 2026-11-12 (to be drawn when Product Detail is revised):** product rating line under the name ("4 mağazada 3.850 değerlendirme · ortalama 4,5 ★", seller-less) · seller trust tile on each hidden offer (Güvenilir satıcı ✓ / Dikkat ✗ + reason; breakdown and store rating after Göster) · request tracking in the action steps ("Fiyat farkı istedim" → "Yanıt bekleniyor", outcome) · price history ranges up to 2 years / Tümü with the lowest marked by rank · campaign note and **installment note** ("Peşin fiyatına en çok 6 taksit"; table after Göster) on each offer, compact one-line summary on the card [RECOMMENDED].
 - **Overlays:** "Göster" gate; allowance-used-up card (Packages state 1).
@@ -288,7 +296,7 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
   - On narrow widths the price list shrinks first; the name column keeps its minimum.
 - **Card grid v5 [DECIDED 2026-11-14]** — replaces the v4 single-row layout; the v4 content rules (price list, ranks, colours, summary, outcomes, mode switch, stale texts) stay:
   - Items are **cards in a two-column grid** (`repeat(2, minmax(0,1fr))`, gap `space.3`) from `breakpoint.md`; one column below it. Cards in the same row share one height; the footer strip is pinned to the bottom, so a shorter card may show a small gap above it (accepted).
-  - **Card header:** image `size.thumb-card` (84) with the status icon on its top-left corner · name (up to two lines) · return badge "İade için N gün" (bought) · check time · ⋯ at the top-right.
+  - **Card header:** image `size.thumb-card` (84) with the status icon on its top-left corner · name (up to two lines) · return badge "İade için N gün" (bought) · check time. **v6 [DECIDED 2026-11-15]:** no ⋯ — the footer strip shows the actions as buttons on its right: deal → "Fırsatı gör" + "Takibi bitir" (ghost); no deal → "Takibi bitir" (ghost); want rows add "Aldım, kaydet" (secondary).
   - **Price table** spans the card width (label · stock · price; prices right-aligned); first row on `surface-alt`.
   - **Summary** as one thin caption line under the table: "7g en düşük · 14g en yüksek · 14g değişim".
   - **Footer strip** at the bottom of the card: deal → `savings-subtle` background, "En çok kazanç" + amount (`fs-price`, `savings`) on the left, "Fırsatı gör" on the right; no deal → `surface-alt`, "Hedefe kalan N TL" or "Daha ucuzu henüz yok" + "Hedefe inince haber veririz" hint. Deal cards have a `savings` border.

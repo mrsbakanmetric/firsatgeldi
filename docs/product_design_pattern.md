@@ -93,6 +93,8 @@ The token file is authoritative; if this table and the file differ, the file win
 - **Spacing:** 4-px based scale from the token file; related items sit close, sections are clearly separated. Lay out groups with gaps, not ad-hoc margins.
 - **Shape:** medium radius for buttons and inputs, larger for cards, pill for flags and chips, extra-large for the search box. Hairline borders for structure; a stronger border only to show "selected / marked" or the priority item.
 - **Alignment of side-by-side blocks [DECIDED]:** blocks shown next to each other that carry the same kind of content (e.g. stock history "Son 14 gün" and "Son 1 ay", offer cards, summary tiles) must line up row by row: same header height, same row order, same row height and element size (boxes, thumbnails, buttons), labels on one line (truncate rather than wrap), equal block heights (grid stretch), and their footers on the same baseline. Only the number of items per row may differ. Check alignment visually before a draft is presented.
+- **Columns end together [DECIDED 2026-11-15] (user):** columns or blocks placed side by side (main + aside, two cards in a row, chart + table) always end on the same bottom line, whatever their content. The shorter side stretches (grid `align-items: stretch`); inside it the last block grows to fill (`flex: 1`), or the block's footer/summary is pinned to its bottom (`margin-top: auto`). A layout where one column ends and the other keeps going with empty space under the first is not allowed.
+- **No idle rows [DECIDED 2026-11-15] (user):** a row is not spent on one short caption and one button with empty space between them. Small actions sit on the row they belong to (beside the title, price or heading), and captions such as check times join the item's information lines. A footer row exists only when it carries content on both sides.
 - **Elevation:** very light shadow on cards, medium on the search box, the confirmation panel and the notification panel; no heavy shadows, no gradients.
 
 ---
@@ -341,7 +343,7 @@ The smallest building blocks. Every larger component (§5.21–§5.35) is made f
 - **Select (`Select`):** single choice from a list; options may carry counts ("Elektronik · 12"). `SortSelect`, `PeriodSelect` and the many-categories form of `CategoryFilter` are built on it. Toolbar selects use the compact height (`size.touch-target-min`). Below `breakpoint.md` the option list opens as a bottom sheet (§5.25).
 - **Switch (`Switch`):** on/off that takes effect immediately (no Save button). Track 48 × 28, thumb 22; on = `primary`, off = `border`. A locked switch is shown at reduced opacity with the reason next to it. `role="switch"` with `aria-checked`.
 - **Checkbox (`Checkbox`):** 20 px box inside a 44 px touch target; checked = `primary` fill with a check icon. Consent checkboxes are never pre-ticked. Indeterminate state for "select all" in admin tables.
-- **Menu (`Menu`):** a list of actions opened from a button (profile menu, row "more" actions). Items 44 px high with icon + label; a destructive item uses `danger` text and still asks for confirmation (§4.2). Arrow keys move, Enter selects, Escape closes and returns focus to the opener. Below `breakpoint.md` it opens as a bottom sheet.
+- **Menu (`Menu`):** a list of actions opened from a button (profile menu, row "more" actions). Items 44 px high with icon + label; a destructive item uses `danger` text and still asks for confirmation (§4.2). Arrow keys move, Enter selects, Escape closes and returns focus to the opener. Below `breakpoint.md` it opens as a bottom sheet. **Visible actions, no overflow menus [DECIDED 2026-11-15] (user):** item and page actions are never hidden behind a ⋯ ("more") button on any screen, user or admin; they are shown as clear buttons where they act (secondary / ghost by importance). `Menu` is used only for navigation lists (the profile menu) and option lists (`Select`).
 - **Tooltip (`Tooltip`):** supplementary text only, shown on hover and keyboard focus after a short delay; never shown on touch. Anything the user needs to act or decide (limits, privacy notes, reasons) is never placed only in a tooltip (§5.20).
 - **Avatar (`Avatar`):** initials on `primary-subtle`; sizes 34 (top bar profile button), 40 (rows, §5.34, §5.35), 96 (profile header). Initials only; a real name is never required. Decorative when inside a labelled button.
 - **Icon (`Icon`):** one outline icon set, stroke 2, `currentColor`, sizes `icon-sm` / `icon-md` / `icon-lg`. Decorative icons are hidden from assistive technology; an icon that carries meaning has a text label. Library: Lucide [DECIDED 2026-11-14].
@@ -377,6 +379,9 @@ Stacking uses only the `z-index` tokens, from bottom to top: **base** (page cont
 ---
 
 ## 8. Rules for building a new screen or component
+
+Before a draft is presented and before a screen is called done, check three layout rules on every page [DECIDED 2026-11-15]: side-by-side columns end on the same bottom line (§3) · no idle rows (§3) · no ⋯ menus, actions visible (§5.36).
+
 
 Follow this order every time:
 
