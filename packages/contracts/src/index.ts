@@ -5,6 +5,7 @@ export * from "./common";
 export * from "./endpoints";
 export * from "./envelope";
 export * from "./errors";
+export * from "./home";
 export * from "./identify";
 export * from "./offers";
 export * from "./permissions";

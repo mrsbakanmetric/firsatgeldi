@@ -16,7 +16,7 @@ describe("live-update messages", () => {
 });
 
 describe("check.finished", () => {
-  it("is part of the contract and refreshes the Tracked Items list and summary", async () => {
+  it("is part of the contract and refreshes the Tracked Items list and summary and Home", async () => {
     const { QueryClient } = await import("@tanstack/react-query");
     const { invalidateFor } = await import("./live-updates");
     const event = parseStreamMessage("check.finished", JSON.stringify({ trackedItemId: uploadId, checkedAt: "2026-11-14T09:00:00.000Z" }));
@@ -24,10 +24,12 @@ describe("check.finished", () => {
     const client = new QueryClient();
     client.setQueryData(["listTrackedItems", { query: { filter: "all" } }], { data: 1 });
     client.setQueryData(["getTrackedItemsSummary"], { data: 1 });
+    client.setQueryData(["getHome", {}], { data: 1 });
     client.setQueryData(["getMe"], { data: 1 });
     if (event) await invalidateFor(client, event);
     expect(client.getQueryState(["listTrackedItems", { query: { filter: "all" } }])?.isInvalidated).toBe(true);
     expect(client.getQueryState(["getTrackedItemsSummary"])?.isInvalidated).toBe(true);
+    expect(client.getQueryState(["getHome", {}])?.isInvalidated).toBe(true);
     expect(client.getQueryState(["getMe"])?.isInvalidated).toBe(false);
   });
 });

@@ -10,6 +10,9 @@ const MS_PER_DAY = 86_400_000;
  */
 export const RETURN_URGENT_DAYS = 3;
 
+/** Home return reminder line: "N ürünün iade süresi 2 gün içinde bitiyor" (modules.md Home › Return reminder line [DECIDED, v1]). */
+export const RETURN_REMINDER_DAYS = 2;
+
 /** Whole calendar days from `from` to `to` (negative when `to` is earlier). */
 export function daysBetween(from: string, to: string): number {
   return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / MS_PER_DAY);

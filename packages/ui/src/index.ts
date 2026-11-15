@@ -11,6 +11,7 @@ export { FreshnessLine, type FreshnessLineProps } from "./freshness-line";
 export { HiddenOfferCard, type HiddenOfferCardProps, type RevealedSeller } from "./hidden-offer-card";
 export { MoneyDisplay, type MoneyDisplayProps, type MoneySize, type MoneyTone } from "./money-display";
 export { ImagePrivacyNote, MultiImageUpload, type MultiImageUploadProps, type UploadFileState, type UploadFileView } from "./multi-image-upload";
+export { PriceHistory, type PriceHistoryEnd, type PriceHistoryProps, type PriceHistoryTile } from "./price-history";
 export { PriceSparkline, type PriceSparklineProps } from "./price-sparkline";
 export { ProductImage, type ProductImageProps, type ProductImageSize } from "./product-image";
 export { ProductRow, type ProductRowColumn, type ProductRowProps } from "./product-row";

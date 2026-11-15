@@ -300,6 +300,18 @@ export const CheckNowBulkResult = z.object({
 });
 export type CheckNowBulkResult = z.infer<typeof CheckNowBulkResult>;
 
+/**
+ * `POST /tracked-items/:id/check-now` (architecture.md §16; modules.md Check Now; Home "Şimdi kontrol et")
+ * → CHECKING (one allowance used; the result arrives as `check.finished`) or CACHED (checked within
+ * `check_now.cache_minutes`: shown at once, no allowance used). `remaining` after the call, null =
+ * unlimited. No allowance left → `LIMIT_REACHED`. Shape [ASSUMPTION — shape].
+ */
+export const CheckNowResult = z.object({
+  status: z.enum(["CHECKING", "CACHED"]),
+  remaining: z.number().int().nonnegative().nullable(),
+});
+export type CheckNowResult = z.infer<typeof CheckNowResult>;
+
 // ── End tracking from the list and undo (modules.md Tracked Items › "End tracking from
 // the list", design v3; architecture.md §16 `POST /tracked-items/:id/end`). Shapes [ASSUMPTION].
 

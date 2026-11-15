@@ -1,5 +1,6 @@
 // Every mock route, in registry order. Development and tests only.
 import { catalogHandlers } from "./handlers/catalog";
+import { homeHandlers } from "./handlers/home";
 import { identifyHandlers } from "./handlers/identify";
 import { streamHandlers } from "./handlers/stream";
 import { trackedItemHandlers } from "./handlers/tracked-items";
@@ -7,5 +8,5 @@ import { trackingHandlers } from "./handlers/tracking";
 import type { MockController } from "./state";
 
 export function createHandlers(controller: MockController) {
-  return [...catalogHandlers(controller), ...identifyHandlers(controller), ...trackingHandlers(controller), ...trackedItemHandlers(controller), ...streamHandlers(controller)];
+  return [...catalogHandlers(controller), ...identifyHandlers(controller), ...trackingHandlers(controller), ...trackedItemHandlers(controller), ...homeHandlers(controller), ...streamHandlers(controller)];
 }

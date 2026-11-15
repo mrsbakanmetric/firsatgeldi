@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildPath, ENDPOINTS, imagePath } from "./endpoints";
+import { TOP_DROP_ITEM_KEYS, TopDropItem, TopDrops } from "./home";
 import { HiddenOfferView, REVEALED_ONLY_FIELDS } from "./offers";
 import { PERMISSION_KEYS, seedPermissions } from "./permissions";
 
@@ -48,6 +49,15 @@ describe("paths", () => {
 describe("hidden-seller views", () => {
   it("HiddenOfferView defines no identity field", () => {
     for (const field of REVEALED_ONLY_FIELDS) expect(Object.keys(HiddenOfferView.shape)).not.toContain(field);
+  });
+
+  it("\"Şu an en çok düşenler\" is seller-less: only product, prices, drop, seller count, stock and check time", () => {
+    expect(TOP_DROP_ITEM_KEYS).toEqual(["product", "averagePrice", "currentPrice", "dropAmount", "dropPct", "sellerCount", "stockState", "checkedAt"]);
+    expect(Object.keys(TopDropItem.shape.product.shape)).toEqual(["id", "name", "imageSha256", "category"]);
+    for (const field of [...REVEALED_ONLY_FIELDS, "ref", "sellerId", "offerId"]) {
+      expect(TOP_DROP_ITEM_KEYS as string[]).not.toContain(field);
+      expect(Object.keys(TopDrops.shape)).not.toContain(field);
+    }
   });
 });
 

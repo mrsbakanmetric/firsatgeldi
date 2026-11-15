@@ -10,6 +10,11 @@ describe("hand-over links (no Add product dialog: Search and Add is the one flow
     expect(readHandoff("?donus=takip")).toEqual({ productId: null, mode: null, backToTracking: true, convertId: null });
   });
 
+  it("Home: typed text or a recent search is searched on arrival", () => {
+    expect(searchAddHref("tr", { query: " Dyson V15 " })).toBe("/tr/ara?q=Dyson+V15");
+    expect(searchAddHref("en", { query: "sony" })).toBe("/en/search?q=sony");
+  });
+
   it("“Takip et” marks the product and preselects the mode; it always comes back to Tracked Items", () => {
     const href = searchAddHref("tr", { productId: id, mode: "WANT" });
     expect(href).toBe(`/tr/ara?urun=${id}&mod=istiyorum`);
