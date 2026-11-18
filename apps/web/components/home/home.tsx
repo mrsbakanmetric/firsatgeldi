@@ -8,12 +8,14 @@
 // opens from the cache at once and refreshes in the background; a finished check refreshes
 // it through the live updates. States: new user · no deal · no big drop in the user's
 // categories · stale (sources missing) · error · loading (skeleton in the same layout) · guest.
-import { RETURN_REMINDER_DAYS } from "@firsatgeldi/core";
+import { formatDate, RETURN_REMINDER_DAYS } from "@firsatgeldi/core";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
 import { Button, buttonClasses, EmptyState, Icon, PageTemplate, SkeletonBlock, StatusBanner } from "@firsatgeldi/ui";
 import { CircleAlert, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useApiQuery, useSession } from "../../lib/api/hooks";
+import { useLocationSearch } from "../../lib/auth/location";
+import { deletionDate } from "../../lib/settings/deletion";
 import { ago, money, useNow } from "../search-add/format";
 import { useTranslator } from "../shell/parts";
 import { TrackedCards } from "./cards";
@@ -39,6 +41,7 @@ export function Home({ locale }: { locale: Locale }) {
     // Guests: the Landing Page belongs here (step 17); until then, sign in.
     return (
       <PageTemplate kind="summary" title={t("pages.home")}>
+        <DeletionBanner locale={locale} t={t} />
         <EmptyState
           icon={LogIn}
           title={t("home.states.signInTitle")}
@@ -180,4 +183,14 @@ function Loading({ t }: { t: Translator }) {
       </span>
     </div>
   );
+}
+
+/**
+ * After "Hesabımı sil" the user is signed out and lands here with the restore date (Settings
+ * design Forms 12): "Hesabın silinmek üzere · {date} tarihine kadar giriş yaparsan her şey geri gelir".
+ */
+function DeletionBanner({ locale, t }: { locale: Locale; t: Translator }) {
+  const date = deletionDate(useLocationSearch());
+  if (!date) return null;
+  return <StatusBanner tone="info">{t("home.states.deletionPending", { date: formatDate(date, locale, { dateStyle: "long" }) })}</StatusBanner>;
 }

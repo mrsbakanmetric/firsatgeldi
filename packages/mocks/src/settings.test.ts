@@ -1,7 +1,7 @@
 // Settings and Account on the mock API (step 19 PR 1): the decisions of 2026-11-18, personal
 // data (masked everywhere; the full own value only after re-authentication, each reveal
 // logged), admin-only sections closed on the server, and the activity row of every write.
-import { ApiError, type ApiErrorBody, TimeSlots } from "@firsatgeldi/contracts";
+import { ApiError, type ApiErrorBody, PERMISSION_KEYS, TimeSlots } from "@firsatgeldi/contracts";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { MOCK_PASSWORD } from "./fixtures/accounts";
 import { USERS } from "./fixtures/users";
@@ -275,10 +275,15 @@ describe("Application Manager sections", () => {
     t.signInAs("manager");
     const own = (await api.call("getOwnPermissions", {})).data;
     expect(own.role).toBe("APP_MANAGER");
+    expect(own.groups.map((group) => group.id)).toEqual(["self", "users", "catalog", "packages", "system", "security", "content"]);
     for (const group of own.groups) {
+      expect(group.total).toBeGreaterThan(0);
       expect(group.granted.length).toBe(group.total);
       for (const key of group.granted) expect(key.startsWith("admin.")).toBe(true);
     }
+    // Every official admin key sits in exactly one group.
+    const adminKeys = PERMISSION_KEYS.filter((key) => key.startsWith("admin."));
+    expect(own.groups.flatMap((group) => group.granted).sort()).toEqual([...adminKeys].sort());
     expect((await api.call("getAccess", {})).data.twoFactor).toEqual({ required: true, enabled: true });
   });
 

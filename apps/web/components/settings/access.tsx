@@ -253,7 +253,7 @@ function AccessRows({ locale, t, access }: { locale: Locale; t: Translator; acce
 }
 
 /** "Önce sen olduğunu doğrula": the password, or the linked provider (design States 1, Forms 8). */
-function ReauthDialog({ t, open, access, onClose, onDone }: { t: Translator; open: boolean; access: AccountAccess; onClose: () => void; onDone: () => void }) {
+export function ReauthDialog({ t, open, access, onClose, onDone }: { t: Translator; open: boolean; access: AccountAccess; onClose: () => void; onDone: () => void }) {
   const queryClient = useQueryClient();
   const reauth = useApiMutation("reauth");
   const [password, setPassword] = useState("");

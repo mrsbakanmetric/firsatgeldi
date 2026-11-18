@@ -32,3 +32,4 @@ export { topDropOf, type TopDrop, type TopDropRule } from "./top-drops";
 export { priceChartModel, type PriceChartInput, type PriceChartModel } from "./price-chart";
 export { emailDomain, maskEmail, passwordAccepted, passwordRules, type PasswordRuleState } from "./auth";
 export { buyOrWaitHint, CROSS_STORE_SCALE, crossStoreRating, historyTiles, type BuyOrWait, type BuyOrWaitRule, type HistoryTiles, type StoreRating } from "./price-history";
+export { TRACKING_EXPIRY_NOTICE_DAYS } from "./tracking";
