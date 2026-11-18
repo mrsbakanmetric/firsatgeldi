@@ -365,6 +365,13 @@ Built from §5.36 primitives; used by Settings and Account (both roles) and reus
 - **Action card (`ActionCard`):** icon tile · title · one line · one action at the bottom; tone normal (export) or danger (delete, `danger` outline button; disabled with its reason when not allowed).
 - **Avatar upload (`AvatarUpload`):** "Fotoğraf yükle" / "Kaldır" beside the avatar; the upload opens a Dialog with a circular crop over the image, a zoom slider and "Başka fotoğraf" / "Kaydet"; JPEG, PNG or WebP up to 5 MB, location data removed (§5.20).
 
+### 5.39 Profile parts [DECIDED 2026-11-18]
+- **Profile header (`ProfileHeader`):** `Avatar` 96 (72 below `breakpoint.md`), @username (h1), badge and privacy pill on the same line, counts as "**N** label" items, "…'dan beri üye"; actions on the right (stacked full width on phone). Without a username: "Profilin hazır değil" + one primary "Kullanıcı adı seç".
+- **Tabs (`Tabs`):** underlined page tabs (`role="tablist"`), 48 px, current = `primary` text + 2 px `primary` underline; below `breakpoint.md` they scroll horizontally. In-card choices stay `SegmentedChoice`.
+- **Shared deal row (`SharedDealRow`):** product image 48 · name + category · price with its check time · status pill (Doğrulandı `primary-subtle` · İnceleniyor `warning-subtle` · Reddedildi `surface-alt` + reason). Never a seller, store or link.
+- **Visibility card (`VisibilityCard`):** "Neyi kim görüyor?" — one row per kind of data with its audience pill (shared = `primary-subtle`, private = `surface-alt`), link to Ayarlar › Gizlilik.
+- **View-as preview (`ViewAsPreview`):** radio buttons Ben · Bir takipçi (· Takip etmeyen biri when public); choosing one re-renders the page as that person sees it.
+
 ---
 
 ## 6. Feedback, loading, empty and error states

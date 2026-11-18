@@ -38,15 +38,18 @@ details>summary::-webkit-details-marker{display:none}
 </div>
 <div style="display: flex; flex-direction: column; align-items: flex-end; gap: var(--s2)"><a href="#" style="display: inline-flex; align-items: center; height: 44px; padding: 0 var(--s4); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text); font-size: var(--fs-bsm); font-weight: 600; text-decoration: none">Profili düzenle</a><a href="#" style="font-size: var(--fs-cap); font-weight: 600; color: var(--primary)">Profil bağlantısını kopyala</a></div>
 </section>
+<sc-if value="{{hasUndo}}" hint-placeholder-val="{{ false }}"><div role="status" style="display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--info-subtle); color: var(--info); font-size: var(--fs-bsm); font-weight: 600"><span style="flex: 1">{{undoText}}</span><button type="button" onClick="{{undo}}" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: var(--info); font: inherit; font-size: var(--fs-bsm); font-weight: 700; cursor: pointer">Geri al</button></div></sc-if>
+<sc-if value="{{isPreview}}" hint-placeholder-val="{{ false }}"><div role="status" style="display: flex; flex-direction: column; align-items: center; gap: var(--s2); padding: var(--s8) var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); background: var(--surface); text-align: center"><span style="font-size: var(--fs-h3); font-weight: 600">{{previewTitle}}</span><span style="font-size: var(--fs-bsm); color: var(--text-muted)">{{previewSub}}</span></div></sc-if>
+<sc-if value="{{isMe}}" hint-placeholder-val="{{ true }}">
 <div role="tablist" style="display: flex; gap: var(--s1); border-bottom: 1px solid var(--border)"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button type="button" role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button></sc-for></div>
 <label style="display: flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted); flex: none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Listede ara</span><input type="search" value="{{q}}" onInput="{{onQ}}" placeholder="{{ph}}" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-bsm); color: var(--text); outline: none"></label>
 
 <sc-if value="{{isPeople}}" hint-placeholder-val="{{ true }}">
 <sc-if value="{{hasReq}}" hint-placeholder-val="{{ true }}"><section aria-labelledby="istek" style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s4); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)"><h2 id="istek" style="margin: 0; font-size: var(--fs-body); font-weight: 700">Takip istekleri · {{reqCount}}</h2>
-<sc-for list="{{reqs}}" as="u" hint-placeholder-count="2"><div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto auto; gap: var(--s3); align-items: center; min-height: 52px"><span aria-hidden="true" style="width: 40px; height: 40px; border-radius: var(--r-pill); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">{{u.ini}}</span><span style="display: flex; flex-direction: column"><a href="#" style="font-size: var(--fs-bsm); font-weight: 700; color: var(--text); text-decoration: none">@{{u.user}}</a><span style="font-size: var(--fs-cap); color: var(--text-muted)">{{u.meta}}</span></span><button type="button" onClick="{{u.decline}}" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600; white-space: nowrap">Reddet</button><button type="button" onClick="{{u.accept}}" style="height: 40px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Onayla</button></div></sc-for>
+<sc-for list="{{reqs}}" as="u" hint-placeholder-count="2"><div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto auto; gap: var(--s3); align-items: center; min-height: 52px"><span aria-hidden="true" style="width: 40px; height: 40px; border-radius: var(--r-pill); background: var(--surface-alt); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">{{u.ini}}</span><span style="display: flex; flex-direction: column"><span style="font-size: var(--fs-bsm); font-weight: 700; color: var(--text); text-decoration: none">@{{u.user}}</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">{{u.meta}}</span></span><button type="button" onClick="{{u.decline}}" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600; white-space: nowrap">Reddet</button><button type="button" onClick="{{u.accept}}" style="height: 40px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Onayla</button></div></sc-for>
 </section></sc-if>
 <div role="list" style="display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden">
-<sc-for list="{{people}}" as="u" hint-placeholder-count="5"><div role="listitem" style="display: grid; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-bottom: 1px solid var(--divider); grid-template-columns: 40px minmax(0, 1fr) auto"><span aria-hidden="true" style="width: 40px; height: 40px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">{{u.ini}}</span><span style="display: flex; flex-direction: column; gap: 2px"><a href="#" style="font-size: var(--fs-bsm); font-weight: 700; color: var(--text); text-decoration: none">@{{u.user}}</a><span style="font-size: var(--fs-cap); color: var(--text-muted)">{{u.meta}}</span></span><button type="button" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600; white-space: nowrap">{{u.action}}</button></div></sc-for>
+<sc-for list="{{people}}" as="u" hint-placeholder-count="5"><div role="listitem" style="display: grid; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-bottom: 1px solid var(--divider); grid-template-columns: 40px minmax(0, 1fr) auto"><span aria-hidden="true" style="width: 40px; height: 40px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">{{u.ini}}</span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 700; color: var(--text); text-decoration: none">@{{u.user}}</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">{{u.meta}}</span></span><button type="button" onClick="{{u.act}}" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600; white-space: nowrap">{{u.action}}</button></div></sc-for>
 <sc-if value="{{noPeople}}" hint-placeholder-val="{{ false }}"><div style="padding: var(--s6); text-align: center; font-size: var(--fs-bsm); color: var(--text-muted)">Bu aramayla eşleşen kişi yok</div></sc-if>
 </div>
 </sc-if>
@@ -58,6 +61,7 @@ details>summary::-webkit-details-marker{display:none}
 <sc-if value="{{noShares}}" hint-placeholder-val="{{ false }}"><div style="padding: var(--s6); text-align: center; font-size: var(--fs-bsm); color: var(--text-muted)">Bu aramayla eşleşen paylaşım yok</div></sc-if>
 </div>
 </sc-if>
+</sc-if>
 </div>
 
 <aside style="display: flex; flex-direction: column; gap: var(--s4)">
@@ -66,7 +70,7 @@ details>summary::-webkit-details-marker{display:none}
 <div style="display: flex; flex-direction: column; font-size: var(--fs-bsm)">
 <sc-for list="{{shareRows}}" as="x" hint-placeholder-count="5"><div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s2); min-height: 40px; border-bottom: 1px solid var(--divider)"><span>{{x.k}}</span><span style="display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border-radius: var(--r-pill); font-size: var(--fs-cap); font-weight: 600; {{x.style}}">{{x.v}}</span></div></sc-for>
 </div>
-<a href="#" style="font-size: var(--fs-bsm); font-weight: 600; color: var(--primary)">Ayarlar › Gizlilik’te değiştir</a>
+<a href="#" style="font-size: var(--fs-bsm); font-weight: 600; color: var(--primary)">Ayarlar › Gizlilik</a>
 </div>
 <div style="flex: 1; display: flex; flex-direction: column; gap: var(--s2); padding: var(--s5); border-radius: var(--r-lg); background: var(--surface-alt)">
 <span style="font-size: var(--fs-bsm); font-weight: 700">Başkaları nasıl görüyor?</span>
@@ -85,7 +89,7 @@ details>summary::-webkit-details-marker{display:none}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":1700}}'>
 class Component extends DCLogic {
-  constructor(props) { super(props); this.state = { tab: 'fol', q: '', cat: 'all', done: {}, view: 'me' }; }
+  constructor(props) { super(props); this.state = { tab: 'fol', q: '', cat: 'all', done: {}, view: 'me', gone: {}, last: null }; }
   tokens() {
     return {
       light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","accent":"#FF5A36","on-accent":"#1A0A05","danger":"#B91C1C","danger-subtle":"#FEE2E2","info-subtle":"#E0F2FE","info":"#0369A1","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E","hero-surface":"#0B1F33","on-hero-surface":"#FFFFFF","on-hero-muted":"#DCE5E1","hero-savings":"#6EE7B7","hero-line":"#24384B","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","overlay":"rgba(11,31,51,0.48)","logo-surface":"#FFFFFF","on-logo-surface":"#0B1F33"},
@@ -130,7 +134,7 @@ class Component extends DCLogic {
     const CL = { e: 'Elektronik', h: 'Ev aletleri', w: 'Giyim ve ayakkabı' };
     const words = this.fold(st.q.trim()).split(/ +/).filter(Boolean);
     const m = (t) => { const h = this.fold(t); return words.every(w => h.includes(w)); };
-    const people = (PE[st.tab] || []).filter(p => m(p[1] + ' ' + p[2]));
+    const people = (PE[st.tab] || []).filter(p => !st.gone[st.tab + p[1]] && m(p[1] + ' ' + p[2]));
     const shQ = SH.filter(x => m(x[0] + ' ' + CL[x[2]] + ' ' + x[3]));
     const shares = shQ.filter(x => st.cat === 'all' || x[2] === st.cat);
     const pub = st.view === 'fol';
@@ -138,20 +142,22 @@ class Component extends DCLogic {
       style: 'height:48px;padding:0 16px;border:0;border-bottom:2px solid ' + (st.tab === k ? 'var(--primary)' : 'transparent') + ';margin-bottom:-1px;background:transparent;font:inherit;font-size:14px;cursor:pointer;' + (st.tab === k ? 'color:var(--primary);font-weight:700' : 'color:var(--text-muted);font-weight:500') });
     const on = 'background:var(--primary-subtle);color:var(--on-primary-subtle)', off = 'background:var(--surface-alt);color:var(--text-muted)';
     return {
-      rootStyle: s, ini: 'SB', user: 'sinan.b', hunter: true, privacy: 'Takipçilere açık', since: 'Ekim 2026’dan beri üye',
-      counts: [{ v: 3 + Object.values(st.done).filter(x => x === 'ok').length, k: 'takipçi' }, { v: 4, k: 'takip' }, { v: 18, k: 'ürün takip ediyor' }, { v: 1, k: 'doğrulanmış paylaşım' }],
+      rootStyle: s, ini: 'SB', user: 'sinan.b', hunter: true, privacy: 'Takipçilerime', since: 'Ekim 2026’dan beri üye',
+      counts: [{ v: 3 + Object.values(st.done).filter(x => x === 'ok').length, k: 'takipçi' }, { v: 4, k: 'takip' }, { v: 18, k: 'ürün takip ediyor' }, { v: 1, k: 'doğrulanmış paylaşım' }].filter((x, i) => st.view === 'me' || i === 0),
       tabs: [tab('fol', 'Takipçilerim'), tab('ing', 'Takip ettiklerim'), tab('share', 'Paylaştığım fırsatlar')],
       q: st.q, ph: st.tab === 'share' ? 'Paylaşımlarında ara: ürün, durum' : 'Kişi ara', onQ: (e) => this.setState({ q: e.target.value }),
       isPeople: st.tab !== 'share', isShare: st.tab === 'share',
       hasReq: st.tab === 'fol' && REQ.length > 0, reqCount: REQ.length,
       reqs: REQ.map(r => ({ ini: r[0], user: r[1], meta: r[2], accept: () => this.setState({ done: Object.assign({}, st.done, { [r[1]]: 'ok' }) }), decline: () => this.setState({ done: Object.assign({}, st.done, { [r[1]]: 'no' }) }) })),
-      people: people.map(p => ({ ini: p[0], user: p[1], meta: p[2], action: p[3] })), noPeople: people.length === 0,
+      people: people.map(p => ({ ini: p[0], user: p[1], meta: p[2], action: p[3], act: () => this.setState({ gone: Object.assign({}, st.gone, { [st.tab + p[1]]: true }), last: { key: st.tab + p[1], text: (p[3] === 'Takipten çıkar' ? '@' + p[1] + ' takipçilerinden çıkarıldı' : p[3] === 'İsteği geri al' ? '@' + p[1] + ' için isteğin geri alındı' : '@' + p[1] + ' artık takip edilmiyor') } }) })),
+      hasUndo: !!st.last, undoText: st.last ? st.last.text : '', undo: () => { const g = Object.assign({}, st.gone); if (st.last) delete g[st.last.key]; this.setState({ gone: g, last: null }); },
+      isMe: st.view === 'me', isPreview: st.view !== 'me', previewTitle: 'Takipçilerin yalnızca profilini görüyor', previewSub: 'Takip ettiklerin, fırsatların, kazancın ve fiyatların: Sadece ben', noPeople: people.length === 0,
       cats: [['all', 'Tümü'], ['e', 'Elektronik'], ['h', 'Ev'], ['w', 'Giyim']].map(c => ({ label: c[1] + ' ' + shQ.filter(x => c[0] === 'all' || x[2] === c[0]).length, pressed: st.cat === c[0] ? 'true' : 'false', pick: () => this.setState({ cat: c[0] }), style: this.chip(st.cat === c[0]) })),
       shares: shares.map(x => ({ name: x[0], art: this.A(x[1]), imgLabel: x[0] + ' görseli', sub: CL[x[2]], status: x[3], pill: PS[x[4]], price: x[5], meta: x[6] })), noShares: shares.length === 0,
-      shareRows: [['Profilim', 'Takipçiler', on], ['Takip ettiklerim', 'Takipçiler', on], ['Yakaladığım fırsatlar', 'Takipçiler', on], ['Kazancım', 'Sadece ben', off], ['Ödediğim fiyatlar', 'Sadece ben', off], ['Aramalarım', 'Hiç paylaşılmaz', off]].map(x => ({ k: x[0], v: x[1], style: x[2] })),
+      shareRows: [['Profilim', 'Takipçilerime', on], ['Takip ettiklerim', 'Sadece ben', off], ['Yakaladığım fırsatlar', 'Sadece ben', off], ['Kazancım', 'Sadece ben', off], ['Ödediğim fiyatlar', 'Sadece ben', off], ['Aramalarım', 'Hiç paylaşılmaz', off]].map(x => ({ k: x[0], v: x[1], style: x[2] })),
       views: [['me', 'Ben'], ['fol', 'Bir takipçi']].map(v => ({ label: v[1], on: st.view === v[0] ? 'true' : 'false', pick: () => this.setState({ view: v[0] }),
         style: 'height:40px;border-radius:10px;font:inherit;font-size:14px;cursor:pointer;' + (st.view === v[0] ? 'border:2px solid var(--primary);background:var(--surface);color:var(--text);font-weight:700' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500') })),
-      viewNote: pub ? 'Takip ettiklerin ve fırsatların görünür · kazanç, fiyat ve aramalar görünmez' : 'Sen her şeyi görürsün'
+      viewNote: pub ? 'Önizleme: sayfa bir takipçinin gördüğü gibi' : 'Sen her şeyi görürsün'
     };
   }
 }
