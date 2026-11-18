@@ -234,6 +234,14 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const verifyRef = useRef<HTMLButtonElement>(null);
   const otherNameRef = useRef<HTMLInputElement>(null);
   const priceRef = useRef<HTMLInputElement>(null);
+  const sellerRef = useRef<HTMLInputElement>(null);
+  /**
+   * Design v5 (link reading): a link that gave the product but not the seller and price paid.
+   * The platform comes from the link, locked until "Değiştir"; seller and price are typed and
+   * both required before "Evet, bunu aldım".
+   */
+  const fromLinkOnly = prefill?.source === "LINK" && (prefill.sellerName === null || prefill.pricePaid === null);
+  const [platformLocked, setPlatformLocked] = useState(prefill?.source === "LINK" && prefill.platformId !== null);
   const [mode, setMode] = useState<Mode>(initialMode ?? "BOUGHT");
   const [targetText, setTargetText] = useState("");
   const [duration, setDuration] = useState<Duration>("1M");
@@ -313,11 +321,20 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
   const alreadyTracking = ctx.alreadyTracking.find((item) => item.mode === mode) ?? null;
   const deadline = platform ? returnDeadline(orderedOn, platform.returnRule) : null;
   const lastDay = customLastDay ?? deadline?.day ?? null;
-  // What "Evet, bunu aldım" still needs, in the order of the fields.
-  const missing: { message: string; field: "verify" | "platformName" | "price" }[] = [
+  // What "Evet, bunu aldım" still needs, in the order of the fields. A link without seller and
+  // price names those two first, in one line (design v5: "Satıcıyı ve ödediğin fiyatı yaz").
+  const sellerMissing = fromLinkOnly && !isOther && !sellerName.trim();
+  const priceMissing = { message: priceText.trim() ? t("searchAdd.confirm.priceInvalid") : t("searchAdd.confirm.missing.price"), field: "price" as const };
+  const linkFields: { message: string; field: "seller" | "price" }[] = sellerMissing
+    ? [{ message: price === null && !priceText.trim() ? t("searchAdd.confirm.missing.sellerAndPrice") : t("searchAdd.confirm.missing.seller"), field: "seller" }, ...(price === null && priceText.trim() ? [priceMissing] : [])]
+    : price === null
+      ? [priceMissing]
+      : [];
+  const missing: { message: string; field: "verify" | "platformName" | "seller" | "price" }[] = [
+    ...(fromLinkOnly ? linkFields : []),
     ...(verified ? [] : [{ message: t("searchAdd.confirm.missing.verify"), field: "verify" as const }]),
     ...(isOther && !otherName.trim() ? [{ message: t("searchAdd.confirm.missing.platformName"), field: "platformName" as const }] : []),
-    ...(price === null ? [{ message: priceText.trim() ? t("searchAdd.confirm.priceInvalid") : t("searchAdd.confirm.missing.price"), field: "price" as const }] : []),
+    ...(!fromLinkOnly && price === null ? [priceMissing] : []),
   ];
   const priceSource: "USER_TYPED" | "USER_LINK" | "USER_SCREENSHOT" =
     prefill?.pricePaid && price === prefill.pricePaid.amount ? (prefill.source === "LINK" ? "USER_LINK" : "USER_SCREENSHOT") : "USER_TYPED";
@@ -354,7 +371,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
     const first = missing.find((item) => item.field !== "verify");
     if (!first) return submitBought(true);
     setShowMissing(true);
-    const field = (first.field === "platformName" ? otherNameRef : priceRef).current;
+    const field = (first.field === "platformName" ? otherNameRef : first.field === "seller" ? sellerRef : priceRef).current;
     field?.scrollIntoView?.({ block: "center", behavior: "smooth" });
     field?.focus();
   };
@@ -466,7 +483,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       {prefill && (
         <p role="status" className="flex items-start gap-2 rounded-md bg-info-subtle p-3 text-body-sm text-text">
           <Icon icon={Info} size="sm" className="text-info" />
-          <span>{prefill.source === "LINK" ? t("searchAdd.confirm.prefilledLink") : t("searchAdd.confirm.prefilledShot")}</span>
+          <span>{fromLinkOnly ? t("searchAdd.confirm.linkWhyEmpty") : prefill.source === "LINK" ? t("searchAdd.confirm.prefilledLink") : t("searchAdd.confirm.prefilledShot")}</span>
         </p>
       )}
       {unsupported ? (
@@ -507,6 +524,18 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
       ) : (
         <>
           <ConfirmSection title={t("searchAdd.confirm.listing")}>
+            {platformLocked && platform && !isOther ? (
+              <div className="flex flex-col gap-1">
+                <span className="text-body-sm font-semibold text-text">{t("searchAdd.confirm.platform")}</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-body text-text">{platform.name}</span>
+                  <Flag tone="info">{t("searchAdd.confirm.platformFromLink")}</Flag>
+                  <Button size="compact" variant="secondary" aria-label={t("searchAdd.confirm.changePlatform")} onClick={() => setPlatformLocked(false)} className="ms-auto">
+                    {t("searchAdd.confirm.change")}
+                  </Button>
+                </div>
+              </div>
+            ) : (
             <Select
               label={t("searchAdd.confirm.platform")}
               value={isOther ? OTHER_PLATFORM : (platform?.id ?? "")}
@@ -517,6 +546,7 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
               }}
               options={[...platforms.map((item) => ({ value: item.id, label: item.name })), { value: OTHER_PLATFORM, label: t("searchAdd.confirm.otherPlatform") }]}
             />
+            )}
             {isOther ? (
               <>
                 <TextField
@@ -531,9 +561,11 @@ export function SignedInConfirm({ t, locale, candidate, identifyRequestId, prefi
             ) : (
               <form onSubmit={findSeller}>
                 <TextField
+                  ref={sellerRef}
                   label={t("searchAdd.confirm.seller")}
                   helper={t("searchAdd.confirm.sellerHelp")}
                   value={sellerName}
+                  {...(showMissing && sellerMissing ? { error: t("searchAdd.confirm.missing.seller") } : {})}
                   onChange={(event) => setSellerName(event.target.value)}
                   onBlur={(event) => {
                     // Not when the blur goes to "Satıcıyı bul" itself: that press looks it up.

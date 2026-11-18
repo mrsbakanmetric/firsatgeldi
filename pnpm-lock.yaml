@@ -279,6 +279,9 @@ importers:
       '@firsatgeldi/core':
         specifier: workspace:*
         version: link:../core
+      '@firsatgeldi/sources':
+        specifier: workspace:*
+        version: link:../sources
       '@firsatgeldi/tokens':
         specifier: workspace:*
         version: link:../tokens

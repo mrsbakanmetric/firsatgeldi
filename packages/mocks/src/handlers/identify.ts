@@ -1,9 +1,10 @@
 // Uploads and identification (architecture.md §10, §11a; database.md §11, §14b).
 import { addCalendarDays, toCalendarDay } from "@firsatgeldi/core";
 import { http, HttpResponse } from "msw";
-import type { ApiLocale } from "@firsatgeldi/contracts";
+import type { ApiLocale, LinkProblem } from "@firsatgeldi/contracts";
+import { type LinkTextFailure, readLinkText } from "@firsatgeldi/sources";
 import { ATTRIBUTE_LABELS, BULK_SCREENSHOT, CATEGORIES, MATCH_CRITICAL_ATTRIBUTES, type ProductFixture, PRODUCT_LIST, PRODUCTS, SIMILAR } from "../fixtures/catalog";
-import { listingUrl, offerForLink, OFFERS, PLATFORM_LIST, PLATFORMS, SELLERS } from "../fixtures/market";
+import { listingUrl, offerByListingUrl, type OfferFixture, offerForLink, OFFERS, type PlatformKey, PLATFORMS, SELLERS } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { ORDER_SCREENSHOT_EXTRACTION } from "../fixtures/users";
 import { newId } from "../ids";
@@ -114,9 +115,18 @@ function isBulk(controller: MockController, row: IdentifyRequestRow): boolean {
   return row.uploadIds.some((id) => controller.state.uploads.get(id)?.recognised === "bulk");
 }
 
-function resultFor(controller: MockController, row: IdentifyRequestRow, locale: ApiLocale, empty: boolean, link: ReturnType<typeof detectLink>) {
+function resultFor(controller: MockController, row: IdentifyRequestRow, locale: ApiLocale, empty: boolean) {
+  const reading = readLink(row.link);
+  const link = reading?.link ?? null;
+  const linkProblem = empty ? null : (reading?.problem ?? null);
   if (!empty && isBulk(controller, row)) {
-    return { requestId: row.id, understood: [], questions: [], candidates: [], items: bulkItems(locale), similarCount: 0, link };
+    return { requestId: row.id, understood: [], questions: [], candidates: [], items: bulkItems(locale), similarCount: 0, link, linkProblem };
+  }
+  if (reading) {
+    // A link goes straight to mark/confirm: no "Nasıl anladık", no questions (modules.md › Link detection).
+    const product = empty ? null : reading.product;
+    if (product && !inCatalog(controller, product)) controller.state.catalogAdded.add(product.key);
+    return { requestId: row.id, understood: [], questions: [], candidates: product ? candidatesFor([product], locale, "EXACT", product) : [], items: [], similarCount: 0, link, linkProblem };
   }
   const resolution = empty ? { lead: null, exact: [], close: [] } : withCorrections(resolveFor(controller, row, row.text ?? "", locale), row, locale);
   // Found through the live sources → cleaned and saved to the catalogue (architecture.md §11 "Catalogue miss").
@@ -143,7 +153,8 @@ function resultFor(controller: MockController, row: IdentifyRequestRow, locale: 
     candidates: [...candidatesFor(resolution.exact, locale, "EXACT", lead), ...candidatesFor(resolution.close, locale, "CLOSE", lead)],
     items: [],
     similarCount: lead && !empty ? (SIMILAR[lead.family] ?? []).length : 0,
-    link,
+    link: null,
+    linkProblem: null,
   };
 }
 
@@ -161,13 +172,6 @@ function withCorrections(base: Resolution, row: IdentifyRequestRow, locale: ApiL
 }
 
 function resolveFor(controller: MockController, row: IdentifyRequestRow, text: string, locale: ApiLocale): Resolution {
-  if (row.link) {
-    const offer = offerForLink(row.link);
-    if (offer) {
-      const product = PRODUCTS[offer.product];
-      return { lead: product, exact: [product], close: [] };
-    }
-  }
   if (row.uploadIds.length) {
     const ready = row.uploadIds.map((id) => controller.state.uploads.get(id)).filter((upload) => upload?.status === "READY");
     if (ready.length) {
@@ -178,19 +182,52 @@ function resolveFor(controller: MockController, row: IdentifyRequestRow, text: s
   return resolveText(text, locale);
 }
 
-/** A pasted link of a known store: the user's own platform, seller and price (design case A). */
-function detectLink(link: string | null) {
+const LINK_PROBLEMS: Readonly<Record<LinkTextFailure, LinkProblem>> = {
+  // `POST /identify` validates the URL; a non-http one is no store we support.
+  NOT_A_URL: "UNSUPPORTED_STORE",
+  UNKNOWN_STORE: "UNSUPPORTED_STORE",
+  SHORT_LINK: "SHORT_LINK",
+  NOT_A_PRODUCT_PAGE: "NOT_A_PRODUCT_PAGE",
+};
+
+interface LinkReading {
+  readonly link: { platformId: string; platformName: string; sellerName: string | null; pricePaid: ReturnType<typeof money> | null; brand: string | null; modelCode: string | null } | null;
+  readonly problem: LinkProblem | null;
+  readonly product: ProductFixture | null;
+}
+
+/**
+ * A pasted link, in the reading order of architecture.md §10.1 [DECIDED 2026-11-19]:
+ * a listing of the fixtures (the user's own purchase with seller and price, design case A) →
+ * path 1, the link text (`packages/sources`, the real reader) → path 2, the store search
+ * (here: the product whose model code the link carries; no live search in the mock) →
+ * the store's sample listing (development) → not found. Seller and price paid stay null
+ * unless a listing gives them: the user types them (design v5).
+ */
+function readLink(link: string | null): LinkReading | null {
   if (!link) return null;
-  const host = new URL(link).hostname.replace(/^www\./, "");
-  const platform = PLATFORM_LIST.find((item) => host === item.domain);
-  if (!platform) return null;
-  const offer = offerForLink(link);
-  return {
-    platformId: platform.id,
-    platformName: platform.name,
-    sellerName: offer ? SELLERS[offer.seller].name : null,
-    pricePaid: offer ? money(offer.priceMinor) : null,
+  const text = readLinkText(link);
+  const fromText = text.ok ? { brand: text.reading.brand, modelCode: text.reading.modelCode } : { brand: null, modelCode: null };
+  const listing = (offer: OfferFixture): LinkReading => {
+    const platform = PLATFORMS[SELLERS[offer.seller].platform];
+    return {
+      link: { platformId: platform.id, platformName: platform.name, sellerName: SELLERS[offer.seller].name, pricePaid: money(offer.priceMinor), ...fromText },
+      problem: null,
+      product: PRODUCTS[offer.product],
+    };
   };
+  const exact = offerByListingUrl(link);
+  if (exact) return listing(exact);
+  if (!text.ok) return { link: null, problem: LINK_PROBLEMS[text.reason], product: null };
+
+  const platform = PLATFORMS[text.reading.platform as PlatformKey];
+  const own = { platformId: platform.id, platformName: platform.name, sellerName: null, pricePaid: null, ...fromText };
+  const modelCode = text.reading.modelCode;
+  const found = modelCode ? PRODUCT_LIST.find((product) => product.modelCodes.includes(modelCode)) : undefined;
+  if (found) return { link: own, problem: null, product: found };
+  const sample = offerForLink(link);
+  if (sample) return listing(sample);
+  return { link: own, problem: "NOT_FOUND", product: null };
 }
 
 function ownUpload(controller: MockController, id: string, actor: UploadRow["owner"]): UploadRow {
@@ -322,7 +359,7 @@ export function identifyHandlers(controller: MockController) {
       state.identifyRequests.set(row.id, row);
       const source = body.link ? "LINK" : body.uploadIds ? "PHOTO" : "SEARCH_BOX";
       const savedBefore = state.catalogAdded.size;
-      const result = resultFor(controller, row, locale, empty, detectLink(row.link));
+      const result = resultFor(controller, row, locale, empty);
       const savedFromLiveSources = state.catalogAdded.size - savedBefore;
       if (body.text) {
         state.searchEvents.push({
@@ -330,7 +367,7 @@ export function identifyHandlers(controller: MockController) {
           queryRaw: scrubPersonalData(body.text), locale, source, resultCount: result.candidates.length, occurredAt: now.toISOString(),
         });
       }
-      note({ targetType: "identify_request", targetId: row.id, metadata: { source, candidateCount: result.candidates.length, savedFromLiveSources } });
+      note({ targetType: "identify_request", targetId: row.id, metadata: { source, candidateCount: result.candidates.length, savedFromLiveSources, linkProblem: result.linkProblem } });
       return { data: result };
     }),
 
@@ -345,7 +382,7 @@ export function identifyHandlers(controller: MockController) {
         row.attributes[body.attributeKey] = body.value;
       }
       note({ targetType: "identify_request", targetId: row.id, metadata: { answer: "questionId" in body ? "QUESTION" : "ATTRIBUTE" } });
-      return { data: resultFor(controller, row, locale, empty, detectLink(row.link)) };
+      return { data: resultFor(controller, row, locale, empty) };
     }),
   ];
 }

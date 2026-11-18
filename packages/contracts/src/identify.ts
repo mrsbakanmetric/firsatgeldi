@@ -53,14 +53,29 @@ export const IdentifyCandidate = z.object({
 
 /**
  * A pasted store link: ours to read for the user's own purchase (design case A).
- * The platform and seller are the user's own and therefore visible.
+ * The platform and seller are the user's own and therefore visible. Read in the order of
+ * architecture.md §10.1 › Link reading order [DECIDED 2026-11-19]: seller and price paid
+ * are null while no path can read them (the user types them, design v5).
  */
 export const DetectedLink = z.object({
   platformId: Id,
   platformName: z.string().min(1),
   sellerName: z.string().nullable(),
   pricePaid: Money.nullable(),
+  /** What the link text says (path 1), shown as chips (design v5) [ASSUMPTION — field, to be written into architecture.md §16.1]. */
+  brand: z.string().nullable(),
+  /** Manufacturer model code from the link text ("1042A237-101") [ASSUMPTION — field, as above]. */
+  modelCode: z.string().nullable(),
 });
+
+/**
+ * Why a pasted link gave no product (design v5 edge states) [ASSUMPTION — field, as above]:
+ * NOT_FOUND = the link was read but the store search found no matching product ·
+ * SHORT_LINK = a share link that only redirects · UNSUPPORTED_STORE = not a launch store ·
+ * NOT_A_PRODUCT_PAGE = a store page that is not a product page.
+ */
+export const LinkProblem = z.enum(["NOT_FOUND", "SHORT_LINK", "UNSUPPORTED_STORE", "NOT_A_PRODUCT_PAGE"]);
+export type LinkProblem = z.infer<typeof LinkProblem>;
 
 /** One product found in a multi-product image (bulk add, database.md §11 `result.items[]`). */
 export const IdentifyItem = z.object({
@@ -79,6 +94,8 @@ export const IdentifyResult = z.object({
   /** Count for "Benzer ama farklı · N"; the list comes from `GET /products/:id/similar` [ASSUMPTION]. */
   similarCount: z.number().int().nonnegative(),
   link: DetectedLink.nullable(),
+  /** Set only for a link input that gave no product; null otherwise. */
+  linkProblem: LinkProblem.nullable(),
 });
 export type IdentifyResult = z.infer<typeof IdentifyResult>;
 

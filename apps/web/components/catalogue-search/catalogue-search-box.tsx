@@ -9,14 +9,15 @@
 // first matches also appear as image tiles, only from 4 matches on. ↑/↓ move, Enter
 // chooses; Esc, a click outside, the camera and "Ara" close it. The first suggestion
 // that starts with the typed text completes it inline in muted colour; Tab or → accepts.
-// Our own catalogue only — no prices, no stores. A pasted store link is detected;
-// nothing found → "mağazalarda ara". Pages choose only what a pick, a submit, a link and
-// a photo do (Search and Add: mark in place; Home: hand over to Search and Add).
+// Our own catalogue only — no prices, no stores. A pasted store link is detected and read
+// (design v5, link reading: what the link says, the found product, four edge states with
+// "Adıyla ara"); nothing found → "mağazalarda ara". Pages choose only what a pick, a submit,
+// a link and a photo do (Search and Add: mark in place; Home: hand over to Search and Add).
 import { type ApiError, type IdentifyResult, imagePath, type ProductSummary } from "@firsatgeldi/contracts";
 import type { Translator } from "@firsatgeldi/i18n";
 import { Button, chipClasses, cn, focusRing, Icon, ProductImage, SearchBox, SkeletonBlock } from "@firsatgeldi/ui";
-import { Link2, Package, Store } from "lucide-react";
-import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useState } from "react";
+import { CircleAlert, Link2, Package, Search, Store } from "lucide-react";
+import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useImperativeHandle, useRef, useState } from "react";
 import { API_BASE_URL } from "../../lib/api/config";
 import { useApiQuery } from "../../lib/api/hooks";
 import { acceptsCompletion, completionFor } from "../../lib/completion";
@@ -71,6 +72,9 @@ export interface CatalogueSearchBoxProps {
 
 export function CatalogueSearchBox({ t, inputRef, query, onQueryChange, signedIn, onSubmit, submitting, canSubmit, onChoose, onSearchStores, onLink, onAddPhoto, below, onError }: CatalogueSearchBoxProps) {
   const id = useId();
+  // Our own ref (for "Adıyla ara", which puts the focus back in the box), handed to the page too.
+  const ownInput = useRef<HTMLInputElement>(null);
+  useImperativeHandle(inputRef, () => ownInput.current as HTMLInputElement, []);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const typed = query.trim();
@@ -106,6 +110,14 @@ export function CatalogueSearchBox({ t, inputRef, query, onQueryChange, signedIn
   // with the typed text; recomputed on every keystroke, gone when nothing matches.
   const completing = open && !link ? completionFor(query, items.map((product) => product.name)) : null;
   const completion = completing ? completing.slice(query.length) : "";
+
+  /** "Adıyla ara" (design v5 edge states): the link's brand and model code when it had them, otherwise an empty box; the focus goes back to it. */
+  const searchByName = (text: string) => {
+    onQueryChange(text);
+    setActive(0);
+    setOpen(true);
+    ownInput.current?.focus();
+  };
 
   const choose = (product: ProductSummary) => {
     setOpen(false);
@@ -143,7 +155,7 @@ export function CatalogueSearchBox({ t, inputRef, query, onQueryChange, signedIn
 
   return (
     <SearchBox
-      ref={inputRef}
+      ref={ownInput}
       label={t("searchAdd.search.label")}
       placeholder={t("searchAdd.search.label")}
       value={query}
@@ -173,7 +185,7 @@ export function CatalogueSearchBox({ t, inputRef, query, onQueryChange, signedIn
       overlay={
         <>
           {link ? (
-            <LinkCard t={t} pending={linkCheck.pending} result={linkCheck.result} onContinue={(result) => (setOpen(false), onLink(result))} />
+            <LinkCard t={t} pending={linkCheck.pending} result={linkCheck.result} onContinue={(result) => (setOpen(false), onLink(result))} onSearchByName={searchByName} />
           ) : typed.length === 0 ? (
             <div className="flex flex-col gap-2">
               <p className="text-caption text-text-muted">{t("searchAdd.suggest.recent")}</p>
@@ -264,7 +276,8 @@ export function CatalogueSearchBox({ t, inputRef, query, onQueryChange, signedIn
               )}
             </>
           )}
-          {link && <p className="text-caption text-text-muted">{t("searchAdd.suggest.linkTip")}</p>}
+          {/* Only when the link really gives seller and price (a listing we know, design case A). */}
+          {link && linkCheck.result?.link?.sellerName && <p className="text-caption text-text-muted">{t("searchAdd.suggest.linkTip")}</p>}
         </>
       }
     />
@@ -307,29 +320,110 @@ function Preview({ t, product, onChoose }: { t: Translator; product: ProductSumm
   );
 }
 
-function LinkCard({ t, pending, result, onContinue }: { t: Translator; pending: boolean; result: IdentifyResult | null; onContinue: (result: IdentifyResult) => void }) {
-  if (pending || !result) return <SkeletonBlock shape="card" />;
-  const product = result.candidates[0]?.product ?? null;
+/** What the link text says (design v5): "<Platform> linki" and the brand and model code chips. */
+function LinkFacts({ t, link, chips }: { t: Translator; link: NonNullable<IdentifyResult["link"]>; chips: boolean }) {
+  const facts = chips
+    ? ([
+        [t("searchAdd.suggest.linkBrand"), link.brand],
+        [t("searchAdd.suggest.linkModel"), link.modelCode],
+      ] as const).filter((fact): fact is readonly [string, string] => fact[1] !== null)
+    : [];
   return (
-    <div className="flex flex-col gap-3">
-      {result.link && (
-        <p className="flex items-center gap-2 text-body-sm font-semibold text-text">
-          <Icon icon={Link2} className="text-primary" />
-          <span>{t("searchAdd.suggest.linkDetected", { platform: result.link.platformName })}</span>
-        </p>
-      )}
-      {product && (
-        <div className="flex items-center gap-3">
-          <ProductImage src={imageUrl(product.imageSha256)} size="sm" fallbackIcon={Package} />
-          <span className="flex flex-col">
-            <span className="text-body-sm font-semibold text-text">{product.name}</span>
-            <span className="text-caption text-text-muted">{t("searchAdd.suggest.linkReads")}</span>
+    <div className="flex flex-wrap items-center gap-2">
+      <p className="flex items-center gap-1 text-caption font-semibold text-info">
+        <Icon icon={Link2} size="sm" />
+        <span>{t("searchAdd.suggest.linkDetected", { platform: link.platformName })}</span>
+      </p>
+      {facts.map(([label, value]) => (
+        <span key={label} className={chipClasses("hover:bg-surface-alt")}>
+          <span className="text-text-muted">{label}</span>
+          <span>{value}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * The link card (design v5, `pagedesign.md` §8.2 › Link reading): while the link is read and
+ * the store searched, a skeleton and "Ürünü arıyoruz…"; then the found product with
+ * "Bu linkle devam et", or one line saying why there is none with "Adıyla ara". No other
+ * store's name or price ever appears here (hidden seller).
+ */
+export function LinkCard({
+  t,
+  pending,
+  result,
+  onContinue,
+  onSearchByName,
+}: {
+  t: Translator;
+  pending: boolean;
+  result: IdentifyResult | null;
+  onContinue: (result: IdentifyResult) => void;
+  onSearchByName: (text: string) => void;
+}) {
+  if (pending || !result) {
+    return (
+      <div className="flex flex-col gap-3">
+        <div role="status" aria-live="polite" className="flex items-center gap-3">
+          <SkeletonBlock shape="card" className="w-(--size-thumb-md) shrink-0" />
+          <span className="flex min-w-0 flex-1 flex-col gap-2">
+            <SkeletonBlock shape="title" width="2/3" />
+            <SkeletonBlock width="1/3" />
+            <span className="flex items-center gap-1 text-caption text-text-muted">
+              <Icon icon={Search} size="sm" />
+              <span>{t("searchAdd.suggest.linkFinding")}</span>
+            </span>
           </span>
         </div>
-      )}
-      <Button onClick={() => onContinue(result)} className="self-start">
+        <Button size="compact" disabled className="self-end">
+          {t("searchAdd.suggest.linkContinue")}
+        </Button>
+      </div>
+    );
+  }
+  const candidate = result.candidates[0] ?? null;
+  const link = result.link;
+  if (result.linkProblem || !candidate) {
+    return <LinkProblemLine t={t} result={result} onSearchByName={onSearchByName} />;
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      {link && <LinkFacts t={t} link={link} chips={false} />}
+      <div className="flex items-center gap-3">
+        <ProductImage src={imageUrl(candidate.product.imageSha256)} size="md" fallbackIcon={Package} />
+        <span className="flex min-w-0 flex-col">
+          <span className="text-body-sm font-semibold break-words text-text">{candidate.product.name}</span>
+          {candidate.variantLine && <span className="text-caption text-text-muted">{candidate.variantLine}</span>}
+          {link?.modelCode && <span className="text-caption text-text-muted">{t("searchAdd.suggest.linkModelLine", { code: link.modelCode })}</span>}
+          {link?.sellerName && <span className="text-caption text-text-muted">{t("searchAdd.suggest.linkReads")}</span>}
+        </span>
+      </div>
+      <Button size="compact" onClick={() => onContinue(result)} className="self-end">
         {t("searchAdd.suggest.linkContinue")}
       </Button>
+    </div>
+  );
+}
+
+/** A link that gave no product (design v5 edge states): one line + "Adıyla ara"; a read link keeps its chips. */
+export function LinkProblemLine({ t, result, onSearchByName }: { t: Translator; result: IdentifyResult; onSearchByName: (text: string) => void }) {
+  const link = result.link;
+  const problem = result.linkProblem ?? "NOT_FOUND";
+  const nameText = link ? [link.brand, link.modelCode].filter(Boolean).join(" ") : "";
+  return (
+    <div className="flex flex-col gap-3">
+      {link && problem === "NOT_FOUND" && <LinkFacts t={t} link={link} chips />}
+      <div className="flex flex-wrap items-center gap-3">
+        <Icon icon={CircleAlert} className="text-text-muted" />
+        <p role="status" className="min-w-0 flex-1 text-body-sm font-medium text-text">
+          {t(`searchAdd.suggest.linkProblem.${problem}`)}
+        </p>
+        <Button size="compact" variant="secondary" onClick={() => onSearchByName(nameText)}>
+          {t("searchAdd.suggest.searchByName")}
+        </Button>
+      </div>
     </div>
   );
 }

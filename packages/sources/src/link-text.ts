@@ -49,8 +49,8 @@ interface PathMatch {
 
 type PathReader = (url: URL) => PathMatch | null;
 
-/** Trendyol: `/{brand}/{name}-p-{contentId}`; the seller is `?merchantId=`. */
-const TRENDYOL_PATH = /^\/([^/]+)\/([^/]+)-p-(\d+)\/?$/;
+/** Trendyol: `/{brand}/{name}-p-{contentId}` (the brand segment may be missing); the seller is `?merchantId=`. */
+const TRENDYOL_PATH = /^\/(?:([^/]+)\/)?([^/]+)-p-(\d+)\/?$/;
 /** Hepsiburada: `/{name}-p-{SKU}` (one listing) or `/{name}-pm-{SKU}` (product family). */
 const HEPSIBURADA_PATH = /^\/([^/]+)-pm?-([A-Za-z0-9]+)\/?$/;
 /** Amazon: `/{name}/dp/{ASIN}`, `/dp/{ASIN}` or `/gp/product/{ASIN}`, anything after. */
@@ -63,8 +63,8 @@ const TEKNOSA_PATH = /^\/([^/]+)-p-(\d+)\/?$/;
 const PATH_READERS: Readonly<Record<PlatformCode, PathReader>> = {
   TRENDYOL: (url) => {
     const match = TRENDYOL_PATH.exec(url.pathname);
-    if (!match?.[1] || !match[2] || !match[3]) return null;
-    return { brandSlug: match[1], nameSlug: match[2], productExternalId: match[3], sellerExternalId: url.searchParams.get("merchantId") };
+    if (!match?.[2] || !match[3]) return null;
+    return { brandSlug: match[1] ?? null, nameSlug: match[2], productExternalId: match[3], sellerExternalId: url.searchParams.get("merchantId") };
   },
   HEPSIBURADA: (url) => {
     const match = HEPSIBURADA_PATH.exec(url.pathname);

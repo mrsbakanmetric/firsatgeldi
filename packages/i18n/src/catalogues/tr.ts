@@ -95,9 +95,22 @@ export const tr = {
       searchStores: "“{query}” için mağazalarda ara · birkaç saniye sürebilir",
       recent: "Son aramaların",
       linkTip: "Mağaza linki yapıştırırsan ürün, satıcı ve ödediğin fiyat linkten dolar.",
-      linkDetected: "Mağaza linki algılandı · {platform}",
+      /** Design v5: caption of the link card. */
+      linkDetected: "{platform} linki",
       linkReads: "Satıcı ve fiyat linkten okunacak",
       linkContinue: "Bu linkle devam et",
+      /** Design v5 (link reading): what the link text says, as chips; the store search; edge states. */
+      linkBrand: "Marka",
+      linkModel: "Model kodu",
+      linkModelLine: "Model kodu {code}",
+      linkFinding: "Ürünü arıyoruz…",
+      linkProblem: {
+        NOT_FOUND: "Bu linkteki ürünü bulamadık.",
+        SHORT_LINK: "Kısa linkleri okuyamıyoruz. Ürün sayfasının tam linkini yapıştır.",
+        UNSUPPORTED_STORE: "Bu mağazayı henüz desteklemiyoruz.",
+        NOT_A_PRODUCT_PAGE: "Bu link bir ürün sayfası değil.",
+      },
+      searchByName: "Adıyla ara",
     },
     photos: {
       title: "Fotoğraflar",
@@ -184,6 +197,8 @@ export const tr = {
         verify: "Önce ürünü doğrula: “Evet, bu?”",
         platformName: "Platform adını yaz",
         price: "Ödediğin fiyatı yaz",
+        seller: "Satıcıyı yaz",
+        sellerAndPrice: "Satıcıyı ve ödediğin fiyatı yaz",
       },
       sellerFind: "Satıcıyı bul",
       sellerFound: "Bu üründe bulundu",
@@ -210,6 +225,11 @@ export const tr = {
       fromShot: "Ekrandan okundu",
       linkNote: "Linkteki fiyat sepet indirimini göstermeyebilir; ödediğin tutar farklıysa düzelt.",
       prefilledLink: "Mağaza linki algılandı: ürün, satıcı ve ödediğin fiyat linkten dolduruldu.",
+      /** Design v5: the link gave the product but not the seller and the price paid. */
+      linkWhyEmpty: "Satıcıyı ve ödediğin fiyatı linkten okuyamadık, sen yaz.",
+      platformFromLink: "linkten",
+      /** Screen-reader name of the platform's "Değiştir" (the product row has its own). */
+      changePlatform: "Platformu değiştir",
       prefilledShot: "Sipariş ekranından dolduruldu. Ad, adres ve sipariş numarası alınmadı; her alanı düzenleyebilirsin.",
       orderedOn: "Sipariş tarihi",
       orderStatus: "Sipariş durumu",

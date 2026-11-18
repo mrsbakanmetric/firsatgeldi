@@ -553,6 +553,98 @@ describe.each(LOCALES)("Search and Add — design v4 — %s", (locale) => {
   });
 });
 
+describe.each(LOCALES)("Search and Add — design v5, link reading — %s", (locale) => {
+  const t = createTranslator(locale);
+  const ASICS_LINK = "https://www.trendyol.com/asics/gel-dedicate-8-kadin-tenis-ayakkabisi-1042a237-101-p-754059415";
+  const asics = PRODUCTS.asicsGelDedicate8;
+  const paste = async (link: string) => {
+    await userEvent.click(screen.getByRole("combobox"));
+    await userEvent.paste(link);
+  };
+
+  it("a link to a product not in the catalogue: the card shows the platform, the found product and its model code", async () => {
+    const { container } = show(locale);
+    await paste(ASICS_LINK);
+    const next = await screen.findByRole("button", { name: t("searchAdd.suggest.linkContinue") }, { timeout: 3000 });
+    await waitFor(() => expect(next.hasAttribute("disabled")).toBe(false));
+    expect(screen.getByText(t("searchAdd.suggest.linkDetected", { platform: "Trendyol" }))).toBeDefined();
+    expect(screen.getByText(asics.name[locale])).toBeDefined();
+    expect(screen.getByText(locale === "tr" ? "Mavi · 40" : "Blue · 40")).toBeDefined();
+    expect(screen.getByText(t("searchAdd.suggest.linkModelLine", { code: "1042A237-101" }))).toBeDefined();
+    // Only what the user's own link says: no seller, no price, no tip promising them.
+    expect(screen.queryByText(t("searchAdd.suggest.linkReads"))).toBeNull();
+    expect(screen.queryByText(t("searchAdd.suggest.linkTip"))).toBeNull();
+    expect(await axeViolations(container)).toEqual([]);
+  });
+
+  it("“Bu linkle devam et”: product selected, platform locked from the link, seller and price empty and required", async () => {
+    show(locale);
+    await paste(ASICS_LINK);
+    const next = await screen.findByRole("button", { name: t("searchAdd.suggest.linkContinue") }, { timeout: 3000 });
+    await waitFor(() => expect(next.hasAttribute("disabled")).toBe(false));
+    await userEvent.click(next);
+    expect(await screen.findByRole("radio", { name: new RegExp(asics.name[locale]), checked: true })).toBeDefined();
+    // "Nasıl anladık" is skipped.
+    expect(screen.queryByRole("region", { name: t("searchAdd.understood.title") })).toBeNull();
+    expect(screen.getAllByText(new RegExp(t("searchAdd.suggest.linkModelLine", { code: "1042A237-101" }))).length).toBeGreaterThan(0);
+    expect(await screen.findByText(t("searchAdd.confirm.linkWhyEmpty"))).toBeDefined();
+    expect(screen.getByText(t("searchAdd.confirm.platformFromLink"))).toBeDefined();
+    expect(screen.getByText("Trendyol")).toBeDefined();
+    expect((screen.getByLabelText(t("searchAdd.confirm.seller")) as HTMLInputElement).value).toBe("");
+    expect((screen.getByLabelText(t("searchAdd.confirm.pricePaid")) as HTMLInputElement).value).toBe("");
+    expect(screen.getByText(t("searchAdd.confirm.missing.sellerAndPrice"))).toBeDefined();
+    const bought = screen.getByRole("button", { name: t("searchAdd.confirm.bought") });
+    expect(bought.hasAttribute("disabled")).toBe(true);
+    // The user's own seller and price: then only the product check is left.
+    await userEvent.type(screen.getByLabelText(t("searchAdd.confirm.seller")), "Bayram Spor");
+    await userEvent.type(screen.getByLabelText(t("searchAdd.confirm.pricePaid")), "3749");
+    expect(await screen.findByText(t("searchAdd.confirm.missing.verify"))).toBeDefined();
+    // "Değiştir" opens the platform list.
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.confirm.changePlatform") }));
+    expect(screen.queryByText(t("searchAdd.confirm.platformFromLink"))).toBeNull();
+    // Hidden seller: no store's seller from the fixtures anywhere on the page.
+    for (const seller of Object.values(SELLERS)) expect(document.body.textContent).not.toContain(seller.name);
+  });
+
+  it.each([
+    ["SHORT_LINK", "https://ty.gl/k3Xa9QpL", ""],
+    ["UNSUPPORTED_STORE", "https://ornekmagaza.com/urun/12345", ""],
+    ["NOT_A_PRODUCT_PAGE", "https://www.trendyol.com/sr?wc=109", ""],
+    ["NOT_FOUND", "https://www.mediamarkt.com.tr/tr/product/_sony-wh-ch720n-kulaklik-1234567.html", "CH720N"],
+  ] as const)("edge state %s: one line and “Adıyla ara”, which goes back to a typed search", async (problem, link, nameText) => {
+    show(locale);
+    await paste(link);
+    expect(await screen.findByText(t(`searchAdd.suggest.linkProblem.${problem}`), undefined, { timeout: 3000 })).toBeDefined();
+    if (problem === "NOT_FOUND") {
+      expect(screen.getByText(t("searchAdd.suggest.linkDetected", { platform: "MediaMarkt" }))).toBeDefined();
+      expect(screen.getByText(t("searchAdd.suggest.linkModel"))).toBeDefined();
+    }
+    expect(screen.queryByRole("button", { name: t("searchAdd.suggest.linkContinue") })).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.suggest.searchByName") }));
+    const box = screen.getByRole("combobox") as HTMLInputElement;
+    expect(box.value).toBe(nameText);
+    expect(document.activeElement).toBe(box);
+  });
+
+  it("“Ara” with a link that gives no product shows the same line on the page", async () => {
+    show(locale);
+    await paste("https://ty.gl/k3Xa9QpL");
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.search.submit") }));
+    expect(await screen.findByText(t("searchAdd.suggest.linkProblem.SHORT_LINK"), undefined, { timeout: 3000 })).toBeDefined();
+    await userEvent.click(screen.getByRole("button", { name: t("searchAdd.suggest.searchByName") }));
+    expect((screen.getByRole("combobox") as HTMLInputElement).value).toBe("");
+  });
+
+  it("every link reading is logged with its outcome", async () => {
+    show(locale);
+    const before = controller.state.activity.length;
+    await paste("https://ty.gl/k3Xa9QpL");
+    await screen.findByText(t("searchAdd.suggest.linkProblem.SHORT_LINK"), undefined, { timeout: 3000 });
+    const row = controller.state.activity.slice(before).find((entry) => entry.action === "identify");
+    expect(row?.metadata).toMatchObject({ source: "LINK", linkProblem: "SHORT_LINK" });
+  });
+});
+
 describe.each(LOCALES)("Search and Add — “Aldım, kaydet” from Tracked Items (v4 mode switch) — %s", (locale) => {
   const t = createTranslator(locale);
   afterEach(() => {
