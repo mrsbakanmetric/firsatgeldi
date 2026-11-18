@@ -618,7 +618,7 @@ Daily usage = today's (Europe/Istanbul) rows with `consumed=true`; Redis counter
 | Column | Type | Description |
 |---|---|---|
 | id | uuid | PK |
-| type | text | Tracking: `DEAL_FOUND`, `PRICE_DROP`, `DEADLINE_SOON`, `RETURN_REMINDER`, `TARGET_REACHED`, `BACK_IN_STOCK`, `DELIVERY_PROMPT`, `TRACKING_EXPIRING`, `SAVING_RECORDED`, `REVEAL_PRICE_UP`, `REPORT_RESOLVED`, `DEAL_ENDED`, `SEARCHED_PRODUCT_DROP`, `DIGEST` · Account/security: `WELCOME`, `VERIFY_EMAIL`, `NEW_DEVICE_SIGNIN`, `PASSWORD_CHANGED`, `IDENTITY_LINKED`, `DELETION_STARTED`, `DELETION_RESTORED`, `DELETION_COMPLETED`, `ACCOUNT_SUSPENDED`, `ACCOUNT_UNSUSPENDED`, `DATA_EXPORT_READY`, `PACKAGE_REQUEST_RESULT`, `SUPPORT_REPLY`, `CONSENT_REQUIRED` · Admin: `ADMIN_FRAUD_CASE`, `ADMIN_SOURCE_ALERT`, `ADMIN_BUDGET`, `ADMIN_PENDING_DIGEST`, `ADMIN_ROLE_CHANGED` |
+| type | text | Tracking: `DEAL_FOUND`, `PRICE_DROP`, `DEADLINE_SOON`, `RETURN_REMINDER`, `TARGET_REACHED`, `BACK_IN_STOCK`, `DELIVERY_PROMPT`, `TRACKING_EXPIRING`, `SAVING_RECORDED`, `REVEAL_PRICE_UP`, `REPORT_RESOLVED`, `DEAL_ENDED`, `SEARCHED_PRODUCT_DROP`, `DIGEST` · Account/security: `WELCOME`, `VERIFY_EMAIL`, `NEW_DEVICE_SIGNIN`, `PASSWORD_CHANGED`, `IDENTITY_LINKED`, `DELETION_STARTED`, `DELETION_RESTORED`, `DELETION_COMPLETED`, `ACCOUNT_SUSPENDED`, `ACCOUNT_UNSUSPENDED`, `DATA_EXPORT_READY`, `PACKAGE_REQUEST_RESULT`, `SUPPORT_REPLY`, `CONSENT_REQUIRED` · Community: `FOLLOW_ACCEPTED` (in-app only; decline, remove and unfollow are silent [DECIDED 2026-11-18]) · Admin: `ADMIN_FRAUD_CASE`, `ADMIN_SOURCE_ALERT`, `ADMIN_BUDGET`, `ADMIN_PENDING_DIGEST`, `ADMIN_ROLE_CHANGED` |
 | channel | text | CHECK (`IN_APP`,`EMAIL`,`PUSH`) |
 | locale | text | Validated against `i18n.locales`; an ACTIVE version is required for every required locale (`tr`, `en`) [DECIDED] |
 | version | integer | |
@@ -679,7 +679,7 @@ Release: the slice after Home → My Savings have settled [DECIDED]; tables are 
 | `community_consents` | user_id (PK) · share_tracking · share_savings · share_deals · share_paid_price (separate consent) · asked_at · updated_at | No data used without explicit consent; all false by default [DECIDED 2026-11-12] |
 | `blocks` | blocker_id · blocked_id · created_at · PK both | Blocked user cannot see the blocker's profile/lists/feed or follow; existing follow removed [DECIDED 2026-11-12] |
 | `link_submissions` | id · user_id · url_raw (hidden) · url_hash · product_id N · offer_id N · status CHECK (`PENDING`,`VERIFIED`,`REJECTED`) · reward_ledger_id N · reviewed_by N · created_at | Once verified it becomes an offer shown as a **hidden seller**; the raw link is never published [DECIDED]. Reward is interim [OPEN] |
-| `user_badges` | user_id · badge_code (`FIRSAT_AVCISI`…) · earned_at · PK both | |
+| `user_badges` | user_id · badge_code (`FIRSAT_AVCISI`…) · earned_at · PK both | `FIRSAT_AVCISI` after at least one `VERIFIED` link submission [ASSUMPTION — final rule with Discover; user decision 2026-11-18] |
 
 ---
 
@@ -776,7 +776,7 @@ The application role has `INSERT` only; `UPDATE`/`DELETE` closed by database pri
 | session_id | uuid | ✓ | |
 | device_hash / ip_hash | text | ✓ | Salted hash; raw values never stored |
 | platform | text | | CHECK (`WEB`,`MOBILE`) |
-| action | text | | e.g. `auth.sign_in`, `search`, `identify`, `upload`, `upload.status` (upload status read, guests included [DECIDED 2026-11-14]), `seller_lookup` · `teaser` · `reveal.hide` · `tracking.restore` ("Geri al") · `tracking.bought` ("Aldım, kaydet") [ASSUMPTION] (`architecture.md` §16.1), Product Detail: `tracking.edit` · `tracking.delivered` · `tracking.step` · `tracking.request` · `tracking.extend` · `feedback.create` · `offer.notify_back_in_stock` [ASSUMPTION] (`architecture.md` §16.1), `tracking.confirm`, `tracking.end`, `reveal`, `offer.go`, `check_now`, `check_now_bulk`, `report.create`, `link.submit`, `package.request`, `savings.edit`, `settings.change`, `consent.accept` |
+| action | text | | e.g. `auth.sign_in`, `search`, `identify`, `upload`, `upload.status` (upload status read, guests included [DECIDED 2026-11-14]), `seller_lookup` · `teaser` · `reveal.hide` · `tracking.restore` ("Geri al") · `tracking.bought` ("Aldım, kaydet") [ASSUMPTION] (`architecture.md` §16.1), Product Detail: `tracking.edit` · `tracking.delivered` · `tracking.step` · `tracking.request` · `tracking.extend` · `feedback.create` · `offer.notify_back_in_stock` [ASSUMPTION] (`architecture.md` §16.1), `tracking.confirm`, `tracking.end`, `reveal`, `offer.go`, `check_now`, `check_now_bulk`, `report.create`, `link.submit`, `package.request`, `savings.edit`, `settings.change`, `consent.accept`, Profilim [ASSUMPTION] (`architecture.md` §16 COMMUNITY): `follow.approve` · `follow.decline` · `follow.delete` (unfollow or withdraw a request; metadata has the previous status) · `follow.restore` ("Geri al") · `follower.remove` · `follower.restore` ("Geri al") |
 | target_type / target_id | text / uuid | ✓ | |
 | metadata | jsonb | ✓ | Action-specific summary (no full email/phone; `contains_hidden_seller=true` when a seller identity is present) |
 | contains_hidden_seller | boolean | | Readable only with `admin.offers.view_hidden_seller` |
