@@ -9,7 +9,7 @@ export function whenApiReady(): Promise<void> {
   // `false` in production and drops the import below: the mock is not bundled
   // (a constant from another module left msw in the production chunks).
   if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_API_MOCKING !== "off") {
-    ready ??= import("../dev/mock-api").then(({ startMockWorker }) => startMockWorker()).then(() => undefined);
+    ready ??= import("../dev/mock-api").then(({ startDevMockApi }) => startDevMockApi()).then(() => undefined);
     return ready;
   }
   return Promise.resolve();
