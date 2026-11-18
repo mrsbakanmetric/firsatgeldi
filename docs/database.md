@@ -183,9 +183,10 @@ erDiagram
 | phone_bidx | text | ✓ | | Blind index; U (non-null) |
 | phone_verified_at | timestamptz | ✓ | | |
 | pii_key_ver | smallint | ✓ | | Encryption key version (for rotation) |
-| username | citext | ✓ | | U; Profile and Following |
+| username | citext | ✓ | | U; Profile and Following. 3–20 characters: lowercase letters, digits, `_`, `.`; changeable once in `username.change_days` (30) [DECIDED 2026-11-18] |
+| username_changed_at | timestamptz | ✓ | | Last username change (the 30-day rule) [DECIDED 2026-11-18] |
 | display_name | text | ✓ | | |
-| avatar_asset_id | uuid | ✓ | | FK media_assets (§14b) |
+| avatar_asset_id | uuid | ✓ | | FK media_assets (§14b). Optional profile photo; null = initials [DECIDED 2026-11-18] |
 | locale | text | | `'tr'` | Validated against `i18n.locales`; set at sign-up from the guest's resolved locale (`fg_locale` cookie) |
 | theme | text | | `'system'` | CHECK (`light`,`dark`,`system`) |
 | privacy_level | text | | `'ONLY_ME'` | CHECK (`EVERYONE`,`FOLLOWERS`,`ONLY_ME`) |
@@ -229,14 +230,14 @@ id · user_id · purpose CHECK (`VERIFY_EMAIL`,`RESET_PASSWORD`,`CHANGE_EMAIL`) 
 | Column | Type | Def. | Description |
 |---|---|---|---|
 | user_id | uuid | | PK, FK users |
-| slots | text[] | `{ALWAYS}` | `MORNING`,`NOON`,`EVENING`,`NIGHT`,`ALWAYS` |
-| custom_from / custom_to | time | N | Custom range |
+| slots | text[] | `{ALWAYS}` | `ALWAYS` (exclusive) or any of `MORNING` 08–12 · `NOON` 12–17 · `EVENING` 17–22 [DECIDED 2026-11-18]; `NIGHT` is no longer offered (removing the value needs the user's two-step approval) |
+| custom_from / custom_to | time | N | Custom range — **not used**: no custom range [DECIDED 2026-11-18]; removing the columns needs the user's two-step approval |
 | digest_enabled | boolean | false | Daily digest [DECIDED] |
-| digest_slot | text | N | Slot the digest is sent in |
+| digest_slot | text | N | **Not used**: the digest is sent at `notify.digest_time` (19:00) in the user's local time, slots do not affect it [DECIDED 2026-11-18]; removing the column needs the user's two-step approval |
 | updated_at | timestamptz | | |
 
 ### `notification_type_preferences`
-user_id · type · channel CHECK (`IN_APP`,`EMAIL`,`PUSH`) · enabled boolean. PK `(user_id, type, channel)`. **No row = the type's default**: enabled for every type and channel [DECIDED], except `SEARCHED_PRODUCT_DROP` × `EMAIL`, which is **disabled by default** [DECIDED 2026-11-13]. Mandatory account/security types ignore this table. When the legal question [OPEN — decide later] is settled, the default can change per type via `system_settings`; the schema does not change.
+user_id · type · channel CHECK (`IN_APP`,`EMAIL`,`PUSH`) · enabled boolean. PK `(user_id, type, channel)`. Settings rows that cover two types ("İade süresi" = `DEADLINE_SOON` + `RETURN_REMINDER`, "Fiyat düştü · hedefe ulaştı" = `PRICE_DROP` + `TARGET_REACHED`) write both rows together [DECIDED 2026-11-18]. **No row = the type's default**: enabled for every type and channel [DECIDED], except `SEARCHED_PRODUCT_DROP` × `EMAIL`, which is **disabled by default** [DECIDED 2026-11-13]. Mandatory account/security types ignore this table. When the legal question [OPEN — decide later] is settled, the default can change per type via `system_settings`; the schema does not change.
 
 ### `cookie_consents`
 id · user_id (N, null for guests) · anon_id (N) · analytics boolean · marketing boolean · version_id (FK content_versions) · created_at. Latest row wins.
@@ -661,7 +662,7 @@ id · user_id · slot · scheduled_for · sent_at N · item_count.
 | Table | Columns | Note |
 |---|---|---|
 | `identify_requests` | id · user_id N · anon_id N · input_text N (personal-data patterns scrubbed) · upload_ids uuid[] (at most `media.max_images_per_request`) · detected_link N · result jsonb (understood + candidates + multi-product list; **personal data stripped**) · status · created_at · expires_at | Bulk add via `result.items[]` [DECIDED]; candidates carry no seller/price |
-| `search_events` (hypertable, indefinite) | id · user_id N · anon_id N · session_id N · device_hash N · query_raw (email/phone patterns replaced with `[gizlendi]`) · query_normalized · locale (UI locale at search time; drives query normalisation) · filters jsonb · source CHECK (`SEARCH_BOX`,`AUTOCOMPLETE`,`LINK`,`PHOTO`) · result_count · picked_product_id N · hidden_by_user_at N · occurred_at | Search text is **never shared**; users can hide entries, the record stays [DECIDED] |
+| `search_events` (hypertable, indefinite) | id · user_id N · anon_id N · session_id N · device_hash N · query_raw (email/phone patterns replaced with `[gizlendi]`) · query_normalized · locale (UI locale at search time; drives query normalisation) · filters jsonb · source CHECK (`SEARCH_BOX`,`AUTOCOMPLETE`,`LINK`,`PHOTO`) · result_count · picked_product_id N · hidden_by_user_at N (set by "Gizle", cleared by "Geri al" [DECIDED 2026-11-18]) · occurred_at | Search text is **never shared**; users can hide entries, the record stays [DECIDED] |
 | `affiliate_clicks` | id · user_id · offer_id · platform_id · tracked_item_id · outbound_url_hash · created_at | Commission never affects which offers are shown |
 
 Uploads are in §14b. Guest flow: `identify_requests` is kept under `anon_id` (cookie) and linked to `user_id` at sign-in; the marked product and typed values are preserved [DECIDED].
@@ -884,7 +885,7 @@ Indexes `(user_id, created_at)`, `(purge_at) WHERE status <> 'DELETED'`.
 | Full name (admin lists) | first name + surname initial | `Mehmet B.` |
 | IP / device | first 8 characters of the hash | `a3f9c2e1…` |
 
-- **Users see their own data** masked in Settings; seeing the full value or changing it requires **re-authentication** (sign-in/password within `pii.reauth_minutes`) [RECOMMENDED].
+- **Users see their own data** masked in Settings; seeing the full value or changing it requires **re-authentication** (password, or Google / Apple for an account without one, within `pii.reauth_minutes`) [DECIDED 2026-11-18]; the revealed value stays `pii.self_reveal_seconds` and every reveal writes an activity row.
 - **The Application Manager** sees masked values by default; the full value opens with `admin.users.view_pii`, **with a written reason**, **time-limited** (def. 10 min); every reveal goes to `audit_logs` (`pii_reveal`) [DECIDED].
 - Exports (CSV) are masked by default; the user's own KVKK data export is full and only to themselves.
 - Email sending: the recipient address is **decrypted at send time** in the worker; full email is never written into templates or notification payloads.
@@ -966,6 +967,8 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `price.outlier.low_pct` / `.high_multiplier` | −90 / 3 | C |
 | `report.suspend_threshold` | 3 | |
 | `notify.daily_cap` | 5 | |
+| `notify.digest_time` | `19:00` | Daily digest, user's local time [DECIDED 2026-11-18] |
+| `notify.slot_hours` | `{"MORNING":[8,12],"NOON":[12,17],"EVENING":[17,22]}` | Time slots [DECIDED 2026-11-18] |
 | `notify.urgent_return_days` | 2 | |
 | `notify.list_days` | 30 [DECIDED 2026-11-13] | Notification list shows the last N days; rows are kept (§16) |
 | `tracking.stale_hours` | 6 [ASSUMPTION] | Tracked Items: a row not checked for this long shows "Güncel değil" |
@@ -974,7 +977,10 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `want.default_duration` | `1M` | |
 | `want.notable_drop_pct` / `.notable_drop_minor` | — | |
 | `savings.edit_days` | 7 | |
-| `account.deletion_restore_days` | 30 | |
+| `account.deletion_restore_days` | 30 | Everything returns on restore: tokens, tracking, pending requests [DECIDED 2026-11-18] |
+| `account.export_download_days` | 7 | Export ZIP (JSON inside) downloadable [DECIDED 2026-11-18] |
+| `username.change_days` | 30 | [DECIDED 2026-11-18] |
+| `avatar.max_bytes` | 5 MB | Profile photo: JPEG, PNG, WebP [DECIDED 2026-11-18] |
 | `return.default_rule` | `{days:14, start:"DELIVERY"}` | |
 | `return.read_interval_hours` | 24 [ASSUMPTION] | Store return-page read frequency |
 | `return.read_fail_task_hours` | 24 | Failures longer than this raise an admin task |
@@ -1020,7 +1026,8 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `catalog_warmup.max_queries_per_run` | 500 [ASSUMPTION] | Upper limit of source queries per warm-up run; counts against the provider budget |
 | `catalog_warmup.categories` | electronics, clothing [ASSUMPTION] | Open categories the warm-up fills |
 | `pii.reveal_minutes` | 10 | C |
-| `pii.reauth_minutes` | 15 | |
+| `pii.reauth_minutes` | 15 | [DECIDED 2026-11-18] |
+| `pii.self_reveal_seconds` | 60 | Own full e-mail/phone visible after re-authentication [DECIDED 2026-11-18] |
 | Plan values (`plans` table) | §9 | C |
 | Provider budget (`provider_budgets`) | — | C |
 | Fraud rules (`risk_rules` table) | §14a | C |
