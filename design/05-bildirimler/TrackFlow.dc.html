@@ -31,7 +31,7 @@ input::placeholder{color:var(--text-muted)}
 <span style="width: 48px; height: 48px; flex: none; border-radius: var(--r-lg); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></span>
 <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
 <h2 id="tk-baslik" style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700">Takip et</h2>
-<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">Bildirimden geldin; ürün seçili. Durumunu söyle, gerisini biz izleyelim.</span>
+
 </div>
 <ol aria-label="Adımlar" style="display: flex; align-items: center; gap: var(--s2); margin: 0; padding: 0; list-style: none; font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600">
 <li style="display: flex; align-items: center; gap: 6px; color: var(--text-muted)"><span style="width: 22px; height: 22px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>Ürün</li>
@@ -84,7 +84,7 @@ input::placeholder{color:var(--text-muted)}
 <div style="display: flex; flex-wrap: wrap; gap: var(--s2)"><sc-for list="{{chips}}" as="ch" hint-placeholder-count="2"><button type="button" onClick="{{ch.pick}}" style="height: 40px; padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-cap); font-weight: 600; cursor: pointer">{{ch.t}}</button></sc-for></div>
 <div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: var(--fs-bsm); font-weight: 600">Ne kadar takip edelim?</span>
 <div role="radiogroup" aria-label="Takip süresi" style="display: flex; gap: var(--s2)"><sc-for list="{{durations}}" as="o" hint-placeholder-count="4"><button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.v}}</button></sc-for></div>
-<span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Süre bitmeden 3 gün önce uzatmak isteyip istemediğini sorarız.</span>
+
 </div>
 <span style="padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--surface-alt); font-size: var(--fs-bsm); line-height: var(--lh-bsm)">{{wantNote}}</span>
 </div>
