@@ -64,6 +64,23 @@ export {
   type ToggleChipOption,
   type ToggleChipsProps,
 } from "./settings-parts";
+export {
+  PersonRow,
+  ProfileHeader,
+  SharedDealRow,
+  Tabs,
+  tabId,
+  tabPanelId,
+  ViewAsPreview,
+  VisibilityCard,
+  type PersonRowProps,
+  type ProfileHeaderProps,
+  type SharedDealRowProps,
+  type SharedDealTone,
+  type TabsProps,
+  type ViewAsPreviewProps,
+  type VisibilityCardProps,
+} from "./profile-parts";
 export { SkeletonBlock, SkeletonRow, type SkeletonBlockProps, type SkeletonShape, type SkeletonWidth } from "./skeleton-block";
 export { StatTile, StatTiles, type StatTileProps } from "./stat-tile";
 export { StatusBanner, type StatusBannerProps, type StatusTone } from "./status-banner";

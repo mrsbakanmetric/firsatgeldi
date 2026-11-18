@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_TIME_ZONE, formatDate, formatDateTime, formatMoney, formatNumber, formatTime, formatUntil, pluralCategory, pluralCategories } from "./format";
+import { DEFAULT_TIME_ZONE, formatDate, formatDateTime, formatMoney, formatNumber, formatSince, formatTime, formatUntil, pluralCategory, turkishAblative, pluralCategories } from "./format";
 
 const nbsp = "\u00a0";
 
@@ -59,5 +59,22 @@ describe("formatUntil — the month's own suffix in Turkish", () => {
     expect(formatUntil(lateNight, "tr")).toBe("12 Aralık'a kadar");
     expect(formatUntil(lateNight, "en")).toBe("until 12 December");
     expect(formatUntil(lateNight, "en", { timeZone: "UTC" })).toBe("until 11 December");
+  });
+});
+
+describe("formatSince — the ablative follows how the year is read", () => {
+  it.each([
+    [2026, "'dan"], [2027, "'den"], [2023, "'ten"], [2024, "'ten"], [2025, "'ten"], [2021, "'den"], [2029, "'dan"],
+    [2030, "'dan"], [2020, "'den"], [2040, "'tan"], [2050, "'den"], [2060, "'tan"], [2070, "'ten"], [2080, "'den"], [2090, "'dan"], [2010, "'dan"],
+    [2000, "'den"], [2100, "'den"], [0, "'dan"],
+  ])("%i%s", (year, suffix) => {
+    expect(turkishAblative(year)).toBe(suffix);
+  });
+
+  it("tr \"Ekim 2026'dan beri\" · en \"since October 2026\"", () => {
+    const date = new Date("2026-10-03T12:00:00Z");
+    expect(formatSince(date, "tr")).toBe("Ekim 2026'dan beri");
+    expect(formatSince(date, "en")).toBe("since October 2026");
+    expect(formatSince(new Date("2027-01-01T08:00:00Z"), "tr")).toBe("Ocak 2027'den beri");
   });
 });
