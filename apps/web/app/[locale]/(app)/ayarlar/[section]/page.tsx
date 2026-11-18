@@ -1,23 +1,20 @@
-import { createTranslator, isLocale } from "@firsatgeldi/i18n";
-import { PageTemplate } from "@firsatgeldi/ui";
+import { isLocale, LOCALES } from "@firsatgeldi/i18n";
 import { notFound } from "next/navigation";
-import { DEFAULT_SETTINGS_SECTION } from "../../../../../lib/shell/navigation";
+import { Settings } from "../../../../../components/settings/settings";
+import { sectionBySlug, SETTINGS_SECTIONS } from "../../../../../lib/settings/sections";
 
-// Section names are added with the Settings and Account screen (architecture.md §21.1).
+// Section names in each language (`/tr/ayarlar/profil`, `/en/settings/profile`); any other is a 404.
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return [{ section: DEFAULT_SETTINGS_SECTION }];
+  return LOCALES.flatMap((locale) => SETTINGS_SECTIONS.map((section) => ({ locale, section: section.slug[locale] })));
 }
 
-// Settings and Account — empty settings template until its screen step (docs/implementation_plan.md).
+// Settings and Account — design "9 Ayarlar" v2.1 (docs/screen_status.md), on the mock API in Phase 1.
 export default async function SettingsPage({ params }: PageProps<"/[locale]/ayarlar/[section]">) {
-  const { locale } = await params;
+  const { locale, section } = await params;
   if (!isLocale(locale)) notFound();
-  const t = createTranslator(locale);
-  return (
-    <PageTemplate kind="settings" title={t("pages.settings")}>
-      {null}
-    </PageTemplate>
-  );
+  const id = sectionBySlug(locale, section);
+  if (!id) notFound();
+  return <Settings locale={locale} section={id} />;
 }

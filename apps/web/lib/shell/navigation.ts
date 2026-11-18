@@ -2,6 +2,7 @@
 // Pure data + functions, so the order and the "current section" rule are tested
 // without rendering.
 import { localizedPath, matchLocalizedPath, PATH_SEGMENTS, type Locale, type Route, type TranslationKey } from "@firsatgeldi/i18n";
+import { FIRST_SETTINGS_SECTION } from "../settings/sections";
 
 export interface NavEntry {
   id: string;
@@ -24,12 +25,8 @@ export const APP_NAV = [
  */
 export const TAB_BAR_IDS = ["home", "tracking", "search", "savings"] as const;
 
-/**
- * Settings section the profile menu's "Ayarlar" entry opens. Section names are
- * added with the Settings and Account screen (architecture.md §21.1); until then
- * the first section of the menu entry list (Bildirimler) is used.
- */
-export const DEFAULT_SETTINGS_SECTION = "bildirimler";
+/** Settings section the profile menu's "Ayarlar" entry opens: the first one, Profil (design v2.1). */
+export const DEFAULT_SETTINGS_SECTION = FIRST_SETTINGS_SECTION;
 
 /** Footer links (pagedesign.md §2.1): KVKK · Koşullar · Çerezler · Komisyon · Yardım. */
 export const FOOTER_LINKS = [

@@ -1,13 +1,14 @@
 "use client";
 
 // Building blocks shared by AppShell, AuthShell and AdminShell (pagedesign.md §2).
-import { createTranslator, localizedPath, LOCALES, type Locale, type Translator } from "@firsatgeldi/i18n";
+import { createTranslator, LOCALES, type Locale, type Translator } from "@firsatgeldi/i18n";
 import { Avatar, cn, focusRing, Icon, Menu, Sheet, type MenuItem } from "@firsatgeldi/ui";
 import { ArrowDown, Bell, CreditCard, LogOut, Settings, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState, type ReactNode } from "react";
 import { writeLocalePreference } from "../../lib/i18n/locale-preference";
+import { settingsHref } from "../../lib/settings/sections";
 import { AUTH_FOOTER_IDS, DEFAULT_SETTINGS_SECTION, FOOTER_LINKS, hrefFor, isProfileMenuPage, isWithin, settingsBase, switchLocalePath } from "../../lib/shell/navigation";
 
 export function useTranslator(locale: Locale): Translator {
@@ -24,7 +25,7 @@ export function useTranslator(locale: Locale): Translator {
 export type ShellViewer =
   | { kind: "loading" }
   | { kind: "guest" }
-  | { kind: "user"; initials: string; unreadCount: number | null; unreadDeal: boolean };
+  | { kind: "user"; initials: string; unreadCount: number | null; unreadDeal: boolean; avatarSrc?: string | null };
 
 export function SkipLink({ t }: { t: Translator }) {
   return (
@@ -167,7 +168,7 @@ export function BellButton({ locale, t, unreadCount, unreadDeal, panel, onHero =
 }
 
 export function profileMenuItems(locale: Locale, t: Translator, pathname: string, onSignOut?: () => void): MenuItem[] {
-  const settings = localizedPath("/ayarlar/[section]", locale, { section: DEFAULT_SETTINGS_SECTION });
+  const settings = settingsHref(locale, DEFAULT_SETTINGS_SECTION);
   const items: MenuItem[] = [
     { id: "profile", label: t("shell.profileMenu.profile"), icon: UserRound, href: hrefFor("/profil", locale), current: pathname === hrefFor("/profil", locale) },
     { id: "plan", label: t("shell.profileMenu.plan"), icon: CreditCard, href: hrefFor("/paketim", locale), current: pathname === hrefFor("/paketim", locale) },
@@ -178,7 +179,8 @@ export function profileMenuItems(locale: Locale, t: Translator, pathname: string
 }
 
 /** Avatar menu at the right end of the top bar (from breakpoint.md). */
-export function ProfileMenu({ locale, t, initials, onSignOut, onHero = false }: {
+export function ProfileMenu({ locale, t, initials, avatarSrc = null, onSignOut, onHero = false }: {
+  avatarSrc?: string | null;
   locale: Locale;
   t: Translator;
   initials: string;
@@ -202,7 +204,7 @@ export function ProfileMenu({ locale, t, initials, onSignOut, onHero = false }: 
             focusRing,
           )}
         >
-          <Avatar initials={initials} size="sm" />
+          <Avatar initials={initials} src={avatarSrc} size="sm" />
           <span>{t("shell.profileMenu.buttonText")}</span>
         </button>
       }

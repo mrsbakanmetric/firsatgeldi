@@ -3,6 +3,7 @@
 export { AttributeChip, chipClasses, type AttributeChipProps, type AttributeChipTexts } from "./attribute-chip";
 export { CategoryFilter, SortSelect, type CategoryFilterProps, type ChipSelectOption, type SortSelectProps } from "./chip-select";
 export { Avatar, type AvatarProps, type AvatarSize } from "./avatar";
+export { AvatarCrop, AvatarUpload, type AvatarCropProps, type AvatarUploadProps } from "./avatar-upload";
 export { ConfirmPanel, ConfirmSection, type ConfirmPanelProps } from "./confirm-panel";
 export { FactTile, FactTiles, type FactTileProps, type FactVerdict } from "./fact-tile";
 export { FilterChips, type FilterChipOption, type FilterChipsProps } from "./filter-chips";
@@ -35,6 +36,21 @@ export { PageTemplate, type PageTemplateKind, type PageTemplateProps } from "./p
 export { SegmentedChoice, type SegmentedChoiceProps, type SegmentedOption } from "./segmented-choice";
 export { Select, type SelectOption, type SelectProps } from "./select";
 export { Sheet, type SheetProps } from "./sheet";
+export {
+  ChoiceCards,
+  MaskedValue,
+  SavedIndicator,
+  SessionRow,
+  SettingRow,
+  SettingsNav,
+  type ChoiceCardOption,
+  type ChoiceCardsProps,
+  type MaskedValueProps,
+  type SessionRowProps,
+  type SettingRowProps,
+  type SettingsNavItem,
+  type SettingsNavProps,
+} from "./settings-parts";
 export { SkeletonBlock, SkeletonRow, type SkeletonBlockProps, type SkeletonShape, type SkeletonWidth } from "./skeleton-block";
 export { StatTile, StatTiles, type StatTileProps } from "./stat-tile";
 export { StatusBanner, type StatusBannerProps, type StatusTone } from "./status-banner";

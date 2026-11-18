@@ -121,7 +121,7 @@ export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut
             <>
               <BellButton locale={locale} t={t} unreadCount={viewer.unreadCount} unreadDeal={viewer.unreadDeal} panel={bellPanel} />
               <div className="hidden md:flex">
-                <ProfileMenu locale={locale} t={t} initials={viewer.initials} {...(onSignOut ? { onSignOut } : {})} />
+                <ProfileMenu locale={locale} t={t} initials={viewer.initials} avatarSrc={viewer.avatarSrc ?? null} {...(onSignOut ? { onSignOut } : {})} />
               </div>
             </>
           ) : variant === "landing" ? (

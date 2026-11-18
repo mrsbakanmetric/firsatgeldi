@@ -67,6 +67,7 @@ function accessView(controller: MockController, actor: UserActor, now: Date): Ac
     identities: (["GOOGLE", "APPLE"] as const).map((provider) => ({ provider, linked: access.identities.has(provider) })),
     twoFactor: user.roles.includes("APP_MANAGER") ? { required: true, enabled: true } : null,
     reauthUntil: access.reauthUntil && new Date(access.reauthUntil) > now ? access.reauthUntil : null,
+    reauthMinutes: SYSTEM_SETTINGS["pii.reauth_minutes"],
   };
 }
 
