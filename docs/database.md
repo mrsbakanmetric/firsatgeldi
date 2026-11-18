@@ -512,7 +512,7 @@ Index `(product_id, finished_at DESC)` — "checked within the last 5 min?" come
 Constraints: **partial U `(user_id, product_id, mode) WHERE state='ACTIVE'`** (no duplicate add [DECIDED]). Indexes `(user_id, state, return_deadline)`, `(product_id, state)`. The active-tracking count cannot exceed the plan limit (service + lock, §9).
 
 ### `tracked_item_events` (append-only)
-id · tracked_item_id · type (`CREATED`,`PRICE_EDITED`,`DEADLINE_EDITED`,`DELIVERED`,`STEP_TICKED`,`STEP_UNTICKED`,`EXTENDED`,`ENDED`,`RESTORED` ("Geri al"),`BOUGHT` (want-to-buy switched to bought in place)…; `RESTORED` and `BOUGHT` [ASSUMPTION] names, `architecture.md` §16.1) · data jsonb · actor CHECK (`USER`,`SYSTEM`,`ADMIN`) · created_at. Feeds the detail change log and the audit trail.
+id · tracked_item_id · type (`CREATED`,`PRICE_EDITED`,`DEADLINE_EDITED`,`ORDER_STATUS_EDITED`,`TARGET_EDITED`,`DELIVERED`,`STEP_TICKED`,`STEP_UNTICKED`,`REQUEST_UPDATED` (request tracking kind or outcome),`EXTENDED`,`ENDED`,`RESTORED` ("Geri al"),`BOUGHT` (want-to-buy switched to bought in place)…; `ORDER_STATUS_EDITED`, `TARGET_EDITED`, `REQUEST_UPDATED`, `RESTORED` and `BOUGHT` [ASSUMPTION] names, `architecture.md` §16.1) · data jsonb · actor CHECK (`USER`,`SYSTEM`,`ADMIN`) · created_at. Feeds the detail change log and the audit trail.
 
 ### `deals` (deal lifecycle)
 | Column | Type | N | Description |
@@ -775,7 +775,7 @@ The application role has `INSERT` only; `UPDATE`/`DELETE` closed by database pri
 | session_id | uuid | ✓ | |
 | device_hash / ip_hash | text | ✓ | Salted hash; raw values never stored |
 | platform | text | | CHECK (`WEB`,`MOBILE`) |
-| action | text | | e.g. `auth.sign_in`, `search`, `identify`, `upload`, `upload.status` (upload status read, guests included [DECIDED 2026-11-14]), `seller_lookup` · `teaser` · `reveal.hide` · `tracking.restore` ("Geri al") · `tracking.bought` ("Aldım, kaydet") [ASSUMPTION] (`architecture.md` §16.1), `tracking.confirm`, `tracking.end`, `reveal`, `offer.go`, `check_now`, `check_now_bulk`, `report.create`, `link.submit`, `package.request`, `savings.edit`, `settings.change`, `consent.accept` |
+| action | text | | e.g. `auth.sign_in`, `search`, `identify`, `upload`, `upload.status` (upload status read, guests included [DECIDED 2026-11-14]), `seller_lookup` · `teaser` · `reveal.hide` · `tracking.restore` ("Geri al") · `tracking.bought` ("Aldım, kaydet") [ASSUMPTION] (`architecture.md` §16.1), Product Detail: `tracking.edit` · `tracking.delivered` · `tracking.step` · `tracking.request` · `tracking.extend` · `feedback.create` · `offer.notify_back_in_stock` [ASSUMPTION] (`architecture.md` §16.1), `tracking.confirm`, `tracking.end`, `reveal`, `offer.go`, `check_now`, `check_now_bulk`, `report.create`, `link.submit`, `package.request`, `savings.edit`, `settings.change`, `consent.accept` |
 | target_type / target_id | text / uuid | ✓ | |
 | metadata | jsonb | ✓ | Action-specific summary (no full email/phone; `contains_hidden_seller=true` when a seller identity is present) |
 | contains_hidden_seller | boolean | | Readable only with `admin.offers.view_hidden_seller` |
@@ -997,6 +997,9 @@ Initial `system_settings` values (all editable from the panel; **C** = critical 
 | `theme.active` | `firsatgeldi-default` | C |
 | `listing.seller_rating_good_min` | 4.0 [ASSUMPTION] | Fallback only when `seller_trust` is `INSUFFICIENT` |
 | `ratings.min_count` | 20 [ASSUMPTION] | Below → "az değerlendirme" |
+| `history.hint_short_days` | 30 [ASSUMPTION] | Buy-or-wait hint: short window ("Son 30 günün en düşüğü") (`modules.md` Price history; `architecture.md` §16.1 `BuyOrWaitHint`) |
+| `history.hint_long_days` | 180 [ASSUMPTION] | Buy-or-wait hint: long window ("Son 6 ayın en düşüğü") |
+| `history.hint_min_days` | 14 [ASSUMPTION] | Buy-or-wait hint: fewer days with data in a window → no hint from that window |
 | `trust.min_signals` / `.weights` | 10 / [RECOMMENDED] | Seller trust indicator |
 | `request.remind_days_before_deadline` | 2 | Request tracking reminder |
 | `search.autocomplete_tiles` / `.autocomplete_page_size` | 3 / 20 | |
