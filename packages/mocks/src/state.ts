@@ -5,11 +5,13 @@ import type { ActivityEvent, ApiLocale, StreamEvent } from "@firsatgeldi/contrac
 import type { ProductKey } from "./fixtures/catalog";
 import type { PlatformKey } from "./fixtures/market";
 import type { UserKey } from "./fixtures/users";
+import { seedAccounts } from "./fixtures/accounts";
 import { seedTrackedItems } from "./fixtures/tracking";
 import { newId } from "./ids";
 import { MOCK_SETTINGS } from "./settings";
 
-export const MOCK_SESSIONS = ["guest", "user", "secondUser", "manager"] as const;
+/** newUser = a just-created account (signed in after sign-up and the verification link). */
+export const MOCK_SESSIONS = ["guest", "user", "secondUser", "newUser", "manager"] as const;
 export type MockSession = (typeof MOCK_SESSIONS)[number];
 /**
  * Home only: no-deal = no item has a deal (Hemen Gözat shows the nearest return) ·
@@ -214,6 +216,52 @@ export interface IdentifyRequestRow {
   readonly link: string | null;
 }
 
+/**
+ * Sign-in account (`users` + `auth_identities`, database.md §3). The mock keeps the password in
+ * memory only to compare it; the real API stores an Argon2id hash and never a password.
+ */
+export interface AuthAccountRow {
+  readonly email: string;
+  readonly userId: string;
+  readonly session: UserKey;
+  state: "ACTIVE" | "UNVERIFIED" | "PENDING_DELETION" | "SUSPENDED" | "DELETED";
+  password: string | null;
+  readonly deletionRequestedAt: string | null;
+  readonly purgeAfter: string | null;
+  readonly suspendedReason: string | null;
+  welcomeGiftGranted: boolean;
+}
+
+/** Wrong-password count per e-mail as typed (known or not, so the count reveals nothing). */
+export interface LoginFailureRow {
+  failures: number;
+  lockedUntil: string | null;
+}
+
+/** `email_tokens` row (database.md §3): one-time link, stored hashed by the real API. */
+export interface EmailTokenRow {
+  readonly token: string;
+  readonly purpose: "VERIFY_EMAIL" | "RESET_PASSWORD";
+  readonly email: string;
+  readonly createdAt: string;
+  readonly expiresAt: string;
+  usedAt: string | null;
+}
+
+/** Correct password on a suspended or pending-deletion account: what the challenge may do. */
+export interface AccountChallengeRow {
+  readonly email: string;
+  readonly kind: "PENDING_DELETION" | "SUSPENDED";
+  readonly expiresAt: string;
+}
+
+/** An e-mail the mock "sends" (no mail provider in Phase 1): development prints the link. */
+export interface MockMail {
+  readonly purpose: EmailTokenRow["purpose"];
+  readonly emailMasked: string;
+  readonly token: string;
+}
+
 export interface StreamSubscriber {
   readonly actor: Actor;
   send(event: StreamEvent): void;
@@ -252,6 +300,21 @@ export interface MockState {
   readonly stockAlerts: { readonly userId: string; readonly offerId: string; readonly createdAt: string }[];
   /** "Mağazaya git": price re-checks already shown per user and offer (`userId:offerId`), so the next press goes through. */
   readonly priceRechecked: Set<string>;
+  /** Sign-in (database.md §3, §9, §14b): accounts by e-mail, failures, links, challenges. */
+  readonly accounts: Map<string, AuthAccountRow>;
+  readonly loginFailures: Map<string, LoginFailureRow>;
+  readonly emailTokens: EmailTokenRow[];
+  readonly challenges: Map<string, AccountChallengeRow>;
+  /** Last link request per `purpose:e-mail` as typed (known or not), for `auth.resend_cooldown_seconds`. */
+  readonly emailRequests: Map<string, string>;
+  /** `user_consents` rows: terms accepted at sign-up. */
+  readonly userConsents: { readonly userId: string; readonly termsVersion: string; readonly acceptedAt: string }[];
+  /** `token_ledger` rows (database.md §9): the welcome gift, once per account. */
+  readonly tokenLedger: { readonly userId: string; readonly kind: "WELCOME"; readonly amount: number; readonly createdAt: string }[];
+  /** Every session of a user revoked (password reset). */
+  readonly sessionRevocations: { readonly userId: string; readonly at: string }[];
+  /** Data exports requested ("Verilerimi indir"). */
+  readonly dataExports: { readonly id: string; readonly userId: string; readonly requestedAt: string }[];
 }
 
 export function createMockState(): MockState {
@@ -280,6 +343,15 @@ export function createMockState(): MockState {
     reports: [],
     stockAlerts: [],
     priceRechecked: new Set(),
+    accounts: new Map(),
+    loginFailures: new Map(),
+    emailTokens: [],
+    challenges: new Map(),
+    emailRequests: new Map(),
+    userConsents: [],
+    tokenLedger: [],
+    sessionRevocations: [],
+    dataExports: [],
   };
 }
 
@@ -295,6 +367,10 @@ export interface MockController {
   now(): Date;
   /** Schedules simulated background work (image processing); tests may run it at once. */
   schedule(task: () => void, ms: number): void;
+  /** Called after a mock sign-in or sign-out changed `config.session` (the browser remembers it). */
+  persist?: (config: MockConfig) => void;
+  /** Called for every e-mail the mock "sends" (the browser prints the link in development). */
+  onMail?: (mail: MockMail) => void;
 }
 
 export interface MockControllerOptions {
@@ -311,6 +387,7 @@ export interface MockControllerOptions {
 export function createMockController(options: MockControllerOptions = {}): MockController {
   const now = options.now ?? (() => new Date());
   const state = createMockState();
+  seedAccounts(state, now());
   if (options.seedTracking) seedTrackedItems(state, now());
   return {
     config: { ...DEFAULT_MOCK_CONFIG, ...options.config },

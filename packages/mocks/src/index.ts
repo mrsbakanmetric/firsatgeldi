@@ -2,7 +2,8 @@
 // in-memory server state. Development and tests only — production code never
 // imports this package (ESLint boundary + production build check).
 export { MOCK_BUILD_MARKER } from "./marker";
-export { MOCK_PARAMS, MOCK_STORAGE_KEY, resolveMockConfig, type ConfigStorage } from "./config";
+export { MOCK_PARAMS, MOCK_STORAGE_KEY, rememberMockConfig, resolveMockConfig, type ConfigStorage } from "./config";
+export { ACCOUNT_LIST, MOCK_PASSWORD, PROVIDER_SESSION, type AccountFixture } from "./fixtures/accounts";
 export { createHandlers } from "./handlers";
 export { MOCK_STORAGE_PATH } from "./handlers/identify";
 export * from "./fixtures/catalog";
@@ -19,6 +20,7 @@ export {
   MOCK_SESSIONS,
   type MockConfig,
   type MockController,
+  type MockMail,
   type MockPhoto,
   type MockScenario,
   type MockSession,

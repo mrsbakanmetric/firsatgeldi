@@ -7,8 +7,8 @@ import { type Localized, text } from "./text";
 export interface UserFixture {
   readonly key: string;
   readonly id: string;
-  readonly displayName: string;
-  readonly username: string;
+  readonly displayName: string | null;
+  readonly username: string | null;
   readonly emailMasked: string;
   readonly phoneMasked: string | null;
   /** `users.locale` (database.md §3). */
@@ -38,6 +38,11 @@ export const USERS = {
   secondUser: user("second-user", {
     displayName: "Ece K.", username: "ece", emailMasked: "ec***@e***.com", phoneMasked: null, locale: "en",
     roles: ["USER"], plan: "FREE", tokenBalance: 0, searchHistory: [],
+  }),
+  /** A just-created account (sign-up → verified link): no name yet, nothing tracked, the welcome gift only. */
+  newUser: user("new-user", {
+    displayName: null, username: null, emailMasked: "y***@o***.test", phoneMasked: null, locale: "tr",
+    roles: ["USER"], plan: "FREE", tokenBalance: 3, searchHistory: [],
   }),
   manager: user("manager", {
     displayName: "Deniz Y.", username: "deniz", emailMasked: "de***@f***.com", phoneMasked: "+90 5** *** ** 07", locale: "tr",

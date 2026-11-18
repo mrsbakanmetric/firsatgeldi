@@ -30,7 +30,12 @@ function writeStored(storage: ConfigStorage | null, config: MockConfig): void {
   }
 }
 
-const isSession = (value: unknown): value is MockSession => MOCK_SESSIONS.includes(value as MockSession);
+/** Remembers the config after a mock sign-in or sign-out, so a reload keeps the session. */
+export function rememberMockConfig(storage: ConfigStorage | null, config: MockConfig): void {
+  writeStored(storage, config);
+}
+
+const isSession =(value: unknown): value is MockSession => MOCK_SESSIONS.includes(value as MockSession);
 const isScenario = (value: unknown): value is MockScenario => MOCK_SCENARIOS.includes(value as MockScenario);
 const isPhoto = (value: unknown): value is MockPhoto => MOCK_PHOTOS.includes(value as MockPhoto);
 const latency = (value: unknown): number | null => {

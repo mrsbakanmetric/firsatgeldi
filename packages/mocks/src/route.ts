@@ -50,6 +50,11 @@ export interface ActivityNote {
   targetId?: string;
   metadata?: Record<string, unknown>;
   containsHiddenSeller?: boolean;
+  /**
+   * Sign-in: the account the call was about, known to the server once the e-mail matched
+   * (also for a failed attempt — Settings › Güvenlik lists them); never sent to the client.
+   */
+  userId?: string;
 }
 
 export interface RouteContext<N extends EndpointName> {
@@ -97,8 +102,8 @@ function requestLocale(request: Request): ApiLocale {
 
 function outcomeOf(status: number, code: ErrorCode | null): ActivityOutcome {
   if (status < 400) return "OK";
-  if (code === "LIMIT_REACHED" || code === "RATE_LIMITED") return "LIMITED";
-  if (status === 401 || status === 403) return "DENIED";
+  if (code === "LIMIT_REACHED" || code === "RATE_LIMITED" || code === "LOCKED") return "LIMITED";
+  if (status === 401 || status === 403 || code === "LINK_INVALID") return "DENIED";
   return "ERROR";
 }
 
@@ -118,7 +123,7 @@ function recordActivity(controller: MockController, name: EndpointName, actor: A
   const row: ActivityEvent = {
     id: newId(),
     occurredAt: controller.now().toISOString(),
-    userId: actor.kind === "user" ? actor.userId : null,
+    userId: note.userId ?? (actor.kind === "user" ? actor.userId : null),
     anonId: actor.kind === "guest" ? actor.anonId : null,
     sessionId: null,
     deviceHash: MOCK_DEVICE_HASH,

@@ -4,6 +4,24 @@
 // OpenAPI document are all derived from this list (architecture.md §15, §16).
 import { z } from "zod";
 import { ActivityAction } from "./activity";
+import {
+  AuthPolicy,
+  ChallengeRequest,
+  DeletionKept,
+  EmailRequest,
+  EmailSent,
+  ExportRequested,
+  PasswordResetContext,
+  PasswordResetQuery,
+  PasswordResetRequest,
+  PasswordResetResult,
+  ProviderSignInRequest,
+  SignedOut,
+  SignInRequest,
+  SignInResult,
+  SignUpRequest,
+  VerifyEmailRequest,
+} from "./auth";
 import { EntitlementSummary } from "./envelope";
 import { ApiLocale, Cursor, Id, ImageSha256, ImageVariant } from "./common";
 import { IdentifyAnswer, IdentifyRequest, IdentifyResult } from "./identify";
@@ -115,6 +133,63 @@ export const ENDPOINTS = {
     method: "GET", path: "/me/stream", ...NONE, response: null, ...READ, kind: "stream",
     // Signed-in users only; guests poll instead [DECIDED 2026-11-14] (architecture.md §13, §16.1).
     permission: "account.own.view", public: false,
+  }),
+
+  // AUTH (architecture.md §16 AUTH, §17; modules.md Sign-in and Sign-up). Signed-out flows on the
+  // public allow-list with `auth.use`. Phase 1: answered by the mock API (mock sign-in); the
+  // policy read, the reset-link read, the resend, the deletion choice and the suspended export
+  // are [ASSUMPTION — endpoints]. Not in step 20: Application Manager two-step sign-in, re-consent.
+  getAuthPolicy: endpoint({ method: "GET", path: "/auth/policy", ...NONE, response: AuthPolicy, ...READ, permission: "auth.use", public: true }),
+  signIn: endpoint({
+    method: "POST", path: "/auth/login", params: null, query: null, body: SignInRequest,
+    response: SignInResult, ...READ, activity: "auth.sign_in", permission: "auth.use", public: true,
+  }),
+  signInWithGoogle: endpoint({
+    method: "POST", path: "/auth/google", params: null, query: null, body: ProviderSignInRequest,
+    response: SignInResult, ...READ, activity: "auth.sign_in", permission: "auth.use", public: true,
+  }),
+  signInWithApple: endpoint({
+    method: "POST", path: "/auth/apple", params: null, query: null, body: ProviderSignInRequest,
+    response: SignInResult, ...READ, activity: "auth.sign_in", permission: "auth.use", public: true,
+  }),
+  signUp: endpoint({
+    method: "POST", path: "/auth/register", params: null, query: null, body: SignUpRequest,
+    response: EmailSent, ...READ, idempotent: true, activity: "auth.sign_up", permission: "auth.use", public: true,
+  }),
+  verifyEmail: endpoint({
+    method: "POST", path: "/auth/verify-email", params: null, query: null, body: VerifyEmailRequest,
+    response: SignInResult, ...READ, activity: "auth.verify_email", permission: "auth.use", public: true,
+  }),
+  resendVerification: endpoint({
+    method: "POST", path: "/auth/verify-email/resend", params: null, query: null, body: EmailRequest,
+    response: EmailSent, ...READ, activity: "auth.verify_resend", permission: "auth.use", public: true,
+  }),
+  forgotPassword: endpoint({
+    method: "POST", path: "/auth/password/forgot", params: null, query: null, body: EmailRequest,
+    response: EmailSent, ...READ, activity: "auth.password_forgot", permission: "auth.use", public: true,
+  }),
+  getPasswordReset: endpoint({
+    method: "GET", path: "/auth/password/reset", params: null, query: PasswordResetQuery, body: null,
+    response: PasswordResetContext, ...READ, permission: "auth.use", public: true,
+  }),
+  resetPassword: endpoint({
+    method: "POST", path: "/auth/password/reset", params: null, query: null, body: PasswordResetRequest,
+    response: PasswordResetResult, ...READ, activity: "auth.password_reset", permission: "auth.use", public: true,
+  }),
+  restoreAccount: endpoint({
+    method: "POST", path: "/me/restore", params: null, query: null, body: ChallengeRequest,
+    response: SignInResult, ...READ, idempotent: true, activity: "account.restore", permission: "auth.use", public: true,
+  }),
+  keepDeletion: endpoint({
+    method: "POST", path: "/auth/deletion/keep", params: null, query: null, body: ChallengeRequest,
+    response: DeletionKept, ...READ, idempotent: true, activity: "account.restore_declined", permission: "auth.use", public: true,
+  }),
+  exportSuspendedAccount: endpoint({
+    method: "POST", path: "/auth/suspended/export", params: null, query: null, body: ChallengeRequest,
+    response: ExportRequested, ...READ, idempotent: true, activity: "account.export", permission: "auth.use", public: true,
+  }),
+  signOut: endpoint({
+    method: "POST", path: "/auth/logout", ...NONE, response: SignedOut, ...READ, activity: "auth.sign_out", permission: "auth.use", public: false,
   }),
 
   // IDENTIFY, SEARCH AND UPLOADS

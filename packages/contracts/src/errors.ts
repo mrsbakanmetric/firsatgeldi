@@ -18,6 +18,12 @@ export const ERRORS = {
   ALREADY_TRACKING: { status: 409, messageKey: "errors.alreadyTracking" },
   LIMIT_REACHED: { status: 409, messageKey: "errors.limitReached" },
   RATE_LIMITED: { status: 429, messageKey: "errors.rateLimited" },
+  // Sign-in [ASSUMPTION — codes, design "8 Giriş" v2.1]. Never says which field was wrong or whether
+  // the account exists: params { remainingAttempts } · { retryAfterSeconds } · LINK_INVALID = expired,
+  // used or unknown e-mail link (one page for all).
+  INVALID_CREDENTIALS: { status: 401, messageKey: "errors.invalidCredentials" },
+  LOCKED: { status: 429, messageKey: "errors.locked" },
+  LINK_INVALID: { status: 410, messageKey: "errors.linkInvalid" },
   INTERNAL: { status: 500, messageKey: "errors.internal" },
 } as const;
 

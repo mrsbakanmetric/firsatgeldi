@@ -1,10 +1,27 @@
 // Helpers shared by the mock route handlers.
-import type { EntitlementSummary, StreamEvent } from "@firsatgeldi/contracts";
+import type { EntitlementSummary, Me, StreamEvent } from "@firsatgeldi/contracts";
 import { toCalendarDay } from "@firsatgeldi/core";
 import { USERS, type UserFixture } from "../fixtures/users";
-import { MockApiError } from "../route";
+import { MockApiError, permissionsOf } from "../route";
 import { PLAN_LIMITS, REVEAL_GATE_STAGE } from "../settings";
 import type { Actor, MockController } from "../state";
+
+/** `GET /me` for a signed-in actor; also the `me` of a successful sign-in. */
+export function meView(actor: Extract<Actor, { kind: "user" }>): Me {
+  const user = USERS[actor.userKey];
+  return {
+    id: actor.userId,
+    displayName: user.displayName,
+    username: user.username,
+    emailMasked: user.emailMasked,
+    phoneMasked: user.phoneMasked,
+    locale: user.locale,
+    theme: "system",
+    privacyLevel: "ONLY_ME",
+    roles: [...user.roles],
+    permissions: permissionsOf(actor),
+  };
+}
 
 export function requireUser(actor: Actor): { user: UserFixture; userId: string } {
   // The route already refused guests on non-public endpoints; this narrows the type.

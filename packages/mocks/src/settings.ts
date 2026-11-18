@@ -24,6 +24,20 @@ export const SYSTEM_SETTINGS = {
   "seller_lookup.rate_limit_per_minute": 10,
   "listing.seller_rating_good_min": 4.0,
   "tokens.welcome_gift": 3,
+  /** Sign-in (database.md §9 [ASSUMPTION] values; modules.md Sign-in and Sign-up). */
+  "auth.password_min_length": 8,
+  "auth.lockout_attempts": 5,
+  "auth.lockout_minutes": 15,
+  "auth.resend_cooldown_seconds": 60,
+  /** Days a deleted account can still be restored (database.md §18). */
+  "account.deletion_restore_days": 30,
+  /** E-mail link lifetimes [ASSUMPTION — keys and values; not in database.md yet]. */
+  "auth.verify_link_hours": 24,
+  "auth.reset_link_minutes": 60,
+  /** Life of the choice after a correct password on a suspended / pending-deletion account [ASSUMPTION]. */
+  "auth.challenge_minutes": 15,
+  /** Version id of the terms accepted at sign-up (Legal Pages) [ASSUMPTION — mock value]. */
+  "legal.terms_version": "2026-11-01",
   /** Home (database.md §18 [DECIDED 2026-11-15]; values [ASSUMPTION]). */
   "home.tracked_cards": 4,
   "home.top_drops.count": 3,

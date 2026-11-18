@@ -46,6 +46,27 @@ export const ACTIVITY_ACTIONS = [
   "report.create",
   /** "Stoğa gelince haber ver" on an offer. */
   "offer.notify_back_in_stock",
+  // Sign-in and Sign-up. `auth.sign_in` is listed in database.md §14a; the others are
+  // [ASSUMPTION — action names]. Rows keep the e-mail domain only, never the address or password.
+  /** Every sign-in attempt (e-mail, Google, Apple); metadata { method, result }. */
+  "auth.sign_in",
+  /** "Hesap oluştur"; metadata { termsVersion } — the consent itself is a `user_consents` row. */
+  "auth.sign_up",
+  /** The verification link opened. */
+  "auth.verify_email",
+  /** "Bağlantıyı tekrar gönder". */
+  "auth.verify_resend",
+  /** "Bağlantı gönder" on "Şifreni sıfırla". */
+  "auth.password_forgot",
+  /** "Şifreyi kaydet" on the new-password page. */
+  "auth.password_reset",
+  "auth.sign_out",
+  /** "Hesabımı geri aç". */
+  "account.restore",
+  /** "Vazgeç, silinsin". */
+  "account.restore_declined",
+  /** "Verilerimi indir" (suspended account). */
+  "account.export",
 ] as const;
 export const ActivityAction = z.enum(ACTIVITY_ACTIONS);
 export type ActivityAction = z.infer<typeof ActivityAction>;

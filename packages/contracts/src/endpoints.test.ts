@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { Email, SignUpRequest } from "./auth";
 import { buildPath, ENDPOINTS, imagePath } from "./endpoints";
 import { TOP_DROP_ITEM_KEYS, TopDropItem, TopDrops } from "./home";
 import { HiddenOfferView, REVEALED_ONLY_FIELDS } from "./offers";
@@ -31,6 +32,26 @@ describe("endpoint registry", () => {
     for (const [, definition] of definitions) {
       if (definition.public) expect(publicKeys).toContain(definition.permission);
     }
+  });
+});
+
+describe("sign-in endpoints", () => {
+  const auth = definitions.filter(([, definition]) => definition.permission === "auth.use");
+
+  it("are signed-out flows on the public allow-list; only sign-out needs a session", () => {
+    expect(auth.length).toBeGreaterThan(0);
+    for (const [name, definition] of auth) expect(definition.public).toBe(name !== "signOut");
+  });
+
+  it("e-mails are trimmed and lower-cased before they are checked", () => {
+    expect(Email.parse("  Sena@Ornek.TEST ")).toBe("sena@ornek.test");
+    expect(Email.safeParse("sena").success).toBe(false);
+  });
+
+  it("sign-up needs the terms ticked", () => {
+    const body = { email: "a@b.test", password: "deneme123", termsVersion: "v1", locale: "tr" };
+    expect(SignUpRequest.safeParse({ ...body, acceptTerms: false }).success).toBe(false);
+    expect(SignUpRequest.safeParse({ ...body, acceptTerms: true }).success).toBe(true);
   });
 });
 
