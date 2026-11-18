@@ -3,7 +3,7 @@
 // every text from the catalogue in tr and en, the decisions of 2026-11-18, personal data only
 // after re-authentication, the "Kaydedildi" indicator, the activity rows, and axe.
 import { createTranslator, LOCALES, type Locale } from "@firsatgeldi/i18n";
-import { MOCK_PASSWORD, USERS } from "@firsatgeldi/mocks";
+import { MOCK_PASSWORD, SYSTEM_SETTINGS, USERS } from "@firsatgeldi/mocks";
 import { createMockServer } from "@firsatgeldi/mocks/node";
 import { axeViolations } from "@firsatgeldi/ui/test";
 import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
@@ -117,6 +117,9 @@ describe.each(LOCALES)("Settings (%s)", (locale) => {
       expect(screen.queryByText("sena@ornek.test")).toBeNull();
       await userEvent.click(screen.getAllByRole("button", { name: t("settings.access.show") })[0] as HTMLElement);
       const dialog = await screen.findByRole("dialog", { name: t("settings.reauth.title") });
+      // The window comes from the settings (pii.reauth_minutes), stated before re-authenticating.
+      expect(within(dialog).getByText(t("settings.reauth.text", { count: SYSTEM_SETTINGS["pii.reauth_minutes"] }))).toBeDefined();
+      expect(within(dialog).getByText(locale === "tr" ? /15 dakika boyunca tekrar sorulmaz/ : /Won't ask again for 15 minutes/)).toBeDefined();
       await userEvent.type(within(dialog).getByLabelText(t("auth.password")), MOCK_PASSWORD);
       await userEvent.click(within(dialog).getByRole("button", { name: t("settings.reauth.submit") }));
       expect(await screen.findByText("sena@ornek.test")).toBeDefined();
@@ -186,6 +189,12 @@ describe.each(LOCALES)("Settings (%s)", (locale) => {
       expect(await screen.findByText(t("settings.access.createSentTitle"))).toBeDefined();
       expect((screen.getByRole("button", { name: t("settings.access.removeLink") }) as HTMLButtonElement).disabled).toBe(true);
       expect(screen.getByText(t("settings.access.onlyMethod"))).toBeDefined();
+      // Re-authentication with the linked provider states the same window.
+      await userEvent.click(screen.getAllByRole("button", { name: t("settings.access.show") })[0] as HTMLElement);
+      const dialog = await screen.findByRole("dialog", { name: t("settings.reauth.title") });
+      expect(within(dialog).getByText(t("settings.reauth.textProvider", { count: SYSTEM_SETTINGS["pii.reauth_minutes"] }))).toBeDefined();
+      expect(within(dialog).queryByLabelText(t("auth.password"))).toBeNull();
+      expect(within(dialog).getByRole("button", { name: t("settings.reauth.withProvider.GOOGLE") })).toBeDefined();
     });
   });
 

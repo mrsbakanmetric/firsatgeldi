@@ -970,8 +970,8 @@ export const en = {
     },
     reauth: {
       title: "Confirm it's you first",
-      text: "Enter your password to continue; we won't ask again for a while.",
-      textProvider: "Confirm with the way you sign in; we won't ask again for a while.",
+      text: { one: "Enter your password to continue. Won't ask again for {count} minute.", other: "Enter your password to continue. Won't ask again for {count} minutes." },
+      textProvider: { one: "Confirm with the way you sign in. Won't ask again for {count} minute.", other: "Confirm with the way you sign in. Won't ask again for {count} minutes." },
       submit: "Confirm",
       withProvider: { GOOGLE: "Confirm with Google", APPLE: "Confirm with Apple" },
     },

@@ -76,7 +76,7 @@ describe("profile (PATCH /me)", () => {
 describe("e-mail and password", () => {
   it("access rows are masked; the full own values only after re-authentication, each reveal logged", async () => {
     const access = (await api.call("getAccess", {})).data;
-    expect(access).toMatchObject({ emailMasked: "s***@o***.test", phoneMasked: USERS.user.phoneMasked, password: { set: true }, reauthUntil: null, twoFactor: null });
+    expect(access).toMatchObject({ emailMasked: "s***@o***.test", phoneMasked: USERS.user.phoneMasked, password: { set: true }, reauthUntil: null, reauthMinutes: SYSTEM_SETTINGS["pii.reauth_minutes"], twoFactor: null });
     expect(access.identities).toEqual([{ provider: "GOOGLE", linked: true }, { provider: "APPLE", linked: false }]);
     expect((await failure(api.call("getOwnPii", {}))).code).toBe("REAUTH_REQUIRED");
 

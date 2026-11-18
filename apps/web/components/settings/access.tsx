@@ -271,7 +271,7 @@ function ReauthDialog({ t, open, access, onClose, onDone }: { t: Translator; ope
   return (
     <Dialog open={open} onClose={onClose} title={t("settings.reauth.title")} closeLabel={t("common.close")} size="compact">
       <div className="flex flex-col gap-4 p-5">
-        <p className="text-body-sm text-text-muted">{access.password.set ? t("settings.reauth.text") : t("settings.reauth.textProvider")}</p>
+        <p className="text-body-sm text-text-muted">{access.password.set ? t("settings.reauth.text", { count: access.reauthMinutes }) : t("settings.reauth.textProvider", { count: access.reauthMinutes })}</p>
         {reauth.isError && <StatusBanner tone="danger">{errorMessage(t, reauth.error)}</StatusBanner>}
         {access.password.set && (
           <form noValidate onSubmit={submit} className="flex flex-col gap-4">

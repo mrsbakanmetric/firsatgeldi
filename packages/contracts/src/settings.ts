@@ -63,6 +63,8 @@ export const AccountAccess = z.object({
   twoFactor: z.object({ required: z.boolean(), enabled: z.boolean() }).nullable(),
   /** Re-authentication still valid until (null = ask first). */
   reauthUntil: Timestamp.nullable(),
+  /** How long a re-authentication lasts (`pii.reauth_minutes`), stated in the dialog before it opens. */
+  reauthMinutes: z.number().int().positive(),
 });
 export type AccountAccess = z.infer<typeof AccountAccess>;
 

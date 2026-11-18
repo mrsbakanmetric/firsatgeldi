@@ -974,8 +974,8 @@ export const tr = {
     },
     reauth: {
       title: "Önce sen olduğunu doğrula",
-      text: "Devam etmeden önce şifreni gir; bir süre tekrar sorulmaz.",
-      textProvider: "Hesabına girdiğin yöntemle doğrula; bir süre tekrar sorulmaz.",
+      text: { one: "Devam etmeden önce şifreni gir. {count} dakika boyunca tekrar sorulmaz.", other: "Devam etmeden önce şifreni gir. {count} dakika boyunca tekrar sorulmaz." },
+      textProvider: { one: "Hesabına girdiğin yöntemle doğrula. {count} dakika boyunca tekrar sorulmaz.", other: "Hesabına girdiğin yöntemle doğrula. {count} dakika boyunca tekrar sorulmaz." },
       submit: "Doğrula",
       withProvider: { GOOGLE: "Google ile doğrula", APPLE: "Apple ile doğrula" },
     },
