@@ -567,11 +567,9 @@ export const tr = {
       signIn: "Giriş yap",
     },
   },
-  // Product Detail (design "2 Ürün Detayı v2"; modules.md Product Detail; pagedesign.md §8.3). Want-to-buy mode follows in PR 3.
+  // Product Detail (design "2 Ürün Detayı v2"; modules.md Product Detail; pagedesign.md §8.3), bought and want-to-buy modes.
   productDetail: {
     title: "Ürün Detayı",
-    soonTitle: "Bu sayfa yakında",
-    soonText: "Ürün Detayı ekranı hazırlanıyor. Şimdilik takip listene dönebilirsin.",
     back: "Takip ettiklerime dön",
     breadcrumb: "Konum",
     breadcrumbSeparator: "/",
@@ -753,10 +751,6 @@ export const tr = {
       skip: "Atla",
       send: "Gönder",
       thanks: "Teşekkürler, cevapların kaydedildi.",
-    },
-    end: {
-      ended: "Takip bitti.",
-      endedSaving: "Takip bitti · {amount} Kazancım’a yazıldı",
     },
     states: {
       loading: "Ürün bilgileri yükleniyor",
