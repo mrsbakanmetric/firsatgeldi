@@ -71,6 +71,33 @@ export function formatUntil(date: Date, locale: string, { timeZone = DEFAULT_TIM
   return `until ${day} ${month}`;
 }
 
+/**
+ * Turkish ablative suffix ('dan/'den/'tan/'ten) of a written number: it follows how the number's
+ * last word is read — the last non-zero digit ("altı" → 'dan), else its tens ("otuz" → 'dan),
+ * else "yüz", "bin" ('den). 2026'dan · 2027'den · 2030'dan · 2040'tan · 2000'den.
+ */
+const TR_ABLATIVE_UNITS = ["", "'den", "'den", "'ten", "'ten", "'ten", "'dan", "'den", "'den", "'dan"] as const;
+const TR_ABLATIVE_TENS = ["", "'dan", "'den", "'dan", "'tan", "'den", "'tan", "'ten", "'den", "'dan"] as const;
+
+export function turkishAblative(value: number): string {
+  const n = Math.abs(Math.trunc(value));
+  if (n === 0) return "'dan";
+  if (n % 10 !== 0) return TR_ABLATIVE_UNITS[n % 10] ?? "";
+  if (n % 100 !== 0) return TR_ABLATIVE_TENS[(n % 100) / 10] ?? "";
+  if (n % 1_000_000 === 0) return "'dan"; // milyon, milyar
+  return "'den"; // yüz, bin
+}
+
+/**
+ * A start phrase with month and year: tr "Ekim 2026'dan beri" · en "since October 2026"
+ * ("…'dan beri üye", member since).
+ */
+export function formatSince(date: Date, locale: string, { timeZone = DEFAULT_TIME_ZONE }: ZoneOption = {}): string {
+  const month = new Intl.DateTimeFormat(locale, { month: "long", timeZone }).format(date);
+  const year = Number(new Intl.DateTimeFormat("en", { year: "numeric", timeZone }).format(date));
+  return language(locale) === "tr" ? `${month} ${year}${turkishAblative(year)} beri` : `since ${month} ${year}`;
+}
+
 /** CLDR plural category for a count ("one", "other", …) used to pick a catalogue message. */
 export function pluralCategory(count: number, locale: string): Intl.LDMLPluralRule {
   return new Intl.PluralRules(locale).select(count);

@@ -1,6 +1,10 @@
-import { EmptyPage } from "../../../../components/empty-page";
+import { isLocale } from "@firsatgeldi/i18n";
+import { notFound } from "next/navigation";
+import { MyProfile } from "../../../../components/profile/my-profile";
 
-// Profilim (Discover and Profile) — empty list template until its screen step (docs/implementation_plan.md).
-export default function ProfilePage({ params }: PageProps<"/[locale]/profil">) {
-  return <EmptyPage params={params} kind="list" titleKey="pages.profile" />;
+// Profilim — design "13 Keşfet ve Profil" v2.1 Me (docs/screen_status.md), on the mock API in Phase 1.
+export default async function ProfilePage({ params }: PageProps<"/[locale]/profil">) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  return <MyProfile locale={locale} />;
 }
