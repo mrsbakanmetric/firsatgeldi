@@ -6,11 +6,11 @@ import { PRODUCT_LIST, type ProductFixture, PRODUCTS, SIMILAR, SPELLING_FIXES } 
 import { productKeyOf } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { uuidFor } from "../ids";
-import { MockApiError, permissionsOf, route } from "../route";
+import { MockApiError, route } from "../route";
 import { SYSTEM_SETTINGS } from "../settings";
 import type { MockController } from "../state";
 import { productSummary, productView } from "../views";
-import { entitlements, fold, requireUser, scrubPersonalData, tokens } from "./shared";
+import { entitlements, fold, meView, requireUser, scrubPersonalData, tokens } from "./shared";
 
 const MS_PER_MINUTE = 60_000;
 
@@ -45,21 +45,8 @@ const IMAGE_SHAS = new Set(PRODUCT_LIST.map((product) => product.imageSha256));
 export function catalogHandlers(controller: MockController) {
   return [
     route(controller, "getMe", ({ actor }) => {
-      const { user, userId } = requireUser(actor);
-      return {
-        data: {
-          id: userId,
-          displayName: user.displayName,
-          username: user.username,
-          emailMasked: user.emailMasked,
-          phoneMasked: user.phoneMasked,
-          locale: user.locale,
-          theme: "system",
-          privacyLevel: "ONLY_ME",
-          roles: [...user.roles],
-          permissions: permissionsOf(actor),
-        },
-      };
+      if (actor.kind !== "user") throw new MockApiError("UNAUTHENTICATED");
+      return { data: meView(actor) };
     }),
 
     route(controller, "getEntitlements", ({ actor }) => ({ data: entitlements(controller, actor) })),
