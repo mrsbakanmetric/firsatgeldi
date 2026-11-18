@@ -29,6 +29,13 @@ export function invalidateFor(queryClient: QueryClient, event: StreamEvent): Pro
         queryClient.invalidateQueries({ queryKey: apiQueryKey("getStockHistory") }),
         queryClient.invalidateQueries({ queryKey: apiQueryKey("getEntitlements") }),
       ]).then(() => undefined);
+    case "notification.created":
+      // The bell's unread count, the page and the panel list.
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: apiQueryKey("getUnreadCount") }),
+        queryClient.invalidateQueries({ queryKey: apiQueryKey("getNotifications") }),
+        queryClient.invalidateQueries({ queryKey: apiQueryKey("getDeliveryStatus") }),
+      ]).then(() => undefined);
   }
 }
 

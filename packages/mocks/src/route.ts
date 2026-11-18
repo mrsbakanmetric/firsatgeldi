@@ -4,12 +4,14 @@
 // handler → response shaping (Zod output schema strips undeclared fields,
 // so hidden-seller identity cannot leak) → activity log.
 import {
+  type ActivityAction,
   type ActivityEvent,
   type ActivityOutcome,
   API_PREFIX,
   type ApiLocale,
   dataEnvelope,
   ENDPOINTS,
+  type EndpointDefinition,
   type EndpointName,
   type ErrorCode,
   ERRORS,
@@ -50,6 +52,8 @@ export interface ActivityNote {
   targetId?: string;
   metadata?: Record<string, unknown>;
   containsHiddenSeller?: boolean;
+  /** One of the endpoint's `activityVariants`, written instead of its `activity` (anything else is ignored). */
+  action?: ActivityAction;
   /**
    * Sign-in: the account the call was about, known to the server once the e-mail matched
    * (also for a failed attempt — Settings › Güvenlik lists them); never sent to the client.
@@ -118,7 +122,9 @@ const MOCK_DEVICE_HASH = "mock-device-hash";
 const MOCK_IP_HASH = "mock-ip-hash";
 
 function recordActivity(controller: MockController, name: EndpointName, actor: Actor, request: Request, status: number, code: ErrorCode | null, note: ActivityNote) {
-  const action = ENDPOINTS[name].activity;
+  const definition: EndpointDefinition = ENDPOINTS[name];
+  const variant = note.action && definition.activityVariants?.includes(note.action) ? note.action : null;
+  const action = variant ?? definition.activity;
   if (action === null) return;
   const row: ActivityEvent = {
     id: newId(),

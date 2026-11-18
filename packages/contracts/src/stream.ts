@@ -10,6 +10,8 @@ export const STREAM_EVENTS = {
   "upload.rejected": z.object({ uploadId: Id, batchId: Id.nullable(), reason: UploadRejectReason }),
   /** Tracked Items / Check Now: one check finished (architecture.md §13) [ASSUMPTION — payload]. */
   "check.finished": z.object({ trackedItemId: Id, checkedAt: Timestamp }),
+  /** Notifications: a new item arrived; the unread count, the bell and the page refresh [ASSUMPTION — payload]. */
+  "notification.created": z.object({ id: Id, unread: z.number().int().nonnegative() }),
 } as const;
 
 export type StreamEventType = keyof typeof STREAM_EVENTS;
@@ -19,5 +21,6 @@ export const StreamEvent = z.discriminatedUnion("type", [
   z.object({ type: z.literal("upload.ready"), data: STREAM_EVENTS["upload.ready"] }),
   z.object({ type: z.literal("upload.rejected"), data: STREAM_EVENTS["upload.rejected"] }),
   z.object({ type: z.literal("check.finished"), data: STREAM_EVENTS["check.finished"] }),
+  z.object({ type: z.literal("notification.created"), data: STREAM_EVENTS["notification.created"] }),
 ]);
 export type StreamEvent = z.infer<typeof StreamEvent>;

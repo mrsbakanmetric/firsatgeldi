@@ -52,6 +52,18 @@ import {
   UpdateRequestResult,
   UpdateTrackedItemRequest,
 } from "./product-detail";
+import {
+  DeliveryAnswerRequest,
+  DeliveryAnswerResult,
+  DeliveryStatus,
+  ForYou,
+  NotificationDetail,
+  NotificationList,
+  NotificationsQuery,
+  ReadAllResult,
+  ReadResult,
+  UnreadCount,
+} from "./notifications";
 import type { PermissionKey } from "./permissions";
 import {
   CommunityConsents,
@@ -147,6 +159,11 @@ export interface EndpointDefinition {
   readonly idempotent: boolean;
   /** Activity history action written for every call (database.md §14a); null = read without a log row. */
   readonly activity: ActivityAction | null;
+  /**
+   * Other actions the handler may write instead of `activity` for some requests (one row per call):
+   * the delivery answer logs "Evet, aldım" as `tracking.delivered`, "Henüz değil" as its own action.
+   */
+  readonly activityVariants?: readonly ActivityAction[];
   /** The response can contain offers: scanned by the hidden-seller leak test (architecture.md §6.5). */
   readonly returnsOffers: boolean;
 }
@@ -260,6 +277,26 @@ export const ENDPOINTS = {
   getAdminActivity: endpoint({
     method: "GET", path: "/me/admin-activity", params: null, query: AdminActivityQuery, body: null,
     response: AdminActivity, ...READ, permission: "admin.self.activity.view", public: false,
+  }),
+  // NOTIFICATIONS (step 13; modules.md Notifications and Preferences; architecture.md §16).
+  // Preview, "Senin için", delivery status and the delivery answer are [ASSUMPTION] until §16.1.
+  // Fixed paths come before `/notifications/:id`.
+  getNotifications: endpoint({
+    method: "GET", path: "/notifications", params: null, query: NotificationsQuery, body: null, response: NotificationList, ...READ, permission: "notifications.own.view", public: false,
+  }),
+  getUnreadCount: endpoint({ method: "GET", path: "/notifications/unread-count", ...NONE, response: UnreadCount, ...READ, permission: "notifications.own.view", public: false }),
+  getForYou: endpoint({ method: "GET", path: "/notifications/for-you", ...NONE, response: ForYou, ...READ, permission: "notifications.own.view", public: false }),
+  getDeliveryStatus: endpoint({ method: "GET", path: "/notifications/delivery-status", ...NONE, response: DeliveryStatus, ...READ, permission: "notifications.own.view", public: false }),
+  readAllNotifications: endpoint({
+    method: "POST", path: "/notifications/read-all", ...NONE, response: ReadAllResult, ...READ, idempotent: true, activity: "notification.read_all", permission: "notifications.own.write", public: false,
+  }),
+  getNotification: endpoint({ method: "GET", path: "/notifications/:id", params: IdParams, query: null, body: null, response: NotificationDetail, ...READ, permission: "notifications.own.view", public: false }),
+  readNotification: endpoint({
+    method: "PATCH", path: "/notifications/:id/read", params: IdParams, query: null, body: null, response: ReadResult, ...READ, activity: "notification.read", permission: "notifications.own.write", public: false,
+  }),
+  answerDeliveryPrompt: endpoint({
+    method: "POST", path: "/notifications/:id/delivery-answer", params: IdParams, query: null, body: DeliveryAnswerRequest,
+    response: DeliveryAnswerResult, ...READ, activity: "tracking.delivered", activityVariants: ["notification.delivery_later"], permission: "tracking.own.write", public: false,
   }),
   // MY PROFILE (Profilim, step 21a; modules.md Profile and Following; architecture.md §16 COMMUNITY).
   // Own-profile reads, remove follower and the "Geri al" restores are [ASSUMPTION] until §16.1.

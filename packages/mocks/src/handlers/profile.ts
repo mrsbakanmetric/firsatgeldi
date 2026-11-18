@@ -217,7 +217,7 @@ export function profileHandlers(controller: MockController) {
       if (!row || row.status !== "PENDING" || !visiblePerson(controller, user.userId, params.userId)) throw new MockApiError("NOT_FOUND");
       row.status = "ACCEPTED";
       // The requester learns it in the app; nothing else is sent [DECIDED 2026-11-18].
-      state.notifications.push({ id: newId(), userId: params.userId, type: "FOLLOW_ACCEPTED", actorId: user.userId, createdAt: iso(now) });
+      state.notifications.push({ id: newId(), userId: params.userId, type: "FOLLOW_ACCEPTED", actorId: user.userId, createdAt: iso(now), readAt: null, seedKey: null, awaitingAnswer: false });
       note({ targetType: "user", targetId: params.userId });
       return { data: change(controller, user.userId, params.userId) };
     }),
