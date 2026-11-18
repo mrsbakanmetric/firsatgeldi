@@ -24,9 +24,9 @@ input::placeholder{color:var(--text-muted)}
 </div>
 </header>
 
-<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 480px; gap: var(--s8); align-items: start">
+<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 480px; gap: var(--s8); align-items: stretch">
 
-<section aria-label="FırsatGeldi nedir" style="display: flex; flex-direction: column; gap: var(--s6); padding: var(--s8); border-radius: var(--r-xl); background: var(--hero-surface); color: var(--on-hero-surface)">
+<section aria-label="FırsatGeldi nedir" style="display: flex; flex-direction: column; justify-content: center; gap: var(--s6); padding: var(--s8); border-radius: var(--r-xl); background: var(--hero-surface); color: var(--on-hero-surface)">
 <h1 style="margin: 0; font-size: var(--fs-display); line-height: var(--lh-display); font-weight: 700">Aldığın ürün ucuzlarsa haberin olsun.</h1>
 <p style="margin: 0; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--on-hero-muted)">İade süren bitmeden daha ucuzu çıkarsa söyleriz. İade edip daha ucuza yeniden alırsın, farkı cebine koyarsın.</p>
 <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--s4); align-items: center; padding: var(--s4); border-radius: var(--r-lg); background: var(--surface); color: var(--text)">
@@ -47,7 +47,7 @@ input::placeholder{color:var(--text-muted)}
 <sc-if value="{{fromGuest}}" hint-placeholder-val="{{ true }}">
 <div role="status" style="display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--s3); align-items: center; padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
 <span role="img" aria-label="Insta360 Ace Pro 2 görseli" style="width: 56px; height: 56px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" style="fill: var(--text)"/><path d="M8 16h9v4H8z" style="fill: var(--surface)"/><path d="M30 16a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM30 21a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd" style="fill: var(--text-muted)"/></svg></span>
-<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 700">Seçtiğin ürün seni bekliyor</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Insta360 Ace Pro 2 · Flash Print · girince onay adımından devam edersin, yazdıkların duruyor</span></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 700">Seçtiğin ürün seni bekliyor</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Insta360 Ace Pro 2 · Flash Print</span></span>
 </div>
 </sc-if>
 
@@ -89,13 +89,12 @@ input::placeholder{color:var(--text-muted)}
 <span style="width: 64px; height: 64px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4zM4 6l8 7 8-7"/></svg></span>
 <h2 style="margin: 0; font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700">{{mailTitle}}</h2>
 <p style="margin: 0; font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{mailText}} <strong style="color: var(--text)">{{masked}}</strong></p>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Gelmediyse istenmeyen klasörüne bak. 60 sn sonra tekrar gönderebilirsin.</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Gelmediyse istenmeyen klasörüne bak.</span>
 <div style="display: flex; gap: var(--s2)"><button type="button" aria-disabled="true" style="height: 44px; padding: 0 var(--s4); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text-muted); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tekrar gönder · 0:58</button><button type="button" onClick="{{goSignin}}" style="height: 44px; padding: 0 var(--s4); border: 0; border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Girişe dön</button></div>
 </div>
 </sc-if>
 
 </div>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted); text-align: center">Aynı e-postayla Google ya da Apple'dan gelirsen hesapların tek hesapta birleşir.</span>
 </section>
 </main>
 

@@ -24,6 +24,7 @@ input::placeholder{color:var(--text-muted)}
 <a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Ana Sayfa</a>
 <a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Takip</a>
 <a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Ara ve Ekle</a>
+<a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Keşfet</a>
 <a href="#" style="display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); text-decoration: none; font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; border-top: 2px solid transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M16 14h.01"/></svg>Kazancım</a>
 </nav>
 <div style="flex: 1"></div>
@@ -47,9 +48,9 @@ input::placeholder{color:var(--text-muted)}
 <main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s8) var(--s6); box-sizing: border-box; display: flex; flex-direction: column; gap: var(--s5)">
 <div style="display: flex; flex-direction: column; gap: var(--s1)"><h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">Ayarlar</h1><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Hesabın, bildirimlerin, güvenliğin ve verilerin tek yerde</span></div>
 
-<div style="display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: var(--s6); align-items: start">
+<div style="display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: var(--s6); align-items: stretch">
 
-<nav aria-label="Ayar bölümleri" style="display: flex; flex-direction: column; gap: 2px; padding: var(--s2); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
+<nav aria-label="Ayar bölümleri" style="align-self: start; position: sticky; top: var(--s6); display: flex; flex-direction: column; gap: 2px; padding: var(--s2); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
 <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
 <a href="#" aria-current="{{n.current}}" onClick="{{n.pick}}" style="{{n.style}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.icon}}"/></svg>{{n.label}}</a>
 </sc-for>
@@ -66,11 +67,11 @@ input::placeholder{color:var(--text-muted)}
 <div style="display: flex; flex-direction: column; gap: var(--s5); padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
 <div style="display: flex; align-items: center; gap: var(--s4)">
 <span aria-hidden="true" style="width: 72px; height: 72px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-h2); font-weight: 700">SB</span>
-<div style="display: flex; flex-direction: column; gap: var(--s1)"><div style="display: flex; gap: var(--s2)"><button type="button" style="height: 40px; padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Fotoğraf yükle</button><button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Kaldır</button></div><span style="font-size: var(--fs-cap); color: var(--text-muted)">JPEG, PNG ya da WebP · konum gibi gizli bilgiler fotoğraftan silinir</span></div>
+<div style="display: flex; flex-direction: column; gap: var(--s1)"><div style="display: flex; gap: var(--s2)"><button type="button" style="height: 40px; padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Fotoğraf yükle</button><button type="button" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Kaldır</button></div><span style="font-size: var(--fs-cap); color: var(--text-muted)">JPEG, PNG ya da WebP · konum bilgisi silinir</span></div>
 </div>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4)">
 <label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Ad soyad<input value="Serkan B." style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body); font-weight: 500"></label>
-<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Kullanıcı adı<input value="serkanb" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 2px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body); font-weight: 500"><span style="font-size: var(--fs-cap); font-weight: 600; color: var(--savings)">✓ Kullanılabilir · Keşfet açılınca profilinde görünür</span></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-bsm); font-weight: 600">Kullanıcı adı<input value="serkanb" style="height: 48px; padding: 0 var(--s3); box-sizing: border-box; border: 2px solid var(--primary); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body); font-weight: 500"><span style="font-size: var(--fs-cap); font-weight: 600; color: var(--savings)">✓ Kullanılabilir</span></label>
 </div>
 <div style="display: flex; justify-content: flex-end"><button type="button" onClick="{{save}}" style="height: 48px; padding: 0 var(--s6); border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-btn); font-weight: 600; cursor: pointer">Kaydet</button></div>
 </div>
@@ -87,7 +88,7 @@ input::placeholder{color:var(--text-muted)}
 </div>
 </sc-for>
 </div>
-<span style="display: flex; gap: var(--s2); align-items: center; font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"/></svg>Tam adresi görmek ya da değiştirmek için son 15 dakika içinde yeniden giriş yapman istenir.</span>
+<span style="display: flex; gap: var(--s2); align-items: center; font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
 </sc-if>
 
 <!-- BİLDİRİMLER -->
@@ -95,12 +96,12 @@ input::placeholder{color:var(--text-muted)}
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4)">
 <div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
 <span style="font-size: var(--fs-bsm); font-weight: 700">Nasıl gelsin?</span>
-<div role="radiogroup" aria-label="Gönderim" style="display: flex; flex-direction: column; gap: var(--s2)"><sc-for list="{{delivery}}" as="d" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{d.checked}}" onClick="{{d.pick}}" style="{{d.style}}"><span style="{{d.dot}}"></span><span style="display: flex; flex-direction: column; gap: 2px; text-align: left"><span style="font-size: var(--fs-bsm); font-weight: 600">{{d.t}}</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">{{d.d}}</span></span></button></sc-for></div>
+<div role="radiogroup" aria-label="Gönderim" style="display: flex; flex-direction: column; gap: var(--s2)"><sc-for list="{{delivery}}" as="d" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{d.checked}}" onClick="{{d.pick}}" style="{{d.style}}"><span style="display: flex; flex-direction: column; gap: 2px; text-align: left"><span style="font-size: var(--fs-bsm); font-weight: 600">{{d.t}}</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">{{d.d}}</span></span></button></sc-for></div>
 </div>
 <div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
 <span style="font-size: var(--fs-bsm); font-weight: 700">Hangi saatlerde?</span>
 <div role="group" aria-label="Saat dilimleri" style="display: flex; flex-wrap: wrap; gap: var(--s2)"><sc-for list="{{slots}}" as="s" hint-placeholder-count="5"><button type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}" style="{{s.style}}">{{s.t}}</button></sc-for></div>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); color: var(--text-muted)">Bu saatlerin dışındakiler bir sonraki uygun saate kayar. İadesi 2 gün içinde bitenler ve hesap güvenliği beklemez.</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); color: var(--text-muted)">İadesi 2 gün içinde bitenler ve hesap güvenliği beklemez.</span>
 <div style="display: flex; justify-content: space-between; align-items: center; padding-top: var(--s2); border-top: 1px solid var(--divider); font-size: var(--fs-bsm)"><span style="color: var(--text-muted)">Günlük en çok</span><span style="font-weight: 700">5 bildirim · bugün 3</span></div>
 </div>
 </div>
@@ -111,12 +112,11 @@ input::placeholder{color:var(--text-muted)}
 <sc-if value="{{t.head}}" hint-placeholder-val="{{ false }}"><div style="padding: var(--s3) var(--s5); border-top: 1px solid var(--divider); background: var(--surface-alt); font-size: var(--fs-cap); font-weight: 700; color: var(--text-muted)">{{t.headText}}</div></sc-if>
 <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 140px 140px; gap: var(--s4); align-items: center; padding: var(--s3) var(--s5); border-top: 1px solid var(--divider)">
 <div role="cell" style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 600">{{t.t}}</span><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); color: var(--text-muted)">{{t.d}}</span></div>
-<div role="cell" style="display: flex; justify-content: center"><button type="button" role="switch" aria-checked="{{t.appOn}}" aria-label="{{t.appLabel}}" aria-disabled="{{t.locked}}" onClick="{{t.toggleApp}}" style="{{t.appTrack}}"><span style="{{t.appKnob}}"></span></button></div>
-<div role="cell" style="display: flex; justify-content: center"><button type="button" role="switch" aria-checked="{{t.mailOn}}" aria-label="{{t.mailLabel}}" aria-disabled="{{t.locked}}" onClick="{{t.toggleMail}}" style="{{t.mailTrack}}"><span style="{{t.mailKnob}}"></span></button></div>
+<div role="cell" style="display: flex; justify-content: center"><button type="button" role="switch" aria-checked="{{t.appOn}}" aria-label="{{t.appLabel}}" aria-disabled="{{t.locked}}" onClick="{{t.toggleApp}}" style="{{t.appTrack}}"></button></div>
+<div role="cell" style="display: flex; justify-content: center"><button type="button" role="switch" aria-checked="{{t.mailOn}}" aria-label="{{t.mailLabel}}" aria-disabled="{{t.locked}}" onClick="{{t.toggleMail}}" style="{{t.mailTrack}}"></button></div>
 </div>
 </sc-for>
 </div>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Kilitli satırlar yasal ve güvenlik gereği kapatılamaz. Anahtarlar anında kaydolur.</span>
 </sc-if>
 
 <!-- GÜVENLİK -->
@@ -160,7 +160,7 @@ input::placeholder{color:var(--text-muted)}
 </ul>
 </sc-if>
 <sc-if value="{{noHist}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: space-between; align-items: center; padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); font-size: var(--fs-bsm)"><span>Gösterilecek arama yok.</span><button type="button" onClick="{{resetH}}" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Filtreyi temizle</button></div></sc-if>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{hiddenNote}} Gizlediğin aramalar listede görünmez, "Son aramaların" ve "Aradığın ürün ucuzladı" bildirimi için kullanılmaz.</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{hiddenNote}}</span>
 </sc-if>
 
 <!-- YETKİLERİM -->
@@ -178,7 +178,7 @@ input::placeholder{color:var(--text-muted)}
 </div>
 </sc-for>
 </div>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Bu liste salt okunur. Yetkiler Roller ve Yetkiler ekranından değişir; her zaman en az bir Uygulama Yöneticisi kalır.</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Yetkiler Roller ve Yetkiler ekranından değişir.</span>
 </sc-if>
 
 <!-- YÖNETİM ETKİNLİĞİM -->
@@ -200,14 +200,14 @@ input::placeholder{color:var(--text-muted)}
 </ul>
 </sc-if>
 <sc-if value="{{noAudit}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: space-between; align-items: center; padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); font-size: var(--fs-bsm)"><span>Bu aramayla eşleşen kayıt yok.</span><button type="button" onClick="{{resetA}}" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Filtreyi temizle</button></div></sc-if>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Kayıtlar değiştirilemez ve silinemez. Tamamı ve diğer yöneticilerinkiler Denetim Kaydı ekranında.</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Tamamı Denetim Kaydı ekranında.</span>
 </sc-if>
 
 <!-- DİL VE GÖRÜNÜM -->
 <sc-if value="{{isLook}}" hint-placeholder-val="{{ false }}">
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4)">
-<div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)"><span style="font-size: var(--fs-bsm); font-weight: 700">Dil</span><div role="radiogroup" aria-label="Dil" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2)"><sc-for list="{{langs}}" as="o" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.t}}</button></sc-for></div><span style="font-size: var(--fs-cap); color: var(--text-muted)">Hemen uygulanır; bildirim ve e-postalar da bu dilde gelir.</span></div>
-<div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)"><span style="font-size: var(--fs-bsm); font-weight: 700">Tema</span><div role="radiogroup" aria-label="Tema" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2)"><sc-for list="{{themes}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.t}}</button></sc-for></div><span style="font-size: var(--fs-cap); color: var(--text-muted)">"Sistem" cihazının ayarını izler.</span></div>
+<div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)"><span style="font-size: var(--fs-bsm); font-weight: 700">Dil</span><div role="radiogroup" aria-label="Dil" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2)"><sc-for list="{{langs}}" as="o" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.t}}</button></sc-for></div></div>
+<div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)"><span style="font-size: var(--fs-bsm); font-weight: 700">Tema</span><div role="radiogroup" aria-label="Tema" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2)"><sc-for list="{{themes}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.t}}</button></sc-for></div></div>
 </div>
 </sc-if>
 
@@ -216,10 +216,10 @@ input::placeholder{color:var(--text-muted)}
 <div style="display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden">
 <div style="padding: var(--s4) var(--s5); background: var(--surface-alt); font-size: var(--fs-bsm); font-weight: 700">Çerezler</div>
 <sc-for list="{{cookies}}" as="t" hint-placeholder-count="3">
-<div style="display: grid; grid-template-columns: minmax(0, 1fr) 140px; gap: var(--s4); align-items: center; padding: var(--s3) var(--s5); border-top: 1px solid var(--divider)"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 600">{{t.t}}</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">{{t.d}}</span></div><div style="display: flex; justify-content: center"><button type="button" role="switch" aria-checked="{{t.on}}" aria-label="{{t.t}}" aria-disabled="{{t.locked}}" onClick="{{t.toggle}}" style="{{t.track}}"><span style="{{t.knob}}"></span></button></div></div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 140px; gap: var(--s4); align-items: center; padding: var(--s3) var(--s5); border-top: 1px solid var(--divider)"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 600">{{t.t}}</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">{{t.d}}</span></div><div style="display: flex; justify-content: center"><button type="button" role="switch" aria-checked="{{t.on}}" aria-label="{{t.t}}" aria-disabled="{{t.locked}}" onClick="{{t.toggle}}" style="{{t.track}}"></button></div></div>
 </sc-for>
 </div>
-<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); background: var(--surface)"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: var(--fs-bsm); font-weight: 700">Profil görünürlüğü</span><span style="font-size: var(--fs-cap); color: var(--text-muted)">Keşfet ve Profil açıldığında buradan seçeceksin; şu an kimse profilini göremez.</span></div><span style="display: inline-flex; align-items: center; height: 28px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--surface-alt); font-size: var(--fs-cap); font-weight: 700">Yakında</span></div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: var(--s4); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)"><span style="font-size: var(--fs-bsm); font-weight: 700">Profil görünürlüğü</span><div role="group" aria-label="Profil görünürlüğü" style="display: flex; gap: 2px; padding: 2px; border-radius: var(--r-md); background: var(--surface-alt)"><button type="button" aria-pressed="false" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-cap); font-weight: 600">Herkese açık</button><button type="button" aria-pressed="false" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-cap); font-weight: 600">Takipçilerime</button><button type="button" aria-pressed="true" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: var(--r-sm); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-cap); font-weight: 700">Sadece ben</button></div></div>
 <div style="display: flex; gap: var(--s5); font-size: var(--fs-bsm)"><a href="#" style="color: var(--primary); font-weight: 600">KVKK aydınlatma metni</a><a href="#" style="color: var(--primary); font-weight: 600">Çerez politikası</a></div>
 </sc-if>
 
@@ -229,7 +229,7 @@ input::placeholder{color:var(--text-muted)}
 <div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">
 <span style="width: 40px; height: 40px; border-radius: var(--r-md); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></span>
 <span style="font-size: var(--fs-body); font-weight: 700">Verilerimi indir</span>
-<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{exportText}} Hazır olunca bildirim ve e-posta gelir.</span>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); color: var(--text-muted)">{{exportText}}</span>
 <button type="button" style="align-self: flex-start; margin-top: auto; height: 44px; padding: 0 var(--s4); border: 1px solid var(--primary); border-radius: var(--r-md); background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Dosya hazırla</button>
 </div>
 <div style="display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface)">

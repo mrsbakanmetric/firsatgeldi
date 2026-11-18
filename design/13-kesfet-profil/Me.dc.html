@@ -27,7 +27,7 @@ details>summary::-webkit-details-marker{display:none}
 <button type="button" aria-label="Profil menüsü" aria-current="page" style="display: flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s2) 0 var(--s1); border: 2px solid var(--primary); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><span style="width: 34px; height: 34px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-cap); font-weight: 700">SB</span>Profil</button>
 </div>
 </header>
-<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s6) var(--s6) var(--s12); box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) var(--aside-w); gap: var(--s8); align-items: start">
+<main style="flex: 1; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: var(--s6) var(--s6) var(--s12); box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) var(--aside-w); gap: var(--s8); align-items: stretch">
 <div style="display: flex; flex-direction: column; gap: var(--s5); min-width: 0">
 <section style="display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: var(--s5); align-items: center; padding: var(--s6); border: 1px solid var(--border); border-radius: var(--r-xl); background: var(--surface)">
 <span aria-hidden="true" style="width: 96px; height: 96px; border-radius: var(--r-pill); background: var(--primary-subtle); color: var(--on-primary-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-h1); font-weight: 700">{{ini}}</span>
@@ -68,7 +68,7 @@ details>summary::-webkit-details-marker{display:none}
 </div>
 <a href="#" style="font-size: var(--fs-bsm); font-weight: 600; color: var(--primary)">Ayarlar › Gizlilik’te değiştir</a>
 </div>
-<div style="display: flex; flex-direction: column; gap: var(--s2); padding: var(--s5); border-radius: var(--r-lg); background: var(--surface-alt)">
+<div style="flex: 1; display: flex; flex-direction: column; gap: var(--s2); padding: var(--s5); border-radius: var(--r-lg); background: var(--surface-alt)">
 <span style="font-size: var(--fs-bsm); font-weight: 700">Başkaları nasıl görüyor?</span>
 <div role="radiogroup" aria-label="Önizleme" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2)"><sc-for list="{{views}}" as="v" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{v.on}}" onClick="{{v.pick}}" style="{{v.style}}">{{v.label}}</button></sc-for></div>
 <span style="font-size: var(--fs-cap); line-height: var(--lh-cap); color: var(--text-muted)">{{viewNote}}</span>
@@ -78,7 +78,6 @@ details>summary::-webkit-details-marker{display:none}
 <footer style="flex: none; background: var(--surface); border-top: 1px solid var(--border)">
 <div style="max-width: var(--content-max); margin: 0 auto; padding: var(--s6); box-sizing: border-box; display: flex; flex-direction: column; gap: var(--s3)">
 <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); font-size: var(--fs-bsm)"><nav aria-label="Yasal ve yardım" style="display: flex; flex-wrap: wrap; gap: var(--s5)"><a href="#" style="color: var(--text-muted)">KVKK aydınlatma metni</a><a href="#" style="color: var(--text-muted)">Kullanım koşulları</a><a href="#" style="color: var(--text-muted)">Çerez politikası</a><a href="#" style="color: var(--text-muted)">Komisyon açıklaması</a><a href="#" style="color: var(--text-muted)">Yardım ve SSS</a></nav><span style="font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)">Türkçe · English</span></div>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); color: var(--text-muted)">Bazı mağaza bağlantılarından komisyon alabiliriz; bu, gösterdiğimiz fiyatları ve sıralamayı değiştirmez.</span>
 </div>
 </footer>
 </div>
@@ -152,7 +151,7 @@ class Component extends DCLogic {
       shareRows: [['Profilim', 'Takipçiler', on], ['Takip ettiklerim', 'Takipçiler', on], ['Yakaladığım fırsatlar', 'Takipçiler', on], ['Kazancım', 'Sadece ben', off], ['Ödediğim fiyatlar', 'Sadece ben', off], ['Aramalarım', 'Hiç paylaşılmaz', off]].map(x => ({ k: x[0], v: x[1], style: x[2] })),
       views: [['me', 'Ben'], ['fol', 'Bir takipçi']].map(v => ({ label: v[1], on: st.view === v[0] ? 'true' : 'false', pick: () => this.setState({ view: v[0] }),
         style: 'height:40px;border-radius:10px;font:inherit;font-size:14px;cursor:pointer;' + (st.view === v[0] ? 'border:2px solid var(--primary);background:var(--surface);color:var(--text);font-weight:700' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500') })),
-      viewNote: pub ? 'Bir takipçin profilinde takip ettiklerini ve yakaladığın fırsatları görür; kazancını, ödediğin fiyatları ve aramalarını görmez.' : 'Sen her şeyi görürsün. Önizleme için “Bir takipçi”yi seç.'
+      viewNote: pub ? 'Takip ettiklerin ve fırsatların görünür · kazanç, fiyat ve aramalar görünmez' : 'Sen her şeyi görürsün'
     };
   }
 }
