@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const started = vi.hoisted(() => ({ count: 0 }));
 vi.mock("../dev/mock-api", () => ({
-  startMockWorker: async () => {
+  startDevMockApi: async () => {
     started.count += 1;
   },
 }));

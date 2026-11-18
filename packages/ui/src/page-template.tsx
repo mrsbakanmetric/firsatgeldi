@@ -7,6 +7,9 @@
 // Detail (Product Detail v2): `header` is a card that carries the page's h1 in place of the title
 // row, and the content and the side column end on the same bottom line (design §3 "columns end
 // together"): both stretch, and their last block fills the height.
+// Flow on Sign-in (design "8 Giriş" v2.1): the hero in the content carries the page's h1
+// (`titleInContent`, no title row), hero and form end on the same line (`endTogether`), and
+// on phones the form comes first (`sideFirstOnPhone`).
 import type { ReactNode } from "react";
 import { cn } from "./cn";
 
@@ -36,6 +39,12 @@ export interface PageTemplateProps {
   /** Detail: full-width sections under the two-column top. */
   sections?: ReactNode;
   footnote?: ReactNode;
+  /** The content region carries the page's h1 (Sign-in hero): no title row is drawn. */
+  titleInContent?: boolean;
+  /** Content and side column end on the same bottom line (always for Detail). */
+  endTogether?: boolean;
+  /** Below breakpoint.md the side column comes before the content (Sign-in: form first). */
+  sideFirstOnPhone?: boolean;
   /** The content region, where the five states are drawn. */
   children: ReactNode;
   className?: string;
@@ -63,10 +72,13 @@ export function PageTemplate({
   sideLabel,
   sections,
   footnote,
+  titleInContent = false,
+  endTogether = false,
+  sideFirstOnPhone = false,
   children,
   className,
 }: PageTemplateProps) {
-  const stretch = kind === "detail" && Boolean(side);
+  const stretch = (kind === "detail" || endTogether) && Boolean(side);
   const content = (
     <div className="flex min-w-0 flex-1 flex-col gap-5">
       {toolbar && <div className="flex flex-wrap items-center gap-3">{toolbar}</div>}
@@ -83,7 +95,7 @@ export function PageTemplate({
     >
       {header ? (
         <div className="flex min-w-0 flex-col gap-3 md:basis-full">{header}</div>
-      ) : (
+      ) : titleInContent ? null : (
         <div className="flex min-w-0 flex-col gap-1 md:flex-1">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-h1 text-text">{title}</h1>
@@ -102,7 +114,7 @@ export function PageTemplate({
         {kind === "settings" && sectionMenu && <div className="md:w-(--size-section-menu-width) md:shrink-0">{sectionMenu}</div>}
         {content}
         {side && (
-          <aside aria-label={sideLabel} className={cn("flex flex-col gap-4 md:shrink-0", SIDE_WIDTH_CLASSES[kind])}>
+          <aside aria-label={sideLabel} className={cn("flex flex-col gap-4 md:shrink-0", SIDE_WIDTH_CLASSES[kind], sideFirstOnPhone && "order-first md:order-none")}>
             {side}
           </aside>
         )}

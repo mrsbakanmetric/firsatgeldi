@@ -11,6 +11,7 @@ import { CirclePlus, Compass, House, List, LogIn, Search, UserRound, Wallet, typ
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { signInHref, signUpHref } from "../../lib/auth/next";
 import { APP_NAV, currentAppSection, hrefFor, isProfileMenuPage, LANDING_NAV, TAB_BAR_IDS, type AppNavId } from "../../lib/shell/navigation";
 import { BellButton, Logo, ProfileMenu, profileMenuItems, SiteFooter, SkipLink, useTranslator, type ShellViewer } from "./parts";
 
@@ -125,15 +126,15 @@ export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut
             </>
           ) : variant === "landing" ? (
             <div className="flex shrink-0 items-center gap-2">
-              <Link href={hrefFor("/giris", locale)} className={buttonClasses("ghost", "hidden md:inline-flex")}>
+              <Link href={signInHref(locale, pathname)} className={buttonClasses("ghost", "hidden md:inline-flex")}>
                 {t("shell.signIn")}
               </Link>
-              <Link href={hrefFor("/giris", locale)} className={buttonClasses("primary")}>
+              <Link href={signUpHref(locale, pathname)} className={buttonClasses("primary")}>
                 {t("shell.startFree")}
               </Link>
             </div>
           ) : (
-            <Link href={hrefFor("/giris", locale)} className={buttonClasses("secondary", "shrink-0")}>
+            <Link href={signInHref(locale, pathname)} className={buttonClasses("secondary", "shrink-0")}>
               {t("shell.signIn")}
             </Link>
           )}
@@ -170,7 +171,7 @@ export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut
               }
             />
           ) : (
-            <TabLink href={hrefFor("/giris", locale)} icon={LogIn} label={t("shell.nav.signIn")} active={false} />
+            <TabLink href={signInHref(locale, pathname)} icon={LogIn} label={t("shell.nav.signIn")} active={false} />
           )}
         </nav>
       )}

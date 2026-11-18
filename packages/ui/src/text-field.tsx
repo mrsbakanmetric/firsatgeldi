@@ -20,13 +20,15 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   error?: string;
   /** A compact button inside the field's right end. */
   action?: ReactNode;
+  /** A small link on the label's row, at its right end (Sign-in: "Şifremi unuttum"). */
+  labelAction?: ReactNode;
   /** Labels of the password toggle (from the i18n catalogue). */
   showPasswordLabel?: string;
   hidePasswordLabel?: string;
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  { label, type = "text", helper, error, showPasswordLabel, hidePasswordLabel, suffix, action, className, ...input },
+  { label, type = "text", helper, error, showPasswordLabel, hidePasswordLabel, suffix, action, labelAction, className, ...input },
   ref,
 ) {
   const id = useId();
@@ -39,9 +41,18 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <label htmlFor={id} className="text-body-sm font-semibold text-text">
-        {label}
-      </label>
+      {labelAction ? (
+        <div className="flex items-center justify-between gap-2">
+          <label htmlFor={id} className="text-body-sm font-semibold text-text">
+            {label}
+          </label>
+          {labelAction}
+        </div>
+      ) : (
+        <label htmlFor={id} className="text-body-sm font-semibold text-text">
+          {label}
+        </label>
+      )}
       <div
         className={cn(
           "relative flex items-center",
