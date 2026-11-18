@@ -749,14 +749,21 @@ POST /tracked-items/:id/feedback        # two buyer questions
 PATCH /tracked-items/:id/request        # request tracking: kind, outcome
 ```
 
-### COMMUNITY (later slice)
+### COMMUNITY (later slice; the own profile Profilim is built in Phase 1, step 21a)
 ```
 POST|DELETE /follows/:userId · POST /follows/:userId/approve|decline
 POST|DELETE /blocks/:userId
 GET  /users/:username · GET /discover?tab=&q=&category=
-POST /link-submissions · GET /me/link-submissions
-PUT  /me/community-consents
+POST /link-submissions · GET /me/link-submissions?q=&category=
+GET|PUT /me/community-consents         # GET: read-only in Profilim "Neyi kim görüyor?" until Discover
+# Own profile (Profilim) [ASSUMPTION — names; user decisions 2026-11-18]
+GET  /me/profile                       # header: @username, photo, badge, visibility, counts, member since
+GET  /me/followers?q= · GET /me/following?q= · GET /me/follow-requests
+DELETE /me/followers/:userId           # "Takipten çıkar" (remove a follower), silent
+POST /me/followers/:userId/restore     # "Geri al" after removing a follower
+POST /follows/:userId/restore          # "Geri al" after unfollowing / withdrawing a request
 ```
+Approving a request (`POST /follows/:userId/approve`) sends the requester the in-app notification `FOLLOW_ACCEPTED`; decline, remove, unfollow and withdraw notify no one [DECIDED 2026-11-18] (user). Person rows carry only what each person shares; link submissions never carry the link, store or seller (§6).
 
 ### ADMIN (permission-keyed; Application Manager holds all)
 ```

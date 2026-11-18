@@ -674,8 +674,18 @@ Canvas "FırsatGeldi — 13 Keşfet ve Profil": Discover (4 tabs), another user'
 - **Profilim:** follow requests (Onayla / Reddet), Takipçilerim, Takip ettiklerim, Paylaştığım fırsatlar with status; "Neyi kim görüyor?" summary and a "Bir takipçi gözünden" preview; editing goes to Ayarlar.
 - **Report and block [DECIDED 2026-11-12]:** "Şikayet et · Engelle" on every profile. A blocked person cannot see the blocker's profile, lists or feed items and cannot follow; an existing follow is removed. Reports go to Reports and Match Corrections.
 
+### Profilim in Phase 1 (step 21a) [DECIDED 2026-11-18] (user)
+Only the own profile `/profil` is built now (design v2.1, `pagedesign.md` §8.9a); other profiles, Discover and link sharing come with step 21.
+- **"Neyi kim görüyor?" is read-only:** Profilim follows the visibility chosen in Ayarlar › Gizlilik (Herkese açık · Takipçilerime · Sadece ben); tracked products, deals caught, savings and paid prices show "Sadece ben" (sharing permissions stay at their defaults — all off); Aramalarım "Hiç paylaşılmaz"; link to Ayarlar › Gizlilik. Changing sharing permissions comes with Discover.
+- **"Paylaştığım fırsatlar"** shows sample shares (Doğrulandı · İnceleniyor · Reddedildi with the reason) without a new-share button until Discover. Each price carries its check time; never a seller, store or link (hidden-seller rule).
+- **Person names are plain text** (no link) until other users' profiles `/u/{username}` exist.
+- **Follow actions:** approving a request sends the requester an **in-app** notification ("isteğin onaylandı"); declining, removing a follower, unfollowing and withdrawing a request are **silent**. Removing a follower, unfollowing and withdrawing a request have no dialog; the result line offers "Geri al", which restores the row as it was (an accepted follow stays accepted, a withdrawn request is pending again).
+- **Counts:** takipçi · takip · ürün takip ediyor (= all ongoing tracking, Aldım + Almak istiyorum) · doğrulanmış paylaşım.
+- **"Fırsat Avcısı" badge:** earned with **at least one verified share** [ASSUMPTION — final rule with Discover, see Reward for sharing].
+
 ### API
 `POST|DELETE /follows/:userId` · `POST /follows/:userId/approve|decline` · `GET /users/:username` · `POST|DELETE /blocks/:userId` · `POST /reports` (kind `PROFILE`)
+Own profile (Profilim, step 21a) [ASSUMPTION — names until `architecture.md` §16.1]: `GET /me/profile` · `GET /me/followers?q=` · `GET /me/following?q=` · `GET /me/follow-requests` · `DELETE /me/followers/:userId` · `POST /me/followers/:userId/restore` · `POST /follows/:userId/restore` · `GET /me/link-submissions?q=&category=` · `GET /me/community-consents`
 
 ---
 
