@@ -783,7 +783,7 @@ GET|PATCH      /admin/support-requests · POST /admin/support-requests/:id/reply
 GET|POST       /admin/link-submissions (later slice)
 ```
 
-### 16.1 Field-level contract — Search and Add, Tracked Items, Home and session reads
+### 16.1 Field-level contract — Search and Add, Tracked Items, Home, Product Detail and session reads
 
 Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and served by the mock API in Phase 1. **[ASSUMPTION]** marks fields or names without an earlier counterpart in the docs; they stand until the user decides otherwise. Money is `{ amount, currency }` with `amount` in **minor units (kuruş)** [ASSUMPTION — follows `database.md` §1]. Times are ISO 8601 with offset; calendar days are `YYYY-MM-DD` (Europe/Istanbul).
 
@@ -816,6 +816,17 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | `POST /offers/:ref/reveal` | `reveal.own.use` | — | ✓ | `reveal` |
 | `POST /offers/:ref/hide` | `reveal.own.use` | — | | `reveal.hide` [ASSUMPTION] |
 | `POST /offers/:ref/go` | `offer.own.go` | — | | `offer.go` |
+| `GET /tracked-items/:id` · `GET …/price-history` · `GET …/stock-history` · `GET …/price-difference-message` · `GET …/calendar.ics` | `tracking.own.view` | — | | — |
+| `GET /tracked-items/:id/offers` | `tracking.own.view` (response scanned for offers) | — | | — |
+| `GET /products/:id/ratings` | `catalog.view` | ✓ | | — |
+| `PATCH /tracked-items/:id` | `tracking.own.write` | — | | `tracking.edit` [ASSUMPTION] |
+| `POST /tracked-items/:id/delivered` | `tracking.own.write` | — | | `tracking.delivered` [ASSUMPTION] |
+| `POST /tracked-items/:id/steps/:step` | `tracking.own.write` | — | | `tracking.step` [ASSUMPTION] |
+| `PATCH /tracked-items/:id/request` | `tracking.own.write` | — | | `tracking.request` [ASSUMPTION] |
+| `POST /tracked-items/:id/extend` | `tracking.own.write` | — | ✓ | `tracking.extend` [ASSUMPTION] |
+| `POST /tracked-items/:id/feedback` | `feedback.own.write` | — | ✓ | `feedback.create` [ASSUMPTION] |
+| `POST /reports` | `report.own.create` | — | ✓ | `report.create` |
+| `POST /offers/:ref/notify-back-in-stock` | `tracking.own.write` | — | ✓ | `offer.notify_back_in_stock` [ASSUMPTION] |
 
 **Session reads**
 
@@ -856,7 +867,7 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | `ConfirmContext` | `productId`, `platforms[{ id, name, returnRule{ days, startType, avgDeliveryDays, sourceState, policyUrl } }]`, `noWithdrawalRight`; allowances in `meta.entitlements` | §16; `database.md` §6 |
 | `ConfirmContext` | `warnings[]` (`NO_BRAND_CODE`, `CATEGORY_UNSUPPORTED`), `alreadyTracking[{ trackedItemId, mode, since }]`, `targetHints{ lowest30Days, lowest6Months }` | [ASSUMPTION] (design cases H, G, E) |
 | `SellerLookupRequest` | `{ platformId, name }` → exact match or `null` | §16, §6.4 |
-| `SellerLookupResult.match` | `sellerRef`, `sellerName`, `sellerRating`, `sellerRatingCount`, `stockState`, `warrantyType`, `listingUrl`, `lastCheckedAt` — the user's own seller, so visible | §6.1; shape [ASSUMPTION] |
+| `SellerLookupResult.match` | `sellerRef`, `sellerName`, `sellerRating` (`Rating`, the store's own scale [DECIDED 2026-11-15] (user)), `trust`, `stockState`, `warrantyType`, `listingUrl`, `lastCheckedAt` — the user's own seller, so visible | §6.1; shape [ASSUMPTION] |
 | `TeaserRequest` / `TeaserResult` | `{ pricePaid, sellerRef }` → `offers[]` (`HiddenOfferView`) | §16 |
 | `TeaserResult` | `summary{ cheaperCount, maxSaving, lastCheckedAt }` | [ASSUMPTION] (design "2 satıcıda daha ucuz · en çok …") |
 | `CreateTrackedItemRequest` | BOUGHT: `productId`, `platformId`, `pricePaid`, `pricePaidSource`, `orderStatus`, `returnDeadline` (only when the user changed it); WANT: `productId`, `targetPrice`, `trackingDuration` | `database.md` §8 |
@@ -866,9 +877,11 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | `HiddenOfferView` | `ref`, `price`, `previousPrice`, `saving`, `netSaving`, `shippingCost`, `deliveryDays{min,max}`, `stockState`, `stockSince`, `priceSince`, `warrantyType`, `lastCheckedAt`, `fakeDiscountNote{ claimedOldPrice }` | §6.1; `database.md` §6 |
 | `HiddenOfferView` | `rank` (1 = cheapest) instead of `rankLabel`; the label comes from the catalogue | [ASSUMPTION] |
 | `RevealedOfferView` | + `sellerName`, `sellerRating`, `platformName`, `listingUrl`, `commissionNote`, `revealExpiresAt`, `gateUsed` | §6.1, §6.3 |
+| `RevealedOfferView` | `sellerRating` (the seller's rating at the store) and `productRating` (this product's rating at that store) as `Rating`, `reviewsUrl` ("Yorumları mağazada oku"; review texts are never copied) | `modules.md` Ratings › After Göster; fields [ASSUMPTION] |
+| `Rating` | `{ value, scale, count }` — kept on the store's own scale ("4,6 / 5", "9,4 / 10"), never converted; `value` ≤ `scale`; `count` `null` when the store does not show it | `modules.md` Ratings [DECIDED 2026-11-15] (user); shape [ASSUMPTION] |
 | Reveal result | `{ allowed: true, offer }` \| `{ allowed: false, reason, options }` | §6.3; `offer` wrapper [ASSUMPTION] |
 | Hide result | `{ offer: HiddenOfferView }` | [ASSUMPTION] |
-| Go result | `{ status: OK, url }` \| `{ status: GONE\|PRICE_CHANGED, next }` | §16; `status` discriminator [ASSUMPTION] |
+| Go result | `{ status: OK, url }` \| `{ status: PRICE_CHANGED, price, url, next }` (re-checked price and the link of the already revealed offer: "Yeni fiyatla mağazaya git") \| `{ status: GONE, next }`; `next` = the offer taking its place, hidden, by rank ("Sıradaki satıcıya bak") or `null` | §16; `status` discriminator, `price` and `url` [ASSUMPTION] (design Product Detail flows A–B) |
 | Stream events | `upload.ready{ uploadId, batchId }`, `upload.rejected{ uploadId, batchId, reason }` | §13; payloads [ASSUMPTION] |
 | Stream events | `check.finished{ trackedItemId, checkedAt }` — refreshes the Tracked Items list and summary, and Home | §13; payload [ASSUMPTION] |
 
@@ -901,6 +914,33 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 | Activity `check_now_bulk` | `metadata{ requested, willCheck, skippedCached }`; outcome `LIMITED` on `LIMIT_REACHED` | `database.md` §14a |
 | `CheckNowResult` (`POST /tracked-items/:id/check-now`, no body) | `{ status, remaining }`: `CHECKING` = one allowance used (`check_now_usage` row, `consumed = true`), the result arrives as `check.finished` · `CACHED` = checked within `check_now.cache_minutes`, shown at once, no allowance used (row with `consumed = false`); `remaining` after the call, `null` = unlimited. Own active items only (else `NOT_FOUND`); no allowance left → `LIMIT_REACHED`. Used by Home "Şimdi kontrol et" (single-item endpoint [DECIDED 2026-11-15] (user)) | §16; `modules.md` Check Now; `database.md` §9; result shape [ASSUMPTION] |
 | Activity `check_now` | `metadata{ cached }`; target = the tracked item; outcome `LIMITED` on `LIMIT_REACHED` | `database.md` §14a |
+
+**Product Detail** (`modules.md` Product Detail, Price and Stock History, Ratings, Return Window, Want to Buy; `pagedesign.md` §8.3). Cheaper sellers are referred to by rank only; a seller and platform appear only in offers the user revealed and for the user's own purchase (§6.1). Shapes [ASSUMPTION] unless marked.
+
+| Schema | Fields | Source |
+|---|---|---|
+| `TrackedItemDetail` (`GET /tracked-items/:id`) | every `TrackedItemListItem` field (same figures as Tracked Items and Home) + `product.variantLine` · `trackingStartedOn` · `returnRule` (the user's own platform; `null` on "Diğer") · `noWithdrawalRight` (→ price-difference steps, never "iade") · `deliveryPrompt` (estimated delivery day passed, last day still estimated → "Teslim aldın mı?") · `steps[{ step, done }]` · `request` · `targetHints{ lowest30Days, lowest6Months }` (WANT; `null` = not enough history) · `feedback` (answers already given, BOUGHT) · `frequentReturns{ count, months }` (the user's own high return rate at the store bought from, informational: "3 ayda bu mağazada 4 iade"; `null` when not high) | `modules.md` Product Detail, Trust and Accuracy › Frequent returns; `database.md` §8 |
+| `ActionStep` | with a right of withdrawal `RETURN_REQUEST` (cancel while ordered) → `REORDER` → `END`; without it `PRICE_DIFFERENCE` → `END`; WANT items have none | `modules.md` Product Detail › Action steps |
+| `TrackingRequest` | `{ kind, since, outcome }`; `kind` ∈ `PRICE_DIFFERENCE`, `RETURN`; `outcome` ∈ `GIVEN`, `REFUSED`, `COUPON` or `null` ("Yanıt bekleniyor") | `modules.md` Return Window › request tracking |
+| `DetailOffers` (`GET /tracked-items/:id/offers`) | `offers[]` — BOUGHT: offers cheaper than the price paid, own listing excluded; WANT: in-stock offers, cheapest first; each a `HiddenOfferView` (`revealed: false`) or, while the reveal is open, a `RevealedOfferView` (`revealed: true`), both with `summary` · `own{ sellerName, platformName, price, shippingCost, stockState, lastCheckedAt }` (the reference row "Aldığın satıcı"; `null` for WANT and "Diğer") · `checkedCount` ("7 satıcı kontrol edildi") · `underReview` (offers left out while reports are reviewed). Ended items and a closed return window list no offers | §6.1; `modules.md` Product Detail |
+| `OfferSummary` (one line before "Göster") | `trust{ verdict, reasonKey }` · `installments{ maxInterestFree }` or `null` (not read → nothing shown) · `campaign{ kind ∈ BASKET, COUPON, BANK; amount }` or `null` — a structured kind, never the store's text, nothing that identifies the seller | `modules.md` Ratings › Installments, Seller trust |
+| `PriceHistoryDetail` (`GET …/price-history?range=14d\|1m\|3m\|6m\|1y\|2y\|all`) | `range`, `from`, `cheapest[]` (cheapest price per day in kuruş incl. shipping, seller unnamed, oldest first; `null` = no data, nothing guessed) · `trackingStartedOn` (days before are drawn dimmed) · `reference{ kind ∈ PAID, TARGET; price }` · `lowest{ day, price, rankThen }` (the seller only by its rank that day) · `tiles{ lowest, highest, average, change }` over the range · `dataDays` ("veri N günlük") · `hint` | `modules.md` Price and Stock History |
+| `BuyOrWaitHint` | `{ kind: LOWEST_IN_DAYS, days }` ("Son 30 günün en düşüğü") · `{ kind: ABOVE_LOWEST, days, amount }` ("Son 6 ayın en düşüğüne 1.098 TL var") · `null`. Windows `history.hint_short_days` / `history.hint_long_days`; a window with fewer than `history.hint_min_days` data days gives no hint (`database.md` §18). BOUGHT leads with the short window's lowest (the return decision), WANT with the distance to the long window's lowest (the buying decision) [ASSUMPTION — order by mode, as drawn in design v2] | `modules.md` Price history › buy-or-wait hint [DECIDED] |
+| `StockHistoryDetail` (`GET …/stock-history?range=14d\|1m`) | `range`, `from`, `rows[{ subject, days[] }]` (one `StockState` or `null` per day) · `changes[{ day, subject, from, to }]` (newest first) · `conclusion{ subject, state, atLeastDays }` ("Şu an stokta · en az 7 gündür"); `subject` = `{ kind: RANK, rank }` or `{ kind: OWN }` (the seller bought from) | `modules.md` Price and Stock History |
+| `PriceDifferenceMessage` (`GET …/price-difference-message?locale=`) | `locale`, `recipient` (the seller the user bought from — never another), `text` (`null` when there is no cheaper price to ask about), `difference` | `modules.md` Product Detail › helpers |
+| `GET …/calendar.ics` | the return last day as a calendar file ("Takvime ekle"); no seller of any cheaper offer | `modules.md` Return Window |
+| `ProductRatings` (`GET /products/:id/ratings`) | `average` (`Rating` on the shared 5-point scale, `null` without data) · `storeCount` · `few` (under `ratings.min_count` → "az değerlendirme") · `readAt` — no store names. Cross-store rule below | `modules.md` Ratings › Before Göster |
+| `UpdateTrackedItemRequest` (`PATCH /tracked-items/:id`) → `TrackedItemDetail` | at least one of `pricePaid`, `orderStatus`, `returnDeadline` (BOUGHT) or `targetPrice` (WANT; `null` = no target) | `database.md` §8 |
+| `DeliveredRequest` → `DeliveredResult` | `{ answer ∈ TODAY, OTHER_DAY, NOT_YET; day }` (`day` only with `OTHER_DAY`) → `{ returnDeadline, returnDeadlineStatus }` | `modules.md` Return Window › delivery prompt |
+| `StepRequest` (`POST …/steps/:step`) → `StepResult` | `{ done }` ("Yaptım ✓", reversible) → `{ steps }` | `modules.md` Product Detail › Action steps |
+| `UpdateRequestRequest` (`PATCH …/request`) → `{ request }` | `{ kind, outcome }`; `kind: null` clears it | `modules.md` Return Window |
+| `ExtendRequest` (`POST …/extend`) → `ExtendResult` | `{ duration }` (WANT only) → `{ trackingDuration, trackingEndsAt }` | `modules.md` Want to Buy |
+| `FeedbackRequest` (`POST …/feedback`) → `{ feedback }` | `priceDifferenceGiven` ∈ `YES`, `NO`, `NOT_ASKED` · `returnSmooth` ∈ `YES`, `PROBLEM`, `NOT_DONE` (either may be `null`, not both); one answer per item, BOUGHT only | `modules.md` Ratings › Our buyers' answers |
+| `CreateReportRequest` (`POST /reports`) → `{ id, status: RECEIVED }` | `trackedItemId`, `kind` ∈ `WRONG_PRICE` (with `offerRef`), `DIFFERENT_PRODUCT` (no `offerRef`), `note` (optional, ≤ 500 characters); the answer comes later as a notification | `modules.md` Trust and Accuracy |
+| `POST /offers/:ref/notify-back-in-stock` → `{ subscribed: true }` | "Stoğa gelince haber ver" for that offer | `modules.md` Product Detail |
+| Activity rows (Product Detail writes) | `tracking.edit` `metadata{ fields }` · `tracking.delivered{ answer }` · `tracking.step{ step, done }` · `tracking.request{ kind, outcome }` · `tracking.extend{ duration }` · `feedback.create{ answers }` · `report.create{ kind, rank, trackedItemId }` (the offer by rank, never the seller) · `offer.notify_back_in_stock{ rank }`; reads write none. Each tracked-item write also writes its `tracked_item_events` row | `database.md` §14, §14a; names [ASSUMPTION] |
+
+**Cross-store product rating [DECIDED 2026-11-15] (user).** The seller-less product rating before "Göster" ("4,5 / 5 · 4 mağazada 3.850 değerlendirme") is one average on a **shared 5-point scale**, weighted by each store's rating count; a store whose product rating uses another scale is brought to 5 **only for this average**, and stores without a count are left out; one decimal (`crossStoreRating`, `packages/core`). Every other rating — each store's product rating and seller rating after "Göster", the user's own seller in Search and Add — keeps the store's own scale and is never converted. To be checked in the Phase 2 data test: which stores show product ratings on which scale.
 
 **"Katalogda yok → mağazalarda ara"** (design "1 Ara ve Ekle", autocomplete case C) [DECIDED 2026-11-14]: no endpoint of its own. The client calls `POST /identify` with `{ text }` (the typed text); the answer is a normal `IdentifyResult` — candidates found in the catalogue or through live sources and saved (§11), or no exact match + the closest three, or the "not yet supported" category state. Same key (`identify.use`), guest access, activity action (`identify`) and `search_events` row (`source = SEARCH_BOX`) as any identify call.
 
