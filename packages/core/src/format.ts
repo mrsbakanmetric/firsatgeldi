@@ -51,6 +51,26 @@ export function formatDateTime(
   return new Intl.DateTimeFormat(locale, { dateStyle, timeStyle, timeZone }).format(date);
 }
 
+/**
+ * Turkish month names with the dative suffix: the suffix follows the name's last vowel and is
+ * written after an apostrophe ("Aralık'a", "Eylül'e"), so it cannot be added to a formatted date.
+ */
+const TR_MONTHS_DATIVE = ["Ocak'a", "Şubat'a", "Mart'a", "Nisan'a", "Mayıs'a", "Haziran'a", "Temmuz'a", "Ağustos'a", "Eylül'e", "Ekim'e", "Kasım'a", "Aralık'a"] as const;
+
+/**
+ * A deadline phrase with day and month: tr "12 Aralık'a kadar" · en "until 12 December".
+ * Use it wherever a sentence says something lasts until a date (restore window, …).
+ */
+export function formatUntil(date: Date, locale: string, { timeZone = DEFAULT_TIME_ZONE }: ZoneOption = {}): string {
+  const day = new Intl.DateTimeFormat(locale, { day: "numeric", timeZone }).format(date);
+  if (language(locale) === "tr") {
+    const month = Number(new Intl.DateTimeFormat("en", { month: "numeric", timeZone }).format(date));
+    return `${day} ${TR_MONTHS_DATIVE[month - 1]} kadar`;
+  }
+  const month = new Intl.DateTimeFormat(locale, { month: "long", timeZone }).format(date);
+  return `until ${day} ${month}`;
+}
+
 /** CLDR plural category for a count ("one", "other", …) used to pick a catalogue message. */
 export function pluralCategory(count: number, locale: string): Intl.LDMLPluralRule {
   return new Intl.PluralRules(locale).select(count);

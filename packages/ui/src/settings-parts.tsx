@@ -2,13 +2,15 @@
 
 // Settings parts (product_design_pattern.md §5.38 [DECIDED 2026-11-18]; pagedesign.md §8.9
 // design v2.1), built from the §5.36 primitives:
-// SettingsNav · SavedIndicator · ChoiceCards · SettingRow · MaskedValue · SessionRow.
+// SettingsNav · SavedIndicator · ChoiceCards · ToggleChips · SettingRow · MaskedValue · SessionRow ·
+// ChannelMatrix · ActionCard · RoleCard · PermissionGroup.
 import { Check, Laptop, type LucideIcon, Monitor, Smartphone, Tablet } from "lucide-react";
-import { type ReactNode, useEffect, useRef } from "react";
+import { Fragment, type ReactNode, useEffect, useRef } from "react";
 import { Button } from "./button";
 import { cn, focusRing } from "./cn";
 import { Icon } from "./icon";
 import { useLinkComponent } from "./link";
+import { Switch } from "./switch";
 
 // ── SettingsNav ──────────────────────────────────────────────────────────────
 
@@ -266,6 +268,228 @@ export function SessionRow({ device, title, subtitle, when, end }: SessionRowPro
       </div>
       <span className="shrink-0 text-caption text-text-muted">{when}</span>
       {end && <div className="flex shrink-0 items-center">{end}</div>}
+    </div>
+  );
+}
+
+// ── ToggleChips ──────────────────────────────────────────────────────────────
+
+export interface ToggleChipOption {
+  readonly value: string;
+  readonly label: string;
+}
+
+export interface ToggleChipsProps {
+  /** Accessible name of the group ("Saat dilimleri"). */
+  label: string;
+  options: readonly ToggleChipOption[];
+  /** The pressed values. */
+  value: readonly string[];
+  /** The exclusive "all" chip ("Her zaman"): pressing it clears the others, clearing the others presses it. */
+  allValue: string;
+  onValueChange: (value: string[]) => void;
+}
+
+/** Multi-select pills with aria-pressed, 44 px; pressed = primary-subtle + primary border (§5.38). */
+export function ToggleChips({ label, options, value, allValue, onValueChange }: ToggleChipsProps) {
+  const toggle = (option: string) => {
+    if (option === allValue) return onValueChange([allValue]);
+    const rest = value.filter((entry) => entry !== allValue);
+    const next = rest.includes(option) ? rest.filter((entry) => entry !== option) : [...rest, option];
+    onValueChange(next.length === 0 ? [allValue] : options.map((entry) => entry.value).filter((entry) => next.includes(entry)));
+  };
+  return (
+    <div role="group" aria-label={label} className="flex flex-wrap gap-2">
+      {options.map((option) => {
+        const pressed = value.includes(option.value);
+        return (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={pressed}
+            onClick={() => toggle(option.value)}
+            className={cn(
+              "inline-flex min-h-(--size-touch-target-min) items-center gap-1 rounded-pill border px-4 text-body-sm",
+              pressed ? "border-primary bg-primary-subtle font-semibold text-on-primary-subtle" : "border-border bg-surface font-medium text-text hover:bg-surface-alt",
+              focusRing,
+            )}
+          >
+            {pressed && <Icon icon={Check} size="sm" />}
+            <span>{option.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── ChannelMatrix ────────────────────────────────────────────────────────────
+
+export interface ChannelMatrixChannel {
+  readonly id: string;
+  /** Column heading ("Uygulama içi"). */
+  readonly label: string;
+}
+
+export interface ChannelMatrixRow {
+  readonly id: string;
+  readonly title: string;
+  readonly description: string;
+  /** A group heading shown above this row ("Yönetim bildirimleri"). */
+  readonly heading?: string;
+  /** Channel id → on. */
+  readonly values: Readonly<Record<string, boolean>>;
+  /** "kapatılamaz": the switches are locked on. */
+  readonly lockedLabel?: string;
+}
+
+export interface ChannelMatrixProps {
+  /** Accessible name of the table ("Bildirim türleri"). */
+  label: string;
+  /** First column heading ("Bildirim"). */
+  rowHeader: string;
+  channels: readonly ChannelMatrixChannel[];
+  rows: readonly ChannelMatrixRow[];
+  /** The switch's accessible name ("Fırsat geldi · e-posta"). */
+  switchLabel: (row: ChannelMatrixRow, channel: ChannelMatrixChannel) => string;
+  onToggle: (rowId: string, channelId: string, value: boolean) => void;
+}
+
+/** Notification types × channels with a Switch per cell; optional group headings; locked rows (§5.38). */
+export function ChannelMatrix({ label, rowHeader, channels, rows, switchLabel, onToggle }: ChannelMatrixProps) {
+  const row = "flex items-center gap-2 px-5";
+  const cell = "flex w-20 shrink-0 justify-center md:w-28";
+  return (
+    <div role="table" aria-label={label} className="overflow-hidden rounded-lg border border-border bg-surface">
+      <div role="rowgroup">
+        <div role="row" className={cn(row, "border-b border-divider bg-surface-alt py-2 text-caption font-semibold text-text-muted")}>
+          <span role="columnheader" className="min-w-0 flex-1">
+            {rowHeader}
+          </span>
+          {channels.map((channel) => (
+            <span key={channel.id} role="columnheader" className={cn(cell, "text-center")}>
+              {channel.label}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div role="rowgroup" className="flex flex-col divide-y divide-divider">
+        {rows.map((entry) => (
+          <Fragment key={entry.id}>
+            {entry.heading && (
+              <div role="row" className="bg-surface-alt px-5 py-2">
+                <span role="cell" className="text-caption font-semibold text-text-muted uppercase">
+                  {entry.heading}
+                </span>
+              </div>
+            )}
+            <div role="row" className={cn(row, "py-2")}>
+              <div role="cell" className="flex min-w-0 flex-1 flex-col py-1">
+                <span className="text-body-sm font-semibold text-text">{entry.lockedLabel ? [entry.title, entry.lockedLabel].join(" · ") : entry.title}</span>
+                <span className="text-caption text-text-muted">{entry.description}</span>
+              </div>
+              {channels.map((channel) => (
+                <div key={channel.id} role="cell" className={cell}>
+                  <Switch
+                    hideLabel
+                    label={switchLabel(entry, channel)}
+                    checked={entry.values[channel.id] ?? false}
+                    {...(entry.lockedLabel ? { lockedReason: entry.lockedLabel } : {})}
+                    onCheckedChange={(value) => onToggle(entry.id, channel.id, value)}
+                  />
+                </div>
+              ))}
+            </div>
+          </Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── ActionCard ───────────────────────────────────────────────────────────────
+
+export interface ActionCardProps {
+  icon: LucideIcon;
+  title: string;
+  /** One line (or the state of the action: "Dosyan hazır · …"). */
+  text: ReactNode;
+  /** The one action at the bottom. */
+  action: ReactNode;
+  /** danger: delete (danger tile and outline button). */
+  tone?: "normal" | "danger";
+}
+
+/** Icon tile · title · one line · one action at the bottom (§5.38). */
+export function ActionCard({ icon, title, text, action, tone = "normal" }: ActionCardProps) {
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5">
+      <span aria-hidden="true" className={cn("flex size-10 items-center justify-center rounded-md", tone === "danger" ? "bg-danger-subtle text-danger" : "bg-primary-subtle text-on-primary-subtle")}>
+        <Icon icon={icon} />
+      </span>
+      <h3 className="text-body font-semibold text-text">{title}</h3>
+      <div className="text-body-sm text-text-muted">{text}</div>
+      <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">{action}</div>
+    </div>
+  );
+}
+
+// ── RoleCard · PermissionGroup ───────────────────────────────────────────────
+
+export interface RoleCardProps {
+  icon: LucideIcon;
+  /** "Uygulama Yöneticisi". */
+  title: string;
+  /** One line ("Her şeyi görür ve yönetir · …"). */
+  text: string;
+  /** Link to Roles and Permissions. */
+  link?: { href: string; label: string };
+}
+
+/** The role on a hero-surface tile + one line + a link to Roles and Permissions; read-only (§5.38). */
+export function RoleCard({ icon, title, text, link }: RoleCardProps) {
+  const Link = useLinkComponent();
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5 md:flex-row md:items-center md:gap-4">
+      <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-md bg-hero-surface text-on-hero-surface">
+        <Icon icon={icon} />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="text-h3 text-text">{title}</span>
+        <span className="text-body-sm text-text-muted">{text}</span>
+      </div>
+      {link && (
+        <Link href={link.href} className={cn("text-body-sm font-semibold text-primary underline underline-offset-4", focusRing)}>
+          {link.label}
+        </Link>
+      )}
+    </div>
+  );
+}
+
+export interface PermissionGroupProps {
+  title: string;
+  /** "7 / 7 yetki". */
+  count: string;
+  /** Official permission keys (database.md §4), shown as they are. */
+  keys: readonly string[];
+}
+
+/** A group of permission keys in monospace chips with its count; read-only (§5.38). */
+export function PermissionGroup({ title, count, keys }: PermissionGroupProps) {
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-4">
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-body-sm font-semibold text-text">{title}</h3>
+        <span className="shrink-0 text-caption text-text-muted tabular-nums">{count}</span>
+      </div>
+      <ul className="flex flex-wrap gap-2">
+        {keys.map((key) => (
+          <li key={key}>
+            <code className="inline-flex rounded-sm bg-surface-alt px-2 py-1 text-caption break-all text-text">{key}</code>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

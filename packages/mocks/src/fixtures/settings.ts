@@ -45,6 +45,20 @@ export const TAKEN_USERNAMES: readonly string[] = ["serkan", "admin", "destek", 
 /** "2 Uygulama Yöneticisinden biri": holders of the role in the drawn world (the mock signs in one). */
 export const APP_MANAGER_HOLDERS = 2;
 
+/**
+ * "Yetkilerim" groups (design v2.1): every official admin key (database.md §4) in exactly one group,
+ * in the drawn order. A key prefix names its group; the first matching prefix wins.
+ */
+export const PERMISSION_GROUPS: readonly { id: string; prefixes: readonly string[] }[] = [
+  { id: "self", prefixes: ["admin.self."] },
+  { id: "users", prefixes: ["admin.users.", "admin.tracking.", "admin.savings."] },
+  { id: "catalog", prefixes: ["admin.catalog.", "admin.category_templates.", "admin.offers.", "admin.platforms."] },
+  { id: "packages", prefixes: ["admin.packages.", "admin.support.", "admin.reports."] },
+  { id: "system", prefixes: ["admin.overview.", "admin.settings.", "admin.return_rules.", "admin.usage.", "admin.budgets.", "admin.notifications."] },
+  { id: "security", prefixes: ["admin.fraud.", "admin.audit.", "admin.history.", "admin.roles."] },
+  { id: "content", prefixes: ["admin.content.", "admin.notification_templates.", "admin.campaigns.", "admin.community."] },
+];
+
 /** "Yönetim etkinliğim" entries (design v2.1), newest first; product entries carry the product key. */
 export const ADMIN_ACTIVITY_SEEDS: readonly {
   type: "HIDDEN_SELLER" | "PII" | "SETTING" | "USER_ACTION";

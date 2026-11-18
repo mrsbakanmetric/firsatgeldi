@@ -14,17 +14,19 @@ export interface SwitchProps {
   description?: string;
   /** Why the switch cannot be changed; makes it locked. */
   lockedReason?: string;
+  /** The label, description and reason are read aloud only (the row shows them, e.g. `ChannelMatrix`). */
+  hideLabel?: boolean;
   className?: string;
 }
 
-export function Switch({ label, checked, onCheckedChange, description, lockedReason, className }: SwitchProps) {
+export function Switch({ label, checked, onCheckedChange, description, lockedReason, hideLabel = false, className }: SwitchProps) {
   const id = useId();
   const locked = lockedReason !== undefined;
   const describedBy = [description ? `${id}-description` : null, locked ? `${id}-reason` : null].filter(Boolean).join(" ") || undefined;
 
   return (
     <div className={cn("flex min-h-(--size-touch-target-min) items-center justify-between gap-4", className)}>
-      <div className="flex min-w-0 flex-col">
+      <div className={cn("flex min-w-0 flex-col", hideLabel && "sr-only")}>
         <span id={`${id}-label`} className="text-body text-text">
           {label}
         </span>

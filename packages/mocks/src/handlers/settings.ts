@@ -15,7 +15,7 @@ import {
 import { emailDomain, maskEmail, passwordAccepted } from "@firsatgeldi/core";
 import { http, HttpResponse } from "msw";
 import { PRODUCTS } from "../fixtures/catalog";
-import { ADMIN_ACTIVITY_SEEDS, APP_MANAGER_HOLDERS, NOTIFICATIONS_TODAY, SESSION_SEEDS, SIGN_IN_SEEDS, TAKEN_USERNAMES } from "../fixtures/settings";
+import { ADMIN_ACTIVITY_SEEDS, APP_MANAGER_HOLDERS, NOTIFICATIONS_TODAY, PERMISSION_GROUPS, SESSION_SEEDS, SIGN_IN_SEEDS, TAKEN_USERNAMES } from "../fixtures/settings";
 import { pick } from "../fixtures/text";
 import { USERS } from "../fixtures/users";
 import { newId, sha256For, uuidFor } from "../ids";
@@ -482,15 +482,13 @@ export function settingsHandlers(controller: MockController) {
     route(controller, "getOwnPermissions", ({ actor }) => {
       const user = userActor(actor);
       const granted = new Set(permissionsOf(user));
-      const groups = new Map<string, { granted: string[]; total: number }>();
-      for (const key of PERMISSION_KEYS.filter((value) => value.startsWith(ADMIN_PREFIX))) {
-        const id = key.split(".")[1] ?? "other";
-        const group = groups.get(id) ?? { granted: [], total: 0 };
-        group.total += 1;
-        if (granted.has(key)) group.granted.push(key);
-        groups.set(id, group);
-      }
-      return { data: { role: USERS[user.userKey].roles[0] ?? "USER", holders: APP_MANAGER_HOLDERS, groups: [...groups.entries()].map(([id, group]) => ({ id, granted: group.granted as (typeof PERMISSION_KEYS)[number][], total: group.total })) } };
+      const adminKeys = PERMISSION_KEYS.filter((value) => value.startsWith(ADMIN_PREFIX));
+      const groupOf = (key: string) => PERMISSION_GROUPS.find((group) => group.prefixes.some((prefix) => key.startsWith(prefix)))?.id;
+      const groups = PERMISSION_GROUPS.map((group) => {
+        const keys = adminKeys.filter((key) => groupOf(key) === group.id);
+        return { id: group.id, granted: keys.filter((key) => granted.has(key)), total: keys.length };
+      });
+      return { data: { role: USERS[user.userKey].roles[0] ?? "USER", holders: APP_MANAGER_HOLDERS, groups } };
     }),
 
     route(controller, "getAdminActivity", ({ actor, query, locale, now, empty }) => {

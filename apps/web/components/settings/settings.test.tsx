@@ -59,17 +59,28 @@ describe.each(LOCALES)("Settings (%s)", (locale) => {
     expect(screen.getByRole("heading", { level: 1, name: t("settings.title") })).toBeDefined();
     const nav = screen.getByRole("navigation", { name: t("settings.navLabel") });
     const links = within(nav).getAllByRole("link");
-    expect(links.map((link) => link.textContent)).toEqual(["profile", "access", "security", "look", "privacy"].map((id) => t(`settings.sections.${id as SettingsSectionId}.title`)));
+    expect(links.map((link) => link.textContent)).toEqual(["profile", "access", "notifications", "security", "history", "look", "privacy", "data"].map((id) => t(`settings.sections.${id as SettingsSectionId}.title`)));
     expect(within(nav).getByRole("link", { current: "page" }).textContent).toBe(t("settings.sections.profile.title"));
     expect(links[0]?.getAttribute("href")).toBe(locale === "tr" ? "/tr/ayarlar/profil" : "/en/settings/profile");
     expect(screen.queryByText(t("settings.adminFooter"))).toBeNull();
     expect(await axeViolations(container)).toEqual([]);
   });
 
-  it("the Application Manager sees the footer line", async () => {
+  it("the Application Manager sees the footer line, Yetkilerim and Yönetim etkinliğim, and no search history", async () => {
     controller.config = { ...controller.config, session: "manager" };
     show(locale, "profile");
     expect(await screen.findByText(t("settings.adminFooter"))).toBeDefined();
+    const links = within(screen.getByRole("navigation", { name: t("settings.navLabel") })).getAllByRole("link");
+    expect(links.map((link) => link.textContent)).toEqual(["profile", "access", "notifications", "security", "permissions", "activity", "look", "privacy", "data"].map((id) => t(`settings.sections.${id as SettingsSectionId}.title`)));
+  });
+
+  it("a section the account does not have says so and links to Profil", async () => {
+    show(locale, "permissions");
+    expect(await screen.findByText(t("settings.states.unavailableTitle"))).toBeDefined();
+    // The menu's link and the state's link both open Profil.
+    const profile = screen.getAllByRole("link", { name: t("settings.sections.profile.title") });
+    expect(profile).toHaveLength(2);
+    for (const link of profile) expect(link.getAttribute("href")).toBe(locale === "tr" ? "/tr/ayarlar/profil" : "/en/settings/profile");
   });
 
   it("a guest is asked to sign in and comes back to the section", async () => {

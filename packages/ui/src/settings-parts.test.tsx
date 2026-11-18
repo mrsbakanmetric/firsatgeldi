@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { KeyRound, UserRound } from "lucide-react";
+import { Download, KeyRound, ShieldCheck, UserRound } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
-import { Avatar, AvatarCrop, AvatarUpload, ChoiceCards, MaskedValue, SavedIndicator, SessionRow, SettingRow, SettingsNav } from "./index";
+import { ActionCard, Avatar, AvatarCrop, AvatarUpload, ChannelMatrix, ChoiceCards, MaskedValue, PermissionGroup, RoleCard, SavedIndicator, SessionRow, SettingRow, SettingsNav, ToggleChips } from "./index";
 import { axeViolations } from "./test/axe";
 
 describe("Settings parts (product_design_pattern.md §5.38)", () => {
@@ -94,5 +94,70 @@ describe("Settings parts (product_design_pattern.md §5.38)", () => {
     const onZoom = vi.fn();
     render(<AvatarCrop src="blob:x" zoom={1} onZoomChange={onZoom} zoomLabel="Yakınlaştır" minZoom={1} maxZoom={3} step={0.1} />);
     expect(screen.getByRole("slider", { name: "Yakınlaştır" })).toBeDefined();
+  });
+
+  it("ToggleChips: the all chip is exclusive; clearing the others presses it", async () => {
+    const onValueChange = vi.fn();
+    const options = [
+      { value: "ALWAYS", label: "Her zaman" },
+      { value: "MORNING", label: "Sabah" },
+      { value: "NOON", label: "Öğle" },
+    ];
+    const { rerender, container } = render(<ToggleChips label="Saat dilimleri" options={options} value={["ALWAYS"]} allValue="ALWAYS" onValueChange={onValueChange} />);
+    expect(screen.getByRole("button", { name: "Her zaman" }).getAttribute("aria-pressed")).toBe("true");
+    await userEvent.click(screen.getByRole("button", { name: "Öğle" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(["NOON"]);
+    rerender(<ToggleChips label="Saat dilimleri" options={options} value={["NOON"]} allValue="ALWAYS" onValueChange={onValueChange} />);
+    await userEvent.click(screen.getByRole("button", { name: "Sabah" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(["MORNING", "NOON"]);
+    await userEvent.click(screen.getByRole("button", { name: "Öğle" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(["ALWAYS"]);
+    await userEvent.click(screen.getByRole("button", { name: "Her zaman" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(["ALWAYS"]);
+    expect(await axeViolations(container)).toEqual([]);
+  });
+
+  it("ChannelMatrix: a switch per cell, group headings, locked rows cannot change", async () => {
+    const onToggle = vi.fn();
+    const { container } = render(
+      <ChannelMatrix
+        label="Bildirim türleri"
+        rowHeader="Bildirim"
+        channels={[
+          { id: "IN_APP", label: "Uygulama içi" },
+          { id: "EMAIL", label: "E-posta" },
+        ]}
+        rows={[
+          { id: "DEAL_FOUND", title: "Fırsat geldi", description: "Daha ucuzu çıkınca", heading: "Kendi takiplerin", values: { IN_APP: true, EMAIL: false } },
+          { id: "ACCOUNT", title: "Hesap ve güvenlik", description: "Yeni cihaz", values: { IN_APP: true, EMAIL: true }, lockedLabel: "kapatılamaz" },
+        ]}
+        switchLabel={(row, channel) => [row.title, channel.label].join(" · ")}
+        onToggle={onToggle}
+      />,
+    );
+    expect(screen.getByRole("table", { name: "Bildirim türleri" })).toBeDefined();
+    expect(screen.getByText("Kendi takiplerin")).toBeDefined();
+    expect(screen.getByText("Hesap ve güvenlik · kapatılamaz")).toBeDefined();
+    await userEvent.click(screen.getByRole("switch", { name: "Fırsat geldi · E-posta" }));
+    expect(onToggle).toHaveBeenCalledWith("DEAL_FOUND", "EMAIL", true);
+    const locked = screen.getByRole("switch", { name: "Hesap ve güvenlik · E-posta" }) as HTMLButtonElement;
+    expect(locked.disabled).toBe(true);
+    expect(await axeViolations(container)).toEqual([]);
+  });
+
+  it("ActionCard, RoleCard and PermissionGroup show their parts", async () => {
+    const { container } = render(
+      <div>
+        <ActionCard icon={Download} title="Verilerimi indir" text="Tek dosyada" action={<button type="button">Dosya hazırla</button>} />
+        <RoleCard icon={ShieldCheck} title="Uygulama Yöneticisi" text="Her şeyi görür" link={{ href: "/tr/admin/roller", label: "Roller ve Yetkiler" }} />
+        <PermissionGroup title="Kendi hesabın" count="2 / 2 yetki" keys={["admin.self.activity.view", "admin.self.permissions.view"]} />
+      </div>,
+    );
+    expect(screen.getByRole("heading", { name: "Verilerimi indir" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Dosya hazırla" })).toBeDefined();
+    expect(screen.getByRole("link", { name: "Roller ve Yetkiler" }).getAttribute("href")).toBe("/tr/admin/roller");
+    expect(screen.getByText("admin.self.activity.view").tagName).toBe("CODE");
+    expect(screen.getByText("2 / 2 yetki")).toBeDefined();
+    expect(await axeViolations(container)).toEqual([]);
   });
 });

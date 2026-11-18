@@ -37,19 +37,32 @@ export { SegmentedChoice, type SegmentedChoiceProps, type SegmentedOption } from
 export { Select, type SelectOption, type SelectProps } from "./select";
 export { Sheet, type SheetProps } from "./sheet";
 export {
+  ActionCard,
+  ChannelMatrix,
   ChoiceCards,
   MaskedValue,
+  PermissionGroup,
+  RoleCard,
   SavedIndicator,
   SessionRow,
   SettingRow,
   SettingsNav,
+  ToggleChips,
+  type ActionCardProps,
+  type ChannelMatrixChannel,
+  type ChannelMatrixProps,
+  type ChannelMatrixRow,
   type ChoiceCardOption,
   type ChoiceCardsProps,
   type MaskedValueProps,
+  type PermissionGroupProps,
+  type RoleCardProps,
   type SessionRowProps,
   type SettingRowProps,
   type SettingsNavItem,
   type SettingsNavProps,
+  type ToggleChipOption,
+  type ToggleChipsProps,
 } from "./settings-parts";
 export { SkeletonBlock, SkeletonRow, type SkeletonBlockProps, type SkeletonShape, type SkeletonWidth } from "./skeleton-block";
 export { StatTile, StatTiles, type StatTileProps } from "./stat-tile";

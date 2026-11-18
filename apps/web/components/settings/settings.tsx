@@ -8,15 +8,19 @@
 // Switches and choices save at once; forms have their own "Kaydet".
 import type { Locale, Translator } from "@firsatgeldi/i18n";
 import { buttonClasses, EmptyState, PageTemplate, SavedIndicator, SettingsNav, SkeletonBlock, StatusBanner, Button } from "@firsatgeldi/ui";
-import { LogIn } from "lucide-react";
+import { Lock, LogIn } from "lucide-react";
 import Link from "next/link";
 import { createContext, type ReactNode, useContext, useState } from "react";
 import { useSession } from "../../lib/api/hooks";
 import { signInHref } from "../../lib/auth/next";
-import { type SettingsSectionId, settingsHref, visibleSections } from "../../lib/settings/sections";
+import { FIRST_SETTINGS_SECTION, type SettingsSectionId, settingsHref, visibleSections } from "../../lib/settings/sections";
 import { useTranslator } from "../shell/parts";
 import { AccessSection } from "./access";
+import { ActivitySection, PermissionsSection } from "./admin";
+import { DataSection } from "./data";
+import { HistorySection } from "./history";
 import { LookSection } from "./look";
+import { NotificationsSection } from "./notifications";
 import { PrivacySection } from "./privacy";
 import { ProfileSection } from "./profile";
 import { SecuritySection } from "./security";
@@ -49,7 +53,7 @@ export function Settings({ locale, section }: { locale: Locale; section: Setting
     );
   }
 
-  const sections = visibleSections(session.me.permissions);
+  const sections = visibleSections(session.me.permissions, session.me.roles);
   const admin = session.me.roles.includes("APP_MANAGER");
   const nav = sections.map((entry) => ({ id: entry.id, label: t(`settings.sections.${entry.id}.title`), href: settingsHref(locale, entry.id), icon: entry.icon }));
 
@@ -71,9 +75,23 @@ export function Settings({ locale, section }: { locale: Locale; section: Setting
           </div>
           {saved === section && <SavedIndicator text={t("settings.saved")} />}
         </div>
-        <SavedContext.Provider value={() => setSaved(section)}>
-          <SectionBody locale={locale} t={t} section={section} />
-        </SavedContext.Provider>
+        {sections.some((entry) => entry.id === section) ? (
+          <SavedContext.Provider value={() => setSaved(section)}>
+            <SectionBody locale={locale} t={t} section={section} />
+          </SavedContext.Provider>
+        ) : (
+          // A section this account does not have (e.g. an admin address opened by a user); the server refuses it too.
+          <EmptyState
+            icon={Lock}
+            title={t("settings.states.unavailableTitle")}
+            description={t("settings.states.unavailableText")}
+            action={
+              <Link href={settingsHref(locale)} className={buttonClasses("secondary")}>
+                {t(`settings.sections.${FIRST_SETTINGS_SECTION}.title`)}
+              </Link>
+            }
+          />
+        )}
       </section>
     </PageTemplate>
   );
@@ -85,12 +103,22 @@ function SectionBody({ locale, t, section }: { locale: Locale; t: Translator; se
       return <ProfileSection locale={locale} t={t} />;
     case "access":
       return <AccessSection locale={locale} t={t} />;
+    case "notifications":
+      return <NotificationsSection locale={locale} t={t} />;
     case "security":
       return <SecuritySection locale={locale} t={t} />;
+    case "permissions":
+      return <PermissionsSection locale={locale} t={t} />;
+    case "activity":
+      return <ActivitySection locale={locale} t={t} />;
+    case "history":
+      return <HistorySection locale={locale} t={t} />;
     case "look":
       return <LookSection locale={locale} t={t} />;
     case "privacy":
       return <PrivacySection locale={locale} t={t} />;
+    case "data":
+      return <DataSection locale={locale} t={t} />;
   }
 }
 
