@@ -14,7 +14,7 @@ import type { Actor, MockController, TrackedItemRow } from "../state";
 import { money, totalMinor } from "../views";
 import { newId } from "../ids";
 import { activeTrackingCount, checksUsedToday, emit, entitlements, fold, requireUser, tokens } from "./shared";
-import { boughtDetails, cheaperOffers } from "./tracking";
+import { boughtDetails, cheaperOffers, rankedForWant } from "./tracking";
 
 const MS_PER_MINUTE = 60_000;
 const MS_PER_HOUR = 3_600_000;
@@ -52,9 +52,7 @@ function lastCheckedAt(controller: MockController, item: TrackedItemRow, context
 
 /** In-stock offers, cheapest total first. */
 export function availableOffers(item: TrackedItemRow) {
-  return offersFor(item.productKey)
-    .filter((offer) => offer.stockState !== "OUT_OF_STOCK")
-    .sort((a, b) => totalMinor(a) - totalMinor(b));
+  return rankedForWant(item.productKey);
 }
 
 function dealOf(item: TrackedItemRow): { cheaperCount: number; maxSaving: number } | null {

@@ -79,9 +79,16 @@ export type RevealResult = z.infer<typeof RevealResult>;
 /** `POST /offers/:ref/hide` → the offer hidden again. */
 export const HideResult = z.object({ offer: HiddenOfferView });
 
-/** `POST /offers/:ref/go` → re-check → { url } | { gone|priceChanged, next } (architecture.md §16). */
+/**
+ * `POST /offers/:ref/go` → re-check → { url } | { gone|priceChanged, next } (architecture.md §16).
+ * PRICE_CHANGED carries the re-checked price and the link, so the user can go on at the new price
+ * ("Yeni fiyatla mağazaya git"); the offer is already revealed, so the link is the user's to see.
+ * `next` = the offer that takes its place, by rank and hidden ("Sıradaki satıcıya bak")
+ * [ASSUMPTION — price and url fields, design flows A–B].
+ */
 export const GoResult = z.discriminatedUnion("status", [
   z.object({ status: z.literal("OK"), url: z.url() }),
-  z.object({ status: z.enum(["GONE", "PRICE_CHANGED"]), next: HiddenOfferView.nullable() }),
+  z.object({ status: z.literal("PRICE_CHANGED"), price: Money, url: z.url(), next: HiddenOfferView.nullable() }),
+  z.object({ status: z.literal("GONE"), next: HiddenOfferView.nullable() }),
 ]);
 export type GoResult = z.infer<typeof GoResult>;

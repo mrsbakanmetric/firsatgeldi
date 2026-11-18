@@ -122,6 +122,12 @@ export interface OfferFixture {
   readonly installmentsMax?: number;
   readonly campaign?: { readonly kind: "BASKET" | "COUPON" | "BANK"; readonly amountMinor: number | null };
   readonly productRating?: { readonly value: number; readonly scale: number; readonly count: number | null };
+  /**
+   * What the re-check at "Mağazaya git" finds (design flows A–B): the price moved (once; later
+   * presses go through) or the offer is gone. Unset = unchanged. The listed values stay as they
+   * are: the mock does not move the market.
+   */
+  readonly recheck?: { readonly kind: "PRICE"; readonly priceMinor: number } | { readonly kind: "GONE" };
 }
 
 function offer(productKey: ProductKey, sellerKey: SellerKey, values: Omit<OfferFixture, "id" | "product" | "seller">): OfferFixture {
@@ -147,6 +153,8 @@ export const OFFERS: readonly OfferFixture[] = [
     stockState: "LOW_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 1, priceSinceDaysAgo: 2, checkedMinutesAgo: 4,
     listingPath: "/dp/B0DACEPRO2FP",
     installmentsMax: 3, productRating: { value: 4.4, scale: 5, count: 310 },
+    // Flow A: the price went up by the time the user pressed "Mağazaya git".
+    recheck: { kind: "PRICE", priceMinor: 2_759_900 },
   }),
   offer("acePro2FlashPrint", "teknikDukkan", {
     priceMinor: 2_949_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: null, deliveryDays: null,
@@ -219,6 +227,8 @@ export const OFFERS: readonly OfferFixture[] = [
     priceMinor: 1_649_900, previousPriceMinor: 1_749_900, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 1, max: 2 },
     stockState: "IN_STOCK", warrantyType: "DISTRIBUTOR", stockSinceDaysAgo: 4, priceSinceDaysAgo: 1, checkedMinutesAgo: 5,
     listingPath: "/dp/B0DOSMOP3",
+    // Flow B: sold out by the time the user pressed "Mağazaya git"; the 2nd cheapest is next.
+    recheck: { kind: "GONE" },
   }),
   offer("osmoPocket3", "goruntuMarket", {
     priceMinor: 1_729_900, previousPriceMinor: null, claimedOldPriceMinor: null, shippingMinor: 0, deliveryDays: { min: 2, max: 3 },

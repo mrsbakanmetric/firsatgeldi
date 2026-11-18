@@ -40,7 +40,8 @@ export function useOfferActions(t: Translator, { onGoResult }: { onGoResult?: (o
       setProblem(null);
       hide.mutate({ params: { ref: offer.ref } }, { onSuccess: () => setOverrides((current) => ({ ...current, [offer.ref]: "hidden" })) });
     },
-    go(offer: HiddenOfferView) {
+    /** `onResult` (per press) sees the re-check answer too: price changed, or gone (Product Detail flows A–B). */
+    go(offer: HiddenOfferView, onResult?: (result: GoResult) => void) {
       setProblem(null);
       go.mutate(
         { params: { ref: offer.ref } },
@@ -48,6 +49,7 @@ export function useOfferActions(t: Translator, { onGoResult }: { onGoResult?: (o
           onSuccess: ({ data }) => {
             if (data.status === "OK") globalThis.open(data.url, "_blank", "noopener,noreferrer");
             onGoResult?.(offer, data);
+            onResult?.(data);
           },
         },
       );

@@ -302,3 +302,39 @@ describe("writes — each one logged", () => {
     expect((await refused(() => api.call("tickStep", { params: { id, step: "REORDER" }, body: { done: true } }))).body.code).toBe("VALIDATION");
   });
 });
+
+describe("“Mağazaya git” re-check (design flows A–B)", () => {
+  async function revealed(key: keyof typeof PRODUCTS, mode: "BOUGHT" | "WANT", rank: number) {
+    const offer = (await api.call("getTrackedItemOffers", { params: { id: idOf(key, mode) } })).data.offers.find((item) => item.rank === rank);
+    const ref = offer?.ref ?? "";
+    await api.call("revealOffer", { params: { ref }, idempotencyKey: crypto.randomUUID() });
+    return ref;
+  }
+
+  it("the price moved: the new price and the link (no next offer after the last one); the next press goes through", async () => {
+    const ref = await revealed("acePro2FlashPrint", "BOUGHT", 2);
+    const first = (await api.call("goToOffer", { params: { ref } })).data;
+    expect(first).toMatchObject({ status: "PRICE_CHANGED", price: tl(27_599) });
+    if (first.status !== "PRICE_CHANGED") throw new Error("expected PRICE_CHANGED");
+    expect(first.url).toMatch(/^https:\/\//);
+    expect(first.next).toBeNull();
+    expect((await api.call("goToOffer", { params: { ref } })).data.status).toBe("OK");
+  });
+
+  it("sold out: the next offer takes its place with its own rank, hidden; nothing is opened", async () => {
+    const ref = await revealed("osmoPocket3", "WANT", 1);
+    const result = (await api.call("goToOffer", { params: { ref } })).data;
+    expect(result.status).toBe("GONE");
+    if (result.status !== "GONE") throw new Error("expected GONE");
+    expect(result.next?.rank).toBe(2);
+    expect(result.next).not.toHaveProperty("platformName");
+    expect(result).not.toHaveProperty("url");
+  });
+});
+
+describe("frequent returns (design flows D)", () => {
+  it("the user's own high return rate at the store bought from is given; otherwise null", async () => {
+    expect((await api.call("getTrackedItem", { params: { id: idOf("dysonV15") } })).data.frequentReturns).toEqual({ count: 4, months: 3 });
+    expect((await api.call("getTrackedItem", { params: { id: idOf("acePro2FlashPrint") } })).data.frequentReturns).toBeNull();
+  });
+});

@@ -49,6 +49,12 @@ export const TrackedItemDetail = TrackedItemListItem.extend({
   targetHints: z.object({ lowest30Days: Money.nullable(), lowest6Months: Money.nullable() }).nullable(),
   /** Answers already given to the two buyer questions (bought items), else null. */
   feedback: BuyerFeedback.nullable(),
+  /**
+   * The user's own high return rate at the store bought from (modules.md Trust and Accuracy ›
+   * Frequent returns, informational): "3 ayda bu mağazada 4 iade" next to step 1; null when not
+   * high [ASSUMPTION — field, design flows D].
+   */
+  frequentReturns: z.object({ count: z.number().int().positive(), months: z.number().int().positive() }).nullable(),
 });
 export type TrackedItemDetail = z.infer<typeof TrackedItemDetail>;
 
