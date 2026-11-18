@@ -266,11 +266,6 @@ function AuthPanel({ locale, t, context }: { locale: Locale; t: Translator; cont
         <fieldset disabled={busy || locked} className="flex min-w-0 flex-col gap-4">
           <EmailField t={t} value={email} onChange={setEmail} showError={(touched.email || submitted) && !emailOk} onBlur={() => setTouched((value) => ({ ...value, email: true }))} />
           <div className="flex flex-col gap-2">
-            {tab === "signin" && (
-              <Button variant="link" className="self-end text-body-sm" onClick={() => (setSubmitted(false), setView({ kind: "forgot" }))}>
-                {t("auth.forgotLink")}
-              </Button>
-            )}
             <TextField
               label={t("auth.password")}
               type="password"
@@ -278,6 +273,15 @@ function AuthPanel({ locale, t, context }: { locale: Locale; t: Translator; cont
               onChange={(event) => setPassword(event.target.value)}
               onBlur={() => setTouched((value) => ({ ...value, password: true }))}
               autoComplete={tab === "signin" ? "current-password" : "new-password"}
+              {...(tab === "signin"
+                ? {
+                    labelAction: (
+                      <Button variant="link" className="text-body-sm" onClick={() => (setSubmitted(false), setView({ kind: "forgot" }))}>
+                        {t("auth.forgotLink")}
+                      </Button>
+                    ),
+                  }
+                : {})}
               showPasswordLabel={t("common.showPassword")}
               hidePasswordLabel={t("common.hidePassword")}
               {...(passwordProblem ? { error: passwordProblem } : {})}

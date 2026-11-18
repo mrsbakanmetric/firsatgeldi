@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Camera } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
-import { EmailSentBlock, GuestProductCard, HeroBlock, PageTemplate, PasswordRules, ProviderButton } from "./index";
+import { EmailSentBlock, GuestProductCard, HeroBlock, PageTemplate, PasswordRules, ProviderButton, TextField } from "./index";
 import { axeViolations } from "./test/axe";
 
 describe("Sign-in components (pagedesign.md §5, 2026-11-18)", () => {
@@ -48,6 +48,14 @@ describe("Sign-in components (pagedesign.md §5, 2026-11-18)", () => {
     expect(screen.getByRole("heading", { name: "E-postanı doğrula" })).toBeDefined();
     expect(screen.getByText("s***@o***.com")).toBeDefined();
     expect(screen.getByRole("button", { name: "Girişe dön" })).toBeDefined();
+    expect(await axeViolations(container)).toEqual([]);
+  });
+
+  it("TextField labelAction: a link on the label's row, right end; the field keeps its label", async () => {
+    const { container } = render(<TextField label="Şifre" type="password" labelAction={<button type="button">Şifremi unuttum</button>} />);
+    const label = screen.getByText("Şifre", { selector: "label" });
+    expect(screen.getByRole("button", { name: "Şifremi unuttum" }).parentElement).toBe(label.parentElement);
+    expect(screen.getByLabelText("Şifre")).toBeDefined();
     expect(await axeViolations(container)).toEqual([]);
   });
 

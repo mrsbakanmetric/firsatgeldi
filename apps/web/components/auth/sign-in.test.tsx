@@ -86,6 +86,18 @@ describe.each(LOCALES)("Sign-in (%s)", (locale) => {
     expect(await axeViolations(container)).toEqual([]);
   });
 
+  it("\"Şifremi unuttum\" sits on the \"Şifre\" label's row, right end — Giriş tab only, no row of its own", async () => {
+    show(locale);
+    const forgot = await screen.findByRole("button", { name: t("auth.forgotLink") });
+    const label = screen.getByText(t("auth.password"), { selector: "label" });
+    expect(forgot.parentElement).toBe(label.parentElement);
+    expect(label.parentElement?.className).toContain("justify-between");
+    await userEvent.click(screen.getByRole("button", { name: t("auth.tabs.signUp") }));
+    expect(screen.queryByRole("button", { name: t("auth.forgotLink") })).toBeNull();
+    const signUpLabel = screen.getByText(t("auth.password"), { selector: "label" });
+    expect(signUpLabel.parentElement?.className).not.toContain("justify-between");
+  });
+
   it("signs in and returns to `next`; the action is logged without the address", async () => {
     show(locale, `/${locale}/giris?next=${encodeURIComponent(`/${locale}/takip`)}`);
     await fillSignIn(locale, "sena@ornek.test", MOCK_PASSWORD);
