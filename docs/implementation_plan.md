@@ -66,7 +66,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 
 | # | Step | Delivers | Status | PR | Date |
 |---|---|---|---|---|---|
-| 23 | Data test | Report: which store gives which field, how reliably — brought forward, before the remaining Phase 1 steps (user decision 2026-11-19) | ⬜ | — | — |
+| 23 | Data test | Report: which store gives which field, how reliably — brought forward, before the remaining Phase 1 steps (user decision 2026-11-19) | 🛠 | #140 (link reading order) · #141 (path 1: link text) · #142 (path 2: SerpApi client, first search) | — |
 | 24 | Open decisions review | List of every open item (the user decides) | ⬜ | — | — |
 | 25 | Database | Full schema, migrations, seed | ⬜ | — | — |
 | 26 | Real API and permission framework | API core, permission keys, development login, action logging | ⬜ | — | — |

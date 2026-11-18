@@ -2,22 +2,59 @@
 // part of the app. Usage:
 //
 //   pnpm --filter @firsatgeldi/sources data-test link <url>
+//   pnpm --filter @firsatgeldi/sources data-test link <url> --search [--max-queries N]
 //
-// `link` runs path 1 (link text): it sends no request to the store and spends no
-// SerpApi query. Paths 2 and 3 are added as their own commands later.
+// `link` runs path 1 (link text): no request to the store, no SerpApi search.
+// `--search` adds path 2: one Google Shopping search through SerpApi with what path 1
+// read. Saved answers (recordings/serpapi) are reused and cost nothing; a run spends at
+// most `--max-queries` live searches (default 1). The key is read from the root `.env`.
+import { join } from "node:path";
 import { readLinkText } from "./link-text.ts";
+import { pathTwoQuery, readGoogleShopping } from "./google-shopping.ts";
+import { createSerpApiClient } from "./serpapi.ts";
 
-const USAGE = "Usage: data-test link <url>";
+const USAGE = "Usage: data-test link <url> [--search] [--max-queries N]";
+const ROOT = join(import.meta.dirname, "..", "..", "..");
+export const RECORDINGS_DIR = join(import.meta.dirname, "..", "recordings", "serpapi");
+const DEFAULT_MAX_QUERIES = 1;
 
-function main(args: readonly string[]): number {
+function flagValue(args: readonly string[], flag: string): string | undefined {
+  const index = args.indexOf(flag);
+  return index >= 0 ? args[index + 1] : undefined;
+}
+
+function print(value: unknown): void {
+  process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
+}
+
+async function main(args: readonly string[]): Promise<number> {
   const [command, url] = args;
   if (command !== "link" || !url) {
     process.stderr.write(`${USAGE}\n`);
     return 2;
   }
   const result = readLinkText(url);
-  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
-  return result.ok ? 0 : 1;
+  if (!args.includes("--search") || !result.ok) {
+    print(result);
+    return result.ok ? 0 : 1;
+  }
+
+  try {
+    process.loadEnvFile(join(ROOT, ".env"));
+  } catch {
+    // No .env: the key check below explains what is missing.
+  }
+  const apiKey = process.env.SERPAPI_API_KEY ?? "";
+  if (!apiKey) {
+    process.stderr.write("SERPAPI_API_KEY is not set in the root .env.\n");
+    return 2;
+  }
+  const maxQueries = Number(flagValue(args, "--max-queries") ?? DEFAULT_MAX_QUERIES);
+  const client = createSerpApiClient({ apiKey, maxQueries, cacheDir: RECORDINGS_DIR });
+  const query = pathTwoQuery(result.reading);
+  const answer = await client.googleShopping(query);
+  print({ path1: result.reading, path2: { query, fromCache: answer.fromCache, searchesSpent: client.spent(), ...readGoogleShopping(answer.body) } });
+  return 0;
 }
 
-process.exitCode = main(process.argv.slice(2));
+process.exitCode = await main(process.argv.slice(2));

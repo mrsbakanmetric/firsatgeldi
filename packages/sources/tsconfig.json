@@ -3,6 +3,7 @@
   "compilerOptions": {
     // The data-test CLI runs on Node's built-in type stripping, which needs explicit `.ts` imports.
     "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
     "types": ["node"]
   },
   "include": ["src"]
