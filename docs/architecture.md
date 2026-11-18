@@ -421,7 +421,7 @@ Rule: request handlers never wait for a queue job; they only enqueue and return 
     2. **SerpApi search** with the product found in path 1 → stores and prices. One query per link, counted in the provider budget (§8.5).
     3. **The store's official API or partner feed**, where the store grants access (application made by the user) → seller, price, stock.
   - Reading the store's product page (§7.1) is used only where the store allows an identifiable client (§8.3).
-  - **[OPEN]** While only path 1 exists, the confirm panel cannot fill seller and price paid from the link: the user types them (product rule: price paid comes only from the user). How the panel asks for them is a design question.
+  - **[DECIDED 2026-11-19]** While only paths 1 and 2 exist, the confirm panel cannot fill seller and price paid from the link: the user types them (product rule: price paid comes only from the user). Panel design: `pagedesign.md` §8.2 › Link reading (design v5).
   - **Data test findings (2026-11-19):** Trendyol answered **403** to an identifiable User-Agent on a product page (one request; stopped, no retry, no evasion — §8.3). Trendyol's robots.txt disallows `?q=` (its site search) for every agent. The other stores are not checked yet.
 - **Order screenshot:** product + seller + price + order date; **several products** → a list, mark → confirm in turn. Personal data in the screenshot is stripped (§11a).
 - **Multiple images:** up to 5 per request; identification runs once all are processed.

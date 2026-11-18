@@ -249,7 +249,7 @@ These rules apply to every screen and are not repeated in each module.
 - **Photo status for guests [DECIDED 2026-11-14]:** a guest sees only the uploads of their own session; guests get no live updates, so the page asks for the status every `upload.guest_poll_interval_seconds` (2) for at most `upload.guest_poll_max_seconds` (60), then shows the error state. Each status read is logged.
 
 ### v1 helpers [DECIDED]
-- **Link detection:** pasting a store link fills product, seller and price paid from the link; "Nasıl anladık" is skipped, straight to mark/confirm. How the link is read, in order (link text → SerpApi search → the store's official API), is in `architecture.md` §10.1 [DECIDED 2026-11-19]. **[OPEN]** While only the link text is read, seller and price paid are not available from the link and the user types them; the panel design for this is open.
+- **Link detection:** pasting a store link fills product, seller and price paid from the link; "Nasıl anladık" is skipped, straight to mark/confirm. How the link is read, in order (link text → SerpApi search → the store's official API), is in `architecture.md` §10.1 [DECIDED 2026-11-19]. **[DECIDED 2026-11-19]** While seller and price paid cannot be read from the link, the confirm panel opens with both empty and one line saying why; the user types them (design v5, `pagedesign.md` §8.2 › Link reading).
 - **One-shot fill from screenshot:** product + seller + price + order date are read from an order screenshot; the user only checks and confirms.
 - **Bulk add:** if a screenshot contains several products, "N ürün bulduk" → mark → confirm each in turn; skippable, the rest are kept.
 - Adding by email forwarding is **not** in v1 (backlog).
