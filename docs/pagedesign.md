@@ -336,7 +336,7 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 ### 8.8 Sign-in and Sign-up — `/[locale]/giris`
 - **Shell/template:** AuthShell · Flow.
 - **Regions:** left hero (value proposition, example deal notification with image, 3 steps) | right: guest hand-back card ("Seçtiğin ürün seni bekliyor" with image) → tabs Giriş yap / Kayıt ol → Google, Apple → divider → email, password (show/hide), "Şifremi unuttum" → sign-up: live password rules, terms checkbox (unticked), KVKK link → primary → reset and verify screens.
-- **States:** wrong credentials (no field disclosed) · too many attempts (countdown) · email not verified · email linked to Google/Apple only · account pending deletion (restore) · suspended (support) · error · signing in.
+- **States:** wrong credentials (no field disclosed) · too many attempts (countdown) · email not verified · account pending deletion (restore) · suspended (support) · error · signing in.
 - **Design v2 additions [DECIDED 2026-11-18] (user):**
   - **Link pages** (board Links): new password (`/sifre-sifirla?…`: masked e-mail, new password with show/hide, live `PasswordRules`, "Şifreyi kaydet" → status "Şifren değişti · tüm cihazlardan çıkış yapıldı" + "Giriş yap") · e-mail verified (`/dogrula?…`: check mark, "3 hediye jeton hesabında", "Kaldığın yerden devam et"; skeleton while verifying) · expired or used link (one page for both: warning banner, e-mail field, "Yeni bağlantı gönder", "Girişe dön").
   - **States after the correct password only:** e-mail not verified · account pending deletion ("Hesabımı geri aç" / "Vazgeç, silinsin") · account suspended (reason, "Destek talebi aç", "Verilerimi indir"; no access to the app). Before the correct password nothing reveals whether an account exists.
