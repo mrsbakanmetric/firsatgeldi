@@ -196,6 +196,12 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 | `ChannelMatrix` (notification type × channel switches) [DECIDED 2026-11-18] | §5.38 | Settings › Bildirimler |
 | `ActionCard` (export, delete) [DECIDED 2026-11-18] | §5.38 | Settings › Verilerim ve hesap |
 | `AvatarUpload` (upload + circular crop dialog) [DECIDED 2026-11-18] | §5.38 | Settings › Profil |
+| `ProfileHeader` (avatar 96 or 72 on phone, @username, badge, privacy pill, counts, member since, actions) [DECIDED 2026-11-18] | §5.39 | Profilim; later other profiles |
+| `PersonRow` + `FollowButton` (rules as §5.34) [DECIDED 2026-11-18] | §5.34 | Profilim lists, follow requests, Discover |
+| `Tabs` (underlined page tabs; phone: horizontal scroll) [DECIDED 2026-11-18] | §5.39 | Profilim, Discover; `SegmentedChoice` stays for in-card choices |
+| `SharedDealRow` (image, name, category, price + check time, status pill; never a seller) [DECIDED 2026-11-18] | §5.39 | Profilim › Paylaştığım fırsatlar, Discover |
+| `VisibilityCard` ("Neyi kim görüyor?", read-only rows + link to Gizlilik) [DECIDED 2026-11-18] | §5.39 | Profilim aside |
+| `ViewAsPreview` (Ben · Bir takipçi · Takip etmeyen biri; changes the page itself) [DECIDED 2026-11-18] | §5.39 | Profilim aside |
 | `Icon` | §5.36 | everywhere an icon appears |
 
 **This table is the canonical component list [DECIDED 2026-11-13].** `packages/ui` uses exactly these names. Former names in other documents map as follows: `StatusFlag` → `Flag` · `RevealGate` (UI) → `HiddenOfferCard` (the server-side `RevealGate` interface in `architecture.md` §6.3 keeps its name) · `AllowanceIndicator` → `AllowanceMeter` · `DealHero` → `HeroBlock` · `ErrorState` → `StatusBanner` (danger) · `MarkConfirm` → `ConfirmPanel` · compact `PriceHistory` → `PriceSparkline` · compact `StockHistory` → `StockStrip`. A new component is added to this table and to `product_design_pattern.md` first, then used.
@@ -373,6 +379,20 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
   - Admin: sections inside the normal shell, visible by permission; permission keys exactly as `database.md` §4; footer line "Yönetim ekranlarındaki her işlem kayda yazılır"; empty activity "Henüz yönetim işlemin yok" + "Genel bakışa git". Community sharing permissions come with Discover.
   - Phone width: `SettingsNav` as sticky horizontal chips under the title.
 - **API:** `/me`, `/me/reauth`, `/me/pii`, `/me/email`, `/me/notification-preferences`, `/me/sessions`, `/me/search-history`, `/me/export`, `DELETE /me`, `/me/2fa/*`, `/me/admin-activity`.
+
+### 8.9a My Profile — `/[locale]/profil` (Phase 1: own profile only) — design v2.1 additions [DECIDED 2026-11-18] (user)
+- Canvas: `design/13-kesfet-profil/Me.dc.html` + `MeStates.dc.html`.
+- "Neyi kim görüyor?" read-only in this step: Profilim from Settings › Gizlilik visibility; the other sharing rows "Sadece ben"; Aramalarım "Hiç paylaşılmaz"; link to Ayarlar › Gizlilik. Changing sharing permissions comes with Discover.
+- "Paylaştığım fırsatlar" shows sample shares (Doğrulandı · İnceleniyor · Reddedildi + reason); no new-share button until Discover. Price always with its check time; never a seller or store.
+- Person names are plain text until other profiles (`/u/{username}`) exist.
+- "Takipten çıkar" (remove a follower), "Takipten çık", "İsteği geri al": no dialog; a `StatusBanner` with "Geri al". Accepting a request sends the requester an in-app notification; decline, remove and unfollow are silent.
+- "Takip istekleri" block appears only when a request exists. Empty states: "Henüz takipçin yok" + "Profil bağlantısını kopyala" · "Henüz kimseyi takip etmiyorsun" · "Henüz paylaşımın yok" (the last two without an action until Discover).
+- No username yet: header "Profilin hazır değil" + "Kullanıcı adı seç" → Ayarlar › Profil; copy link hidden.
+- "Profil bağlantısını kopyala" → info line "Bağlantı kopyalandı · …/u/{username}".
+- Preview ("Başkaları nasıl görüyor?") changes the page itself: unshared tabs and counts disappear; a third option "Takip etmeyen biri" appears when the profile is Herkese açık.
+- Counts: takipçi · takip · ürün takip ediyor (all ongoing tracking, Aldım + Almak istiyorum) · doğrulanmış paylaşım. "Fırsat Avcısı" badge: at least one verified share [ASSUMPTION — final rule with Discover].
+- States: error "Profilin şu an yüklenemedi" + "Tekrar dene" · skeleton in the same layout.
+- Phone width: header actions stacked, tabs scroll horizontally, aside below the list.
 
 ### 8.10 Landing Page — `/[locale]` (signed out) and product page — `/[locale]/urun/[slug]`
 - **Shell/template:** AppShell (guest header §2.1) · Summary; product page uses the Detail template.
