@@ -5,6 +5,7 @@ import { TOP_DROP_ITEM_KEYS, TopDropItem, TopDrops } from "./home";
 import { HiddenOfferView, REVEALED_ONLY_FIELDS } from "./offers";
 import { PERMISSION_KEYS, seedPermissions } from "./permissions";
 import { CreateReportRequest, DetailHiddenOffer, OfferSummary, StockSubject } from "./product-detail";
+import { LinkSubmissionView, PersonView } from "./profile";
 import { Rating } from "./common";
 
 const definitions = Object.entries(ENDPOINTS);
@@ -65,6 +66,24 @@ describe("Settings and Account endpoints", () => {
 
   it("every reveal of the own full e-mail / phone writes an activity row", () => {
     expect(ENDPOINTS.getOwnPii.activity).toBe("account.pii_view");
+  });
+});
+
+describe("Profilim endpoints", () => {
+  it("are for signed-in users only; follow writes need follows.own.write and write an activity row each", () => {
+    const reads = ["getMyProfile", "getFollowers", "getFollowing", "getFollowRequests", "getMyLinkSubmissions", "getCommunityConsents"] as const;
+    for (const name of reads) expect(ENDPOINTS[name]).toMatchObject({ public: false, activity: null, permission: "account.own.view" });
+    const writes = { approveFollow: "follow.approve", declineFollow: "follow.decline", unfollow: "follow.delete", restoreFollow: "follow.restore", removeFollower: "follower.remove", restoreFollower: "follower.restore" } as const;
+    for (const [name, activity] of Object.entries(writes)) expect(ENDPOINTS[name as keyof typeof writes]).toMatchObject({ public: false, activity, permission: "follows.own.write" });
+  });
+
+  it("an own share carries no link, store or seller field", () => {
+    const fields = [...Object.keys(LinkSubmissionView.shape), ...Object.keys(LinkSubmissionView.shape.product.shape)];
+    for (const field of ["url", "urlRaw", "link", "seller", "sellerName", "platform", "store"]) expect(fields).not.toContain(field);
+  });
+
+  it("a person row has no real name, e-mail or phone", () => {
+    for (const field of ["displayName", "email", "emailMasked", "phone", "phoneMasked"]) expect(Object.keys(PersonView.shape)).not.toContain(field);
   });
 });
 

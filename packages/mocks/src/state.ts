@@ -325,6 +325,23 @@ export interface MockState {
   readonly cookieConsents: Map<string, { analytics: boolean; marketing: boolean; version: string; decidedAt: string }>;
   /** Hidden search ids ("Gizle"; cleared by "Geri al"); the rows themselves are kept. */
   readonly hiddenSearches: Set<string>;
+  /** Profilim (database.md §8 `follows`, `blocks`): rows of the signed-in users, created on first use. */
+  readonly follows: FollowRow[];
+  readonly blocks: { readonly blockerId: string; readonly blockedId: string }[];
+  /** Users whose Profilim rows were created from the fixtures. */
+  readonly profileSeeded: Set<string>;
+  /** Follow rows just removed, kept for "Geri al" within `community.follow_undo_minutes`. */
+  readonly removedFollows: { readonly row: FollowRow; readonly removedBy: string; readonly removedAt: string }[];
+  /** In-app notifications created (database.md §10 `notifications`); the Notifications step reads them. */
+  readonly notifications: { readonly id: string; readonly userId: string; readonly type: "FOLLOW_ACCEPTED"; readonly actorId: string; readonly createdAt: string }[];
+}
+
+/** One `follows` row: one-way; PENDING until a private profile approves. */
+export interface FollowRow {
+  readonly followerId: string;
+  readonly followeeId: string;
+  status: "ACCEPTED" | "PENDING";
+  readonly createdAt: string;
 }
 
 /** `users` profile columns the Settings screen changes. */
@@ -407,6 +424,11 @@ export function createMockState(): MockState {
     notificationPrefs: new Map(),
     cookieConsents: new Map(),
     hiddenSearches: new Set(),
+    follows: [],
+    blocks: [],
+    profileSeeded: new Set(),
+    removedFollows: [],
+    notifications: [],
   };
 }
 
