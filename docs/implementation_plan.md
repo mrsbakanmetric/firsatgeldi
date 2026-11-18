@@ -1,6 +1,6 @@
 # FırsatGeldi — Implementation Plan
 
-> **Status:** Phase 1 — steps 1 and 3–8 done (#16, #20, #21, #22, #24, #25, #50); next: step 9 (mock API and fixtures) · **Last updated:** 2026-11-14 · **Owner:** implementation side (Claude Code)
+> **Status:** Phase 1 — steps 1, 3–14, 19, 20, 21a done; steps 15–18, 21, 22 paused · next: step 23 (data test), brought forward (user decision 2026-11-19) · **Last updated:** 2026-11-19 · **Owner:** implementation side (Claude Code)
 > **Sources:** `CLAUDE.md` (The plan and the daily flow, Phases), `architecture.md` (§2, §3, §6, §15, §16, §19–§21, §24, §25), `pagedesign.md` (§2–§5, §7, §8), `product_design_pattern.md`, `engineering_checklist.md`, `screen_status.md`, `modules.md` Appendix A.
 
 **This is the single project plan.** Every working day follows it, one step at a time (`CLAUDE.md` › The plan and the daily flow):
@@ -55,18 +55,18 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 19 | Settings and Account | Screen (user and Application Manager variants), incl. the Profile section — after step 20 (user decision 2026-11-15); decisions spec PR, then three PRs: contract + mock API + logging · account sections · notifications, search history, data and admin sections (user decision 2026-11-18; design v2.1, #120) | ✅ | #121 (decisions) · #123 (contract + mock API + logging) · #124 (account sections) · #125 (notifications, search history, data, admin sections) | 2026-11-18 |
 | 21a | My Profile | The user's own profile page `/profil` only — after step 19 (user decision 2026-11-15); decisions spec PR, then two PRs: contract + mock API + logging · the screen (user decision 2026-11-18; design v2.1, #126) | ✅ | #127 (decisions) · #128 (contract + mock API + logging) · #129 (screen) | 2026-11-19 |
 | 13 | Notifications and Preferences | Page and bell panel (preferences were built in step 19, Ayarlar › Bildirimler); decisions spec PR, then three PRs: contract + mock API + logging · the page · the bell panel with preview and the live unread count (user decision 2026-11-19; design v2.1, #130, #131) | ✅ | #132 (decisions) · #133 (contract + mock API + logging) · #134 (page) · #135 (bell panel) | 2026-11-19 |
-| 15 | My Savings | Screen | ⬜ | — | — |
-| 16 | Packages and Premium | Screen | ⬜ | — | — |
-| 17 | Landing Page + SEO product page | Both pages | ⬜ | — | — |
-| 18 | Legal Pages + Help and FAQ | Pages | ⬜ | — | — |
-| 21 | Discover and Profile | Discover and other users' profiles (the own profile page is step 21a) | ⬜ | — | — |
-| 22 | Phase 1 closing check | All screens checked together in both languages, both themes, both widths | ⬜ | — | — |
+| 15 | My Savings | Screen | ⏸ paused — step 23 first (user decision 2026-11-19) | — | — |
+| 16 | Packages and Premium | Screen | ⏸ paused — step 23 first (user decision 2026-11-19) | — | — |
+| 17 | Landing Page + SEO product page | Both pages | ⏸ paused — step 23 first (user decision 2026-11-19) | — | — |
+| 18 | Legal Pages + Help and FAQ | Pages | ⏸ paused — step 23 first (user decision 2026-11-19) | — | — |
+| 21 | Discover and Profile | Discover and other users' profiles (the own profile page is step 21a) | ⏸ paused — step 23 first (user decision 2026-11-19) | — | — |
+| 22 | Phase 1 closing check | All screens checked together in both languages, both themes, both widths | ⏸ paused — step 23 first (user decision 2026-11-19) | — | — |
 
 ### Phase 2 — Real data
 
 | # | Step | Delivers | Status | PR | Date |
 |---|---|---|---|---|---|
-| 23 | Data test | Report: which store gives which field, how reliably | ⬜ | — | — |
+| 23 | Data test | Report: which store gives which field, how reliably — brought forward, before the remaining Phase 1 steps (user decision 2026-11-19) | ⬜ | — | — |
 | 24 | Open decisions review | List of every open item (the user decides) | ⬜ | — | — |
 | 25 | Database | Full schema, migrations, seed | ⬜ | — | — |
 | 26 | Real API and permission framework | API core, permission keys, development login, action logging | ⬜ | — | — |
@@ -109,6 +109,8 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 - **Exception [DECIDED 2026-11-19] (user decision):** Notifications and Preferences (step 13) stays one plan step but ships in three PRs after the decisions spec PR — (1) contract + mock API + action logging + tests, no screen (also: My Profile's phone avatar moves to `components.avatar.size-lg-compact`, tokens 1.15.0) · (2) the `/bildirimler` page with "Senin için" and its states · (3) the bell panel with the preview and the live unread count in the top bar. No "Takip et" dialog: Search and Add opens with the product marked. Preferences are not rebuilt (step 19). The step is ✅ only after the third PR.
 - **Exception [DECIDED 2026-11-18] (user decision):** My Profile (step 21a) stays one plan step but ships in two PRs after the decisions spec PR — (1) contract + mock API + action logging + tests, no screen · (2) the `/profil` screen (design v2.1, #126). Only the own profile: other users' profiles, Discover, link sharing and changing sharing permissions stay in step 21. The step is ✅ only after the second PR.
 - **Exception [DECIDED 2026-11-18] (user decision):** Settings and Account (step 19) stays one plan step but ships in three PRs after the decisions spec PR — (1) contract + mock API + action logging + tests, no screen · (2) Settings frame, Profil, E-posta ve şifre, Güvenlik ve cihazlar, Dil ve görünüm, Gizlilik ve çerezler · (3) Bildirimler, Arama geçmişi, Verilerim ve hesap, Application Manager sections. **Ayarlar › Bildirimler is built in this step** (not in step 13). Application Manager two-step verification management (backup codes, change device) and community sharing permissions are later steps (with the admin screens and with Discover). The step is ✅ only after the third PR.
+
+- **Exception [DECIDED 2026-11-19] (user decision):** the data test (step 23) is brought forward and done **before** the remaining Phase 1 steps (15, 16, 17, 18, 21, 22), which are paused (⏸). Reason: what the stores really give (and how a pasted store link is read) shapes the database, the API and every later screen, so it is measured before more screens are built on sample data. Only step 23 moves; steps 24–43 keep their order and are not started by this change. Phase 1 is not closed: its exit criterion still applies and step 22 still runs before Phase 1 ends. **[OPEN]** After the data test report is reviewed, the user decides the next step: continue Phase 2 (step 24) or return to the paused Phase 1 steps — a plan change in its own `spec` PR either way.
 
 **Phase 2** — makes the product really work for users.
 - **Data test (23):** which data the stores really give affects every later decision, so it comes first.
@@ -231,9 +233,7 @@ Source: `CLAUDE.md` › Phases; `architecture.md` §2, §3, §19–§21. Each st
 
 ## 6. Today's target
 
-**The app shell opening on `localhost`:** steps 3 → 8, each its own PR, with a stop for approval after each.
-
-Step 8 needs its two preconditions (shell design HTML, base primitives in the component list). If they are not on `main` yet, the day ends at step 7: a bilingual, themed, empty app on `localhost`.
+**2026-11-19 — the data test (step 23):** first the code PR (`feat/sources-data-test`: `packages/sources` adapters + CLI runner on recorded fixtures), then the report PR (`docs/data_test_report.md`), each with a stop for approval. Live runs need the user's SerpApi key in the local `.env` (Appendix A).
 
 ---
 
@@ -292,6 +292,7 @@ Goal: know, before building the backend, which source gives which field and how 
 | Per field | found yes/no per store × source, extraction path, agreement between sources, read time |
 | Politeness | robots.txt respected, ~1–2 requests/s per site, identifiable User-Agent, no store accounts, stop on 403/429/captcha (`architecture.md` §8.3) |
 | Code | first production pieces of `packages/sources` (`DiscoverySource`, `SiteSearchAdapter`, `ProductPageVerifier` + adapters with unit tests on recorded fixtures) and a CLI runner; no throwaway code |
+| Pasted link **[PROPOSAL]** | the CLI also takes a single store product link (e.g. a Trendyol product page) and prints what the product-page verifier reads from it — product name, brand, attributes, seller, price, stock; same politeness rules. It is the measured base of the `link-resolve` job (`architecture.md` §9, §10); the app keeps its sample-data link answer until the real API (step 26) and worker jobs (step 27) exist |
 | Key | the user puts the SerpApi key into the local `.env`; never committed |
 | Not included | the 2-week deal-frequency validation (`product_spect.md` §17-8) is a separate task after the data test |
 
