@@ -24,6 +24,13 @@ export const ERRORS = {
   INVALID_CREDENTIALS: { status: 401, messageKey: "errors.invalidCredentials" },
   LOCKED: { status: 429, messageKey: "errors.locked" },
   LINK_INVALID: { status: 410, messageKey: "errors.linkInvalid" },
+  // Settings and Account [ASSUMPTION — codes, design "9 Ayarlar" v2.1]: params { availableOn } for
+  // USERNAME_LOCKED; REAUTH_REQUIRED asks for the password (or provider) first.
+  USERNAME_TAKEN: { status: 409, messageKey: "errors.usernameTaken" },
+  USERNAME_LOCKED: { status: 409, messageKey: "errors.usernameLocked" },
+  REAUTH_REQUIRED: { status: 403, messageKey: "errors.reauthRequired" },
+  LAST_SIGN_IN_METHOD: { status: 409, messageKey: "errors.lastSignInMethod" },
+  ROLE_HANDOVER_REQUIRED: { status: 409, messageKey: "errors.roleHandoverRequired" },
   INTERNAL: { status: 500, messageKey: "errors.internal" },
 } as const;
 

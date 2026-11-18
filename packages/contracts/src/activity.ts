@@ -65,8 +65,38 @@ export const ACTIVITY_ACTIONS = [
   "account.restore",
   /** "Vazgeç, silinsin". */
   "account.restore_declined",
-  /** "Verilerimi indir" (suspended account). */
+  /** "Verilerimi indir" (suspended account) · "Dosya hazırla" (Settings). */
   "account.export",
+  // Settings and Account. `settings.change` and `consent.accept` are listed in database.md §14a;
+  // the others are [ASSUMPTION — action names]. No row holds a full e-mail, phone or password.
+  /** Profile, language, theme, privacy, notification preferences; metadata { section, fields }. */
+  "settings.change",
+  /** Cookie preferences; metadata { analytics, marketing, version }. */
+  "consent.accept",
+  /** Re-authentication before a sensitive action; metadata { method }. */
+  "account.reauth",
+  /** Own full e-mail / phone shown ("Göster"); every reveal is logged. */
+  "account.pii_view",
+  "account.email_change",
+  "account.email_change_resend",
+  "account.email_change_cancel",
+  /** "Şifreyi değiştir"; metadata { otherSessionsRevoked }. */
+  "auth.password_change",
+  /** "Şifre oluştur" (account without a password): the link e-mail. */
+  "auth.password_create_link",
+  "account.identity_link",
+  "account.identity_unlink",
+  /** "Çıkış yap" on one device. */
+  "auth.session_revoke",
+  /** "Diğer cihazlardan çıkış yap". */
+  "auth.sign_out_others",
+  "search_history.hide",
+  /** "Geri al" after hiding a search. */
+  "search_history.unhide",
+  /** "İndir (ZIP)": a download link of a ready export. */
+  "account.export_download",
+  /** "Hesabımı sil". */
+  "account.delete",
 ] as const;
 export const ActivityAction = z.enum(ACTIVITY_ACTIONS);
 export type ActivityAction = z.infer<typeof ActivityAction>;

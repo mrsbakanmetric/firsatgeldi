@@ -2,7 +2,7 @@
 import { tokens as themeTokens } from "@firsatgeldi/tokens";
 import { http, HttpResponse } from "msw";
 import { API_PREFIX, buildPath, ENDPOINTS } from "@firsatgeldi/contracts";
-import { PRODUCT_LIST, type ProductFixture, PRODUCTS, SIMILAR, SPELLING_FIXES } from "../fixtures/catalog";
+import { PRODUCT_LIST, type ProductFixture, type ProductKey, PRODUCTS, SIMILAR, SPELLING_FIXES } from "../fixtures/catalog";
 import { productKeyOf } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { uuidFor } from "../ids";
@@ -10,6 +10,7 @@ import { MockApiError, route } from "../route";
 import { SYSTEM_SETTINGS } from "../settings";
 import type { MockController } from "../state";
 import { productSummary, productView } from "../views";
+import { avatarShas } from "./settings";
 import { entitlements, fold, meView, requireUser, scrubPersonalData, tokens } from "./shared";
 
 const MS_PER_MINUTE = 60_000;
@@ -46,14 +47,15 @@ export function catalogHandlers(controller: MockController) {
   return [
     route(controller, "getMe", ({ actor }) => {
       if (actor.kind !== "user") throw new MockApiError("UNAUTHENTICATED");
-      return { data: meView(actor) };
+      return { data: meView(controller, actor) };
     }),
 
     route(controller, "getEntitlements", ({ actor }) => ({ data: entitlements(controller, actor) })),
 
-    route(controller, "getSearchHistory", ({ actor, locale, now, empty }) => {
+    route(controller, "getSearchHistory", ({ actor, query, locale, now, empty }) => {
       const { user, userId } = requireUser(actor);
-      if (empty) return { data: { items: [] } };
+      const none = { items: [], facets: { total: 0, categories: [] } };
+      if (empty) return { data: none };
       const typed = controller.state.searchEvents
         .filter((row) => row.userId === userId && row.source === "SEARCH_BOX")
         .map((row) => ({ id: row.id, query: row.queryRaw, source: row.source, occurredAt: row.occurredAt }))
@@ -64,7 +66,26 @@ export function catalogHandlers(controller: MockController) {
         source: "SEARCH_BOX" as const,
         occurredAt: new Date(now.getTime() - entry.minutesAgo * MS_PER_MINUTE).toISOString(),
       }));
-      return { data: { items: [...typed, ...fixture] } };
+      const tracked = new Set(controller.state.trackedItems.filter((row) => row.userId === userId && row.state === "ACTIVE").map((row) => row.productKey));
+      // Hidden searches are left out; the matched product carries its image, category and whether it is tracked (no price).
+      const visible = [...typed, ...fixture]
+        .filter((row) => !controller.state.hiddenSearches.has(row.id))
+        .map((row) => {
+          const product = matchProducts(row.query, locale)[0] ?? null;
+          const summary = product ? productSummary(product, locale) : null;
+          return { ...row, product: product && summary ? { id: summary.id, name: summary.name, imageSha256: summary.imageSha256, category: summary.category, tracking: tracked.has(product.key as ProductKey) } : null };
+        });
+      const wanted = tokens(query.q ?? "");
+      const byText = visible.filter((row) => wanted.every((token) => fold(`${row.query} ${row.product?.name ?? ""}`).includes(token)));
+      const counts = new Map<string, { id: string; name: string; count: number }>();
+      for (const row of byText) {
+        if (!row.product) continue;
+        const entry = counts.get(row.product.category.id) ?? { ...row.product.category, count: 0 };
+        entry.count += 1;
+        counts.set(entry.id, entry);
+      }
+      const items = query.category ? byText.filter((row) => row.product?.category.id === query.category) : byText;
+      return { data: { items, facets: { total: byText.length, categories: [...counts.values()] } } };
     }),
 
     route(controller, "autocomplete", ({ query, locale, actor, now, empty, note }) => {
@@ -113,7 +134,8 @@ export function catalogHandlers(controller: MockController) {
     // Catalogue images: binary, outside the JSON envelope (architecture.md §11a).
     http.get(`*${API_PREFIX}${ENDPOINTS.image.path}`, ({ params }) => {
       const sha = String(params["sha256"]);
-      if (!IMAGE_SHAS.has(sha)) return new HttpResponse(null, { status: 404 });
+      // Catalogue images and saved profile photos (the mock draws the same neutral placeholder).
+      if (!IMAGE_SHAS.has(sha) && !avatarShas(controller).has(sha)) return new HttpResponse(null, { status: 404 });
       return new HttpResponse(placeholderSvg(), { headers: { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=31536000, immutable" } });
     }),
   ];

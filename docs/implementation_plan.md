@@ -52,7 +52,7 @@ Legend: ⬜ not started · 🛠 in progress · ✅ done · ⏸ waiting (blocked 
 | 14 | Home | Screen (design v2) — built before step 11 (user decision 2026-11-15) | ✅ | #99 (v2 + shared CatalogueSearchBox) · #106 (layout rules) | 2026-11-15 |
 | 11 | Product Detail | Screen incl. Want to Buy mode — three PRs (user decision 2026-11-15) | ✅ | #108 (PR 1: contract + mock API + hidden-seller tests) · #110 (PR 2: bought mode screen) · #111 (PR 3: want to buy, full "Takibi bitir", flows) | 2026-11-16 |
 | 20 | Sign-in and Sign-up | Screen, with mock sign-in — right after step 11 (user decision 2026-11-15); two PRs: contract + mock sign-in + tests, then the screens (user decision 2026-11-18; design v2.1, #115) | ✅ | #118 (contract + mock sign-in) · #119 (screens) | 2026-11-18 |
-| 19 | Settings and Account | Screen (user and Application Manager variants), incl. the Profile section — after step 20 (user decision 2026-11-15); decisions spec PR, then three PRs: contract + mock API + logging · account sections · notifications, search history, data and admin sections (user decision 2026-11-18; design v2.1, #120) | ⬜ | — | — |
+| 19 | Settings and Account | Screen (user and Application Manager variants), incl. the Profile section — after step 20 (user decision 2026-11-15); decisions spec PR, then three PRs: contract + mock API + logging · account sections · notifications, search history, data and admin sections (user decision 2026-11-18; design v2.1, #120) | 🛠 | PR 1 (contract + mock API + logging) | 2026-11-18 |
 | 21a | My Profile | The user's own profile page `/profil` only — after step 19 (user decision 2026-11-15) | ⬜ | — | — |
 | 13 | Notifications and Preferences | Page, bell panel, notification preferences | ⬜ | — | — |
 | 15 | My Savings | Screen | ⬜ | — | — |

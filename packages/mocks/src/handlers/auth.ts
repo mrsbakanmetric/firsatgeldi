@@ -28,10 +28,10 @@ const later = (now: Date, ms: number) => new Date(now.getTime() + ms);
 function openSession(controller: MockController, session: UserKey) {
   controller.config = { ...controller.config, session };
   controller.persist?.(controller.config);
-  return meView({ kind: "user", userKey: session, userId: USERS[session].id });
+  return meView(controller, { kind: "user", userKey: session, userId: USERS[session].id });
 }
 
-function closeSession(controller: MockController) {
+export function closeSession(controller: MockController) {
   controller.config = { ...controller.config, session: "guest" };
   startGuestSession(controller.state);
   controller.persist?.(controller.config);
@@ -59,17 +59,19 @@ function outcomeOf(controller: MockController, account: AuthAccountRow, now: Dat
 }
 
 /** A one-time link, "sent" by e-mail. */
-function issueLink(controller: MockController, purpose: EmailTokenRow["purpose"], email: string, now: Date): void {
-  const lifetime = purpose === "VERIFY_EMAIL" ? SYSTEM_SETTINGS["auth.verify_link_hours"] * MS_PER_HOUR : SYSTEM_SETTINGS["auth.reset_link_minutes"] * MS_PER_MINUTE;
+export function issueLink(controller: MockController, purpose: EmailTokenRow["purpose"], email: string, now: Date, accountEmail?: string): void {
+  const lifetime = purpose === "RESET_PASSWORD" ? SYSTEM_SETTINGS["auth.reset_link_minutes"] * MS_PER_MINUTE : SYSTEM_SETTINGS["auth.verify_link_hours"] * MS_PER_HOUR;
   const token = newId();
-  controller.state.emailTokens.push({ token, purpose, email, createdAt: iso(now), expiresAt: iso(later(now, lifetime)), usedAt: null });
+  controller.state.emailTokens.push({ token, purpose, email, ...(accountEmail ? { accountEmail } : {}), createdAt: iso(now), expiresAt: iso(later(now, lifetime)), usedAt: null });
   controller.onMail?.({ purpose, emailMasked: maskEmail(email), token });
 }
 
 /** A valid, unused link of that purpose; anything else is the one "link not valid" page. */
-function linkOf(controller: MockController, purpose: EmailTokenRow["purpose"], token: string, now: Date): { row: EmailTokenRow; account: AuthAccountRow } {
-  const row = controller.state.emailTokens.find((entry) => entry.token === token && entry.purpose === purpose);
-  const account = row ? controller.state.accounts.get(row.email) : undefined;
+function linkOf(controller: MockController, purposes: EmailTokenRow["purpose"] | readonly EmailTokenRow["purpose"][], token: string, now: Date): { row: EmailTokenRow; account: AuthAccountRow } {
+  const wanted: readonly EmailTokenRow["purpose"][] = typeof purposes === "string" ? [purposes] : purposes;
+  const row = controller.state.emailTokens.find((entry) => entry.token === token && wanted.includes(entry.purpose));
+  // An e-mail change link belongs to the account under its old address.
+  const account = row ? controller.state.accounts.get(row.accountEmail ?? row.email) : undefined;
   if (!row || !account || row.usedAt !== null || new Date(row.expiresAt) <= now) throw new MockApiError("LINK_INVALID");
   return { row, account };
 }
@@ -103,6 +105,32 @@ function requireRules(password: string): void {
   if (!passwordAccepted(password, SYSTEM_SETTINGS["auth.password_min_length"])) throw new MockApiError("VALIDATION", { fields: { password: "errors.validation" } });
 }
 
+/**
+ * The password check of e-mail sign-in, re-authentication and password change: attempts are
+ * counted per e-mail as typed (known or not) and locked after `auth.lockout_attempts` for
+ * `auth.lockout_minutes`. Wrong → INVALID_CREDENTIALS { remainingAttempts }; locked → LOCKED.
+ */
+export function checkPassword(controller: MockController, email: string, password: string, now: Date): AuthAccountRow {
+  const { state } = controller;
+  const account = state.accounts.get(email);
+  const failures = state.loginFailures.get(email) ?? { failures: 0, lockedUntil: null };
+  const lockedFor = failures.lockedUntil ? new Date(failures.lockedUntil).getTime() - now.getTime() : 0;
+  if (lockedFor > 0) throw new MockApiError("LOCKED", { params: { retryAfterSeconds: Math.ceil(lockedFor / MS_PER_SECOND) } });
+  if (account && account.state !== "DELETED" && account.password !== null && account.password === password) {
+    state.loginFailures.delete(email);
+    return account;
+  }
+  const limit = SYSTEM_SETTINGS["auth.lockout_attempts"];
+  const count = (failures.lockedUntil ? 0 : failures.failures) + 1;
+  if (count >= limit) {
+    const minutes = SYSTEM_SETTINGS["auth.lockout_minutes"];
+    state.loginFailures.set(email, { failures: count, lockedUntil: iso(later(now, minutes * MS_PER_MINUTE)) });
+    throw new MockApiError("LOCKED", { params: { retryAfterSeconds: minutes * 60 } });
+  }
+  state.loginFailures.set(email, { failures: count, lockedUntil: null });
+  throw new MockApiError("INVALID_CREDENTIALS", { params: { remainingAttempts: limit - count } });
+}
+
 export function authHandlers(controller: MockController) {
   const { state } = controller;
   return [
@@ -119,24 +147,8 @@ export function authHandlers(controller: MockController) {
       const { email, password } = body;
       const account = state.accounts.get(email);
       note({ ...(account ? { userId: account.userId } : {}), metadata: { method: "EMAIL", emailDomain: emailDomain(email) } });
-      const failures = state.loginFailures.get(email) ?? { failures: 0, lockedUntil: null };
-      const lockedFor = failures.lockedUntil ? new Date(failures.lockedUntil).getTime() - now.getTime() : 0;
-      if (lockedFor > 0) throw new MockApiError("LOCKED", { params: { retryAfterSeconds: Math.ceil(lockedFor / MS_PER_SECOND) } });
-
-      const correct = account !== undefined && account.state !== "DELETED" && account.password !== null && account.password === password;
-      if (!correct) {
-        const limit = SYSTEM_SETTINGS["auth.lockout_attempts"];
-        const count = (failures.lockedUntil ? 0 : failures.failures) + 1;
-        if (count >= limit) {
-          const minutes = SYSTEM_SETTINGS["auth.lockout_minutes"];
-          state.loginFailures.set(email, { failures: count, lockedUntil: iso(later(now, minutes * MS_PER_MINUTE)) });
-          throw new MockApiError("LOCKED", { params: { retryAfterSeconds: minutes * 60 } });
-        }
-        state.loginFailures.set(email, { failures: count, lockedUntil: null });
-        throw new MockApiError("INVALID_CREDENTIALS", { params: { remainingAttempts: limit - count } });
-      }
-      state.loginFailures.delete(email);
-      const result = outcomeOf(controller, account, now);
+      checkPassword(controller, email, password, now);
+      const result = outcomeOf(controller, account as AuthAccountRow, now);
       note({ metadata: { method: "EMAIL", emailDomain: emailDomain(email), result: result.status } });
       return { data: result };
     }),
@@ -169,8 +181,18 @@ export function authHandlers(controller: MockController) {
     }),
 
     route(controller, "verifyEmail", ({ body, now, note }) => {
-      const { row, account } = linkOf(controller, "VERIFY_EMAIL", body.token, now);
+      const link = linkOf(controller, ["VERIFY_EMAIL", "CHANGE_EMAIL"], body.token, now);
+      const { row } = link;
+      let { account } = link;
       row.usedAt = iso(now);
+      if (row.purpose === "CHANGE_EMAIL") {
+        // The new address replaces the old one only now (the old one stayed valid until the link was opened).
+        state.accounts.delete(account.email);
+        account = { ...account, email: row.email };
+        state.accounts.set(account.email, account);
+        const access = state.access.get(account.userId);
+        if (access) access.pendingEmail = null;
+      }
       if (account.state === "UNVERIFIED") account.state = "ACTIVE";
       let gift: number | null = null;
       if (!account.welcomeGiftGranted) {
@@ -229,7 +251,7 @@ export function authHandlers(controller: MockController) {
     route(controller, "exportSuspendedAccount", ({ body, now, note }) => {
       const account = challengeOf(controller, body.challenge, "SUSPENDED", now);
       const requestId = newId();
-      state.dataExports.push({ id: requestId, userId: account.userId, requestedAt: iso(now) });
+      state.dataExports.push({ id: requestId, userId: account.userId, requestedAt: iso(now), readyAt: null });
       note({ userId: account.userId, targetType: "data_export", targetId: requestId });
       return { data: { status: "PREPARING", requestId } };
     }),

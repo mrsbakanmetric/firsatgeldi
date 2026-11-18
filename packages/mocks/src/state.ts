@@ -226,8 +226,8 @@ export interface AuthAccountRow {
   readonly session: UserKey;
   state: "ACTIVE" | "UNVERIFIED" | "PENDING_DELETION" | "SUSPENDED" | "DELETED";
   password: string | null;
-  readonly deletionRequestedAt: string | null;
-  readonly purgeAfter: string | null;
+  deletionRequestedAt: string | null;
+  purgeAfter: string | null;
   readonly suspendedReason: string | null;
   welcomeGiftGranted: boolean;
 }
@@ -241,8 +241,10 @@ export interface LoginFailureRow {
 /** `email_tokens` row (database.md §3): one-time link, stored hashed by the real API. */
 export interface EmailTokenRow {
   readonly token: string;
-  readonly purpose: "VERIFY_EMAIL" | "RESET_PASSWORD";
+  readonly purpose: "VERIFY_EMAIL" | "RESET_PASSWORD" | "CHANGE_EMAIL";
   readonly email: string;
+  /** CHANGE_EMAIL: the account whose address changes to `email`. */
+  readonly accountEmail?: string;
   readonly createdAt: string;
   readonly expiresAt: string;
   usedAt: string | null;
@@ -314,7 +316,54 @@ export interface MockState {
   /** Every session of a user revoked (password reset). */
   readonly sessionRevocations: { readonly userId: string; readonly at: string }[];
   /** Data exports requested ("Verilerimi indir"). */
-  readonly dataExports: { readonly id: string; readonly userId: string; readonly requestedAt: string }[];
+  readonly dataExports: { readonly id: string; readonly userId: string; readonly requestedAt: string; readyAt: string | null }[];
+  /** Settings and Account (database.md §3, §6a, §11, §14): per signed-in user, created on first use. */
+  readonly profiles: Map<string, ProfileRow>;
+  readonly access: Map<string, AccessRow>;
+  readonly sessions: SessionRow[];
+  readonly notificationPrefs: Map<string, NotificationPrefsRow>;
+  readonly cookieConsents: Map<string, { analytics: boolean; marketing: boolean; version: string; decidedAt: string }>;
+  /** Hidden search ids ("Gizle"; cleared by "Geri al"); the rows themselves are kept. */
+  readonly hiddenSearches: Set<string>;
+}
+
+/** `users` profile columns the Settings screen changes. */
+export interface ProfileRow {
+  displayName: string | null;
+  username: string | null;
+  usernameChangedAt: string | null;
+  avatarSha256: string | null;
+  locale: ApiLocale;
+  theme: "light" | "dark" | "system";
+  privacyLevel: "EVERYONE" | "FOLLOWERS" | "ONLY_ME";
+}
+
+/** E-mail change in progress, password change time, linked providers, the re-authentication window. */
+export interface AccessRow {
+  pendingEmail: { email: string; sentAt: string } | null;
+  passwordChangedAt: string | null;
+  identities: Set<"GOOGLE" | "APPLE">;
+  reauthUntil: string | null;
+}
+
+/** `sessions` + `user_devices` (no location). */
+export interface SessionRow {
+  readonly id: string;
+  readonly userId: string;
+  readonly deviceType: "DESKTOP" | "PHONE" | "TABLET";
+  readonly browser: string;
+  readonly os: string;
+  readonly lastUsedAt: string;
+  readonly current: boolean;
+  revokedAt: string | null;
+}
+
+/** `notification_preferences` + `notification_type_preferences` (no row = default). */
+export interface NotificationPrefsRow {
+  delivery: "INSTANT" | "DIGEST";
+  slots: ("ALWAYS" | "MORNING" | "NOON" | "EVENING")[];
+  /** `ROW_KEY:CHANNEL` → enabled; missing = the default. */
+  readonly switches: Map<string, boolean>;
 }
 
 export function createMockState(): MockState {
@@ -352,6 +401,12 @@ export function createMockState(): MockState {
     tokenLedger: [],
     sessionRevocations: [],
     dataExports: [],
+    profiles: new Map(),
+    access: new Map(),
+    sessions: [],
+    notificationPrefs: new Map(),
+    cookieConsents: new Map(),
+    hiddenSearches: new Set(),
   };
 }
 

@@ -11,6 +11,8 @@ export interface UserFixture {
   readonly username: string | null;
   readonly emailMasked: string;
   readonly phoneMasked: string | null;
+  /** Full phone, a made-up number: only `GET /me/pii` returns it, after re-authentication. */
+  readonly phone: string | null;
   /** `users.locale` (database.md §3). */
   readonly locale: ApiLocale;
   readonly roles: readonly RoleCode[];
@@ -26,7 +28,7 @@ function user(key: string, values: Omit<UserFixture, "key" | "id">): UserFixture
 
 export const USERS = {
   user: user("user", {
-    displayName: "Sena B.", username: "sena", emailMasked: "se***@e***.com", phoneMasked: "+90 5** *** ** 41", locale: "tr",
+    displayName: "Sena B.", username: "sena", emailMasked: "se***@e***.com", phoneMasked: "+90 5** *** ** 41", phone: "+90 555 000 00 41", locale: "tr",
     roles: ["USER"], plan: "FREE", tokenBalance: 3,
     searchHistory: [
       { query: text("Dyson V15 Detect", "Dyson V15 Detect"), minutesAgo: 90 },
@@ -36,16 +38,16 @@ export const USERS = {
   }),
   /** A second signed-in user: proves refs and reveals do not cross users. */
   secondUser: user("second-user", {
-    displayName: "Ece K.", username: "ece", emailMasked: "ec***@e***.com", phoneMasked: null, locale: "en",
+    displayName: "Ece K.", username: "ece", emailMasked: "ec***@e***.com", phoneMasked: null, phone: null, locale: "en",
     roles: ["USER"], plan: "FREE", tokenBalance: 0, searchHistory: [],
   }),
   /** A just-created account (sign-up → verified link): no name yet, nothing tracked, the welcome gift only. */
   newUser: user("new-user", {
-    displayName: null, username: null, emailMasked: "y***@o***.test", phoneMasked: null, locale: "tr",
+    displayName: null, username: null, emailMasked: "y***@o***.test", phoneMasked: null, phone: null, locale: "tr",
     roles: ["USER"], plan: "FREE", tokenBalance: 3, searchHistory: [],
   }),
   manager: user("manager", {
-    displayName: "Deniz Y.", username: "deniz", emailMasked: "de***@f***.com", phoneMasked: "+90 5** *** ** 07", locale: "tr",
+    displayName: "Deniz Y.", username: "deniz", emailMasked: "de***@f***.com", phoneMasked: "+90 5** *** ** 07", phone: "+90 555 000 00 07", locale: "tr",
     roles: ["APP_MANAGER"], plan: "PREMIUM", tokenBalance: 0, searchHistory: [],
   }),
 } as const satisfies Record<string, UserFixture>;

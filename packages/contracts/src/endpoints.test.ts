@@ -55,6 +55,19 @@ describe("sign-in endpoints", () => {
   });
 });
 
+describe("Settings and Account endpoints", () => {
+  it("are for signed-in users only; Yetkilerim and Yönetim etkinliğim need the admin self keys", () => {
+    const settings = ["updateMe", "checkUsername", "getAccess", "reauth", "getOwnPii", "changeEmail", "changePassword", "getSecurity", "signOutOthers", "hideSearch", "getNotificationPreferences", "requestExport", "deleteAccount", "getOwnPermissions", "getAdminActivity"] as const;
+    for (const name of settings) expect(ENDPOINTS[name].public).toBe(false);
+    expect(ENDPOINTS.getOwnPermissions.permission).toBe("admin.self.permissions.view");
+    expect(ENDPOINTS.getAdminActivity.permission).toBe("admin.self.activity.view");
+  });
+
+  it("every reveal of the own full e-mail / phone writes an activity row", () => {
+    expect(ENDPOINTS.getOwnPii.activity).toBe("account.pii_view");
+  });
+});
+
 describe("paths", () => {
   it("fills and encodes parameters", () => {
     expect(buildPath("/offers/:ref/reveal", { ref: "a/b" })).toBe("/offers/a%2Fb/reveal");

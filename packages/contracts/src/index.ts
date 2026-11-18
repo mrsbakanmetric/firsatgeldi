@@ -13,6 +13,7 @@ export * from "./permissions";
 export * from "./product-detail";
 export * from "./products";
 export * from "./session";
+export * from "./settings";
 export * from "./stream";
 export * from "./tracking";
 export * from "./uploads";

@@ -36,6 +36,16 @@ export const SYSTEM_SETTINGS = {
   "auth.reset_link_minutes": 60,
   /** Life of the choice after a correct password on a suspended / pending-deletion account [ASSUMPTION]. */
   "auth.challenge_minutes": 15,
+  /** Settings and Account (database.md §18 [DECIDED 2026-11-18]). */
+  "pii.reauth_minutes": 15,
+  "pii.self_reveal_seconds": 60,
+  "username.change_days": 30,
+  "avatar.max_bytes": 5 * MEGABYTE,
+  "notify.daily_cap": 5,
+  "notify.digest_time": "19:00",
+  "account.export_download_days": 7,
+  /** Version id of the cookie policy the consent refers to (Legal Pages) [ASSUMPTION — mock value]. */
+  "legal.cookie_version": "2026-11-01",
   /** Version id of the terms accepted at sign-up (Legal Pages) [ASSUMPTION — mock value]. */
   "legal.terms_version": "2026-11-01",
   /** Home (database.md §18 [DECIDED 2026-11-15]; values [ASSUMPTION]). */
@@ -73,6 +83,10 @@ export const MOCK_SETTINGS = {
   processingMs: 600,
   /** Stale scenario: checks are moved back by this many times `tracking.stale_hours`. */
   staleFactor: 2,
+  /** Simulated time to prepare a data export ("Dosyan hazırlanıyor"). */
+  exportMs: 1500,
+  /** Life of an export download link. */
+  exportLinkMinutes: 10,
   /** Simulated time of one Check Now run before `check.finished`. */
   checkMs: 900,
 } as const;

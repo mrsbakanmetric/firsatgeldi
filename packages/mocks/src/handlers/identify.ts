@@ -199,18 +199,30 @@ function ownUpload(controller: MockController, id: string, actor: UploadRow["own
   return upload;
 }
 
+const ALL_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic"] as const;
+/** Profile photo: one JPEG, PNG or WebP up to `avatar.max_bytes` [DECIDED 2026-11-18]. */
+const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+
+/** Upload limits by purpose, from the settings (the policy endpoint and the presign check agree). */
+function uploadLimits(purpose: "IDENTIFY" | "ORDER_SCREENSHOT" | "AVATAR" | "SUPPORT_ATTACHMENT"): { maxFiles: number; maxBytes: number; types: readonly (typeof ALL_TYPES)[number][] } {
+  if (purpose === "AVATAR") return { maxFiles: 1, maxBytes: SYSTEM_SETTINGS["avatar.max_bytes"], types: AVATAR_TYPES };
+  if (purpose === "SUPPORT_ATTACHMENT") return { maxFiles: SYSTEM_SETTINGS["support.max_attachments"], maxBytes: SYSTEM_SETTINGS["media.max_bytes"], types: ALL_TYPES };
+  return { maxFiles: SYSTEM_SETTINGS["media.max_images_per_request"], maxBytes: SYSTEM_SETTINGS["media.max_bytes"], types: ALL_TYPES };
+}
+
 export function identifyHandlers(controller: MockController) {
   const { state } = controller;
   return [
     // Registered before `GET /uploads/:id`, so "policy" is never read as an upload id.
     route(controller, "getUploadPolicy", ({ query }) => {
       const support = query.purpose === "SUPPORT_ATTACHMENT";
+      const limits = uploadLimits(query.purpose);
       return {
         data: {
           purpose: query.purpose,
-          maxFiles: support ? SYSTEM_SETTINGS["support.max_attachments"] : SYSTEM_SETTINGS["media.max_images_per_request"],
-          maxBytes: SYSTEM_SETTINGS["media.max_bytes"],
-          acceptedTypes: ["image/jpeg", "image/png", "image/webp", "image/heic"],
+          maxFiles: limits.maxFiles,
+          maxBytes: limits.maxBytes,
+          acceptedTypes: [...limits.types],
           retention: query.purpose === "AVATAR"
             ? null
             : support
@@ -221,10 +233,12 @@ export function identifyHandlers(controller: MockController) {
     }),
 
     route(controller, "presignUploads", ({ body, actor, now, origin, note }) => {
-      const maxFiles = SYSTEM_SETTINGS["media.max_images_per_request"];
+      const { maxFiles, maxBytes, types } = uploadLimits(body.purpose);
       if (body.files.length > maxFiles) throw new MockApiError("VALIDATION", { params: { max: maxFiles } });
-      const tooLarge = body.files.findIndex((file) => file.bytes > SYSTEM_SETTINGS["media.max_bytes"]);
+      const tooLarge = body.files.findIndex((file) => file.bytes > maxBytes);
       if (tooLarge >= 0) throw new MockApiError("VALIDATION", { fields: { [`files.${tooLarge}.bytes`]: "errors.validation" } });
+      const wrongType = body.files.findIndex((file) => !types.includes(file.mime));
+      if (wrongType >= 0) throw new MockApiError("VALIDATION", { fields: { [`files.${wrongType}.mime`]: "errors.validation" } });
       const batchId = newId();
       const expiresAt = new Date(now.getTime() + MOCK_SETTINGS.presignMinutes * MS_PER_MINUTE).toISOString();
       const purgeAt = new Date(now.getTime() + SYSTEM_SETTINGS["media.private_retention_hours"] * MS_PER_HOUR).toISOString();

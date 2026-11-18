@@ -14,7 +14,8 @@ type MockMail = Parameters<NonNullable<MockWorkerOptions["onMail"]>>[0];
 function printMockMail(mail: MockMail): void {
   const lang = document.documentElement.lang;
   const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
-  const route = mail.purpose === "VERIFY_EMAIL" ? "/dogrula" : "/sifre-sifirla";
+  // Verification and e-mail change links open the verification page; reset links the new-password page.
+  const route = mail.purpose === "RESET_PASSWORD" ? "/sifre-sifirla" : "/dogrula";
   console.info(`[mock e-mail → ${mail.emailMasked}] ${globalThis.location.origin}${localizedPath(route, locale)}?token=${mail.token}`);
 }
 
