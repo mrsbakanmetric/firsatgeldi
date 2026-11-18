@@ -1,23 +1,72 @@
 // Helpers shared by the mock route handlers.
 import type { EntitlementSummary, Me, StreamEvent } from "@firsatgeldi/contracts";
-import { toCalendarDay } from "@firsatgeldi/core";
+import { maskEmail, toCalendarDay } from "@firsatgeldi/core";
+import { PASSWORD_CHANGED_DAYS_AGO, USERNAME_CHANGED_DAYS_AGO } from "../fixtures/settings";
 import { USERS, type UserFixture } from "../fixtures/users";
 import { MockApiError, permissionsOf } from "../route";
 import { PLAN_LIMITS, REVEAL_GATE_STAGE } from "../settings";
-import type { Actor, MockController } from "../state";
+import type { AccessRow, Actor, AuthAccountRow, MockController, ProfileRow } from "../state";
 
-/** `GET /me` for a signed-in actor; also the `me` of a successful sign-in. */
-export function meView(actor: Extract<Actor, { kind: "user" }>): Me {
+type UserActor = Extract<Actor, { kind: "user" }>;
+const MS_PER_DAY = 86_400_000;
+
+/** The sign-in account of a user (by id, else the account that opens this fixture session). */
+export function accountOf(controller: MockController, actor: UserActor): AuthAccountRow | null {
+  const accounts = [...controller.state.accounts.values()];
+  return accounts.find((row) => row.userId === actor.userId) ?? accounts.find((row) => row.session === actor.userKey && row.state === "ACTIVE") ?? null;
+}
+
+/** The editable profile (`users`), created from the fixture on first use. */
+export function profileOf(controller: MockController, actor: UserActor): ProfileRow {
+  let row = controller.state.profiles.get(actor.userId);
+  if (!row) {
+    const user = USERS[actor.userKey];
+    row = {
+      displayName: user.displayName,
+      username: user.username,
+      usernameChangedAt: user.username ? new Date(controller.now().getTime() - USERNAME_CHANGED_DAYS_AGO * MS_PER_DAY).toISOString() : null,
+      avatarSha256: null,
+      locale: user.locale,
+      theme: "system",
+      privacyLevel: "ONLY_ME",
+    };
+    controller.state.profiles.set(actor.userId, row);
+  }
+  return row;
+}
+
+/** E-mail change, password time, linked providers, re-authentication window; created on first use. */
+export function accessOf(controller: MockController, actor: UserActor): AccessRow {
+  let row = controller.state.access.get(actor.userId);
+  if (!row) {
+    const account = accountOf(controller, actor);
+    row = {
+      pendingEmail: null,
+      passwordChangedAt: account?.password ? new Date(controller.now().getTime() - PASSWORD_CHANGED_DAYS_AGO * MS_PER_DAY).toISOString() : null,
+      // Fixture users signed up with e-mail and later linked Google ("Google bağlı · Apple bağlı değil").
+      identities: new Set(actor.userKey === "newUser" ? [] : ["GOOGLE"]),
+      reauthUntil: null,
+    };
+    controller.state.access.set(actor.userId, row);
+  }
+  return row;
+}
+
+/** `GET /me` for a signed-in actor; also the `me` of a successful sign-in. E-mail and phone masked. */
+export function meView(controller: MockController, actor: UserActor): Me {
   const user = USERS[actor.userKey];
+  const profile = profileOf(controller, actor);
+  const account = accountOf(controller, actor);
   return {
     id: actor.userId,
-    displayName: user.displayName,
-    username: user.username,
-    emailMasked: user.emailMasked,
+    displayName: profile.displayName,
+    username: profile.username,
+    emailMasked: account ? maskEmail(account.email) : user.emailMasked,
     phoneMasked: user.phoneMasked,
-    locale: user.locale,
-    theme: "system",
-    privacyLevel: "ONLY_ME",
+    locale: profile.locale,
+    theme: profile.theme,
+    privacyLevel: profile.privacyLevel,
+    avatarSha256: profile.avatarSha256,
     roles: [...user.roles],
     permissions: permissionsOf(actor),
   };

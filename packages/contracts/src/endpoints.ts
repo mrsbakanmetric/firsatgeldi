@@ -23,7 +23,7 @@ import {
   VerifyEmailRequest,
 } from "./auth";
 import { EntitlementSummary } from "./envelope";
-import { ApiLocale, Cursor, Id, ImageSha256, ImageVariant } from "./common";
+import { ApiLocale, Id, ImageSha256, ImageVariant } from "./common";
 import { IdentifyAnswer, IdentifyRequest, IdentifyResult } from "./identify";
 import { HomeView } from "./home";
 import { GoResult, HideResult, OfferRef, RevealResult } from "./offers";
@@ -54,7 +54,37 @@ import {
 } from "./product-detail";
 import type { PermissionKey } from "./permissions";
 import { AutocompleteQuery, AutocompleteResult, ProductView, SimilarProducts } from "./products";
-import { Me, SearchHistory } from "./session";
+import { Me, SearchHistory, SearchHistoryQuery } from "./session";
+import {
+  AccountAccess,
+  AdminActivity,
+  AdminActivityQuery,
+  ChangeEmailRequest,
+  ChangePasswordRequest,
+  CookieConsent,
+  DataExport,
+  DeleteAccountRequest,
+  DeletionPreview,
+  DeletionScheduled,
+  ExportLink,
+  LatestExport,
+  LinkIdentityRequest,
+  NotificationPreferences,
+  OwnPermissions,
+  OwnPii,
+  PasswordChanged,
+  ProviderParams,
+  ReauthRequest,
+  ReauthResult,
+  SearchHidden,
+  SecurityView,
+  SessionRevoked,
+  UpdateCookieConsent,
+  UpdateMeRequest,
+  UpdateNotificationPreferences,
+  UsernameCheck,
+  UsernameCheckQuery,
+} from "./settings";
 import {
   CheckNowBulkRequest,
   CheckNowBulkResult,
@@ -126,8 +156,98 @@ export const ENDPOINTS = {
     permission: "packages.own.view", public: false,
   }),
   getSearchHistory: endpoint({
-    method: "GET", path: "/me/search-history", params: null, query: z.object({ cursor: Cursor.optional() }), body: null,
+    method: "GET", path: "/me/search-history", params: null, query: SearchHistoryQuery, body: null,
     response: SearchHistory, ...READ, permission: "account.own.view", public: false,
+  }),
+
+  // SETTINGS AND ACCOUNT (architecture.md §16 ME; modules.md Settings and Account; design v2.1).
+  // Endpoints not named in §16 (`/me/access`, `/me/permissions`, export link) and every shape are
+  // [ASSUMPTION] until §16.1. Sensitive ones need a fresh re-authentication (REAUTH_REQUIRED).
+  updateMe: endpoint({
+    method: "PATCH", path: "/me", params: null, query: null, body: UpdateMeRequest,
+    response: Me, ...READ, activity: "settings.change", permission: "account.own.write", public: false,
+  }),
+  checkUsername: endpoint({
+    method: "GET", path: "/me/username-check", params: null, query: UsernameCheckQuery, body: null,
+    response: UsernameCheck, ...READ, permission: "account.own.write", public: false,
+  }),
+  getAccess: endpoint({ method: "GET", path: "/me/access", ...NONE, response: AccountAccess, ...READ, permission: "account.own.view", public: false }),
+  reauth: endpoint({
+    method: "POST", path: "/me/reauth", params: null, query: null, body: ReauthRequest,
+    response: ReauthResult, ...READ, activity: "account.reauth", permission: "account.own.view_pii", public: false,
+  }),
+  // A read that writes a log row: every reveal of the own full e-mail / phone is recorded.
+  getOwnPii: endpoint({ method: "GET", path: "/me/pii", ...NONE, response: OwnPii, ...READ, activity: "account.pii_view", permission: "account.own.view_pii", public: false }),
+  changeEmail: endpoint({
+    method: "PATCH", path: "/me/email", params: null, query: null, body: ChangeEmailRequest,
+    response: AccountAccess, ...READ, activity: "account.email_change", permission: "account.own.write", public: false,
+  }),
+  resendEmailChange: endpoint({
+    method: "POST", path: "/me/email/resend", ...NONE, response: AccountAccess, ...READ, activity: "account.email_change_resend", permission: "account.own.write", public: false,
+  }),
+  cancelEmailChange: endpoint({
+    method: "DELETE", path: "/me/email/pending", ...NONE, response: AccountAccess, ...READ, activity: "account.email_change_cancel", permission: "account.own.write", public: false,
+  }),
+  changePassword: endpoint({
+    method: "POST", path: "/me/password", params: null, query: null, body: ChangePasswordRequest,
+    response: PasswordChanged, ...READ, activity: "auth.password_change", permission: "account.own.write", public: false,
+  }),
+  createPasswordLink: endpoint({
+    method: "POST", path: "/me/password/create-link", ...NONE, response: EmailSent, ...READ, activity: "auth.password_create_link", permission: "account.own.write", public: false,
+  }),
+  linkIdentity: endpoint({
+    method: "POST", path: "/me/identities/:provider", params: ProviderParams, query: null, body: LinkIdentityRequest,
+    response: AccountAccess, ...READ, activity: "account.identity_link", permission: "account.own.write", public: false,
+  }),
+  unlinkIdentity: endpoint({
+    method: "DELETE", path: "/me/identities/:provider", params: ProviderParams, query: null, body: null,
+    response: AccountAccess, ...READ, activity: "account.identity_unlink", permission: "account.own.write", public: false,
+  }),
+  getSecurity: endpoint({ method: "GET", path: "/me/security", ...NONE, response: SecurityView, ...READ, permission: "account.own.view", public: false }),
+  revokeSession: endpoint({
+    method: "DELETE", path: "/me/sessions/:id", params: IdParams, query: null, body: null,
+    response: SessionRevoked, ...READ, activity: "auth.session_revoke", permission: "account.own.write", public: false,
+  }),
+  signOutOthers: endpoint({
+    method: "POST", path: "/me/sessions/sign-out-others", ...NONE, response: SessionRevoked, ...READ, idempotent: true, activity: "auth.sign_out_others", permission: "account.own.write", public: false,
+  }),
+  hideSearch: endpoint({
+    method: "POST", path: "/me/search-history/:id/hide", params: IdParams, query: null, body: null,
+    response: SearchHidden, ...READ, activity: "search_history.hide", permission: "search_history.own.hide", public: false,
+  }),
+  unhideSearch: endpoint({
+    method: "POST", path: "/me/search-history/:id/unhide", params: IdParams, query: null, body: null,
+    response: SearchHidden, ...READ, activity: "search_history.unhide", permission: "search_history.own.hide", public: false,
+  }),
+  getNotificationPreferences: endpoint({
+    method: "GET", path: "/me/notification-preferences", ...NONE, response: NotificationPreferences, ...READ, permission: "account.own.view", public: false,
+  }),
+  updateNotificationPreferences: endpoint({
+    method: "PUT", path: "/me/notification-preferences", params: null, query: null, body: UpdateNotificationPreferences,
+    response: NotificationPreferences, ...READ, activity: "settings.change", permission: "notification_prefs.own.write", public: false,
+  }),
+  getCookieConsent: endpoint({ method: "GET", path: "/me/cookie-consent", ...NONE, response: CookieConsent, ...READ, permission: "account.own.view", public: false }),
+  updateCookieConsent: endpoint({
+    method: "PUT", path: "/me/cookie-consent", params: null, query: null, body: UpdateCookieConsent,
+    response: CookieConsent, ...READ, activity: "consent.accept", permission: "consent.own.write", public: false,
+  }),
+  requestExport: endpoint({
+    method: "POST", path: "/me/export", ...NONE, response: DataExport, ...READ, idempotent: true, activity: "account.export", permission: "account.own.export", public: false,
+  }),
+  getLatestExport: endpoint({ method: "GET", path: "/me/export", ...NONE, response: LatestExport, ...READ, permission: "account.own.export", public: false }),
+  getExportLink: endpoint({
+    method: "POST", path: "/me/export/:id/link", params: IdParams, query: null, body: null,
+    response: ExportLink, ...READ, activity: "account.export_download", permission: "account.own.export", public: false,
+  }),
+  getDeletionPreview: endpoint({ method: "GET", path: "/me/deletion-preview", ...NONE, response: DeletionPreview, ...READ, permission: "account.own.delete", public: false }),
+  deleteAccount: endpoint({
+    method: "DELETE", path: "/me", params: null, query: null, body: DeleteAccountRequest,
+    response: DeletionScheduled, ...READ, idempotent: true, activity: "account.delete", permission: "account.own.delete", public: false,
+  }),
+  getOwnPermissions: endpoint({ method: "GET", path: "/me/permissions", ...NONE, response: OwnPermissions, ...READ, permission: "admin.self.permissions.view", public: false }),
+  getAdminActivity: endpoint({
+    method: "GET", path: "/me/admin-activity", params: null, query: AdminActivityQuery, body: null,
+    response: AdminActivity, ...READ, permission: "admin.self.activity.view", public: false,
   }),
   stream: endpoint({
     method: "GET", path: "/me/stream", ...NONE, response: null, ...READ, kind: "stream",
