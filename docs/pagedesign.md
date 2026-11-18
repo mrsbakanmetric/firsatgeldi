@@ -169,6 +169,9 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 | `StockHistory` (full, 14 days + 1 month, change log) | §5.7 | Product Detail |
 | `StepTick` ("Yaptım ✓", reversible) [DECIDED 2026-11-15] | design §5.11 | Product Detail action steps |
 | `HelpPanel` (contextual "?" help, opens as `Sheet`) [DECIDED 2026-11-15] | design §5.16, §5.25 | next to concepts users may not know (withdrawal right, price difference, "tahmini", hidden seller) |
+| `GuestProductCard` ("Seçtiğin ürün seni bekliyor": image, name, variant) [DECIDED 2026-11-18] | §5.30 | Sign-in, Sign-up (guest hand-back) |
+| `ProviderButton` (Google, Apple — each provider's official button rules) [DECIDED 2026-11-18] | §4.1 | Sign-in, Sign-up, Settings › linked sign-in methods |
+| `PasswordRules` (live checklist: length, letter, digit; `aria-live`) [DECIDED 2026-11-18] | §5.36 TextField | Sign-up, new password, Settings › password |
 | `ConfirmPanel` (mark → confirm, typed seller and price) | §5.1 | Search and Add, Add product dialog step 2, Want to Buy "Aldım, kaydet" |
 | `SegmentedChoice` | §4.3 | order status, ranges, durations, tabs |
 | `MultiImageUpload` + `ImagePrivacyNote` | §5.19, §5.20 | Search and Add, Bize yaz |
@@ -333,6 +336,12 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 - **Shell/template:** AuthShell · Flow.
 - **Regions:** left hero (value proposition, example deal notification with image, 3 steps) | right: guest hand-back card ("Seçtiğin ürün seni bekliyor" with image) → tabs Giriş yap / Kayıt ol → Google, Apple → divider → email, password (show/hide), "Şifremi unuttum" → sign-up: live password rules, terms checkbox (unticked), KVKK link → primary → reset and verify screens.
 - **States:** wrong credentials (no field disclosed) · too many attempts (countdown) · email not verified · email linked to Google/Apple only · account pending deletion (restore) · suspended (support) · error · signing in.
+- **Design v2 additions [DECIDED 2026-11-18] (user):**
+  - **Link pages** (board Links): new password (`/sifre-sifirla?…`: masked e-mail, new password with show/hide, live `PasswordRules`, "Şifreyi kaydet" → status "Şifren değişti · tüm cihazlardan çıkış yapıldı" + "Giriş yap") · e-mail verified (`/dogrula?…`: check mark, "3 hediye jeton hesabında", "Kaldığın yerden devam et"; skeleton while verifying) · expired or used link (one page for both: warning banner, e-mail field, "Yeni bağlantı gönder", "Girişe dön").
+  - **States after the correct password only:** e-mail not verified · account pending deletion ("Hesabımı geri aç" / "Vazgeç, silinsin") · account suspended (reason, "Destek talebi aç", "Verilerimi indir"; no access to the app). Before the correct password nothing reveals whether an account exists.
+  - **Google / Apple-only account:** no separate state (it cannot be confirmed without a password and would reveal the account): the same generic error with a fixed note "Google ya da Apple ile kaydolduysan o düğmeyle gir".
+  - **Phone width (rules, not drawn):** form first; the guest product card above the form; the hero below it.
+  - **Not in this step:** Application Manager two-step sign-in (with the admin screens) and the re-consent dialog (with Legal Pages).
 - **API:** `/auth/*`, `POST /me/restore`.
 
 ### 8.9 Settings and Account — `/[locale]/ayarlar/{section}` (both roles)

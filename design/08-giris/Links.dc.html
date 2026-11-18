@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>E-posta bağlantılarının açtığı sayfalar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+<div style="width: 1280px; min-height: 820px; box-sizing: border-box; padding: 32px 24px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: stretch; background: var(--background); color: var(--text); font-family: var(--font); font-variant-numeric: tabular-nums">
+
+<section aria-label="Yeni şifre" style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-muted)">1 · YENİ ŞİFRE · /sifre-sifirla?…</span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 style="margin: 0; font-size: 22px; font-weight: 600">Yeni şifreni belirle</h2><span style="font-size: 14px; color: var(--text-muted)">s***@o***.com</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="np" style="font-size: 14px; font-weight: 600">Yeni şifre</label>
+<div style="display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 4px 0 12px; box-sizing: border-box; border: 2px solid var(--primary); border-radius: 10px; background: var(--surface)"><input id="np" type="password" value="kamera2026" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 16px; color: var(--text); outline: none"><button type="button" aria-label="Şifreyi göster" style="width: 40px; height: 40px; border: 0; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<ul aria-label="Şifre kuralları" aria-live="polite" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 14px">
+<li style="display: flex; align-items: center; gap: 8px; color: var(--savings); font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>En az 8 karakter</li>
+<li style="display: flex; align-items: center; gap: 8px; color: var(--savings); font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>En az bir harf</li>
+<li style="display: flex; align-items: center; gap: 8px; color: var(--savings); font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>En az bir rakam</li>
+</ul>
+</div>
+<button type="button" style="height: 52px; border: 0; border-radius: 10px; background: var(--primary); color: var(--on-primary); font: inherit; font-size: 16px; font-weight: 600">Şifreyi kaydet</button>
+<div role="status" style="margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-radius: 10px; background: var(--savings-subtle); color: var(--on-primary-subtle)"><span style="font-size: 14px; font-weight: 600">Kaydettikten sonra: Şifren değişti · tüm cihazlardan çıkış yapıldı</span><a href="#" style="font-size: 14px; font-weight: 600; color: var(--on-primary-subtle)">Giriş yap</a></div>
+</div>
+</section>
+
+<section aria-label="E-posta doğrulandı" style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-muted)">2 · E-POSTA DOĞRULAMA · /dogrula?…</span>
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 20px">
+<span style="width: 64px; height: 64px; border-radius: 999px; background: var(--savings-subtle); color: var(--savings); display: flex; align-items: center; justify-content: center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+<h2 style="margin: 0; font-size: 22px; font-weight: 600">E-postan doğrulandı</h2>
+<span style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border-radius: 999px; background: var(--primary-subtle); color: var(--on-primary-subtle); font-size: 14px; font-weight: 600">3 hediye jeton hesabında</span>
+<button type="button" style="align-self: stretch; height: 52px; border: 0; border-radius: 10px; background: var(--primary); color: var(--on-primary); font: inherit; font-size: 16px; font-weight: 600">Kaldığın yerden devam et</button>
+<span style="font-size: 12px; color: var(--text-muted)">Açılırken: "Doğrulanıyor…" (iskelet, aynı yerleşim)</span>
+</div>
+</section>
+
+<section aria-label="Bağlantının süresi dolmuş" style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-muted)">3 · SÜRESİ DOLMUŞ / KULLANILMIŞ BAĞLANTI · ikisi için de</span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px">
+<div role="alert" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-radius: 10px; background: var(--warning-subtle); color: var(--on-warning-subtle)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Bu bağlantının süresi dolmuş</span><span style="font-size: 14px">Yeni bir bağlantı gönderelim.</span></span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><label for="em" style="font-size: 14px; font-weight: 600">E-posta</label><input id="em" type="email" value="sinan@ornek.com" style="height: 48px; padding: 0 12px; box-sizing: border-box; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-alt); font: inherit; font-size: 16px; color: var(--text)"></div>
+<button type="button" style="height: 52px; border: 0; border-radius: 10px; background: var(--primary); color: var(--on-primary); font: inherit; font-size: 16px; font-weight: 600">Yeni bağlantı gönder</button>
+<a href="#" style="margin-top: auto; align-self: center; font-size: 14px; font-weight: 600; color: var(--primary)">Girişe dön</a>
+</div>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1280,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","savings-subtle":"#D1FAE5","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","savings-subtle":"#0F3A2C","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+    const c = t[this.props.theme ?? 'light'] || t.light;
+    let s = '--font:Inter, system-ui, -apple-system, sans-serif;';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    return { rootStyle: s };
+  }
+}
+</script>
+</body>
+</html>
