@@ -88,7 +88,6 @@ input::placeholder{color:var(--text-muted)}
 </div>
 </sc-for>
 </div>
-<span style="display: flex; gap: var(--s2); align-items: center; font-size: var(--fs-cap); font-weight: 500; color: var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
 </sc-if>
 
 <!-- BİLDİRİMLER -->
@@ -122,7 +121,7 @@ input::placeholder{color:var(--text-muted)}
 <!-- GÜVENLİK -->
 <sc-if value="{{isSecurity}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden">
-<div style="display: flex; justify-content: space-between; align-items: center; padding: var(--s4) var(--s5); background: var(--surface-alt)"><span style="font-size: var(--fs-bsm); font-weight: 700">Oturum açık cihazlar</span><button type="button" style="height: 40px; padding: 0 var(--s4); border: 1px solid var(--danger); border-radius: var(--r-md); background: transparent; color: var(--danger); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Tüm cihazlardan çıkış yap</button></div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: var(--s4) var(--s5); background: var(--surface-alt)"><span style="font-size: var(--fs-bsm); font-weight: 700">Oturum açık cihazlar</span><button type="button" style="height: 40px; padding: 0 var(--s4); border: 1px solid var(--danger); border-radius: var(--r-md); background: transparent; color: var(--danger); font: inherit; font-size: var(--fs-bsm); font-weight: 600">Diğer cihazlardan çıkış yap</button></div>
 <sc-for list="{{devices}}" as="d" hint-placeholder-count="3">
 <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 200px 140px; gap: var(--s4); align-items: center; padding: var(--s3) var(--s5); border-top: 1px solid var(--divider)">
 <span style="width: 40px; height: 40px; border-radius: var(--r-md); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{d.icon}}"/></svg></span>
@@ -144,7 +143,7 @@ input::placeholder{color:var(--text-muted)}
 <sc-if value="{{isHistory}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center">
 <label style="flex: 1 1 280px; display: flex; align-items: center; gap: var(--s2); height: var(--touch); padding: 0 var(--s3); box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: var(--text-muted); flex: none" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Aramalarında ara</span><input type="search" value="{{hq}}" onInput="{{onHq}}" placeholder="Aramalarında ara" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: var(--fs-bsm); color: var(--text); outline: none"></label>
-<label style="display: flex; align-items: center; gap: var(--s2); font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted)">Kategori<select onChange="{{onHcat}}" style="height: var(--touch); padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><option value="all">Tümü</option><option value="e">Elektronik</option><option value="h">Ev aletleri</option><option value="w">Giyim ve ayakkabı</option></select></label>
+<label style="display: flex; align-items: center; gap: var(--s2); font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted)">Kategori<select onChange="{{onHcat}}" style="height: var(--touch); padding: 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-bsm); font-weight: 600"><sc-for list="{{hcats}}" as="c" hint-placeholder-count="4"><option value="{{c.v}}">{{c.t}}</option></sc-for></select></label>
 </div>
 <sc-if value="{{hasHist}}" hint-placeholder-val="{{ true }}">
 <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden">
@@ -159,8 +158,8 @@ input::placeholder{color:var(--text-muted)}
 </sc-for>
 </ul>
 </sc-if>
-<sc-if value="{{noHist}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: space-between; align-items: center; padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); font-size: var(--fs-bsm)"><span>Gösterilecek arama yok.</span><button type="button" onClick="{{resetH}}" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Filtreyi temizle</button></div></sc-if>
-<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{hiddenNote}}</span>
+<sc-if value="{{noHist}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: space-between; align-items: center; padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); font-size: var(--fs-bsm)"><span>Eşleşen arama yok</span><button type="button" onClick="{{resetH}}" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Filtreyi temizle</button></div></sc-if>
+<sc-if value="{{hasUndo}}" hint-placeholder-val="{{ false }}"><div role="status" style="display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--info-subtle); color: var(--info); font-size: var(--fs-bsm); font-weight: 600"><span style="flex: 1">Arama gizlendi</span><button type="button" onClick="{{undoHide}}" style="height: 36px; padding: 0 var(--s3); border: 0; border-radius: var(--r-md); background: transparent; color: var(--info); font: inherit; font-size: var(--fs-bsm); font-weight: 700; cursor: pointer">Geri al</button></div></sc-if>
 </sc-if>
 
 <!-- YETKİLERİM -->
@@ -199,7 +198,7 @@ input::placeholder{color:var(--text-muted)}
 </sc-for>
 </ul>
 </sc-if>
-<sc-if value="{{noAudit}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: space-between; align-items: center; padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); font-size: var(--fs-bsm)"><span>Bu aramayla eşleşen kayıt yok.</span><button type="button" onClick="{{resetA}}" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Filtreyi temizle</button></div></sc-if>
+<sc-if value="{{noAudit}}" hint-placeholder-val="{{ false }}"><div style="display: flex; justify-content: space-between; align-items: center; padding: var(--s5); border: 1px dashed var(--border); border-radius: var(--r-lg); font-size: var(--fs-bsm)"><span>Eşleşen kayıt yok</span><button type="button" onClick="{{resetA}}" style="height: 40px; padding: 0 var(--s3); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600; cursor: pointer">Filtreyi temizle</button></div></sc-if>
 <span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Tamamı Denetim Kaydı ekranında.</span>
 </sc-if>
 
@@ -248,17 +247,18 @@ input::placeholder{color:var(--text-muted)}
 <footer style="flex: none; background: var(--surface); border-top: 1px solid var(--border)">
 <div style="max-width: var(--content-max); margin: 0 auto; padding: var(--s6); box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s4); font-size: var(--fs-bsm); line-height: var(--lh-bsm)">
 <nav aria-label="Yasal ve yardım" style="display: flex; flex-wrap: wrap; gap: var(--s5)"><a href="#" style="color: var(--text-muted)">KVKK aydınlatma metni</a><a href="#" style="color: var(--text-muted)">Kullanım koşulları</a><a href="#" style="color: var(--text-muted)">Çerez politikası</a><a href="#" style="color: var(--text-muted)">Komisyon açıklaması</a><a href="#" style="color: var(--text-muted)">Yardım ve SSS</a></nav>
+<sc-if value="{{isAdmin}}" hint-placeholder-val="{{ false }}"><span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--text-muted)">Yönetim ekranlarındaki her işlem kayda yazılır</span></sc-if>
 <span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">Türkçe · English</span>
 </div>
 </footer>
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"role":{"editor":"enum","options":["user","admin"],"default":"user"},"section":{"editor":"enum","options":["profile","access","notif","security","history","perms","audit","look","privacy","data"],"default":"notif"},"$preview":{"width":1280,"height":1500}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"role":{"editor":"enum","options":["user","admin"],"default":"user"},"section":{"editor":"enum","options":["profile","access","notif","security","history","perms","audit","look","privacy","data"],"default":"profile"},"$preview":{"width":1280,"height":1500}}'>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { sec: props.section || 'notif', aq: '', atype: 0, saved: false, digest: false, slots: { s: true, o: true, a: true, g: false, h: false }, app: {}, mail: { search: false }, lang: 'tr', theme: 'system', cookies: { a: false, m: false }, hidden: {}, hq: '', hcat: 'all' };
+    this.state = { sec: props.section || 'profile', aq: '', atype: 0, saved: false, digest: false, slots: { s: false, o: false, a: false, h: true }, hiddenLast: null, app: {}, mail: { search: false }, lang: 'tr', theme: 'system', cookies: { a: false, m: false }, hidden: {}, hq: '', hcat: 'all' };
   }
   tokens() {
     return {
@@ -308,7 +308,7 @@ class Component extends DCLogic {
     ];
     SECS.splice(4, 0, ['perms', 'Yetkilerim', 'Rolün ve sahip olduğun yetki anahtarları', 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4'], ['audit', 'Yönetim etkinliğim', 'Yaptığın yönetim işlemleri ve gördüğün gizli veriler', 'M4 4h16v16H4zM8 9h8M8 13h8M8 17h5']);
     const visible = SECS.filter(x => admin ? x[0] !== 'history' : (x[0] !== 'perms' && x[0] !== 'audit'));
-    const cur = visible.find(x => x[0] === st.sec) || visible.find(x => x[0] === 'notif');
+    const cur = visible.find(x => x[0] === st.sec) || visible[0];
     const sec = cur[0];
     const nav = visible.map(x => { const on = x[0] === sec; return { label: x[1], icon: x[3], current: on ? 'page' : 'false', pick: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ sec: x[0], saved: false }); },
       style: 'display:flex;align-items:center;gap:10px;min-height:44px;padding:0 12px;border-radius:10px;text-decoration:none;font-size:14px;' + (on ? 'background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:700' : 'color:var(--text);font-weight:500') }; });
@@ -345,18 +345,18 @@ class Component extends DCLogic {
     const dot = (on) => 'width:20px;height:20px;box-sizing:border-box;border-radius:999px;' + (on ? 'border:6px solid var(--primary)' : 'border:2px solid var(--border)');
     const delivery = [[false, 'Tek tek, olduğu anda', 'Varsayılan'], [true, 'Günde bir özet', 'Akşam 19.00\'da tek bildirim; acil olanlar beklemez']].map(x => ({ t: x[1], d: x[2], checked: st.digest === x[0] ? 'true' : 'false', style: radio(st.digest === x[0]), dot: dot(st.digest === x[0]), pick: () => this.setState({ digest: x[0], saved: true }) }));
     const pill = (on) => 'height:44px;padding:0 16px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;' + (on ? 'border:1px solid var(--primary);background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:700' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500');
-    const slots = [['s', 'Sabah'], ['o', 'Öğle'], ['a', 'Akşam'], ['g', 'Gece'], ['h', 'Her zaman']].map(x => ({ t: x[1], pressed: st.slots[x[0]] ? 'true' : 'false', style: pill(st.slots[x[0]]), pick: () => this.setState({ slots: Object.assign({}, st.slots, { [x[0]]: !st.slots[x[0]] }), saved: true }) }));
+    const slots = [['h', 'Her zaman'], ['s', 'Sabah 08–12'], ['o', 'Öğle 12–17'], ['a', 'Akşam 17–22']].map(x => ({ t: x[1], pressed: st.slots[x[0]] ? 'true' : 'false', style: pill(st.slots[x[0]]), pick: () => { let n; if (x[0] === 'h') n = { s: false, o: false, a: false, h: true }; else { n = Object.assign({}, st.slots, { h: false, [x[0]]: !st.slots[x[0]] }); if (!n.s && !n.o && !n.a) n.h = true; } this.setState({ slots: n, saved: true }); } }));
     const btn = (kind) => 'height:40px;padding:0 14px;border-radius:10px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;' + (kind === 'p' ? 'border:1px solid var(--primary);background:transparent;color:var(--primary)' : 'border:1px solid var(--border);background:var(--surface);color:var(--text)');
     const accessRows = [
       { k: 'E-posta', v: 's***@o***.com', note: 'Doğrulandı · giriş ve bildirimler için', icon: 'M4 4h16v16H4zM4 6l8 7 8-7', actions: [{ t: 'Göster', style: btn('n') }, { t: 'Değiştir', style: btn('p') }] },
-      { k: 'Telefon (isteğe bağlı)', v: '+90 5** *** ** 67', note: 'İleride SMS doğrulaması için', icon: 'M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z', actions: [{ t: 'Göster', style: btn('n') }, { t: 'Değiştir', style: btn('p') }] },
-      { k: 'Şifre', v: '••••••••', note: 'Son değişiklik 2 Ekim · değişince tüm cihazlardan çıkış yapılır', icon: 'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4', actions: [{ t: 'Şifreyi değiştir', style: btn('p') }] },
-      { k: 'Bağlı hesaplar', v: 'Google bağlı · Apple bağlı değil', note: 'Aynı e-postayla gelen giriş tek hesapta birleşir', icon: 'M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7', actions: [{ t: 'Apple\'ı bağla', style: btn('p') }] }
-    ].concat(admin ? [{ k: 'İki adımlı doğrulama', v: 'Açık · doğrulama uygulaması', note: 'Yönetici hesaplarında zorunlu; kapatılamaz', icon: 'M7 2h10v20H7zM11 18h2M10 8h4v4h-4z', actions: [{ t: 'Yedek kodlar', style: btn('n') }, { t: 'Cihazı değiştir', style: btn('p') }] }] : []).map((a, i) => Object.assign(a, { row: 'display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 20px;' + (i ? 'border-top:1px solid var(--divider)' : '') }));
+      { k: 'Telefon (isteğe bağlı)', v: '+90 5** *** ** 67', note: 'Değiştirme SMS doğrulamasıyla gelecek', icon: 'M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z', actions: [{ t: 'Göster', style: btn('n') }] },
+      { k: 'Şifre', v: '••••••••', note: 'Son değişiklik 2 Ekim · değişince diğer cihazlardan çıkış yapılır', icon: 'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4', actions: [{ t: 'Şifreyi değiştir', style: btn('p') }] },
+      { k: 'Bağlı hesaplar', v: 'Google bağlı · Apple bağlı değil', note: 'Aynı e-postayla gelen giriş tek hesapta birleşir', icon: 'M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7', actions: [{ t: 'Google\'ı kaldır', style: btn('n') }, { t: 'Apple\'ı bağla', style: btn('p') }] }
+    ].concat(admin ? [{ k: 'İki adımlı doğrulama', v: 'Açık · doğrulama uygulaması', note: 'Yönetici hesaplarında zorunlu; kapatılamaz', icon: 'M7 2h10v20H7zM11 18h2M10 8h4v4h-4z', actions: [] }] : []).map((a, i) => Object.assign(a, { row: 'display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 20px;' + (i ? 'border-top:1px solid var(--divider)' : '') }));
     const devices = [
-      { name: 'Chrome · Windows', place: 'İstanbul civarı', when: 'Şu an etkin', current: true, other: false, icon: 'M3 5h18v11H3zM8 21h8M12 16v5' },
-      { name: 'Safari · iPhone', place: 'İstanbul civarı', when: '2 gün önce', current: false, other: true, icon: 'M7 2h10v20H7zM11 18h2' },
-      { name: 'Firefox · macOS', place: 'Ankara civarı', when: '10 Kasım 22.14', current: false, other: true, icon: 'M3 5h18v11H3zM2 20h20' }
+      { name: 'Chrome · Windows', place: 'Bilgisayar', when: 'Şu an etkin', current: true, other: false, icon: 'M3 5h18v11H3zM8 21h8M12 16v5' },
+      { name: 'Safari · iPhone', place: 'Telefon', when: '2 gün önce', current: false, other: true, icon: 'M7 2h10v20H7zM11 18h2' },
+      { name: 'Firefox · macOS', place: 'Bilgisayar', when: '10 Kasım 22.14', current: false, other: true, icon: 'M3 5h18v11H3zM2 20h20' }
     ];
     const logins = [
       { how: 'Google ile giriş', where: 'Chrome · Windows', when: 'Bugün 09.12' },
@@ -365,12 +365,12 @@ class Component extends DCLogic {
       { how: 'Hatalı şifre denemesi (2)', where: 'Bilinmeyen tarayıcı', when: '9 Kas 03.05' }
     ];
     const H = [
-      { id: 1, q: 'dji osmo action 5', match: 'DJI Osmo Action 5 Pro · 18.999 TL\'den başlıyor', tag: 'Takipte değil', when: '5 Kas', art: 'cam', cat: 'e' },
+      { id: 1, q: 'dji osmo action 5', match: 'DJI Osmo Action 5 Pro', tag: 'Takipte değil', when: '5 Kas', art: 'cam', cat: 'e' },
       { id: 2, q: 'insta360 ace pro 2 flash print', match: 'Insta360 Ace Pro 2 · Flash Print Bundle', tag: 'Takip ediliyor', when: '1 Kas', art: 'cam', cat: 'e' },
       { id: 3, q: 'dyson v15', match: 'Dyson V15 Detect Absolute', tag: 'Takip ediliyor', when: '3 Kas', art: 'stick', cat: 'h' },
       { id: 4, q: 'kışlık mont erkek lacivert', match: 'Kışlık mont · erkek · lacivert', tag: 'Takip ediliyor', when: '9 Kas', art: 'jacket', cat: 'w' },
       { id: 5, q: 'airpods pro 2', match: 'Apple AirPods Pro 2', tag: 'Takip ediliyor', when: '25 Eki', art: 'buds', cat: 'e' },
-      { id: 6, q: 'dyson v12', match: 'Dyson V12 Detect Slim · 24.999 TL\'den başlıyor', tag: 'Takipte değil', when: '24 Eki', art: 'stick', cat: 'h' }
+      { id: 6, q: 'dyson v12', match: 'Dyson V12 Detect Slim', tag: 'Takipte değil', when: '24 Eki', art: 'stick', cat: 'h' }
     ];
     const ql = st.hq.trim().toLocaleLowerCase('tr').replace(/ı/g, 'i');
     const shownH = H.filter(h => !st.hidden[h.id] && (st.hcat === 'all' || h.cat === st.hcat) && (!ql || (h.q + ' ' + h.match).toLocaleLowerCase('tr').replace(/ı/g, 'i').indexOf(ql) >= 0));
@@ -378,19 +378,23 @@ class Component extends DCLogic {
     const hist = shownH.map((h, i) => ({ q: h.q, match: h.match, tag: h.tag, when: h.when, art: this.A(h.art), imgLabel: h.match.split(' · ')[0] + ' görseli',
       li: 'display:grid;grid-template-columns:48px minmax(0,1fr) 120px 72px 80px;gap:16px;align-items:center;padding:12px 20px;' + (i ? 'border-top:1px solid var(--divider)' : ''),
       tagStyle: 'justify-self:start;display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;' + (h.tag === 'Takip ediliyor' ? 'background:var(--primary-subtle);color:var(--on-primary-subtle)' : 'color:var(--text-muted);border:1px dashed var(--border)'),
-      hide: () => this.setState({ hidden: Object.assign({}, st.hidden, { [h.id]: true }), saved: true }) }));
+      hide: () => this.setState({ hidden: Object.assign({}, st.hidden, { [h.id]: true }), hiddenLast: h.id, saved: true }) }));
+    const cnt = (k) => H.filter(h => !st.hidden[h.id] && (k === 'all' || h.cat === k)).length;
+    const hcats = [['all', 'Tümü'], ['e', 'Elektronik'], ['h', 'Ev aletleri'], ['w', 'Giyim ve ayakkabı']].map(x => ({ v: x[0], t: x[1] + ' (' + cnt(x[0]) + ')' }));
+    const undoHide = () => { const n = Object.assign({}, st.hidden); delete n[st.hiddenLast]; this.setState({ hidden: n, hiddenLast: null }); };
     const choice = (on) => 'height:48px;border-radius:10px;font:inherit;font-size:14px;cursor:pointer;background:var(--surface);color:var(--text);' + (on ? 'border:2px solid var(--primary);font-weight:700' : 'border:1px solid var(--border);margin:1px;font-weight:500');
     const langs = [['tr', 'Türkçe'], ['en', 'English']].map(x => ({ t: x[1], checked: st.lang === x[0] ? 'true' : 'false', style: choice(st.lang === x[0]), pick: () => this.setState({ lang: x[0], saved: true }) }));
     const themes = [['light', 'Açık'], ['dark', 'Koyu'], ['system', 'Sistem']].map(x => ({ t: x[1], checked: st.theme === x[0] ? 'true' : 'false', style: choice(st.theme === x[0]), pick: () => this.setState({ theme: x[0], saved: true }) }));
     const cookies = [['n', 'Zorunlu çerezler', 'Giriş ve güvenlik için gerekli; kapatılamaz', true], ['a', 'Analitik', 'Hangi sayfaların kullanıldığını anonim olarak ölçer', false], ['m', 'Pazarlama', 'Kampanya ve ortaklık ölçümleri', false]].map(x => { const on = x[3] ? true : !!st.cookies[x[0]]; const w = sw(on, x[3]);
       return { t: x[1], d: x[2], on: on ? 'true' : 'false', locked: x[3] ? 'true' : 'false', track: w.track, knob: w.knob, toggle: () => { if (!x[3]) this.setState({ cookies: Object.assign({}, st.cookies, { [x[0]]: !on }), saved: true }); } }; });
     const perms = [
-      ['Kullanıcılar', ['admin.users.view', 'admin.users.suspend', 'admin.users.view_as', 'admin.pii.reveal']],
-      ['Ürünler ve teklifler', ['admin.catalog.edit', 'admin.offers.view_hidden_seller', 'admin.matches.correct']],
-      ['Paketler', ['admin.packages.edit', 'admin.requests.review', 'admin.tokens.grant']],
-      ['Sistem', ['admin.settings.edit', 'admin.return_rules.edit', 'admin.templates.edit']],
-      ['Güvenlik', ['admin.fraud.view', 'admin.fraud.act', 'admin.audit.view', 'admin.roles.edit']],
-      ['İçerik', ['admin.legal.edit', 'admin.help.edit', 'admin.campaigns.edit']]
+      ['Kendi hesabın', ['admin.self.activity.view', 'admin.self.permissions.view']],
+      ['Kullanıcılar', ['admin.users.view', 'admin.users.view_pii', 'admin.users.suspend', 'admin.users.restrict', 'admin.users.view_as', 'admin.tracking.view', 'admin.savings.view']],
+      ['Ürünler ve teklifler', ['admin.catalog.view', 'admin.catalog.manage', 'admin.category_templates.manage', 'admin.offers.view_hidden_seller', 'admin.offers.suspend', 'admin.platforms.view', 'admin.platforms.manage']],
+      ['Paketler ve destek', ['admin.packages.view', 'admin.packages.manage', 'admin.packages.grant', 'admin.support.manage', 'admin.reports.manage']],
+      ['Sistem', ['admin.overview.view', 'admin.settings.view', 'admin.settings.apply', 'admin.settings.apply_critical', 'admin.return_rules.view', 'admin.return_rules.manage', 'admin.usage.view', 'admin.budgets.manage', 'admin.notifications.receive']],
+      ['Güvenlik ve kayıt', ['admin.fraud.view', 'admin.fraud.manage', 'admin.audit.view', 'admin.audit.export', 'admin.history.view', 'admin.history.export', 'admin.roles.view', 'admin.roles.manage']],
+      ['İçerik ve topluluk', ['admin.content.edit', 'admin.content.publish', 'admin.notification_templates.manage', 'admin.campaigns.manage', 'admin.community.moderate']]
     ].map(g => ({ t: g[0], n: g[1].length + ' / ' + g[1].length + ' yetki', keys: g[1].map(k => ({ k })) }));
     const AT = [['all', 'Tümü'], ['seller', 'Gizli satıcı'], ['pii', 'Kişisel veri'], ['setting', 'Ayar'], ['user', 'Kullanıcı işlemi']];
     const AE = [
@@ -409,21 +413,21 @@ class Component extends DCLogic {
       tile: e.art ? 'background:var(--surface-alt)' : 'background:var(--surface-alt);color:var(--text)', tag: TAG[e.kind][0],
       tagStyle: 'justify-self:start;display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;' + TAG[e.kind][1],
       li: 'display:grid;grid-template-columns:48px minmax(0,1fr) 120px 110px;gap:16px;align-items:center;padding:12px 20px;' + (i ? 'border-top:1px solid var(--divider)' : '') }));
-    const atypes = AT.map((x, i) => ({ label: x[1], pressed: st.atype === i ? 'true' : 'false', pick: () => this.setState({ atype: i }),
+    const atypes = AT.map((x, i) => ({ label: x[1] + ' ' + AE.filter(e => (x[0] === 'all' || e.kind === x[0]) && (!aql || (e.t + ' ' + e.d).toLocaleLowerCase('tr').replace(/ı/g, 'i').indexOf(aql) >= 0)).length, pressed: st.atype === i ? 'true' : 'false', pick: () => this.setState({ atype: i }),
       style: 'height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;' + (st.atype === i ? 'border:1px solid var(--primary);background:var(--primary-subtle);color:var(--on-primary-subtle);font-weight:600' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:500') }));
     const lastManager = false;
     return {
       isAdmin: admin, isUser: !admin, perms, audit, atypes, hasAudit: audit.length > 0, noAudit: audit.length === 0,
       aq: st.aq, onAq: (e) => this.setState({ aq: e.target.value }), resetA: () => this.setState({ aq: '', atype: 0 }),
       exportText: admin ? 'Kendi takiplerin, kazançların, bildirimlerin ve yönetim etkinliğin tek dosyada. Diğer kullanıcıların verileri bu dosyaya girmez.' : 'Takiplerin, kazançların, hak ve jeton hareketlerin, aramaların ve bildirimlerin tek dosyada.',
-      deleteText: admin ? 'Yönetici hesabı silinmeden önce Uygulama Yöneticisi rolü başka bir yöneticiye bırakılmalı. Son Uygulama Yöneticisi hesabını silemez.' : 'Hesabın hemen kapanır; takipler ve bildirimler durur. 30 gün içinde giriş yaparsan geri gelir, sonra kişisel verilerin kalıcı olarak silinir.',
+      deleteText: admin ? 'Yönetici hesabı silinmeden önce Uygulama Yöneticisi rolü başka bir yöneticiye bırakılmalı. Son Uygulama Yöneticisi hesabını silemez.' : 'Hesabın hemen kapanır; takipler ve bildirimler durur. 30 gün içinde giriş yaparsan her şey olduğu gibi geri gelir, sonra kişisel verilerin kalıcı olarak silinir.',
       deleteDisabled: admin ? 'true' : 'false',
       deleteStyle: 'align-self:flex-start;margin-top:auto;height:44px;padding:0 16px;border-radius:10px;font:inherit;font-size:14px;font-weight:600;' + (admin ? 'border:1px solid var(--border);background:var(--surface-alt);color:var(--text-muted);cursor:not-allowed' : 'border:1px solid var(--danger);background:transparent;color:var(--danger);cursor:pointer'),
       rootStyle: s, nav, secTitle: cur[1], secSub: cur[2], saved: st.saved,
       isProfile: sec === 'profile', isAccess: sec === 'access', isNotif: sec === 'notif', isSecurity: sec === 'security', isHistory: sec === 'history', isLook: sec === 'look', isPrivacy: sec === 'privacy', isData: sec === 'data', isPerms: sec === 'perms', isAudit: sec === 'audit',
       save: flash, accessRows, delivery, slots, types, devices, logins, hist, hasHist: hist.length > 0, noHist: hist.length === 0,
       hq: st.hq, onHq: (e) => this.setState({ hq: e.target.value }), onHcat: (e) => this.setState({ hcat: e.target.value }), resetH: () => this.setState({ hq: '', hcat: 'all' }),
-      hiddenNote: hiddenCount ? hiddenCount + ' arama gizlendi.' : '',
+      hasUndo: st.hiddenLast !== null, undoHide, hcats,
       langs, themes, cookies
     };
   }

@@ -186,7 +186,16 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 | `Checkbox` | §5.36 | consent and terms, admin bulk selection |
 | `Menu` | §5.36 | profile menu only (no ⋯ action menus, §6 rule 6b) |
 | `Tooltip` | §5.36 | labels of icon-only buttons, supplementary hints |
-| `Avatar` | §5.34, §5.36 | top bar profile button, person rows, profile header, admin user rows |
+| `Avatar` (own photo if uploaded, else initials) | §5.34, §5.36 | top bar profile button, person rows, profile header, admin user rows |
+| `SettingsNav` (vertical list; phone: sticky horizontal chips) [DECIDED 2026-11-18] | §5.38 | Settings and Account |
+| `SavedIndicator` ("Kaydedildi · şimdi") [DECIDED 2026-11-18] | §5.38 | Settings sections, admin settings |
+| `ChoiceCard` (radio card) · `ToggleChip` (multi-select pill, exclusive "all") [DECIDED 2026-11-18] | §5.38 | Settings › Bildirimler (delivery, time slots) |
+| `SettingRow` · `MaskedValue` (timed "Göster" with countdown) [DECIDED 2026-11-18] | §5.38 | Settings › E-posta ve şifre; admin personal-data fields |
+| `SessionRow` (devices, last sign-ins; no location) [DECIDED 2026-11-18] | §5.38 | Settings › Güvenlik ve cihazlar |
+| `RoleCard` · `PermissionGroup` [DECIDED 2026-11-18] | §5.38 | Settings › Yetkilerim, Roles and Permissions |
+| `ChannelMatrix` (notification type × channel switches) [DECIDED 2026-11-18] | §5.38 | Settings › Bildirimler |
+| `ActionCard` (export, delete) [DECIDED 2026-11-18] | §5.38 | Settings › Verilerim ve hesap |
+| `AvatarUpload` (upload + circular crop dialog) [DECIDED 2026-11-18] | §5.38 | Settings › Profil |
 | `Icon` | §5.36 | everywhere an icon appears |
 
 **This table is the canonical component list [DECIDED 2026-11-13].** `packages/ui` uses exactly these names. Former names in other documents map as follows: `StatusFlag` → `Flag` · `RevealGate` (UI) → `HiddenOfferCard` (the server-side `RevealGate` interface in `architecture.md` §6.3 keeps its name) · `AllowanceIndicator` → `AllowanceMeter` · `DealHero` → `HeroBlock` · `ErrorState` → `StatusBanner` (danger) · `MarkConfirm` → `ConfirmPanel` · compact `PriceHistory` → `PriceSparkline` · compact `StockHistory` → `StockStrip`. A new component is added to this table and to `product_design_pattern.md` first, then used.
@@ -351,8 +360,18 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 - **Shell/template:** AppShell (avatar active) or AdminShell · Settings.
 - **User sections:** Profil · E-posta ve şifre · Bildirimler (delivery, time slots, daily cap, type × channel switches) · Güvenlik ve cihazlar · Arama geçmişi (search + category, product images, hide) · Dil ve görünüm · Gizlilik ve çerezler · Verilerim ve hesap.
 - **Application Manager sections:** the above without Arama geçmişi, plus two-step verification in E-posta ve şifre, "Yönetim bildirimleri" group, **Yetkilerim** and **Yönetim etkinliğim** (search + type filter, product images); account deletion closed until the role is handed over.
-- **Overlays:** re-authenticate dialog · delete-account dialog · e-mail change.
+- **Overlays:** re-authenticate dialog (password or provider) · delete-account dialog · e-mail change · password change · photo crop · remove linked account · sign out other devices.
 - **States:** re-authenticate · delete confirmation · e-mail change pending · export ready · not saved · stale · error · loading.
+- **Design v2.1 additions [DECIDED 2026-11-18] (user):**
+  - Address `/[locale]/ayarlar/{section}` with localized section slugs (`profil` / `profile`, `guvenlik` / `security` …); the first section is **Profil**.
+  - Profil: optional photo (`AvatarUpload`: crop, zoom, JPEG/PNG/WebP ≤ 5 MB), else initials; username 3–20 characters (lowercase letters, digits, `_`, `.`), changeable once in 30 days, 3 suggestions when taken.
+  - E-posta ve şifre: `MaskedValue` — re-authentication valid 15 minutes (password, or the Google / Apple button for accounts without a password), the full value stays visible 60 seconds with a countdown, then masks itself; every reveal logged. Change e-mail dialog → `EmailSentBlock` in the same dialog; old address stays valid until verified. Change password dialog (current + new + `PasswordRules`); afterwards other devices are signed out. Phone: shown only (change comes with SMS verification). Accounts without a password: "Şifre oluştur" sends an e-mail link. Linked accounts: connect Google / Apple, remove with a confirmation; removing the only sign-in method is disabled with "Önce şifre oluştur". Admin two-step verification: information row only in this step.
+  - Bildirimler: delivery "Tek tek" (default) or "Günde bir özet" at 19.00 in the user's local time (time slots do not affect it); time slots "Her zaman" (default, exclusive) · Sabah 08–12 · Öğle 12–17 · Akşam 17–22, no custom range; combined rows ("İade süresi", "Fiyat düştü · hedefe ulaştı") switch both types together.
+  - Güvenlik ve cihazlar: `SessionRow` without location; "Diğer cihazlardan çıkış yap" with a confirmation listing the devices; this device stays signed in.
+  - Arama geçmişi: product and date only (no price); category filter with counts; "Gizle" → `StatusBanner` "Arama gizlendi · Geri al"; empty state "Henüz arama yok" + "Ürün ara".
+  - Verilerim ve hesap: export ZIP (JSON inside), downloadable 7 days. Delete → signed out, Home opens with an info banner; within 30 days everything returns as it was (tokens, tracking, pending requests).
+  - Admin: sections inside the normal shell, visible by permission; permission keys exactly as `database.md` §4; footer line "Yönetim ekranlarındaki her işlem kayda yazılır"; empty activity "Henüz yönetim işlemin yok" + "Genel bakışa git". Community sharing permissions come with Discover.
+  - Phone width: `SettingsNav` as sticky horizontal chips under the title.
 - **API:** `/me`, `/me/reauth`, `/me/pii`, `/me/email`, `/me/notification-preferences`, `/me/sessions`, `/me/search-history`, `/me/export`, `DELETE /me`, `/me/2fa/*`, `/me/admin-activity`.
 
 ### 8.10 Landing Page — `/[locale]` (signed out) and product page — `/[locale]/urun/[slug]`

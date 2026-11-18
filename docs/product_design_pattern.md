@@ -321,7 +321,7 @@ The Landing Page's "Bu hafta bulunan fırsatlardan" block is the product's sales
 - **Rule card:** title, 4 facts (İade süresi "en az", Süre başlangıcı, Kargoya verilmeden, İade kargo), no-withdrawal categories, warning box when unreadable or default, footer with read time and "Mağazanın iade sayfası ↗".
 
 ### 5.34 Person row and follow button [DECIDED 2026-11-12]
-- Avatar: initials on `primary-subtle` (40 px in rows, 96 px in profile headers); @username always, real name never required.
+- Avatar: the person's photo if uploaded, otherwise initials on `primary-subtle` (40 px in rows, 96 px in profile headers); @username always, real name never required.
 - Badge "Fırsat Avcısı" on `primary-subtle` with a check icon; privacy pill (lock + "Sadece ben / Takipçilere açık / Herkese açık") on `surface-alt`.
 - Follow button states: **Takip et** (primary) → **Takip ediliyor** (secondary; press again to unfollow) · private profile: **Takip isteği gönder** → **İstek gönderildi** (secondary; press again to withdraw).
 - What another person shared is shown; what they did not share says so in muted text ("Ödediği fiyatı paylaşmıyor", "Kazancını paylaşmıyor") rather than disappearing silently.
@@ -345,11 +345,25 @@ The smallest building blocks. Every larger component (§5.21–§5.35) is made f
 - **Checkbox (`Checkbox`):** 20 px box inside a 44 px touch target; checked = `primary` fill with a check icon. Consent checkboxes are never pre-ticked. Indeterminate state for "select all" in admin tables.
 - **Menu (`Menu`):** a list of actions opened from a button (profile menu, row "more" actions). Items 44 px high with icon + label; a destructive item uses `danger` text and still asks for confirmation (§4.2). Arrow keys move, Enter selects, Escape closes and returns focus to the opener. Below `breakpoint.md` it opens as a bottom sheet. **Visible actions, no overflow menus [DECIDED 2026-11-15] (user):** item and page actions are never hidden behind a ⋯ ("more") button on any screen, user or admin; they are shown as clear buttons where they act (secondary / ghost by importance). `Menu` is used only for navigation lists (the profile menu) and option lists (`Select`).
 - **Tooltip (`Tooltip`):** supplementary text only, shown on hover and keyboard focus after a short delay; never shown on touch. Anything the user needs to act or decide (limits, privacy notes, reasons) is never placed only in a tooltip (§5.20).
-- **Avatar (`Avatar`):** initials on `primary-subtle`; sizes 34 (top bar profile button), 40 (rows, §5.34, §5.35), 96 (profile header). Initials only; a real name is never required. Decorative when inside a labelled button.
+- **Avatar (`Avatar`):** the user's own photo when they uploaded one, otherwise initials on `primary-subtle` [DECIDED 2026-11-18] (user); sizes 34 (top bar profile button), 40 (rows, §5.34, §5.35), 96 (profile header). A photo is optional; a real name is never required. Decorative when inside a labelled button.
 - **Icon (`Icon`):** one outline icon set, stroke 2, `currentColor`, sizes `icon-sm` / `icon-md` / `icon-lg`. Decorative icons are hidden from assistive technology; an icon that carries meaning has a text label. Library: Lucide [DECIDED 2026-11-14].
 
 ### 5.37 Layer order (`z-index`) [DECIDED 2026-11-14]
 Stacking uses only the `z-index` tokens, from bottom to top: **base** (page content) · **raised** (sticky table header) · **sticky** (top bar, bottom tab bar) · **overlay** (dimmed backdrop) · **modal** (Dialog, Sheet, bell panel) · **popover** (Menu, Select list, autocomplete — above modal because they also open inside dialogs) · **tooltip** (always on top). No literal z-index values in code.
+
+### 5.38 Settings parts [DECIDED 2026-11-18]
+Built from §5.36 primitives; used by Settings and Account (both roles) and reusable in admin settings.
+- **Section menu (`SettingsNav`):** desktop = vertical list (icon + label, 44 px rows, current = `primary-subtle` + `aria-current="page"`), sticky beside the content. Below `breakpoint.md` = one horizontal, scrollable chip row under the page title, sticky at the top; the current chip scrolls into view.
+- **Saved indicator (`SavedIndicator`):** "Kaydedildi · şimdi" with a check, in the section header, `role="status"`; shown after any auto-saved change (switches, choices) and after "Kaydet".
+- **Choice card (`ChoiceCard`):** radio card (dot + title + one muted line), 56 px min; checked = 2 px `primary` border. Used for single choices with a short explanation (delivery mode).
+- **Toggle chip (`ToggleChip`):** pill button with `aria-pressed`, 44 px; pressed = `primary-subtle` + `primary` border. Multi-select chips; an "all" chip ("Her zaman") is exclusive: pressing it clears the others, clearing the others presses it.
+- **Setting row (`SettingRow`):** label (caption) · value (masked where personal) · one muted note · actions on the same row (rule: no idle rows). Used for e-mail, phone, password, linked accounts, two-step verification.
+- **Masked value (`MaskedValue`):** masked text + "Göster"; after re-authentication the full value shows with a countdown pill (`warning-subtle`) and "Gizle", then masks itself again. Every reveal is logged.
+- **Session row (`SessionRow`):** device icon · device and browser · device type · last use · "Bu cihaz" pill or "Çıkış yap"; the last-sign-ins list uses the same row without actions. No location.
+- **Role card (`RoleCard`) and permission group (`PermissionGroup`):** role on `hero-surface` tile + one line + link to Roles and Permissions; groups list official permission keys (`database.md` §4) in monospace chips with an "N / N yetki" count. Read-only.
+- **Channel matrix (`ChannelMatrix`):** table of notification types × channels (Uygulama içi · E-posta) with a `Switch` per cell; optional group headings; locked rows show "kapatılamaz" and a locked switch.
+- **Action card (`ActionCard`):** icon tile · title · one line · one action at the bottom; tone normal (export) or danger (delete, `danger` outline button; disabled with its reason when not allowed).
+- **Avatar upload (`AvatarUpload`):** "Fotoğraf yükle" / "Kaldır" beside the avatar; the upload opens a Dialog with a circular crop over the image, a zoom slider and "Başka fotoğraf" / "Kaydet"; JPEG, PNG or WebP up to 5 MB, location data removed (§5.20).
 
 ---
 
