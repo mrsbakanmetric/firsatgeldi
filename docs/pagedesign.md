@@ -172,6 +172,7 @@ Rules: stacking only through the `z-index` tokens (design §5.37); dimmed page (
 | `GuestProductCard` ("Seçtiğin ürün seni bekliyor": image, name, variant) [DECIDED 2026-11-18] | §5.30 | Sign-in, Sign-up (guest hand-back) |
 | `ProviderButton` (Google, Apple — each provider's official button rules) [DECIDED 2026-11-18] | §4.1 | Sign-in, Sign-up, Settings › linked sign-in methods |
 | `PasswordRules` (live checklist: length, letter, digit; `aria-live`) [DECIDED 2026-11-18] | §5.36 TextField | Sign-up, new password, Settings › password |
+| `EmailSentBlock` (mail icon, title, masked address, "istenmeyen klasörüne bak", resend with countdown, "Girişe dön") [DECIDED 2026-11-18] | §5.13 | Sign-up verify, forgot password, expired link, Settings › e-mail change |
 | `ConfirmPanel` (mark → confirm, typed seller and price) | §5.1 | Search and Add, Add product dialog step 2, Want to Buy "Aldım, kaydet" |
 | `SegmentedChoice` | §4.3 | order status, ranges, durations, tabs |
 | `MultiImageUpload` + `ImagePrivacyNote` | §5.19, §5.20 | Search and Add, Bize yaz |
@@ -341,6 +342,8 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
   - **States after the correct password only:** e-mail not verified · account pending deletion ("Hesabımı geri aç" / "Vazgeç, silinsin") · account suspended (reason, "Destek talebi aç", "Verilerimi indir"; no access to the app). Before the correct password nothing reveals whether an account exists.
   - **Google / Apple-only account:** no separate state (it cannot be confirmed without a password and would reveal the account): the same generic error with a fixed note "Google ya da Apple ile kaydolduysan o düğmeyle gir".
   - **Phone width (rules, not drawn):** form first; the guest product card above the form; the hero below it.
+  - **Disabled primary:** "Hesap oluştur" stays disabled until the form is valid; the unmet item is named next to it (the first unticked rule or "Koşulları onayla"), never a silent disabled button (design §4.2).
+  - **Field errors** (`TextField` error: icon + text under the field + danger border): "Geçerli bir e-posta yaz" · "Şifre kurallarını tamamla" · "Kullanım koşullarını onaylaman gerekiyor"; shown on leaving the field or on submit, not while typing.
   - **Not in this step:** Application Manager two-step sign-in (with the admin screens) and the re-consent dialog (with Legal Pages).
 - **API:** `/auth/*`, `POST /me/restore`.
 
