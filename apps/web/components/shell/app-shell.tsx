@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { signInHref, signUpHref } from "../../lib/auth/next";
 import { APP_NAV, currentAppSection, hrefFor, isProfileMenuPage, LANDING_NAV, TAB_BAR_IDS, type AppNavId } from "../../lib/shell/navigation";
-import { BellButton, Logo, ProfileMenu, profileMenuItems, SiteFooter, SkipLink, useTranslator, type ShellViewer } from "./parts";
+import { BellButton, type BellPanelRenderer, Logo, ProfileMenu, profileMenuItems, SiteFooter, SkipLink, useTranslator, type ShellViewer } from "./parts";
 
 const NAV_ICON: Record<AppNavId, LucideIcon> = {
   home: House,
@@ -30,6 +30,8 @@ export interface AppShellProps {
   variant?: "app" | "landing";
   /** Content of the bell panel (Notifications, plan step 13). */
   bellPanel?: ReactNode;
+  /** Draws the bell panel itself (Notifications: list + preview). */
+  renderBellPanel?: BellPanelRenderer;
   onSignOut?: () => void;
   children: ReactNode;
 }
@@ -37,7 +39,7 @@ export interface AppShellProps {
 const TOP_LINK_CLASSES =
   "flex min-h-(--size-touch-target-min) min-w-(--size-touch-target-min) shrink-0 items-center gap-2 border-y-(length:--border-width-strong) border-transparent px-3 text-body-sm whitespace-nowrap";
 
-export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut, children }: AppShellProps) {
+export function AppShell({ locale, viewer, variant = "app", bellPanel, renderBellPanel, onSignOut, children }: AppShellProps) {
   const t = useTranslator(locale);
   const pathname = usePathname() ?? `/${locale}`;
   const current = currentAppSection(pathname, locale);
@@ -119,7 +121,7 @@ export function AppShell({ locale, viewer, variant = "app", bellPanel, onSignOut
             </span>
           ) : signedIn ? (
             <>
-              <BellButton locale={locale} t={t} unreadCount={viewer.unreadCount} unreadDeal={viewer.unreadDeal} panel={bellPanel} />
+              <BellButton locale={locale} t={t} unreadCount={viewer.unreadCount} unreadDeal={viewer.unreadDeal} panel={bellPanel} {...(renderBellPanel ? { renderPanel: renderBellPanel } : {})} />
               <div className="hidden md:flex">
                 <ProfileMenu locale={locale} t={t} initials={viewer.initials} avatarSrc={viewer.avatarSrc ?? null} {...(onSignOut ? { onSignOut } : {})} />
               </div>

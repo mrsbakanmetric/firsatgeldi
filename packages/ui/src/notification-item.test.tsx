@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { Lock, Sparkles } from "lucide-react";
-import { describe, expect, it } from "vitest";
-import { ModeBadge, NotificationItem, NotificationTile } from "./index";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+import { ModeBadge, NotificationItem, NotificationPreview, NotificationTile } from "./index";
 import { axeViolations } from "./test/axe";
 
 describe("Notification item (product_design_pattern.md §5.29)", () => {
@@ -39,5 +40,34 @@ describe("Notification item (product_design_pattern.md §5.29)", () => {
     expect(container.firstElementChild?.className).toContain("opacity-60");
     expect(screen.getByText("Takipte değil").className).toContain("border-dashed");
     expect(screen.queryByText("okunmadı")).toBeNull();
+  });
+
+  it("NotificationPreview: type and time, title, three values (a saving highlighted), check time, actions, close; no axe violations", async () => {
+    const onClose = vi.fn();
+    const { container } = render(
+      <NotificationPreview
+        type="Fırsat geldi"
+        time={{ label: "14.32", iso: "2026-11-19T11:32:00Z" }}
+        onClose={onClose}
+        closeLabel="Önizlemeyi kapat"
+        media={<NotificationTile icon={Lock} />}
+        mode={<ModeBadge mode="BOUGHT" label="Aldım" />}
+        title="Insta360 Ace Pro 2"
+        sub="Aksiyon kamerası · Hepsiburada · 1 Kasım'da aldın"
+        body="Bunu 28.999 TL'ye aldın."
+        facts={[
+          { label: "Ödediğin", value: "28.999 TL" },
+          { label: "En ucuz şimdi", value: "25.997 TL" },
+          { label: "Kazancın", value: "3.002 TL", highlight: true },
+        ]}
+        checked="Fiyat 2 dk önce yeniden kontrol edildi"
+        actions={<a href="/tr/takip/1">Fırsatı gör</a>}
+      />,
+    );
+    expect(screen.getByRole("region", { name: "Insta360 Ace Pro 2" })).toBeDefined();
+    expect(screen.getByText("3.002 TL").className).toContain("text-savings");
+    await userEvent.click(screen.getByRole("button", { name: "Önizlemeyi kapat" }));
+    expect(onClose).toHaveBeenCalledOnce();
+    expect(await axeViolations(container)).toEqual([]);
   });
 });
