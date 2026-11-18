@@ -305,6 +305,7 @@ interface LinkResolver { resolve(url: string): Promise<ResolvedListing> }       
 
 - [DECIDED] SerpApi + store site searches **together**; adapters are independent (separate queue, separate circuit breaker).
 - Extraction order: official API/feed → JSON-LD → site JSON endpoints → HTML → LLM (last resort); alarm on every fallback.
+- `LinkResolver` reading order for a pasted link: §10.1 › Link reading order [DECIDED 2026-11-19].
 - **Ratings [DECIDED 2026-11-12]:** the same page read extracts `AggregateRating` (average, count) and, where exposed, the star distribution; review texts are never stored. The same page read also extracts the **installment table** (programme, months, interest-free, minimum) where the page shows it [DECIDED 2026-11-13]. A daily job `seller-trust` computes `seller_trust` from offers, stock history, reports and `buyer_feedback`.
 - **Carrier tracking (next phase):** `CarrierSource` adapters per cargo company read status by tracking number, same politeness rules.
 - New fields [DECIDED]: **shipping cost, delivery time, claimed old price** are collected.
@@ -415,6 +416,13 @@ Rule: request handlers never wait for a queue job; they only enqueue and return 
 ### 10.1 Inputs [DECIDED]
 - **Text / photo:** classification → category template (generic template if none approved) → LLM fields with confidence → 1–2 questions only for low-confidence **and** critical fields.
 - **Link detection:** `link-resolve` → product + seller + price; "Nasıl anladık" skipped.
+  - **Link reading order [DECIDED 2026-11-19] (user):** three paths, built in this order, each one filling what the earlier ones cannot:
+    1. **The link text itself** — platform from the domain; brand, product name, model code and the store's product id from the URL path. No request to the store, no provider cost. Gives product identity only (no seller, no price).
+    2. **SerpApi search** with the product found in path 1 → stores and prices. One query per link, counted in the provider budget (§8.5).
+    3. **The store's official API or partner feed**, where the store grants access (application made by the user) → seller, price, stock.
+  - Reading the store's product page (§7.1) is used only where the store allows an identifiable client (§8.3).
+  - **[OPEN]** While only path 1 exists, the confirm panel cannot fill seller and price paid from the link: the user types them (product rule: price paid comes only from the user). How the panel asks for them is a design question.
+  - **Data test findings (2026-11-19):** Trendyol answered **403** to an identifiable User-Agent on a product page (one request; stopped, no retry, no evasion — §8.3). Trendyol's robots.txt disallows `?q=` (its site search) for every agent. The other stores are not checked yet.
 - **Order screenshot:** product + seller + price + order date; **several products** → a list, mark → confirm in turn. Personal data in the screenshot is stripped (§11a).
 - **Multiple images:** up to 5 per request; identification runs once all are processed.
 - Guests: kept under `anon_id`, linked to the user at sign-in.
