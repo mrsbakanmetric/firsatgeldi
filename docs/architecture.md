@@ -642,22 +642,30 @@ POST /auth/refresh · POST /auth/logout · POST /auth/logout-all
 
 ### ME
 ```
-GET|PATCH /me                          # name, username, language, theme, privacy (email/phone masked)
+GET|PATCH /me                          # name, username, photo, language, theme, privacy (email/phone masked)
+GET       /me/username-check?u=        # username free? + 3 suggestions when taken (3–20 chars, once in 30 days) [ASSUMPTION — endpoint]
 GET|PUT   /me/notification-preferences # time slots, digest, type × channel
 GET|PUT   /me/cookie-consent
 GET       /me/entitlements             # plan, remaining reveal/tracking/checks, tokens
 GET       /me/search-history?cursor=   # own searches; also feeds "Son aramaların" and SEARCHED_PRODUCT_DROP (hidden entries excluded)
 POST      /me/search-history/:id/hide  # hide from list (record kept)
+POST      /me/search-history/:id/unhide # "Geri al" after hiding [ASSUMPTION — endpoint]
 GET       /me/security                 # devices, recent sign-ins
 DELETE    /me/devices/:id
-POST      /me/reauth                   # re-authentication before sensitive actions
+POST      /me/reauth                   # re-authentication before sensitive actions: password, or Google / Apple for an account without one; valid `pii.reauth_minutes` (15) [DECIDED 2026-11-18]
 POST      /me/2fa/setup · POST /me/2fa/verify · GET /me/2fa/backup-codes   # mandatory for Application Manager accounts [DECIDED]
 GET       /me/sessions · DELETE /me/sessions/:id · POST /auth/logout-all
+POST      /me/sessions/sign-out-others # "Diğer cihazlardan çıkış yap": this device stays signed in [DECIDED 2026-11-18; endpoint ASSUMPTION]
 GET       /me/admin-activity?q=&type=   # Application Manager: own audit entries (read-only)
-GET       /me/pii                      # full email/phone (only after re-authentication)
-PATCH     /me/email · PATCH /me/phone  # re-authentication + verification email/SMS
-POST      /me/export
-DELETE    /me                          # deletion, restorable for 30 days
+GET       /me/pii                      # full email/phone (only after re-authentication); shown 60 s with a countdown, every reveal logged [DECIDED 2026-11-18]
+PATCH     /me/email · PATCH /me/phone  # re-authentication + verification email/SMS; the old e-mail stays valid until the new one is verified; phone change waits for SMS verification (shown only in this release) [DECIDED 2026-11-18]
+POST      /me/password                 # change: current + new password; signs out the other devices [DECIDED 2026-11-18; endpoint ASSUMPTION]
+POST      /me/password/create-link     # "Şifre oluştur" for an account without a password: sends the reset-link e-mail [ASSUMPTION — endpoint]
+POST      /me/identities/:provider · DELETE /me/identities/:provider   # connect / remove Google or Apple; removing the only sign-in method is refused [DECIDED 2026-11-18; endpoints ASSUMPTION]
+POST      /me/export                   # ZIP (JSON inside), downloadable `account.export_download_days` (7) [DECIDED 2026-11-18]
+GET       /me/export                   # latest export: preparing / ready + expiry, download link [ASSUMPTION — endpoint]
+DELETE    /me                          # deletion, restorable for 30 days; signs out; on restore everything returns (tokens, tracking, pending requests) [DECIDED 2026-11-18]
+GET       /me/deletion-preview         # counts the delete dialog lists (tracking, tokens, pending requests, restore date) [ASSUMPTION — endpoint]
 POST      /me/restore                  # restore within the period — the user's explicit choice after a correct password ("Hesabımı geri aç"), never automatic (§17)
 GET       /me/stream                   # SSE
 ```
@@ -953,11 +961,11 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 - **Session:** short-lived session + rotating refresh in httpOnly Secure cookies; `sessions` hashed; new device → `NEW_DEVICE_SIGNIN`.
 - **Guest** [DECIDED]: search and mark allowed; sign-in at confirmation, then continue (`anon_id` → `user_id`).
 - **At sign-up:** KVKK notice + terms consent (`user_consents`); welcome tokens (`token_ledger WELCOME`, once, held if fraud signals) [DECIDED]; `WELCOME` + `VERIFY_EMAIL`.
-- **Account deletion** [DECIDED]: closes immediately (tracking, checks, notifications stop), restorable within 30 days, then `account-purge` removes personal data while histories remain anonymous. Restore is never automatic: after a correct password the user chooses "Hesabımı geri aç" (`POST /me/restore`) or "Vazgeç, silinsin" (deletion stays scheduled; the choice is logged) [DECIDED 2026-11-18] (user).
+- **Account deletion** [DECIDED]: closes immediately (tracking, checks, notifications stop) and signs out, restorable within 30 days with everything as it was — tokens, tracking, pending requests [DECIDED 2026-11-18], then `account-purge` removes personal data while histories remain anonymous. Restore is never automatic: after a correct password the user chooses "Hesabımı geri aç" (`POST /me/restore`) or "Vazgeç, silinsin" (deletion stays scheduled; the choice is logged) [DECIDED 2026-11-18] (user).
 - **Suspension:** by the Application Manager with a reason. A suspended user does **not** get into the app: after a correct password the sign-in page shows the reason with "Destek talebi aç" and "Verilerimi indir" (data export) only; no session for the app is opened [DECIDED 2026-11-18] (user).
 - **No account enumeration [DECIDED 2026-11-18] (user):** whether an account exists, how it was created or its state is never revealed before a correct password. Every wrong e-mail/password answer is the same generic error (also for accounts that have only Google or Apple and no password), with a fixed note "Google ya da Apple ile kaydolduysan o düğmeyle gir"; "Önce e-postanı doğrula", "pending deletion" and "suspended" appear only after a correct password; sign-up with an already registered e-mail answers like a new one ("E-postanı doğrula"); password reset always answers "Bağlantıyı gönderdik".
 - **Not in Phase 1 step 20 [DECIDED 2026-11-18] (user):** the Application Manager two-step verification step and the re-consent dialog at sign-in; each becomes its own step once its design is approved.
-- **Sensitive actions** (view full email/phone, change email/phone/password): re-authentication within `pii.reauth_minutes` [RECOMMENDED].
+- **Sensitive actions** (view full email/phone, change email/phone/password, delete account): re-authentication within `pii.reauth_minutes` (15) — the password, or for an account without one the Google / Apple button it uses [DECIDED 2026-11-18] (user). A revealed own value stays visible `pii.self_reveal_seconds` (60) and every reveal is logged.
 
 ---
 
