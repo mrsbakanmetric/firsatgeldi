@@ -223,7 +223,16 @@ describe.each(LOCALES)("Sign-in (%s)", (locale) => {
     expect(screen.getByText("y***@o***.test")).toBeDefined();
     const wait = SYSTEM_SETTINGS["auth.resend_cooldown_seconds"];
     expect((screen.getByRole("button", { name: new RegExp(t("auth.sent.resend")) }) as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.getByText(t("auth.sent.resendIn", { time: `${Math.floor(wait / 60)}:${String(wait % 60).padStart(2, "0")}` }))).toBeDefined();
+    // The countdown starts from the policy's cooldown; the second it shows depends on when the
+    // screen renders (a second boundary may pass), so the text is matched by its shape and the
+    // value checked within one second of the cooldown.
+    const [before = "", after = ""] = t("auth.sent.resendIn", { time: "\u0000" }).split("\u0000");
+    const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const label = screen.getByText(new RegExp(`^${escape(before)}(\\d+):(\\d{2})${escape(after)}$`)).textContent ?? "";
+    const [, minutes = "0", seconds = "0"] = /(\d+):(\d{2})/.exec(label) ?? [];
+    const shown = Number(minutes) * 60 + Number(seconds);
+    expect(shown).toBeLessThanOrEqual(wait);
+    expect(shown).toBeGreaterThanOrEqual(wait - 1);
     expect(controller.state.activity.at(-1)).toMatchObject({ action: "auth.sign_up" });
   });
 
