@@ -4,6 +4,15 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-18 → 19 · claude.ai (design side)
+- **Done:** Sign-in v2.1 (#115, #117); Settings and Account v2.1 — new Forms board, Settings parts §5.38 (#120); My Profile v2.1 — MeStates board, Profile parts §5.39 (#126); Notifications v2 (layout rules, new items, tokens 1.15.0 `components.avatar.size-lg-compact`) and v2.1 (no Takip et dialog, TrackFlow boards marked unused) (#130, #131); design reviews of #118, #119, #123–#125, #128, #129, #133–#135.
+- **Decided (user):** Settings (20 items, photo optional), My Profile (7 items) and Notifications (5 items) — written in `pagedesign.md` §8.8, §8.9, §8.9a, §8.5 and, via Claude Code's spec PRs, in `modules.md` / `architecture.md` / `database.md` (#121, #127, #132).
+- **Accepted design differences (in `build_status.md`):** Sign-in form 440 px · provider buttons with initials until official logos (before Phase 2) · notification preview 440 px (a 560 px token can be added if wanted) · My Savings / Packages / Landing / Legal canvases still v1.
+- **Open:** official Google/Apple logos before real sign-in · Settings stale-device state when the API sends a fetch time · user's visual check of the new screens.
+- **Next:** My Savings canvas → v2 (2026-11-15 layout rules) before plan step 15, only with the user's approval; then Packages, Landing, Legal in order.
+
+---
+
 ## 2026-11-16 → 19 · Claude Code
 - **Done:** Product Detail texts cleanup (#112) and contract spec (#113); Sign-in and Sign-up (#116 spec, #118, #119) ✅; Settings and Account (#121 spec, #123, #124, #125) ✅; My Profile `/profil` (#127 spec, #128, #129) ✅; Notifications page + bell panel (#132 spec, #133, #134, #135) ✅; flaky sign-up test fix (#122).
 - **Shared code:** `core` Turkish suffix phrases from tables — "12 Aralık'a kadar", "Ekim 2026'dan beri", "1 Kasım'da", "18.05'te"; Turkish times with a dot everywhere; endpoint registry `activityVariants`; live connection status; new canonical parts for Settings, Profile and Notifications.
