@@ -4,6 +4,15 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-16 → 19 · Claude Code
+- **Done:** Product Detail texts cleanup (#112) and contract spec (#113); Sign-in and Sign-up (#116 spec, #118, #119) ✅; Settings and Account (#121 spec, #123, #124, #125) ✅; My Profile `/profil` (#127 spec, #128, #129) ✅; Notifications page + bell panel (#132 spec, #133, #134, #135) ✅; flaky sign-up test fix (#122).
+- **Shared code:** `core` Turkish suffix phrases from tables — "12 Aralık'a kadar", "Ekim 2026'dan beri", "1 Kasım'da", "18.05'te"; Turkish times with a dot everywhere; endpoint registry `activityVariants`; live connection status; new canonical parts for Settings, Profile and Notifications.
+- **Decided (user):** written in `modules.md`, `architecture.md`, `database.md` and the plan with each spec PR above (#116, #121, #127, #132); design reviews applied in #119, #124, #125, #134.
+- **Open:** [ASSUMPTION] shapes of Sign-in, Settings, Profile and Notifications endpoints to write into `architecture.md` §16.1 · user's visual check of steps 11, 19, 20, 21a, 13 at 390/1280 light/dark · performance budgets not measured · two `packages/ui` tests and one Product Detail test timed out once under a full run (passed alone).
+- **Next:** plan step 15 (My Savings) — its canvas is v1 (before the 2026-11-15 layout rules): ask the design side for a v2 check first; start only with the user's approval.
+
+---
+
 ## 2026-11-15 (late morning) · Claude Code
 - **Done:** #102 merged — Home and Tracked Items contract fields written into `architecture.md` §16.1 and `database.md` (actions `tracking.restore`/`tracking.bought`, events RESTORED/BOUGHT, setting `tracking.restore_days`); #106: layout rules of #104 on Tracked Items (v6: no ⋯, visible footer buttons; ended cards "Geri al" in the strip) and Home (Hemen Gözat columns end together; no idle footer row) — #106.
 - **Decided (user):** error code name `VALIDATION` (#102) · Hemen Gözat label letter spacing not applied (`build_status.md`) · layout-rules PR before Product Detail · "Geri al" result line = `StatusBanner`, buy-or-wait hint = info `Flag`, `StepTick` + `HelpPanel` canonical (#105) · ratings keep the store's scale `{ value, scale }`, never converted (#105, `modules.md`) · top-drop cards not clickable until the product page exists · Product Detail in three PRs, one plan step (`implementation_plan.md`).
