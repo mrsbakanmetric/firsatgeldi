@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_TIME_ZONE, formatDate, formatDateTime, formatMoney, formatNumber, formatSince, formatTime, formatUntil, pluralCategory, turkishAblative, pluralCategories } from "./format";
+import { DEFAULT_TIME_ZONE, formatAtTime, formatDate, formatDateTime, formatMoney, formatNumber, formatOnDay, formatSince, formatTime, formatUntil, pluralCategories, pluralCategory, turkishAblative, turkishLocative } from "./format";
 
 const nbsp = "\u00a0";
 
@@ -76,5 +76,36 @@ describe("formatSince — the ablative follows how the year is read", () => {
     expect(formatSince(date, "tr")).toBe("Ekim 2026'dan beri");
     expect(formatSince(date, "en")).toBe("since October 2026");
     expect(formatSince(new Date("2027-01-01T08:00:00Z"), "tr")).toBe("Ocak 2027'den beri");
+  });
+});
+
+describe("locative phrases — the suffix follows how the day or time is read", () => {
+  it.each([
+    [0, "Ocak'ta"], [1, "Şubat'ta"], [2, "Mart'ta"], [3, "Nisan'da"], [4, "Mayıs'ta"], [5, "Haziran'da"],
+    [6, "Temmuz'da"], [7, "Ağustos'ta"], [8, "Eylül'de"], [9, "Ekim'de"], [10, "Kasım'da"], [11, "Aralık'ta"],
+  ])("month %i: 1 %s", (month, phrase) => {
+    expect(formatOnDay(new Date(Date.UTC(2026, month, 1, 12)), "tr")).toBe(`1 ${phrase}`);
+  });
+
+  it("en: on 1 November", () => {
+    expect(formatOnDay(new Date(Date.UTC(2026, 10, 1, 12)), "en")).toBe("on 1 November");
+  });
+
+  it.each([
+    ["2026-11-19T09:10:00Z", "12:10'da"],
+    ["2026-11-19T15:05:00Z", "18:05'te"],
+    ["2026-11-19T08:20:00Z", "11:20'de"],
+    ["2026-11-19T16:00:00Z", "19:00'da"],
+    ["2026-11-19T06:00:00Z", "09:00'da"],
+    ["2026-11-19T11:40:00Z", "14:40'ta"],
+  ])("%s → %s (Istanbul)", (instant, phrase) => {
+    expect(formatAtTime(new Date(instant), "tr")).toBe(phrase);
+  });
+
+  it("with the short date; en", () => {
+    expect(formatAtTime(new Date("2026-11-11T13:20:00Z"), "tr", { withDate: true })).toBe("11 Kas 16:20'de");
+    expect(formatAtTime(new Date("2026-11-11T13:20:00Z"), "en")).toBe("at 4:20 PM");
+    expect(formatAtTime(new Date("2026-11-11T13:20:00Z"), "en", { withDate: true })).toBe("on Nov 11 at 4:20 PM");
+    expect(turkishLocative(5)).toBe("'te");
   });
 });

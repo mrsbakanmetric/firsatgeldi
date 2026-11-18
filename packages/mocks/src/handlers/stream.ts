@@ -12,8 +12,9 @@ export function streamHandlers(controller: MockController) {
   return [
     sse<Record<StreamEventType, string>>(`*${API_PREFIX}${ENDPOINTS.stream.path}`, ({ client, request }) => {
       const actor = actorFor(controller);
-      // No session → no stream (not on the public allow-list).
-      if (actor.kind === "guest") {
+      // No session → no stream (not on the public allow-list). "stale" scenario: the live
+      // connection is lost (Notifications state "canlı bağlantı koptu").
+      if (actor.kind === "guest" || controller.config.scenario === "stale") {
         client.close();
         return;
       }
