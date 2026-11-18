@@ -728,6 +728,12 @@ GET  /me/reveals?period=&q=&category=&group=product|event&cursor=   # "Nereye ha
 ```
 GET  /home                              # HomeView (§16.1): summary, Hemen Gözat, return reminder, up to 4 tracked cards, top price drops
 GET  /notifications?type=&q=&category=&unread=&cursor= · PATCH /notifications/:id/read · POST /notifications/read-all · GET /notifications/unread-count
+# Notifications page and bell panel [ASSUMPTION — names; user decisions 2026-11-19]
+GET  /notifications/:id                 # bell preview: product, mode, message, three values, 14-day cheapest price, check time, actions
+GET  /notifications/for-you             # "Senin için": drops in the tracked list, recent untracked searches, frequent searches (cheapest offer, never a seller)
+GET  /notifications/delivery-status     # digest on (pending count, time) · daily cap (sent today, limit, deferred count)
+POST /notifications/:id/delivery-answer # { answer: YES | NOT_YET } — YES: delivered today (as Product Detail); NOT_YET: ask again in 2 days, at most 3 times
+# Live: `/me/stream` event `notification.created` (unread count and lists refresh)
 GET  /savings?period=&q=&category= · PATCH /savings/:id   # correction within 7 days (method incl. NOT_USED → missed deal)
 POST /reports
 ```
