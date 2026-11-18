@@ -658,7 +658,7 @@ GET       /me/pii                      # full email/phone (only after re-authent
 PATCH     /me/email · PATCH /me/phone  # re-authentication + verification email/SMS
 POST      /me/export
 DELETE    /me                          # deletion, restorable for 30 days
-POST      /me/restore                  # restore within the period (also automatic at sign-in)
+POST      /me/restore                  # restore within the period — the user's explicit choice after a correct password ("Hesabımı geri aç"), never automatic (§17)
 GET       /me/stream                   # SSE
 ```
 
@@ -953,8 +953,10 @@ Implemented in `packages/contracts` (Zod schemas + endpoint registry; #53) and s
 - **Session:** short-lived session + rotating refresh in httpOnly Secure cookies; `sessions` hashed; new device → `NEW_DEVICE_SIGNIN`.
 - **Guest** [DECIDED]: search and mark allowed; sign-in at confirmation, then continue (`anon_id` → `user_id`).
 - **At sign-up:** KVKK notice + terms consent (`user_consents`); welcome tokens (`token_ledger WELCOME`, once, held if fraud signals) [DECIDED]; `WELCOME` + `VERIFY_EMAIL`.
-- **Account deletion** [DECIDED]: closes immediately (tracking, checks, notifications stop), restorable by sign-in within 30 days, then `account-purge` removes personal data while histories remain anonymous.
-- **Suspension:** by the Application Manager with a reason; suspended users can read but not write.
+- **Account deletion** [DECIDED]: closes immediately (tracking, checks, notifications stop), restorable within 30 days, then `account-purge` removes personal data while histories remain anonymous. Restore is never automatic: after a correct password the user chooses "Hesabımı geri aç" (`POST /me/restore`) or "Vazgeç, silinsin" (deletion stays scheduled; the choice is logged) [DECIDED 2026-11-18] (user).
+- **Suspension:** by the Application Manager with a reason. A suspended user does **not** get into the app: after a correct password the sign-in page shows the reason with "Destek talebi aç" and "Verilerimi indir" (data export) only; no session for the app is opened [DECIDED 2026-11-18] (user).
+- **No account enumeration [DECIDED 2026-11-18] (user):** whether an account exists, how it was created or its state is never revealed before a correct password. Every wrong e-mail/password answer is the same generic error (also for accounts that have only Google or Apple and no password), with a fixed note "Google ya da Apple ile kaydolduysan o düğmeyle gir"; "Önce e-postanı doğrula", "pending deletion" and "suspended" appear only after a correct password; sign-up with an already registered e-mail answers like a new one ("E-postanı doğrula"); password reset always answers "Bağlantıyı gönderdik".
+- **Not in Phase 1 step 20 [DECIDED 2026-11-18] (user):** the Application Manager two-step verification step and the re-consent dialog at sign-in; each becomes its own step once its design is approved.
 - **Sensitive actions** (view full email/phone, change email/phone/password): re-authentication within `pii.reauth_minutes` [RECOMMENDED].
 
 ---

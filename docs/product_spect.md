@@ -121,7 +121,7 @@ Rules:
 - Profile: name, username, avatar, language, notification preferences, privacy level.
 - **Email and phone are masked** on every screen; seeing or changing them needs re-authentication [RECOMMENDED]; passwords are never shown.
 - Session: secure, refreshable web session; sign out from all devices; devices and recent sign-ins visible in Security settings.
-- **Account deletion [DECIDED]:** closes the account immediately; signing in within **30 days** restores it; then personal data is permanently deleted and statistics stay anonymous. Data export available.
+- **Account deletion [DECIDED]:** closes the account immediately; within **30 days** the user can restore it after signing in with a correct password by choosing "Hesabımı geri aç" (never automatic [DECIDED 2026-11-18], `architecture.md` §17); then personal data is permanently deleted and statistics stay anonymous. Data export available.
 - **Mandatory account and security notifications** (welcome, verification, new device, password, deletion, suspension, export, package outcome, support reply, re-consent) are always sent in-app + email and cannot be turned off.
 - Security: rate-limited sign-in; **two-step verification mandatory for Application Manager accounts** [DECIDED] (authenticator app + backup codes); optional 2FA for users and SMS verification later.
 

@@ -264,7 +264,7 @@
 - [ ] Email verification, password reset, rate-limited sign-in; new-device sign-in notification
 - [ ] Web session in secure httpOnly cookies (mobile session storage decided with mobile)
 - [ ] KVKK notice + terms accepted at sign-up (versioned consents)
-- [ ] Data export; **account deletion** closes the account immediately, restorable by signing in within `account.deletion_restore_days` (default 30), then personal data deleted and statistics anonymised
+- [ ] Data export; **account deletion** closes the account immediately, restorable within `account.deletion_restore_days` (default 30) by the user's explicit "Hesabımı geri aç" after a correct password (never automatic, `architecture.md` §17), then personal data deleted and statistics anonymised
 - [ ] Development login removed before launch
 
 ### Internationalisation
