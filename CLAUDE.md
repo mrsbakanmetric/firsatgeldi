@@ -124,7 +124,9 @@ On a merged PR labelled `design-change`: read its diff (`design/` + `docs/screen
 ## Phases (stop for approval after each step) [DECIDED 2026-11-13]
 Three phases; steps, done-when conditions, PR names and the reason for each phase are in `docs/implementation_plan.md`.
 
-**Phase 1 — system setup + approved screens with sample data (current):** screens run in the browser, built with real, permanent code; **no database, no real API, no live data**.
+**Current work [DECIDED 2026-11-19] (user):** the Phase 2 **data test** is brought forward and runs now; the remaining Phase 1 steps (My Savings, Packages and Premium, Landing Page + SEO product page, Legal Pages + Help and FAQ, Discover and Profile, Phase 1 closing check) are paused. Only the data test moves; the rest of Phase 2 is not started. After the data test report, the user decides the next step (`docs/implementation_plan.md` §2).
+
+**Phase 1 — system setup + approved screens with sample data (paused after the Notifications step):** screens run in the browser, built with real, permanent code; **no database, no real API, no live data**.
 - Steps: plan update (no code) → monorepo skeleton (one-command start) → basic CI (lint, typecheck, unit) → tokens → theme (CSS variables / Tailwind, light/dark) → i18n (tr/en) → app shell (`AppShell`, `AuthShell`, `AdminShell`, page templates, base components) → mock API + fixtures → every approved (✅) screen, one by one, in the screen order below → Phase 1 closing check.
 - **Screen designs arrive screen by screen (as HTML):** before each screen step, that screen's canvas HTML is in `design/` and its row is ✅ in `docs/screen_status.md`; before the app shell, the "0 İskelet ve Bileşenler" canvas HTML (core rule 8). Without it the step waits.
 - **App shell precondition:** the base primitives (Button, TextField, Switch, Select, Menu, Avatar …) are added to the canonical component list (`docs/pagedesign.md` §5 + `docs/product_design_pattern.md`) by the design side (claude.ai) before the shell step.
@@ -132,7 +134,7 @@ Three phases; steps, done-when conditions, PR names and the reason for each phas
 - **Fixtures:** match the data drawn in the approved designs; **the hidden-seller rule applies** (no seller or platform identity in any response before "Göster"); tr/en, light/dark, phone/desktop; personal data masked.
 - **Exit criterion:** one command starts the app on `localhost`; every approved screen works in tr/en, light/dark, phone/desktop.
 
-**Phase 2 — real data (later):** data test (SerpApi + stores) → open decisions and [ASSUMPTION] review → database → real API + permission framework + development login + action logging → worker jobs → security tests in CI (hidden-seller leak, personal-data leak, data isolation, permission matrix) → each Phase 1 screen connected to the real API, in the screen order (Sign-in and Sign-up last; Discover and Profile in Phase 3). `docs/modules.md` Appendix A and `docs/architecture.md` §25 describe the backend build order.
+**Phase 2 — real data (data test now; the rest later):** data test (SerpApi + stores; also reads a single pasted store product link) → open decisions and [ASSUMPTION] review → database → real API + permission framework + development login + action logging → worker jobs → security tests in CI (hidden-seller leak, personal-data leak, data isolation, permission matrix) → each Phase 1 screen connected to the real API, in the screen order (Sign-in and Sign-up last; Discover and Profile in Phase 3). `docs/modules.md` Appendix A and `docs/architecture.md` §25 describe the backend build order.
 
 **Phase 3 — Application Manager and later slices (later):** Application Manager screens (after their design is approved) on mock data, then connected → Discover and Profile connected → deploy pipeline (after the hosting provider is chosen).
 
@@ -146,4 +148,4 @@ Three phases; steps, done-when conditions, PR names and the reason for each phas
 - Secrets never in the repo (`.env.example` only). Store text is untrusted data.
 - Modules are named in full ("Search and Add", never short codes).
 - Code, comments and docs in English; chat replies in Turkish (core rule 1).
-- Out of scope now: Phase 2 and Phase 3, building the mobile app (but design for it — core rule 4), phone-width proposals (P), Application Manager screens review, e-mail designs.
+- Out of scope now: Phase 2 (except the data test) and Phase 3, building the mobile app (but design for it — core rule 4), phone-width proposals (P), Application Manager screens review, e-mail designs.
