@@ -39,8 +39,14 @@ export function formatDate(date: Date, locale: string, { dateStyle = "medium", t
   return new Intl.DateTimeFormat(locale, { dateStyle, timeZone }).format(date);
 }
 
+/** Turkish writes the time with a dot ("14.32", "16.20'de"); Intl gives a colon. Other languages keep theirs. */
+const TIME_PATTERN = /\b(\d{1,2}):(\d{2})\b/g;
+function writtenTime(text: string, locale: string): string {
+  return language(locale) === "tr" ? text.replace(TIME_PATTERN, "$1.$2") : text;
+}
+
 export function formatTime(date: Date, locale: string, { timeStyle = "short", timeZone = DEFAULT_TIME_ZONE }: ZoneOption & { timeStyle?: TimeStyle } = {}): string {
-  return new Intl.DateTimeFormat(locale, { timeStyle, timeZone }).format(date);
+  return writtenTime(new Intl.DateTimeFormat(locale, { timeStyle, timeZone }).format(date), locale);
 }
 
 export function formatDateTime(
@@ -48,7 +54,7 @@ export function formatDateTime(
   locale: string,
   { dateStyle = "medium", timeStyle = "short", timeZone = DEFAULT_TIME_ZONE }: ZoneOption & { dateStyle?: DateStyle; timeStyle?: TimeStyle } = {},
 ): string {
-  return new Intl.DateTimeFormat(locale, { dateStyle, timeStyle, timeZone }).format(date);
+  return writtenTime(new Intl.DateTimeFormat(locale, { dateStyle, timeStyle, timeZone }).format(date), locale);
 }
 
 /**
@@ -120,12 +126,12 @@ export function formatOnDay(date: Date, locale: string, { timeZone = DEFAULT_TIM
 }
 
 /**
- * A time phrase, with the short date when it is not today: tr "12:10'da" · "11 Kas 16:20'de" ·
+ * A time phrase, with the short date when it is not today: tr "12.10'da" · "11 Kas 16.20'de" ·
  * en "at 12:10" · "on 11 Nov at 16:20". The suffix follows how the time is read: the minutes,
  * or the hour on the full hour ("19:00'da").
  */
 export function formatAtTime(date: Date, locale: string, { withDate = false, timeZone = DEFAULT_TIME_ZONE }: ZoneOption & { withDate?: boolean } = {}): string {
-  const time = new Intl.DateTimeFormat(locale, { timeStyle: "short", timeZone }).format(date);
+  const time = formatTime(date, locale, { timeZone });
   const day = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone }).format(date);
   if (language(locale) === "tr") {
     const { hour, minute } = zonedParts(date, timeZone);

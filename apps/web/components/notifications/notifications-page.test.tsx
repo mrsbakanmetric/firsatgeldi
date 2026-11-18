@@ -74,6 +74,11 @@ describe.each(LOCALES)("Notifications page (%s)", (locale) => {
     expect(screen.getByRole("heading", { level: 2, name: t("notifications.groups.today") })).toBeDefined();
     expect(screen.getAllByText(t("notifications.types.DEAL_FOUND")).length).toBeGreaterThan(0);
     expect(screen.getAllByText(t("notifications.modes.BOUGHT")).length).toBeGreaterThan(0);
+    // Times as each language writes them: tr "14.32", en "2:32 PM"; the type badge is 28 px (size.step-indicator-dot).
+    const times = [...container.querySelectorAll("time")].map((element) => element.textContent ?? "");
+    expect(times.some((text) => (locale === "tr" ? /^\d{2}\.\d{2}$/ : /^\d{1,2}:\d{2}\s?[AP]M$/).test(text.replace(/\u202f/g, " ")))).toBe(true);
+    expect(times.some((text) => text.includes(":") && locale === "tr")).toBe(false);
+    expect(container.querySelector(".size-\\(--size-step-indicator-dot\\)")).not.toBeNull();
     // Only the first unread deal's action is coral (deal variant = bg-accent).
     expect(container.querySelectorAll("a.bg-accent")).toHaveLength(1);
     expect(screen.getByRole("link", { name: t("notifications.preferences") }).getAttribute("href")).toBe(locale === "tr" ? "/tr/ayarlar/bildirimler" : "/en/settings/notifications");

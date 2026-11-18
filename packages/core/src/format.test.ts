@@ -4,7 +4,7 @@ import { DEFAULT_TIME_ZONE, formatAtTime, formatDate, formatDateTime, formatMone
 const nbsp = "\u00a0";
 
 describe.each([
-  { locale: "tr", whole: `25.997${nbsp}TL`, fraction: `25.997,50${nbsp}TL`, number: "1.234.567", date: "14 Kas 2026", time: "01:30" },
+  { locale: "tr", whole: `25.997${nbsp}TL`, fraction: `25.997,50${nbsp}TL`, number: "1.234.567", date: "14 Kas 2026", time: "01.30" },
   { locale: "en", whole: `TL${nbsp}25,997`, fraction: `TL${nbsp}25,997.50`, number: "1,234,567", date: "Nov 14, 2026", time: "1:30 AM" },
 ])("formatting — $locale", ({ locale, whole, fraction, number, date, time }) => {
   // 22:30 UTC on 13 Nov is 01:30 on 14 Nov in Istanbul.
@@ -26,6 +26,7 @@ describe.each([
     expect(formatDate(instant, locale)).toBe(date);
     expect(formatTime(instant, locale).replace(/\u202f/g, " ")).toBe(time);
     expect(formatDateTime(instant, locale)).toContain(date);
+    expect(formatDateTime(instant, locale).replace(/\u202f/g, " ")).toContain(time);
   });
 
   it("another time zone when asked", () => {
@@ -92,18 +93,18 @@ describe("locative phrases — the suffix follows how the day or time is read", 
   });
 
   it.each([
-    ["2026-11-19T09:10:00Z", "12:10'da"],
-    ["2026-11-19T15:05:00Z", "18:05'te"],
-    ["2026-11-19T08:20:00Z", "11:20'de"],
-    ["2026-11-19T16:00:00Z", "19:00'da"],
-    ["2026-11-19T06:00:00Z", "09:00'da"],
-    ["2026-11-19T11:40:00Z", "14:40'ta"],
+    ["2026-11-19T09:10:00Z", "12.10'da"],
+    ["2026-11-19T15:05:00Z", "18.05'te"],
+    ["2026-11-19T08:20:00Z", "11.20'de"],
+    ["2026-11-19T16:00:00Z", "19.00'da"],
+    ["2026-11-19T06:00:00Z", "09.00'da"],
+    ["2026-11-19T11:40:00Z", "14.40'ta"],
   ])("%s → %s (Istanbul)", (instant, phrase) => {
     expect(formatAtTime(new Date(instant), "tr")).toBe(phrase);
   });
 
   it("with the short date; en", () => {
-    expect(formatAtTime(new Date("2026-11-11T13:20:00Z"), "tr", { withDate: true })).toBe("11 Kas 16:20'de");
+    expect(formatAtTime(new Date("2026-11-11T13:20:00Z"), "tr", { withDate: true })).toBe("11 Kas 16.20'de");
     expect(formatAtTime(new Date("2026-11-11T13:20:00Z"), "en")).toBe("at 4:20 PM");
     expect(formatAtTime(new Date("2026-11-11T13:20:00Z"), "en", { withDate: true })).toBe("on Nov 11 at 4:20 PM");
     expect(turkishLocative(5)).toBe("'te");

@@ -72,7 +72,7 @@ export function NotificationItem({ unread, unreadLabel, faded = false, media, ba
       <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-pill", unread ? "bg-primary" : "bg-transparent")} />
       <span className="relative shrink-0">
         {media}
-        <span aria-hidden="true" className={cn("absolute -right-1 -bottom-1 flex size-(--size-icon-lg) items-center justify-center rounded-pill border-(length:--border-width-strong) border-surface", BADGE_CLASSES[badge.tone])}>
+        <span aria-hidden="true" className={cn("absolute -right-1 -bottom-1 flex size-(--size-step-indicator-dot) items-center justify-center rounded-pill border-(length:--border-width-strong) border-surface", BADGE_CLASSES[badge.tone])}>
           <Icon icon={badge.icon} size="sm" />
         </span>
       </span>

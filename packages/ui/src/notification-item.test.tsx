@@ -15,7 +15,7 @@ describe("Notification item (product_design_pattern.md §5.29)", () => {
             media={<NotificationTile icon={Lock} />}
             badge={{ icon: Sparkles, tone: "ink" }}
             type="Fırsat geldi"
-            time={{ label: "14:32", iso: "2026-11-19T11:32:00Z" }}
+            time={{ label: "14.32", iso: "2026-11-19T11:32:00Z" }}
             title={<a href="/tr/takip/1">Insta360 Ace Pro 2</a>}
             body="Bunu 28.999 TL'ye aldın."
             mode={<ModeBadge mode="BOUGHT" label="Aldım" />}
@@ -26,7 +26,7 @@ describe("Notification item (product_design_pattern.md §5.29)", () => {
       </ul>,
     );
     expect(screen.getByText("okunmadı").className).toContain("sr-only");
-    expect(screen.getByText("14:32").getAttribute("dateTime")).toBe("2026-11-19T11:32:00Z");
+    expect(screen.getByText("14.32").getAttribute("dateTime")).toBe("2026-11-19T11:32:00Z");
     expect(screen.getByText("Aldım")).toBeDefined();
     expect(screen.getByRole("link", { name: "Fırsatı gör" })).toBeDefined();
     expect(await axeViolations(container)).toEqual([]);
