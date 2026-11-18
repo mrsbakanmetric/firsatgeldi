@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_TIME_ZONE, formatDate, formatDateTime, formatMoney, formatNumber, formatTime, pluralCategory, pluralCategories } from "./format";
+import { DEFAULT_TIME_ZONE, formatDate, formatDateTime, formatMoney, formatNumber, formatTime, formatUntil, pluralCategory, pluralCategories } from "./format";
 
 const nbsp = "\u00a0";
 
@@ -41,4 +41,23 @@ describe.each([
 
 it("uses Europe/Istanbul as the default zone", () => {
   expect(DEFAULT_TIME_ZONE).toBe("Europe/Istanbul");
+});
+
+describe("formatUntil — the month's own suffix in Turkish", () => {
+  const TR = ["1 Ocak'a kadar", "1 Şubat'a kadar", "1 Mart'a kadar", "1 Nisan'a kadar", "1 Mayıs'a kadar", "1 Haziran'a kadar", "1 Temmuz'a kadar", "1 Ağustos'a kadar", "1 Eylül'e kadar", "1 Ekim'e kadar", "1 Kasım'a kadar", "1 Aralık'a kadar"];
+  const EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((month) => `until 1 ${month}`);
+
+  it.each(TR.map((text, index) => [index, text, EN[index]] as const))("month %i: %s · %s", (index, tr, en) => {
+    // Noon UTC on the 1st: the same day in Istanbul.
+    const date = new Date(Date.UTC(2026, index, 1, 12));
+    expect(formatUntil(date, "tr")).toBe(tr);
+    expect(formatUntil(date, "en")).toBe(en);
+  });
+
+  it("day and month in the display zone: 12 Aralık'a kadar · until 12 December", () => {
+    const lateNight = new Date("2026-12-11T22:30:00Z"); // 01:30 on 12 December in Istanbul
+    expect(formatUntil(lateNight, "tr")).toBe("12 Aralık'a kadar");
+    expect(formatUntil(lateNight, "en")).toBe("until 12 December");
+    expect(formatUntil(lateNight, "en", { timeZone: "UTC" })).toBe("until 11 December");
+  });
 });

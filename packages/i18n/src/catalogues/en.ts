@@ -570,7 +570,7 @@ export const en = {
       signInTitle: "Sign in to see what you track",
       signInText: "Your tracked products and deals are kept in your account.",
       signIn: "Sign in",
-      deletionPending: "Your account is about to be deleted · sign in by {date} and everything comes back",
+      deletionPending: "Your account is about to be deleted · sign in {until} and everything comes back",
     },
   },
   productDetail: {
@@ -1111,7 +1111,7 @@ export const en = {
       stopsTracking: { one: "Tracking of {count} product and your notifications stop at once.", other: "Tracking of {count} products and your notifications stop at once." },
       stopsNotifications: "Your notifications stop at once.",
       keepsTokens: "Your tokens and pending requests are put on hold.",
-      restoreUntil: "Sign in by {date} and everything comes back as it was.",
+      restoreUntil: "Sign in {until} and everything comes back as it was.",
       purge: "After that your personal data is deleted for good; statistics stay anonymous.",
       confirm: "I've read this and want to delete my account",
       plan: "Your plan:",

@@ -184,6 +184,8 @@ describe.each(LOCALES)("Settings, PR 3 (%s)", (locale) => {
       const dialog = await screen.findByRole("dialog", { name: t("settings.data.dialogTitle") });
       expect(within(dialog).getByText(t("settings.data.keepsTokens"))).toBeDefined();
       expect(within(dialog).getByText(t("settings.data.purge"))).toBeDefined();
+      // The restore date with the month's own suffix (ortak tarih biçimi): "… Aralık'a kadar" · "until … December".
+      expect(within(dialog).getByText(new RegExp(locale === "tr" ? "^\\d{1,2} \\p{L}+'(a|e) kadar giriş yaparsan" : "^Sign in until \\d{1,2} \\p{L}+ and", "u"))).toBeDefined();
       const confirm = within(dialog).getByRole("button", { name: t("settings.data.deleteButton") }) as HTMLButtonElement;
       expect(confirm.disabled).toBe(true);
       await userEvent.click(within(dialog).getByRole("checkbox", { name: t("settings.data.confirm") }));
@@ -256,6 +258,6 @@ describe.each(LOCALES)("Settings, PR 3 (%s)", (locale) => {
         <Home locale={locale} />
       </Providers>,
     );
-    expect(await screen.findByText(locale === "tr" ? /18 Aralık 2026 tarihine kadar giriş yaparsan/ : /sign in by December 18, 2026/)).toBeDefined();
+    expect(await screen.findByText(locale === "tr" ? /18 Aralık'a kadar giriş yaparsan/ : /sign in until 18 December and/)).toBeDefined();
   });
 });

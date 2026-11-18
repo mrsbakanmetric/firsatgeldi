@@ -5,6 +5,7 @@ export {
   formatMoney,
   formatNumber,
   formatTime,
+  formatUntil,
   pluralCategories,
   pluralCategory,
   type DateStyle,

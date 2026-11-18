@@ -11,7 +11,7 @@
 //   handed over (the reason is the card's line).
 // Users also see their plan summary with "Paketim'e git".
 import type { AccountAccess, DataExport, DeletionPreview, EntitlementSummary } from "@firsatgeldi/contracts";
-import { formatDate, formatDateTime } from "@firsatgeldi/core";
+import { formatDateTime, formatUntil } from "@firsatgeldi/core";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
 import { ActionCard, Button, Checkbox, Dialog, StatusBanner } from "@firsatgeldi/ui";
 import { useQueryClient } from "@tanstack/react-query";
@@ -174,11 +174,10 @@ function DeleteDialog({ locale, t, preview, open, onClose }: { locale: Locale; t
     remove.reset();
     onClose();
   };
-  const restoreDate = formatDate(new Date(preview.restoreUntil), locale, { dateStyle: "long" });
   const consequences = [
     preview.activeTracking > 0 ? t("settings.data.stopsTracking", { count: preview.activeTracking }) : t("settings.data.stopsNotifications"),
     t("settings.data.keepsTokens"),
-    t("settings.data.restoreUntil", { date: restoreDate }),
+    t("settings.data.restoreUntil", { until: formatUntil(new Date(preview.restoreUntil), locale) }),
     t("settings.data.purge"),
   ];
 

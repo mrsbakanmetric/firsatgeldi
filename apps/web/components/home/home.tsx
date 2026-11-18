@@ -8,7 +8,7 @@
 // opens from the cache at once and refreshes in the background; a finished check refreshes
 // it through the live updates. States: new user · no deal · no big drop in the user's
 // categories · stale (sources missing) · error · loading (skeleton in the same layout) · guest.
-import { formatDate, RETURN_REMINDER_DAYS } from "@firsatgeldi/core";
+import { formatUntil, RETURN_REMINDER_DAYS } from "@firsatgeldi/core";
 import { type Locale, localizedPath, type Translator } from "@firsatgeldi/i18n";
 import { Button, buttonClasses, EmptyState, Icon, PageTemplate, SkeletonBlock, StatusBanner } from "@firsatgeldi/ui";
 import { CircleAlert, LogIn } from "lucide-react";
@@ -187,10 +187,10 @@ function Loading({ t }: { t: Translator }) {
 
 /**
  * After "Hesabımı sil" the user is signed out and lands here with the restore date (Settings
- * design Forms 12): "Hesabın silinmek üzere · {date} tarihine kadar giriş yaparsan her şey geri gelir".
+ * design Forms 12): "Hesabın silinmek üzere · 12 Aralık'a kadar giriş yaparsan her şey geri gelir".
  */
 function DeletionBanner({ locale, t }: { locale: Locale; t: Translator }) {
   const date = deletionDate(useLocationSearch());
   if (!date) return null;
-  return <StatusBanner tone="info">{t("home.states.deletionPending", { date: formatDate(date, locale, { dateStyle: "long" }) })}</StatusBanner>;
+  return <StatusBanner tone="info">{t("home.states.deletionPending", { until: formatUntil(date, locale) })}</StatusBanner>;
 }

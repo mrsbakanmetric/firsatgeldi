@@ -573,7 +573,7 @@ export const tr = {
       signInTitle: "Takiplerini görmek için giriş yap",
       signInText: "Takip ettiğin ürünler ve fırsatların hesabında saklanır.",
       signIn: "Giriş yap",
-      deletionPending: "Hesabın silinmek üzere · {date} tarihine kadar giriş yaparsan her şey geri gelir",
+      deletionPending: "Hesabın silinmek üzere · {until} giriş yaparsan her şey geri gelir",
     },
   },
   // Product Detail (design "2 Ürün Detayı v2"; modules.md Product Detail; pagedesign.md §8.3), bought and want-to-buy modes.
@@ -1115,7 +1115,7 @@ export const tr = {
       stopsTracking: { one: "{count} ürünün takibi ve bildirimlerin hemen durur.", other: "{count} ürünün takibi ve bildirimlerin hemen durur." },
       stopsNotifications: "Bildirimlerin hemen durur.",
       keepsTokens: "Jetonların ve bekleyen isteklerin bekletilir.",
-      restoreUntil: "{date} tarihine kadar giriş yaparsan her şey olduğu gibi geri gelir.",
+      restoreUntil: "{until} giriş yaparsan her şey olduğu gibi geri gelir.",
       purge: "Sonra kişisel verilerin kalıcı olarak silinir; istatistikler adsız kalır.",
       confirm: "Bunları okudum, hesabımı silmek istiyorum",
       plan: "Paketin:",
