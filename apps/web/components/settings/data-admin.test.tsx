@@ -101,7 +101,7 @@ describe.each(LOCALES)("Settings, PR 3 (%s)", (locale) => {
       await userEvent.click(screen.getByRole("button", { name: t("settings.notifications.slots.MORNING") }));
       await waitFor(() => expect(screen.getByRole("button", { name: t("settings.notifications.slots.ALWAYS") }).getAttribute("aria-pressed")).toBe("true"));
       const digest = screen.getByRole("radio", { name: new RegExp(t("settings.notifications.digest")) });
-      expect(digest.textContent).toContain(locale === "tr" ? "19:00" : "7:00");
+      expect(digest.textContent).toContain(locale === "tr" ? "19.00'da" : "7:00");
       await userEvent.click(digest);
       await waitFor(() => expect(screen.getByRole("radio", { name: new RegExp(t("settings.notifications.digest")) }).getAttribute("aria-checked")).toBe("true"));
     });

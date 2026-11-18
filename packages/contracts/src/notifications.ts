@@ -152,6 +152,8 @@ export type NotificationItem = z.infer<typeof NotificationItem>;
 
 export const NotificationList = z.object({
   items: z.array(NotificationItem),
+  /** `notify.list_days`: the window the list covers ("son 30 gün"). */
+  listDays: z.number().int().positive(),
   facets: z.object({
     filters: z.object({ ALL: z.number().int().nonnegative(), DEAL: z.number().int().nonnegative(), RETURN: z.number().int().nonnegative(), SEARCH: z.number().int().nonnegative(), OTHER: z.number().int().nonnegative() }),
     categories: z.array(z.object({ id: Id, name: z.string().min(1), count: z.number().int().nonnegative() })),

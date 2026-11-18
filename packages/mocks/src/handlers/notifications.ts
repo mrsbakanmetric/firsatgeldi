@@ -172,6 +172,7 @@ export function notificationHandlers(controller: MockController) {
       return {
         data: {
           items: base.filter((item) => inCategory(item) && inFilter(item, query.filter)),
+          listDays: SYSTEM_SETTINGS["notify.list_days"],
           facets: { filters, categories: [...categories.values()], unread: all.filter((item) => !item.read).length },
         },
       };

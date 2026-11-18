@@ -39,8 +39,14 @@ export function formatDate(date: Date, locale: string, { dateStyle = "medium", t
   return new Intl.DateTimeFormat(locale, { dateStyle, timeZone }).format(date);
 }
 
+/** Turkish writes the time with a dot ("14.32", "16.20'de"); Intl gives a colon. Other languages keep theirs. */
+const TIME_PATTERN = /\b(\d{1,2}):(\d{2})\b/g;
+function writtenTime(text: string, locale: string): string {
+  return language(locale) === "tr" ? text.replace(TIME_PATTERN, "$1.$2") : text;
+}
+
 export function formatTime(date: Date, locale: string, { timeStyle = "short", timeZone = DEFAULT_TIME_ZONE }: ZoneOption & { timeStyle?: TimeStyle } = {}): string {
-  return new Intl.DateTimeFormat(locale, { timeStyle, timeZone }).format(date);
+  return writtenTime(new Intl.DateTimeFormat(locale, { timeStyle, timeZone }).format(date), locale);
 }
 
 export function formatDateTime(
@@ -48,7 +54,7 @@ export function formatDateTime(
   locale: string,
   { dateStyle = "medium", timeStyle = "short", timeZone = DEFAULT_TIME_ZONE }: ZoneOption & { dateStyle?: DateStyle; timeStyle?: TimeStyle } = {},
 ): string {
-  return new Intl.DateTimeFormat(locale, { dateStyle, timeStyle, timeZone }).format(date);
+  return writtenTime(new Intl.DateTimeFormat(locale, { dateStyle, timeStyle, timeZone }).format(date), locale);
 }
 
 /**
@@ -96,6 +102,43 @@ export function formatSince(date: Date, locale: string, { timeZone = DEFAULT_TIM
   const month = new Intl.DateTimeFormat(locale, { month: "long", timeZone }).format(date);
   const year = Number(new Intl.DateTimeFormat("en", { year: "numeric", timeZone }).format(date));
   return language(locale) === "tr" ? `${month} ${year}${turkishAblative(year)} beri` : `since ${month} ${year}`;
+}
+
+/** Turkish locative suffix ('da/'de/'ta/'te) of a written number: the ablative without its "n". 12.10'da · 18.05'te · 11.20'de. */
+export function turkishLocative(value: number): string {
+  return turkishAblative(value).slice(0, -1);
+}
+
+/** Turkish month names with the locative suffix ("Kasım'da", "Aralık'ta"). */
+const TR_MONTHS_LOCATIVE = ["Ocak'ta", "Şubat'ta", "Mart'ta", "Nisan'da", "Mayıs'ta", "Haziran'da", "Temmuz'da", "Ağustos'ta", "Eylül'de", "Ekim'de", "Kasım'da", "Aralık'ta"] as const;
+
+function zonedParts(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en", { day: "numeric", month: "numeric", hour: "numeric", minute: "numeric", hourCycle: "h23", timeZone }).formatToParts(date);
+  const get = (type: Intl.DateTimeFormatPartTypes) => Number(parts.find((part) => part.type === type)?.value ?? 0);
+  return { day: get("day"), month: get("month"), hour: get("hour"), minute: get("minute") };
+}
+
+/** A day phrase: tr "1 Kasım'da" · en "on 1 November" ("1 Kasım'da aldın"). */
+export function formatOnDay(date: Date, locale: string, { timeZone = DEFAULT_TIME_ZONE }: ZoneOption = {}): string {
+  const { day, month } = zonedParts(date, timeZone);
+  if (language(locale) === "tr") return `${day} ${TR_MONTHS_LOCATIVE[month - 1]}`;
+  return `on ${day} ${new Intl.DateTimeFormat(locale, { month: "long", timeZone }).format(date)}`;
+}
+
+/**
+ * A time phrase, with the short date when it is not today: tr "12.10'da" · "11 Kas 16.20'de" ·
+ * en "at 12:10" · "on 11 Nov at 16:20". The suffix follows how the time is read: the minutes,
+ * or the hour on the full hour ("19:00'da").
+ */
+export function formatAtTime(date: Date, locale: string, { withDate = false, timeZone = DEFAULT_TIME_ZONE }: ZoneOption & { withDate?: boolean } = {}): string {
+  const time = formatTime(date, locale, { timeZone });
+  const day = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone }).format(date);
+  if (language(locale) === "tr") {
+    const { hour, minute } = zonedParts(date, timeZone);
+    const at = `${time}${turkishLocative(minute === 0 ? hour : minute)}`;
+    return withDate ? `${day} ${at}` : at;
+  }
+  return withDate ? `on ${day} at ${time}` : `at ${time}`;
 }
 
 /** CLDR plural category for a count ("one", "other", …) used to pick a catalogue message. */

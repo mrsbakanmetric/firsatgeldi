@@ -5,7 +5,7 @@
 // refreshes the queries it affects. Same hook for the mock and the real API.
 import { API_PREFIX, ENDPOINTS, StreamEvent, STREAM_EVENT_TYPES } from "@firsatgeldi/contracts";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { API_BASE_URL } from "./config";
 import { apiQueryKey } from "./hooks";
 import { whenApiReady } from "./ready";
@@ -49,6 +49,26 @@ export function parseStreamMessage(type: string, data: string): StreamEvent | nu
   }
 }
 
+/**
+ * The stream's state for screens that say it (Notifications: "Yeni bildirimler gelmiyor"):
+ * "off" (no stream: guest, or no EventSource), "open", "lost" (it broke; the browser retries).
+ */
+export type LiveStatus = "off" | "open" | "lost";
+let liveStatus: LiveStatus = "off";
+const listeners = new Set<() => void>();
+function setLiveStatus(next: LiveStatus) {
+  if (next === liveStatus) return;
+  liveStatus = next;
+  for (const listener of listeners) listener();
+}
+const subscribeLive = (listener: () => void) => {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+};
+export function useLiveStatus(): LiveStatus {
+  return useSyncExternalStore(subscribeLive, () => liveStatus, () => "off");
+}
+
 export function useLiveUpdates(enabled: boolean): void {
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -58,6 +78,8 @@ export function useLiveUpdates(enabled: boolean): void {
     void whenApiReady().then(() => {
       if (closed) return;
       source = new EventSource(`${API_BASE_URL}${API_PREFIX}${ENDPOINTS.stream.path}`, { withCredentials: true });
+      source.addEventListener("open", () => setLiveStatus("open"));
+      source.addEventListener("error", () => setLiveStatus("lost"));
       for (const type of STREAM_EVENT_TYPES) {
         source.addEventListener(type, (message: MessageEvent<string>) => {
           const event = parseStreamMessage(type, message.data);
@@ -68,6 +90,7 @@ export function useLiveUpdates(enabled: boolean): void {
     return () => {
       closed = true;
       source?.close();
+      setLiveStatus("off");
     };
   }, [enabled, queryClient]);
 }

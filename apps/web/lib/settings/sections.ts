@@ -38,6 +38,15 @@ export function settingsHref(locale: Locale, id: SettingsSectionId = FIRST_SETTI
   return localizedPath("/ayarlar/[section]", locale, { section: section.slug[locale] });
 }
 
+/** `?islem=sifre`: E-posta ve şifre opens "Şifreni değiştir" (a new-device notification's "Ben değilim"). */
+export const ACTION_PARAM = "islem";
+export const CHANGE_PASSWORD = "sifre";
+
+/** E-posta ve şifre with the change-password dialog open. */
+export function changePasswordHref(locale: Locale): string {
+  return `${settingsHref(locale, "access")}?${new URLSearchParams({ [ACTION_PARAM]: CHANGE_PASSWORD }).toString()}`;
+}
+
 /** The section a slug names in that language, or null (a slug of the other language is not found). */
 export function sectionBySlug(locale: Locale, slug: string): SettingsSectionId | null {
   return SETTINGS_SECTIONS.find((entry) => entry.slug[locale] === slug)?.id ?? null;

@@ -122,6 +122,13 @@ describe.each(LOCALES)("Settings (%s)", (locale) => {
   });
 
   describe("E-posta ve şifre", () => {
+    it("arriving with ?islem=sifre (a new-device notification's \"Ben değilim\") opens \"Şifreni değiştir\"", async () => {
+      globalThis.history.replaceState(null, "", "/?islem=sifre");
+      show(locale, "access");
+      expect(await screen.findByRole("dialog", { name: t("settings.passwordDialog.title") })).toBeDefined();
+      globalThis.history.replaceState(null, "", "/");
+    });
+
     it("masked by default; \"Göster\" asks for the password, then shows the full e-mail with a countdown; \"Gizle\" masks; every reveal logged", async () => {
       show(locale, "access");
       expect(await screen.findByText("s***@o***.test")).toBeDefined();

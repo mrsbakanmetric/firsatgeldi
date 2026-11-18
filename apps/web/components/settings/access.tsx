@@ -20,6 +20,7 @@ import { apiQueryKey, useApiMutation, useApiQuery, useSession } from "../../lib/
 import { useApiClient } from "../../lib/api/provider";
 import { clock, useSecondsLeft } from "../../lib/auth/countdown";
 import { isEmail, ProviderMark, ruleList, useAuthPolicy } from "../auth/shared";
+import { ACTION_PARAM, CHANGE_PASSWORD } from "../../lib/settings/sections";
 import { SectionError, SectionLoading, SettingsCard, useMarkSaved } from "./settings";
 
 const SECOND_MS = 1000;
@@ -54,7 +55,8 @@ function AccessRows({ locale, t, access }: { locale: Locale; t: Translator; acce
   const [afterReauth, setAfterReauth] = useState<AfterReauth>(null);
   const [reauthOpen, setReauthOpen] = useState(false);
   const [emailOpen, setEmailOpen] = useState(false);
-  const [passwordOpen, setPasswordOpen] = useState(false);
+  // "Ben değilim" on a new-device notification arrives with `?islem=sifre` (accounts with a password).
+  const [passwordOpen, setPasswordOpen] = useState(() => access.password.set && typeof globalThis.location !== "undefined" && new URLSearchParams(globalThis.location.search).get(ACTION_PARAM) === CHANGE_PASSWORD);
   const [unlink, setUnlink] = useState<Provider | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
