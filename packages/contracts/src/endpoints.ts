@@ -53,6 +53,18 @@ import {
   UpdateTrackedItemRequest,
 } from "./product-detail";
 import type { PermissionKey } from "./permissions";
+import {
+  CommunityConsents,
+  FollowChange,
+  Followers,
+  Following,
+  FollowRequests,
+  LinkSubmissions,
+  LinkSubmissionsQuery,
+  MyProfile,
+  PeopleQuery,
+  UserParams,
+} from "./profile";
 import { AutocompleteQuery, AutocompleteResult, ProductView, SimilarProducts } from "./products";
 import { Me, SearchHistory, SearchHistoryQuery } from "./session";
 import {
@@ -249,6 +261,45 @@ export const ENDPOINTS = {
     method: "GET", path: "/me/admin-activity", params: null, query: AdminActivityQuery, body: null,
     response: AdminActivity, ...READ, permission: "admin.self.activity.view", public: false,
   }),
+  // MY PROFILE (Profilim, step 21a; modules.md Profile and Following; architecture.md §16 COMMUNITY).
+  // Own-profile reads, remove follower and the "Geri al" restores are [ASSUMPTION] until §16.1.
+  getMyProfile: endpoint({ method: "GET", path: "/me/profile", ...NONE, response: MyProfile, ...READ, permission: "account.own.view", public: false }),
+  getFollowers: endpoint({
+    method: "GET", path: "/me/followers", params: null, query: PeopleQuery, body: null, response: Followers, ...READ, permission: "account.own.view", public: false,
+  }),
+  getFollowing: endpoint({
+    method: "GET", path: "/me/following", params: null, query: PeopleQuery, body: null, response: Following, ...READ, permission: "account.own.view", public: false,
+  }),
+  getFollowRequests: endpoint({ method: "GET", path: "/me/follow-requests", ...NONE, response: FollowRequests, ...READ, permission: "account.own.view", public: false }),
+  approveFollow: endpoint({
+    method: "POST", path: "/follows/:userId/approve", params: UserParams, query: null, body: null,
+    response: FollowChange, ...READ, activity: "follow.approve", permission: "follows.own.write", public: false,
+  }),
+  declineFollow: endpoint({
+    method: "POST", path: "/follows/:userId/decline", params: UserParams, query: null, body: null,
+    response: FollowChange, ...READ, activity: "follow.decline", permission: "follows.own.write", public: false,
+  }),
+  unfollow: endpoint({
+    method: "DELETE", path: "/follows/:userId", params: UserParams, query: null, body: null,
+    response: FollowChange, ...READ, activity: "follow.delete", permission: "follows.own.write", public: false,
+  }),
+  restoreFollow: endpoint({
+    method: "POST", path: "/follows/:userId/restore", params: UserParams, query: null, body: null,
+    response: FollowChange, ...READ, activity: "follow.restore", permission: "follows.own.write", public: false,
+  }),
+  removeFollower: endpoint({
+    method: "DELETE", path: "/me/followers/:userId", params: UserParams, query: null, body: null,
+    response: FollowChange, ...READ, activity: "follower.remove", permission: "follows.own.write", public: false,
+  }),
+  restoreFollower: endpoint({
+    method: "POST", path: "/me/followers/:userId/restore", params: UserParams, query: null, body: null,
+    response: FollowChange, ...READ, activity: "follower.restore", permission: "follows.own.write", public: false,
+  }),
+  getMyLinkSubmissions: endpoint({
+    method: "GET", path: "/me/link-submissions", params: null, query: LinkSubmissionsQuery, body: null,
+    response: LinkSubmissions, ...READ, permission: "account.own.view", public: false,
+  }),
+  getCommunityConsents: endpoint({ method: "GET", path: "/me/community-consents", ...NONE, response: CommunityConsents, ...READ, permission: "account.own.view", public: false }),
   stream: endpoint({
     method: "GET", path: "/me/stream", ...NONE, response: null, ...READ, kind: "stream",
     // Signed-in users only; guests poll instead [DECIDED 2026-11-14] (architecture.md §13, §16.1).

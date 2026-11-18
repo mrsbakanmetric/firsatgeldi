@@ -97,6 +97,19 @@ export const ACTIVITY_ACTIONS = [
   "account.export_download",
   /** "Hesabımı sil". */
   "account.delete",
+  // Profilim (database.md §14a) [ASSUMPTION — action names]. Rows name the other person by id only.
+  /** "Onayla" on a follow request; the requester gets the in-app FOLLOW_ACCEPTED notification. */
+  "follow.approve",
+  /** "Reddet" on a follow request; silent. */
+  "follow.decline",
+  /** "Takipten çık" or "İsteği geri al"; metadata { previous }; silent. */
+  "follow.delete",
+  /** "Geri al" after unfollowing or withdrawing: the follow returns as it was. */
+  "follow.restore",
+  /** "Takipten çıkar": a follower removed; silent. */
+  "follower.remove",
+  /** "Geri al" after removing a follower. */
+  "follower.restore",
 ] as const;
 export const ActivityAction = z.enum(ACTIVITY_ACTIONS);
 export type ActivityAction = z.infer<typeof ActivityAction>;

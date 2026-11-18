@@ -44,6 +44,8 @@ export const SYSTEM_SETTINGS = {
   "notify.daily_cap": 5,
   "notify.digest_time": "19:00",
   "account.export_download_days": 7,
+  /** Profilim: "Geri al" after removing a follower or unfollowing (modules.md Profilim) [ASSUMPTION — key and value]. */
+  "community.follow_undo_minutes": 10,
   /** Version id of the cookie policy the consent refers to (Legal Pages) [ASSUMPTION — mock value]. */
   "legal.cookie_version": "2026-11-01",
   /** Version id of the terms accepted at sign-up (Legal Pages) [ASSUMPTION — mock value]. */

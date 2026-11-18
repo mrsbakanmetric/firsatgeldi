@@ -11,6 +11,7 @@ export * from "./identify";
 export * from "./offers";
 export * from "./permissions";
 export * from "./product-detail";
+export * from "./profile";
 export * from "./products";
 export * from "./session";
 export * from "./settings";
