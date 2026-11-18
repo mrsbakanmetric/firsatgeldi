@@ -32,7 +32,7 @@ export interface ProfileHeaderProps {
 export function ProfileHeader({ avatar, title, badge, privacy, counts = [], since, actions }: ProfileHeaderProps) {
   return (
     <section className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-5 md:flex-row md:items-center md:gap-5">
-      <Avatar initials={avatar.initials} {...(avatar.src ? { src: avatar.src } : {})} size="lg" className="size-(--size-thumb-md) text-h2 md:size-(--component-avatar-size-lg) md:text-h1" />
+      <Avatar initials={avatar.initials} {...(avatar.src ? { src: avatar.src } : {})} size="lg" className="size-(--component-avatar-size-lg-compact) text-h2 md:size-(--component-avatar-size-lg) md:text-h1" />
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-h1 break-all text-text">{title}</h1>

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Email, SignUpRequest } from "./auth";
 import { buildPath, ENDPOINTS, imagePath } from "./endpoints";
 import { TOP_DROP_ITEM_KEYS, TopDropItem, TopDrops } from "./home";
+import { notificationFilterOf, NotificationItem, NotificationValues } from "./notifications";
 import { HiddenOfferView, REVEALED_ONLY_FIELDS } from "./offers";
 import { PERMISSION_KEYS, seedPermissions } from "./permissions";
 import { CreateReportRequest, DetailHiddenOffer, OfferSummary, StockSubject } from "./product-detail";
@@ -84,6 +85,37 @@ describe("Profilim endpoints", () => {
 
   it("a person row has no real name, e-mail or phone", () => {
     for (const field of ["displayName", "email", "emailMasked", "phone", "phoneMasked"]) expect(Object.keys(PersonView.shape)).not.toContain(field);
+  });
+});
+
+describe("Notifications endpoints", () => {
+  it("are for signed-in users only; reads need notifications.own.view, read marks notifications.own.write", () => {
+    for (const name of ["getNotifications", "getUnreadCount", "getForYou", "getDeliveryStatus", "getNotification"] as const) expect(ENDPOINTS[name]).toMatchObject({ public: false, activity: null, permission: "notifications.own.view" });
+    expect(ENDPOINTS.readNotification).toMatchObject({ public: false, activity: "notification.read", permission: "notifications.own.write" });
+    expect(ENDPOINTS.readAllNotifications).toMatchObject({ public: false, activity: "notification.read_all", permission: "notifications.own.write" });
+  });
+
+  it("the delivery answer logs \"Evet, aldım\" as tracking.delivered and \"Henüz değil\" as its own action", () => {
+    expect(ENDPOINTS.answerDeliveryPrompt).toMatchObject({ activity: "tracking.delivered", activityVariants: ["notification.delivery_later"], permission: "tracking.own.write" });
+  });
+
+  it("fixed notification paths are registered before /notifications/:id", () => {
+    const paths = Object.values(ENDPOINTS).map((definition) => `${definition.method} ${definition.path}`);
+    const byId = paths.indexOf("GET /notifications/:id");
+    for (const fixed of ["GET /notifications/unread-count", "GET /notifications/for-you", "GET /notifications/delivery-status"]) expect(paths.indexOf(fixed)).toBeLessThan(byId);
+  });
+
+  it("a notification carries no seller field; the only store is the user's own purchase", () => {
+    const fields = [...Object.keys(NotificationValues.shape), ...Object.keys(NotificationItem.shape)];
+    for (const field of ["seller", "sellerName", "sellerId", "platform", "listingUrl", "url"]) expect(fields).not.toContain(field);
+    expect(fields).toContain("ownStore");
+  });
+
+  it("filters: Fırsat = found + ended, İade = return window + delivery question, Aramalarım, Diğer", () => {
+    expect(["DEAL_FOUND", "DEAL_ENDED"].map((type) => notificationFilterOf(type as never))).toEqual(["DEAL", "DEAL"]);
+    expect(["DEADLINE_SOON", "RETURN_REMINDER", "DELIVERY_PROMPT"].map((type) => notificationFilterOf(type as never))).toEqual(["RETURN", "RETURN", "RETURN"]);
+    expect(notificationFilterOf("SEARCHED_PRODUCT_DROP")).toBe("SEARCH");
+    expect(notificationFilterOf("FOLLOW_ACCEPTED")).toBe("OTHER");
   });
 });
 

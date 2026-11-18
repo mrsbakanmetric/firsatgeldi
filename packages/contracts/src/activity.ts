@@ -110,6 +110,13 @@ export const ACTIVITY_ACTIONS = [
   "follower.remove",
   /** "Geri al" after removing a follower. */
   "follower.restore",
+  // Notifications (database.md §14a) [ASSUMPTION — action names]. "Evet, aldım" writes `tracking.delivered`.
+  /** One item read (title or action on the page, preview in the bell panel). */
+  "notification.read",
+  /** "Tümünü okundu yap". */
+  "notification.read_all",
+  /** "Henüz değil" on the delivery question: asked again later. */
+  "notification.delivery_later",
 ] as const;
 export const ActivityAction = z.enum(ACTIVITY_ACTIONS);
 export type ActivityAction = z.infer<typeof ActivityAction>;

@@ -8,6 +8,7 @@ export * from "./envelope";
 export * from "./errors";
 export * from "./home";
 export * from "./identify";
+export * from "./notifications";
 export * from "./offers";
 export * from "./permissions";
 export * from "./product-detail";

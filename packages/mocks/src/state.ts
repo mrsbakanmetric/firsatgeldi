@@ -1,7 +1,7 @@
 // In-memory "server side" of the mock API: the rows the real API would write
 // (database.md §8, §9, §11, §14, §14a, §14b), plus the session and scenario
 // switches used in development (implementation_plan.md §4).
-import type { ActivityEvent, ApiLocale, StreamEvent } from "@firsatgeldi/contracts";
+import type { ActivityEvent, ApiLocale, NotificationType, StreamEvent } from "@firsatgeldi/contracts";
 import type { ProductKey } from "./fixtures/catalog";
 import type { PlatformKey } from "./fixtures/market";
 import type { UserKey } from "./fixtures/users";
@@ -332,8 +332,27 @@ export interface MockState {
   readonly profileSeeded: Set<string>;
   /** Follow rows just removed, kept for "Geri al" within `community.follow_undo_minutes`. */
   readonly removedFollows: { readonly row: FollowRow; readonly removedBy: string; readonly removedAt: string }[];
-  /** In-app notifications created (database.md §10 `notifications`); the Notifications step reads them. */
-  readonly notifications: { readonly id: string; readonly userId: string; readonly type: "FOLLOW_ACCEPTED"; readonly actorId: string; readonly createdAt: string }[];
+  /** In-app notifications (database.md §10 `notifications`): fixture rows on first use + rows made by actions. */
+  readonly notifications: NotificationStateRow[];
+  /** Users whose notification rows were created from the fixtures. */
+  readonly notificationsSeeded: Set<string>;
+}
+
+/** One `notifications` row. `createdAt` in the future = scheduled (a delivery question asked again later). */
+export interface NotificationStateRow {
+  readonly id: string;
+  readonly userId: string;
+  readonly type: NotificationType;
+  readonly createdAt: string;
+  readAt: string | null;
+  /** The fixture it came from (subject and values), or null for a row made by an action. */
+  readonly seedKey: string | null;
+  /** FOLLOW_ACCEPTED: who approved. */
+  readonly actorId?: string;
+  /** DELIVERY_PROMPT asked again: the tracked item. */
+  readonly trackedItemId?: string | null;
+  /** DELIVERY_PROMPT: still waiting for "Evet, aldım" / "Henüz değil". */
+  awaitingAnswer: boolean;
 }
 
 /** One `follows` row: one-way; PENDING until a private profile approves. */
@@ -429,6 +448,7 @@ export function createMockState(): MockState {
     profileSeeded: new Set(),
     removedFollows: [],
     notifications: [],
+    notificationsSeeded: new Set(),
   };
 }
 

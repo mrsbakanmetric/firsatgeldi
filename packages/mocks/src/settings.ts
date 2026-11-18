@@ -43,6 +43,10 @@ export const SYSTEM_SETTINGS = {
   "avatar.max_bytes": 5 * MEGABYTE,
   "notify.daily_cap": 5,
   "notify.digest_time": "19:00",
+  /** Notifications (database.md §18): list window and the delivery question asked again [DECIDED 2026-11-13, 2026-11-19]. */
+  "notify.list_days": 30,
+  "notify.delivery_reask_days": 2,
+  "notify.delivery_reask_max": 3,
   "account.export_download_days": 7,
   /** Profilim: "Geri al" after removing a follower or unfollowing (modules.md Profilim) [ASSUMPTION — key and value]. */
   "community.follow_undo_minutes": 10,
