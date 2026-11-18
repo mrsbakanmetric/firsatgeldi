@@ -15,7 +15,7 @@ This document explains **how every page is built**: the one shell, the page temp
 | 2 | Product Detail | FırsatGeldi — 2 Ürün Detayı |
 | 3 | Home | FırsatGeldi — 3 Ana Sayfa |
 | 4 | Tracked Items | FırsatGeldi — 4 Takip Ettiklerim |
-| 5 | Notifications (+ bell panel, "Takip et" dialog) | FırsatGeldi — 5 Bildirimler |
+| 5 | Notifications (+ bell panel) | FırsatGeldi — 5 Bildirimler |
 | 6 | My Savings | FırsatGeldi — 6 Kazancım |
 | 7 | Packages and Premium | FırsatGeldi — 7 Paketim ve Premium |
 | 8 | Sign-in and Sign-up | FırsatGeldi — 8 Giriş |
@@ -330,9 +330,19 @@ Each page lists: route · shell · template · regions top-to-bottom · overlays
 ### 8.5 Notifications — `/[locale]/bildirimler` + bell panel
 - **Shell/template:** AppShell · List with right column.
 - **Regions:** title + unread count + "Tümünü okundu yap" + "Bildirim ayarları" link → **search + Kategori** → filters (Tümü · Fırsat · İade · Aramalarım · Diğer) + "Yalnızca okunmamışlar" → groups (Bugün / Dün / Bu hafta) of `NotificationItem` (dot · image 80 + type badge · type/time · title · message · ModeBadge + check time · action) → right column "Senin için" (latest drops in tracked list · recent searches with drop + "Takip et" · frequent searches).
-- **Overlays:** bell panel (side panel, last 10) + **preview to its left** (image, mode, message, three fact tiles, 14-day chart, check time, actions) · **Takip et dialog step 2** (Aldım: platform, typed seller, price, date, status, teaser · Almak istiyorum: target + suggestion chips, duration).
+- **Overlays:** bell panel (side panel, last 10; full screen on phone) + **preview to its left** (image, mode, message, three fact tiles, 14-day chart, check time, actions; replaces the list on phone).
 - **States:** empty · empty filter · digest on / daily cap reached · live connection lost · error · loading.
 - **Design v2 [DECIDED 2026-11-19]** (2026-11-15 layout rules and later decisions): Keşfet in the main nav (page, bell panel); main column and "Senin için" end together (last aside card fills); explanation lines removed (footnote under the list, caption under recent searches, Takip et dialog intro and duration hint); state texts shortened. New items: "İsteğin onaylandı" (in-app only, person icon tile, no action — from My Profile), "Göster'den sonra fiyat arttı" and "Bildirimin sonuçlandı" (always on, no switch in Settings). New-device sign-in shows device and browser only (no location). Filter and category counts updated. Preferences are edited only in Settings › Bildirimler.
+- **Design v2.1 [DECIDED 2026-11-19] (user):**
+  - "Takip et" from a notification or "Senin için" opens Search and Add with the product marked (as Home); **no Takip et dialog** — the `TrackFlow` boards are marked unused.
+  - Phone width: the bell panel opens full screen; tapping an item replaces the list with its preview; "Geri" returns.
+  - New-device item: "Ben değilim" opens the change-password dialog ("Şifre oluştur" for accounts without a password); "Bu bendim" only marks it read.
+  - When "Fırsat bitti" arrives, the same product's earlier "Fırsat geldi" row fades (60 %); the "Fırsat bitti" row stays normal.
+  - Types not drawn (return check "İade edecek bir şey var mı?", target reached, tracking ending, account): product image or icon tile + one action to the related page; no action when there is no page.
+  - Daily cap reached: "N bildirim yarın gelir" (no time).
+  - Store names without a suffix: "Hepsiburada · 1 Kasım'da aldın".
+  - Delivery question: "Evet, aldım" records today as the delivery date (editable on Product Detail); "Henüz değil" asks again after 2 days, at most 3 times.
+  - Read: opening the title or an action on the page marks it read; in the bell panel opening the preview marks it read.
 - **API:** `GET /notifications?type=&q=&category=`, read/read-all, `/me/notification-preferences` (edited in Settings), `/me/stream`.
 
 ### 8.6 My Savings — `/[locale]/kazancim`
