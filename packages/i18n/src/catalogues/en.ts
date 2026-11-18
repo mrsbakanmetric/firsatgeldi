@@ -566,8 +566,6 @@ export const en = {
   },
   productDetail: {
     title: "Product Detail",
-    soonTitle: "This page is coming soon",
-    soonText: "The Product Detail screen is being built. For now, you can go back to your tracked items.",
     back: "Back to tracked items",
     breadcrumb: "Location",
     breadcrumbSeparator: "/",
@@ -749,10 +747,6 @@ export const en = {
       skip: "Skip",
       send: "Send",
       thanks: "Thank you, your answers are saved.",
-    },
-    end: {
-      ended: "Tracking ended.",
-      endedSaving: "Tracking ended · {amount} added to My Savings",
     },
     states: {
       loading: "Loading the product",
