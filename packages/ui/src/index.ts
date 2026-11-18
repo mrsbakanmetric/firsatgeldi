@@ -64,7 +64,7 @@ export {
   type ToggleChipOption,
   type ToggleChipsProps,
 } from "./settings-parts";
-export { ModeBadge, NotificationItem, NotificationTile, type ModeBadgeMode, type NotificationBadgeTone, type NotificationItemProps } from "./notification-item";
+export { ModeBadge, NotificationItem, NotificationPreview, NotificationTile, type ModeBadgeMode, type NotificationBadgeTone, type NotificationItemProps, type NotificationPreviewProps } from "./notification-item";
 export {
   PersonRow,
   ProfileHeader,

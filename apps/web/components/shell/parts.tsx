@@ -1,15 +1,44 @@
 "use client";
 
 // Building blocks shared by AppShell, AuthShell and AdminShell (pagedesign.md §2).
-import { createTranslator, LOCALES, type Locale, type Translator } from "@firsatgeldi/i18n";
-import { Avatar, cn, focusRing, Icon, Menu, Sheet, type MenuItem } from "@firsatgeldi/ui";
-import { ArrowDown, Bell, CreditCard, LogOut, Settings, UserRound } from "lucide-react";
+import {
+  createTranslator,
+  LOCALES,
+  type Locale,
+  type Translator,
+} from "@firsatgeldi/i18n";
+import {
+  Avatar,
+  cn,
+  focusRing,
+  Icon,
+  Menu,
+  Sheet,
+  type MenuItem,
+} from "@firsatgeldi/ui";
+import {
+  ArrowDown,
+  Bell,
+  CreditCard,
+  LogOut,
+  Settings,
+  UserRound,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState, type ReactNode } from "react";
 import { writeLocalePreference } from "../../lib/i18n/locale-preference";
 import { settingsHref } from "../../lib/settings/sections";
-import { AUTH_FOOTER_IDS, DEFAULT_SETTINGS_SECTION, FOOTER_LINKS, hrefFor, isProfileMenuPage, isWithin, settingsBase, switchLocalePath } from "../../lib/shell/navigation";
+import {
+  AUTH_FOOTER_IDS,
+  DEFAULT_SETTINGS_SECTION,
+  FOOTER_LINKS,
+  hrefFor,
+  isProfileMenuPage,
+  isWithin,
+  settingsBase,
+  switchLocalePath,
+} from "../../lib/shell/navigation";
 
 export function useTranslator(locale: Locale): Translator {
   return useMemo(() => createTranslator(locale), [locale]);
@@ -25,7 +54,13 @@ export function useTranslator(locale: Locale): Translator {
 export type ShellViewer =
   | { kind: "loading" }
   | { kind: "guest" }
-  | { kind: "user"; initials: string; unreadCount: number | null; unreadDeal: boolean; avatarSrc?: string | null };
+  | {
+      kind: "user";
+      initials: string;
+      unreadCount: number | null;
+      unreadDeal: boolean;
+      avatarSrc?: string | null;
+    };
 
 export function SkipLink({ t }: { t: Translator }) {
   return (
@@ -41,9 +76,24 @@ export function SkipLink({ t }: { t: Translator }) {
   );
 }
 
-export function Logo({ locale, t, onHero = false }: { locale: Locale; t: Translator; onHero?: boolean }) {
+export function Logo({
+  locale,
+  t,
+  onHero = false,
+}: {
+  locale: Locale;
+  t: Translator;
+  onHero?: boolean;
+}) {
   return (
-    <Link href={hrefFor("/", locale)} className={cn("flex shrink-0 items-center gap-2 rounded-md", onHero ? "text-on-hero-surface" : "text-text", focusRing)}>
+    <Link
+      href={hrefFor("/", locale)}
+      className={cn(
+        "flex shrink-0 items-center gap-2 rounded-md",
+        onHero ? "text-on-hero-surface" : "text-text",
+        focusRing,
+      )}
+    >
       <span className="flex size-8 items-center justify-center rounded-md bg-primary text-on-primary">
         <Icon icon={ArrowDown} />
       </span>
@@ -53,10 +103,21 @@ export function Logo({ locale, t, onHero = false }: { locale: Locale; t: Transla
 }
 
 /** Türkçe · English: the same page in the other language; remembers the explicit choice. */
-export function LanguageSwitch({ locale, t, onHero = false }: { locale: Locale; t: Translator; onHero?: boolean }) {
+export function LanguageSwitch({
+  locale,
+  t,
+  onHero = false,
+}: {
+  locale: Locale;
+  t: Translator;
+  onHero?: boolean;
+}) {
   const pathname = usePathname() ?? `/${locale}`;
   return (
-    <nav aria-label={t("shell.language.label")} className="flex items-center gap-1">
+    <nav
+      aria-label={t("shell.language.label")}
+      className="flex items-center gap-1"
+    >
       {LOCALES.map((target) => {
         const current = target === locale;
         return (
@@ -69,8 +130,14 @@ export function LanguageSwitch({ locale, t, onHero = false }: { locale: Locale; 
             onClick={() => writeLocalePreference(target)}
             className={cn(
               "flex min-h-(--size-touch-target-min) items-center rounded-md px-2 text-caption",
-              current ? "font-semibold" : "font-medium underline underline-offset-4",
-              onHero ? "text-on-hero-surface" : current ? "text-text" : "text-text-muted hover:text-text",
+              current
+                ? "font-semibold"
+                : "font-medium underline underline-offset-4",
+              onHero
+                ? "text-on-hero-surface"
+                : current
+                  ? "text-text"
+                  : "text-text-muted hover:text-text",
               focusRing,
             )}
           >
@@ -88,17 +155,36 @@ export function LanguageSwitch({ locale, t, onHero = false }: { locale: Locale; 
  * padding; no separate commission sentence (the "Komisyon açıklaması" link
  * covers it). Short labels on phones, where the links wrap.
  */
-export function SiteFooter({ locale, t, variant = "full" }: { locale: Locale; t: Translator; variant?: "full" | "auth" }) {
-  const links = variant === "auth" ? FOOTER_LINKS.filter((link) => (AUTH_FOOTER_IDS as readonly string[]).includes(link.id)) : FOOTER_LINKS;
+export function SiteFooter({
+  locale,
+  t,
+  variant = "full",
+}: {
+  locale: Locale;
+  t: Translator;
+  variant?: "full" | "auth";
+}) {
+  const links =
+    variant === "auth"
+      ? FOOTER_LINKS.filter((link) =>
+          (AUTH_FOOTER_IDS as readonly string[]).includes(link.id),
+        )
+      : FOOTER_LINKS;
   return (
     <footer className="shrink-0 border-t border-border bg-surface">
       <div className="mx-auto flex max-w-(--size-content-max-width) items-center justify-between gap-3 px-4 py-4 md:px-6">
-        <nav aria-label={t("shell.footer.label")} className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 md:gap-x-5">
+        <nav
+          aria-label={t("shell.footer.label")}
+          className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 md:gap-x-5"
+        >
           {links.map((link) => (
             <Link
               key={link.id}
               href={hrefFor(link.route, locale)}
-              className={cn("flex min-h-(--size-touch-target-min) items-center rounded-sm text-caption text-text-muted underline-offset-4 hover:underline", focusRing)}
+              className={cn(
+                "flex min-h-(--size-touch-target-min) items-center rounded-sm text-caption text-text-muted underline-offset-4 hover:underline",
+                focusRing,
+              )}
             >
               <span className="md:hidden">{t(link.short)}</span>
               <span className="hidden md:inline">{t(link.label)}</span>
@@ -111,17 +197,36 @@ export function SiteFooter({ locale, t, variant = "full" }: { locale: Locale; t:
   );
 }
 
+/** A bell panel that draws its own sheet (Notifications: list + preview); the bell owns `open`. */
+export type BellPanelRenderer = (props: {
+  open: boolean;
+  onClose: () => void;
+}) => ReactNode;
+
 /** Bell with its counter (coral only for an unread deal) and the notification panel. */
-export function BellButton({ locale, t, unreadCount, unreadDeal, panel, onHero = false }: {
+export function BellButton({
+  locale,
+  t,
+  unreadCount,
+  unreadDeal,
+  panel,
+  renderPanel,
+  onHero = false,
+}: {
   locale: Locale;
   t: Translator;
   unreadCount: number | null;
   unreadDeal: boolean;
   panel?: ReactNode;
+  /** When given, it draws the panel instead of the plain sheet with `panel`. */
+  renderPanel?: BellPanelRenderer;
   onHero?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const label = unreadCount !== null && unreadCount > 0 ? t("shell.bell.unread", { count: unreadCount }) : t("shell.bell.label");
+  const label =
+    unreadCount !== null && unreadCount > 0
+      ? t("shell.bell.unread", { count: unreadCount })
+      : t("shell.bell.label");
   return (
     <>
       <button
@@ -132,7 +237,9 @@ export function BellButton({ locale, t, unreadCount, unreadDeal, panel, onHero =
         onClick={() => setOpen(true)}
         className={cn(
           "relative flex size-(--size-touch-target-min) shrink-0 items-center justify-center rounded-pill",
-          onHero ? "text-on-hero-surface hover:bg-hero-line" : "text-text hover:bg-surface-alt",
+          onHero
+            ? "text-on-hero-surface hover:bg-hero-line"
+            : "text-text hover:bg-surface-alt",
           focusRing,
         )}
       >
@@ -142,7 +249,9 @@ export function BellButton({ locale, t, unreadCount, unreadDeal, panel, onHero =
             aria-hidden="true"
             className={cn(
               "absolute top-1 right-1 flex h-5 min-w-5 items-center justify-center rounded-pill px-1 text-caption font-semibold tabular-nums",
-              unreadDeal && !onHero ? "bg-accent text-on-accent" : "bg-text text-text-inverse",
+              unreadDeal && !onHero
+                ? "bg-accent text-on-accent"
+                : "bg-text text-text-inverse",
               onHero && "bg-on-hero-surface text-hero-surface",
             )}
           >
@@ -150,36 +259,83 @@ export function BellButton({ locale, t, unreadCount, unreadDeal, panel, onHero =
           </span>
         )}
       </button>
-      <Sheet
-        open={open}
-        onClose={() => setOpen(false)}
-        title={t("shell.bell.panelTitle")}
-        closeLabel={t("common.closePanel")}
-        footer={
-          <Link href={hrefFor("/bildirimler", locale)} onClick={() => setOpen(false)} className={cn("text-body font-semibold text-primary underline-offset-4 hover:underline", focusRing)}>
-            {t("shell.bell.seeAll")}
-          </Link>
-        }
-      >
-        {panel}
-      </Sheet>
+      {renderPanel ? (
+        renderPanel({ open, onClose: () => setOpen(false) })
+      ) : (
+        <Sheet
+          open={open}
+          onClose={() => setOpen(false)}
+          title={t("shell.bell.panelTitle")}
+          closeLabel={t("common.closePanel")}
+          footer={
+            <Link
+              href={hrefFor("/bildirimler", locale)}
+              onClick={() => setOpen(false)}
+              className={cn(
+                "text-body font-semibold text-primary underline-offset-4 hover:underline",
+                focusRing,
+              )}
+            >
+              {t("shell.bell.seeAll")}
+            </Link>
+          }
+        >
+          {panel}
+        </Sheet>
+      )}
     </>
   );
 }
 
-export function profileMenuItems(locale: Locale, t: Translator, pathname: string, onSignOut?: () => void): MenuItem[] {
+export function profileMenuItems(
+  locale: Locale,
+  t: Translator,
+  pathname: string,
+  onSignOut?: () => void,
+): MenuItem[] {
   const settings = settingsHref(locale, DEFAULT_SETTINGS_SECTION);
   const items: MenuItem[] = [
-    { id: "profile", label: t("shell.profileMenu.profile"), icon: UserRound, href: hrefFor("/profil", locale), current: pathname === hrefFor("/profil", locale) },
-    { id: "plan", label: t("shell.profileMenu.plan"), icon: CreditCard, href: hrefFor("/paketim", locale), current: pathname === hrefFor("/paketim", locale) },
-    { id: "settings", label: t("shell.profileMenu.settings"), icon: Settings, href: settings, current: isWithin(pathname, settingsBase(locale), locale) },
+    {
+      id: "profile",
+      label: t("shell.profileMenu.profile"),
+      icon: UserRound,
+      href: hrefFor("/profil", locale),
+      current: pathname === hrefFor("/profil", locale),
+    },
+    {
+      id: "plan",
+      label: t("shell.profileMenu.plan"),
+      icon: CreditCard,
+      href: hrefFor("/paketim", locale),
+      current: pathname === hrefFor("/paketim", locale),
+    },
+    {
+      id: "settings",
+      label: t("shell.profileMenu.settings"),
+      icon: Settings,
+      href: settings,
+      current: isWithin(pathname, settingsBase(locale), locale),
+    },
   ];
-  if (onSignOut) items.push({ id: "sign-out", label: t("shell.profileMenu.signOut"), icon: LogOut, onSelect: onSignOut });
+  if (onSignOut)
+    items.push({
+      id: "sign-out",
+      label: t("shell.profileMenu.signOut"),
+      icon: LogOut,
+      onSelect: onSignOut,
+    });
   return items;
 }
 
 /** Avatar menu at the right end of the top bar (from breakpoint.md). */
-export function ProfileMenu({ locale, t, initials, avatarSrc = null, onSignOut, onHero = false }: {
+export function ProfileMenu({
+  locale,
+  t,
+  initials,
+  avatarSrc = null,
+  onSignOut,
+  onHero = false,
+}: {
   avatarSrc?: string | null;
   locale: Locale;
   t: Translator;
@@ -199,8 +355,12 @@ export function ProfileMenu({ locale, t, initials, avatarSrc = null, onSignOut, 
           aria-current={current ? "page" : undefined}
           className={cn(
             "flex h-(--size-touch-target-min) shrink-0 items-center gap-2 rounded-pill pr-2 pl-1 text-body-sm font-semibold",
-            current ? "border-(length:--border-width-strong) border-primary" : "border border-border",
-            onHero ? "bg-transparent text-on-hero-surface" : "bg-surface text-text",
+            current
+              ? "border-(length:--border-width-strong) border-primary"
+              : "border border-border",
+            onHero
+              ? "bg-transparent text-on-hero-surface"
+              : "bg-surface text-text",
             focusRing,
           )}
         >

@@ -20,9 +20,21 @@ export interface SheetProps {
   children: ReactNode;
   /** Actions pinned to the bottom of the panel. */
   footer?: ReactNode;
+  /** One muted line under the title ("4 okunmamış · son 10 bildirim"). */
+  subtitle?: string;
+  /** One action in the title row, before the close control ("Tümünü okundu yap"). */
+  headerAction?: ReactNode;
+  /**
+   * A second surface to the left of the panel, same height (the bell preview,
+   * product_design_pattern.md §5.29). For wide screens only: below breakpoint.md the caller
+   * shows it inside the panel instead.
+   */
+  beside?: ReactNode;
+  /** Below breakpoint.md the panel fills the screen instead of a bottom sheet (bell panel, design v2.1). */
+  fullOnPhone?: boolean;
 }
 
-export function Sheet({ open, onClose, title, closeLabel, children, footer }: SheetProps) {
+export function Sheet({ open, onClose, title, closeLabel, children, footer, subtitle, headerAction, beside, fullOnPhone = false }: SheetProps) {
   const mounted = useMounted();
   const id = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -45,15 +57,19 @@ export function Sheet({ open, onClose, title, closeLabel, children, footer }: Sh
         tabIndex={-1}
         className={cn(
           "fixed z-(--z-index-modal) flex flex-col bg-surface outline-none",
-          "inset-x-0 bottom-0 max-h-full rounded-t-xl border border-b-0 border-border shadow-lg",
+          fullOnPhone ? "inset-0" : "inset-x-0 bottom-0 max-h-full rounded-t-xl border border-b-0 border-border shadow-lg",
           "md:inset-x-auto md:top-(--size-header-height) md:right-0 md:w-(--size-side-panel-width) md:max-h-none md:rounded-none md:border-y-0 md:border-r-0 md:shadow-md",
         )}
       >
-        <span aria-hidden="true" className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-pill bg-border md:hidden" />
+        {!fullOnPhone && <span aria-hidden="true" className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-pill bg-border md:hidden" />}
         <div className="flex items-center justify-between gap-2 border-b border-divider py-3 pr-3 pl-4">
-          <h2 id={`${id}-title`} className="text-body font-semibold text-text">
-            {title}
-          </h2>
+          <div className="flex min-w-0 flex-col">
+            <h2 id={`${id}-title`} className="text-body font-semibold text-text">
+              {title}
+            </h2>
+            {subtitle && <span className="text-caption text-text-muted">{subtitle}</span>}
+          </div>
+          {headerAction && <div className="ml-auto flex shrink-0 items-center">{headerAction}</div>}
           <button
             type="button"
             onClick={onClose}
@@ -65,6 +81,9 @@ export function Sheet({ open, onClose, title, closeLabel, children, footer }: Sh
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
         {footer && <div className="flex flex-col gap-3 border-t border-divider p-4">{footer}</div>}
+        {beside && (
+          <div className="absolute top-0 right-full bottom-0 w-(--size-side-panel-width) overflow-y-auto border-r border-border bg-surface shadow-lg">{beside}</div>
+        )}
       </div>
     </>,
     document.body,
