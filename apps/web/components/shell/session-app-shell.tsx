@@ -9,6 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useApiMutation, useSession } from "../../lib/api/hooks";
+import { imageUrl } from "../catalogue-search/catalogue-search-box";
 import { AppShell } from "./app-shell";
 import type { ShellViewer } from "./parts";
 
@@ -39,7 +40,7 @@ export function SessionAppShell({ locale, children }: { locale: Locale; children
     session.status === "loading"
       ? { kind: "loading" }
       : session.status === "ready" && session.me
-        ? { kind: "user", initials: initialsOf(session.me.displayName ?? session.me.username, locale), unreadCount: null, unreadDeal: false }
+        ? { kind: "user", initials: initialsOf(session.me.displayName ?? session.me.username, locale), unreadCount: null, unreadDeal: false, avatarSrc: imageUrl(session.me.avatarSha256) }
         : // A failed session read shows the guest controls: signing in still works.
           { kind: "guest" };
   return (
