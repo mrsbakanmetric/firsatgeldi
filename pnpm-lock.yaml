@@ -135,6 +135,9 @@ importers:
       '@firsatgeldi/mocks':
         specifier: workspace:*
         version: link:../../packages/mocks
+      '@firsatgeldi/sources':
+        specifier: workspace:*
+        version: link:../../packages/sources
       '@tailwindcss/postcss':
         specifier: 'catalog:'
         version: 4.3.5

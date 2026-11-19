@@ -26,6 +26,7 @@
   "devDependencies": {
     "@firsatgeldi/config": "workspace:*",
     "@firsatgeldi/mocks": "workspace:*",
+    "@firsatgeldi/sources": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
