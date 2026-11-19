@@ -85,7 +85,7 @@ export function Understood({ t, result, change, onAnswer, onUndo }: { t: Transla
 }
 
 /** One result as a radio (design v4): filled circle + check when selected; no "İşaretlendi" badge. */
-function CandidateCard({ candidate, name, selected, onSelect, difference, stores }: { candidate: Candidate; name: string; selected: boolean; onSelect: () => void; difference?: string | null; stores: string }) {
+function CandidateCard({ candidate, name, selected, onSelect, difference, stores, variant }: { candidate: Candidate; name: string; selected: boolean; onSelect: () => void; difference?: string | null; stores: string; variant: string | null }) {
   const product = candidate.product;
   return (
     <div>
@@ -108,7 +108,7 @@ function CandidateCard({ candidate, name, selected, onSelect, difference, stores
         <ProductImage src={imageUrl(product.imageSha256)} size="md" fallbackIcon={Package} />
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="text-body font-semibold break-words text-text">{product.name}</span>
-          {candidate.variantLine && <span className="text-body-sm text-text-muted">{candidate.variantLine}</span>}
+          {variant && <span className="text-body-sm text-text-muted">{variant}</span>}
           {difference && <span className="text-caption text-on-warning-subtle">{difference}</span>}
           <span className="text-caption text-text-muted">{stores}</span>
         </span>
@@ -132,6 +132,10 @@ export function Candidates({
 }) {
   const name = useId();
   const stores = (candidate: Candidate) => t("searchAdd.suggest.stores", { count: candidate.product.storeCount });
+  // A product found from a link also shows the link's model code (design v5: "Mavi · 40 · Model kodu …").
+  const modelCode = result.link?.modelCode ?? null;
+  const variant = (candidate: Candidate) =>
+    [candidate.variantLine, modelCode ? t("searchAdd.suggest.linkModelLine", { code: modelCode }) : null].filter(Boolean).join(t("common.listSeparator")) || null;
   const exact = result.candidates.filter((candidate) => candidate.match === "EXACT");
   const close = result.candidates.filter((candidate) => candidate.match === "CLOSE");
   const lead = (exact[0] ?? close[0])?.product.id ?? null;
@@ -145,7 +149,7 @@ export function Candidates({
           <p className="text-body-sm text-text-muted">{t("searchAdd.candidates.summary", { count: exact.length })}</p>
           <div role="radiogroup" aria-labelledby="candidates-title" className="flex flex-col gap-3">
             {exact.map((candidate) => (
-              <CandidateCard key={candidate.product.id} name={name} candidate={candidate} selected={candidate.product.id === markedId} onSelect={() => onSelect(candidate)} stores={stores(candidate)} />
+              <CandidateCard key={candidate.product.id} name={name} candidate={candidate} selected={candidate.product.id === markedId} onSelect={() => onSelect(candidate)} stores={stores(candidate)} variant={variant(candidate)} />
             ))}
           </div>
         </>
@@ -164,6 +168,7 @@ export function Candidates({
                 selected={candidate.product.id === markedId}
                 onSelect={() => onSelect(candidate)}
                 stores={stores(candidate)}
+                variant={variant(candidate)}
                 difference={candidate.difference ? t(`searchAdd.candidates.difference.${candidate.difference}`) : null}
               />
             ))}

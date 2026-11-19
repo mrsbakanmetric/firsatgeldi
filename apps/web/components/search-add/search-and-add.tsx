@@ -28,7 +28,7 @@ import { formatDay, money, useNow } from "./format";
 import { type AttributeChange, BulkList, type BulkState, type Candidate, Candidates, Understood } from "./mark-step";
 import { PhotoArea, PhotoWatchers } from "./photos";
 import { isLink, PhotoInput, takeHandedFiles } from "../input-source/input-source";
-import { CatalogueSearchBox, imageUrl } from "../catalogue-search/catalogue-search-box";
+import { CatalogueSearchBox, imageUrl, LinkProblemLine } from "../catalogue-search/catalogue-search-box";
 import { usePhotos } from "./use-photos";
 
 type IdentifyBody = { text?: string; uploadIds?: string[]; link?: string };
@@ -77,7 +77,7 @@ function firstResult(data: IdentifyResult): Candidate | null {
 
 /** A result that holds only one candidate (restored after sign-in, or one bulk item). */
 function singleResult(base: IdentifyResult | null, requestId: string, candidates: readonly Candidate[]): IdentifyResult {
-  return { requestId, understood: [], questions: [], candidates: [...candidates], items: [], similarCount: 0, link: base?.link ?? null };
+  return { requestId, understood: [], questions: [], candidates: [...candidates], items: [], similarCount: 0, link: base?.link ?? null, linkProblem: null };
 }
 
 function nextOpen(states: readonly BulkState[], from: number): number {
@@ -152,9 +152,17 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
     [identify, showResult],
   );
 
+  /** A link from "Ara", another page or "Tekrar dene": the same as "Bu linkle devam et" (design v5). */
+  const runLink = (link: string) => {
+    setError(null);
+    setLastText("");
+    lastIdentify.current = { body: { link }, markProductId: null };
+    identify.mutate({ body: { link } }, { onSuccess: ({ data }) => continueWithLink(data), onError: (failure) => setError({ error: failure, kind: "identify" }) });
+  };
+
   const submit = () => {
     const text = query.trim();
-    if (isLink(text)) return runIdentify({ link: text });
+    if (isLink(text)) return runLink(text);
     runIdentify({ ...(text ? { text } : {}), ...(photos.readyIds.length ? { uploadIds: photos.readyIds } : {}) });
   };
 
@@ -258,9 +266,23 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
     setQuery(product.name);
     runIdentify({ text: product.name }, product.id);
   };
+  /**
+   * "Bu linkle devam et": "Nasıl anladık" is skipped, the product is selected and the confirm
+   * panel opens (phones: the sheet) with the platform from the link; seller and price paid
+   * come from the link only when it gives them, otherwise the user types them (design v5).
+   * A link without a product shows why, with "Adıyla ara".
+   */
   const continueWithLink = (data: IdentifyResult) => {
-    showResult(data, data.candidates[0]?.product.id ?? null);
-    if (data.link) setLinkPrefill({ source: "LINK", platformId: data.link.platformId, platformName: data.link.platformName, sellerName: data.link.sellerName, pricePaid: data.link.pricePaid, orderedOn: null });
+    const product = data.linkProblem ? null : (data.candidates[0]?.product ?? null);
+    showResult(data, product?.id ?? null);
+    setLinkPrefill(data.link && product ? { source: "LINK", platformId: data.link.platformId, platformName: data.link.platformName, sellerName: data.link.sellerName, pricePaid: data.link.pricePaid, orderedOn: null } : null);
+    if (product) setSheetOpen(isPhoneWidth());
+  };
+  /** "Adıyla ara" on a link that gave no product: back to a typed search, with the link's brand and model code when it had them. */
+  const searchByName = (text: string) => {
+    setResult(null);
+    setQuery(text);
+    focusSearch();
   };
 
   // The shell's search box hands over `?q=`; after sign-in `?devam=1` restores the guest's draft.
@@ -296,8 +318,7 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
     if (handed && isLink(handed)) {
       // A link handed over by another page (InputSourceHandler): same as "Bu linkle devam et".
       setQuery(handed);
-      lastIdentify.current = { body: { link: handed }, markProductId: null };
-      identify.mutate({ body: { link: handed } }, { onSuccess: ({ data }) => continueWithLink(data), onError: (failure) => setError({ error: failure, kind: "identify" }) });
+      runLink(handed);
     } else if (handed) {
       setQuery(handed);
       runIdentify({ text: handed });
@@ -312,7 +333,11 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
   const retry = () => {
     const failed = error?.kind;
     setError(null);
-    if (failed === "identify" && lastIdentify.current) runIdentify(lastIdentify.current.body, lastIdentify.current.markProductId);
+    const last = lastIdentify.current;
+    if (failed === "identify" && last) {
+      if (last.body.link) runLink(last.body.link);
+      else runIdentify(last.body, last.markProductId);
+    }
     if (failed === "answer" && lastAnswer.current) onAnswer(lastAnswer.current.body, lastAnswer.current.change);
   };
 
@@ -421,6 +446,8 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
               <SkeletonRow />
               <SkeletonRow />
             </div>
+          ) : noResults && shown.linkProblem ? (
+            <LinkProblemLine t={t} result={shown} onSearchByName={searchByName} />
           ) : noResults ? (
             <EmptyState
               icon={SearchX}

@@ -138,23 +138,72 @@ describe("catalogue miss → search stores (architecture.md §11)", () => {
   });
 });
 
-describe("pasted links (development: any Trendyol or Hepsiburada link answers with a sample listing)", () => {
+describe("pasted links — reading order of architecture.md §10.1 (design v5)", () => {
   const t2 = createTestApi();
   beforeAll(() => t2.server.listen({ onUnhandledFrame: "error" }));
   afterAll(() => t2.server.close());
+  const ASICS_LINK = "https://www.trendyol.com/asics/gel-dedicate-8-kadin-tenis-ayakkabisi-1042a237-101-p-754059415?merchantId=968";
+
+  it("the user's Trendyol link: path 1 reads brand and model code, the store search finds the product; seller and price stay empty", async () => {
+    const { data } = await t2.api.call("identify", { body: { link: ASICS_LINK } });
+    expect(data.link).toEqual({ platformId: PLATFORMS.TRENDYOL.id, platformName: "Trendyol", sellerName: null, pricePaid: null, brand: "asics", modelCode: "1042A237-101" });
+    expect(data.linkProblem).toBeNull();
+    expect(data.candidates).toHaveLength(1);
+    expect(data.candidates[0]).toMatchObject({ match: "EXACT", variantLine: "Mavi · 40", product: { id: PRODUCTS.asicsGelDedicate8.id, name: "ASICS Gel-Dedicate 8" } });
+    // A link skips "Nasıl anladık".
+    expect(data.understood).toEqual([]);
+    expect(data.questions).toEqual([]);
+  });
+
+  it("answers in English too", async () => {
+    t2.useLocale("en");
+    try {
+      const { data } = await t2.api.call("identify", { body: { link: ASICS_LINK } });
+      expect(data.candidates[0]?.variantLine).toBe("Blue · 40");
+    } finally {
+      t2.useLocale("tr");
+    }
+  });
+
+  it("the found product is saved to the catalogue: autocomplete knows it afterwards", async () => {
+    await t2.api.call("identify", { body: { link: ASICS_LINK } });
+    const { data } = await t2.api.call("autocomplete", { query: { q: "gel-dedicate" } });
+    expect(data.items.map((item) => item.id)).toContain(PRODUCTS.asicsGelDedicate8.id);
+  });
 
   it.each([
     ["https://www.hepsiburada.com/herhangi-bir-urun-p-HBC0000XYZ", "Hepsiburada", "Kamera Dünyası", PRODUCTS.acePro2FlashPrint.id],
     ["https://trendyol.com/marka/baska-bir-urun-p-12345?boutiqueId=1", "Trendyol", "Süpürge Merkezi", PRODUCTS.dysonV15.id],
-  ])("%s → the store's sample listing: own platform, seller, price; the product as the result", async (link, platformName, sellerName, productId) => {
+  ])("%s → the store's sample listing (development): own platform, seller, price", async (link, platformName, sellerName, productId) => {
     const { data } = await t2.api.call("identify", { body: { link } });
     expect(data.link).toMatchObject({ platformName, sellerName });
     expect(data.link?.pricePaid).not.toBeNull();
     expect(data.candidates[0]?.product.id).toBe(productId);
   });
 
-  it("another store's link is not recognised", async () => {
-    const { data } = await t2.api.call("identify", { body: { link: "https://www.example.com/urun" } });
-    expect(data.link).toBeNull();
+  it.each([
+    ["read but not found", "https://www.amazon.com.tr/Bilinmeyen-Urun/dp/B0ABCDE123", "NOT_FOUND", "Amazon TR"],
+    ["short share link", "https://ty.gl/k3Xa9QpL", "SHORT_LINK", null],
+    ["store not supported", "https://ornekmagaza.com/urun/12345", "UNSUPPORTED_STORE", null],
+    ["not a product page", "https://www.trendyol.com/sr?wc=109", "NOT_A_PRODUCT_PAGE", null],
+  ])("%s → %s, no product", async (_case, link, problem, platformName) => {
+    const { data } = await t2.api.call("identify", { body: { link } });
+    expect(data.linkProblem).toBe(problem);
+    expect(data.candidates).toEqual([]);
+    expect(data.link?.platformName ?? null).toBe(platformName);
+  });
+
+  it("logs the link reading with its outcome", async () => {
+    await t2.api.call("identify", { body: { link: "https://ty.gl/abc" } });
+    const row = [...t2.controller.state.activity].reverse().find((entry) => entry.action === "identify");
+    expect(row?.metadata).toMatchObject({ source: "LINK", candidateCount: 0, linkProblem: "SHORT_LINK" });
+  });
+
+  it("never shows another store's seller or price: only the user's own platform", async () => {
+    const { data } = await t2.api.call("identify", { body: { link: ASICS_LINK } });
+    const body = JSON.stringify(data);
+    for (const seller of Object.values(SELLERS)) expect(body).not.toContain(seller.name);
+    for (const platform of Object.values(PLATFORMS).filter((item) => item.name !== "Trendyol")) expect(body).not.toContain(platform.name);
   });
 });
+

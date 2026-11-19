@@ -1,8 +1,7 @@
 {
   "extends": "@firsatgeldi/config/tsconfig/base.json",
   "compilerOptions": {
-    // The data-test CLI runs on Node's built-in type stripping, which needs explicit `.ts` imports.
-    "allowImportingTsExtensions": true,
+    // The data-test CLI runs on Node's built-in type stripping: explicit `.ts` imports, erasable syntax only.
     "erasableSyntaxOnly": true,
     "types": ["node"]
   },

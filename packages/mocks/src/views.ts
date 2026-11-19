@@ -31,7 +31,7 @@ export function productSummary(product: ProductFixture, locale: ApiLocale) {
 }
 
 export function variantLine(product: ProductFixture, locale: ApiLocale): string | null {
-  const parts = [product.generation, product.bundle, product.colors[0]].filter((part) => part !== null && part !== undefined);
+  const parts = [product.generation, product.bundle, product.colors[0], product.size].filter((part) => part !== null && part !== undefined);
   return parts.length ? parts.map((part) => pick(part, locale)).join(" · ") : null;
 }
 

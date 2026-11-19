@@ -51,6 +51,10 @@ describe("readLinkText — path 1, the link text itself", () => {
     expect(reading("https://www.teknosa.com/apple-iphone-15-128-gb-siyah-p-125077505").modelCode).toBeNull();
   });
 
+  it("reads a Trendyol link without the brand segment; brand is then not guessed", () => {
+    expect(reading("https://www.trendyol.com/herhangi-bir-urun-p-998877")).toMatchObject({ platform: "TRENDYOL", productExternalId: "998877", brand: null, nameWords: ["herhangi", "bir", "urun"] });
+  });
+
   it("reads mobile and bare store hosts", () => {
     expect(reading("https://m.trendyol.com/asics/gel-p-1").platform).toBe("TRENDYOL");
     expect(reading("https://trendyol.com/asics/gel-p-1").platform).toBe("TRENDYOL");

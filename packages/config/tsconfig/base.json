@@ -16,6 +16,8 @@
     "verbatimModuleSyntax": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    // `packages/sources` imports with explicit `.ts` (its CLI runs on Node type stripping); every package that type-checks it needs this.
+    "allowImportingTsExtensions": true
   }
 }

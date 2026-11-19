@@ -93,9 +93,22 @@ export const en = {
       searchStores: "Search stores for “{query}” · may take a few seconds",
       recent: "Your recent searches",
       linkTip: "Paste a store link and the product, seller and price you paid are filled in from it.",
-      linkDetected: "Store link detected · {platform}",
+      /** Design v5: caption of the link card. */
+      linkDetected: "{platform} link",
       linkReads: "Seller and price will be read from the link",
       linkContinue: "Continue with this link",
+      /** Design v5 (link reading): what the link text says, as chips; the store search; edge states. */
+      linkBrand: "Brand",
+      linkModel: "Model code",
+      linkModelLine: "Model code {code}",
+      linkFinding: "Finding the product…",
+      linkProblem: {
+        NOT_FOUND: "We couldn't find the product in this link.",
+        SHORT_LINK: "We can't read short links. Paste the product page's full link.",
+        UNSUPPORTED_STORE: "We don't support this store yet.",
+        NOT_A_PRODUCT_PAGE: "This link isn't a product page.",
+      },
+      searchByName: "Search by name",
     },
     photos: {
       title: "Photos",
@@ -182,6 +195,8 @@ export const en = {
         verify: "First confirm the product: “Yes, this one?”",
         platformName: "Type the platform name",
         price: "Type the price you paid",
+        seller: "Type the seller",
+        sellerAndPrice: "Type the seller and the price you paid",
       },
       sellerFind: "Find seller",
       sellerFound: "Found on this product",
@@ -208,6 +223,11 @@ export const en = {
       fromShot: "Read from the screen",
       linkNote: "The link price may not show a basket discount; correct it if you paid a different amount.",
       prefilledLink: "Store link detected: product, seller and the price you paid were filled in from the link.",
+      /** Design v5: the link gave the product but not the seller and the price paid. */
+      linkWhyEmpty: "We couldn't read the seller and the price you paid from the link. Please type them.",
+      platformFromLink: "from link",
+      /** Screen-reader name of the platform's "Change" (the product row has its own). */
+      changePlatform: "Change platform",
       prefilledShot: "Filled in from your order screen. Name, address and order number were not taken; you can edit every field.",
       orderedOn: "Order date",
       orderStatus: "Order status",

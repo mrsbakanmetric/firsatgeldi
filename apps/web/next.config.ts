@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
     "@firsatgeldi/i18n",
     // Development only: loaded behind the mock API switch (lib/api/ready.ts).
     "@firsatgeldi/mocks",
+    // Development only, through the mock API: link reading path 1 (architecture.md §10.1).
+    "@firsatgeldi/sources",
     "@firsatgeldi/tokens",
     "@firsatgeldi/ui",
   ],

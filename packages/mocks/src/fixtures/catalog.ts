@@ -38,6 +38,8 @@ export const CATEGORIES = {
   smartwatch: category("smartwatch", text("Akıllı saat", "Smartwatch")),
   airFryer: category("air-fryer", text("Fritöz", "Air fryer")),
   eReader: category("e-reader", text("E-okuyucu", "E-reader")),
+  // Search and Add v5 link reading (the user's Trendyol ASICS link, 2026-11-19).
+  sportsShoes: category("sports-shoes", text("Spor ayakkabı", "Sports shoes")),
 } as const;
 
 /** Attribute labels (category template translations, architecture.md §19). */
@@ -74,6 +76,10 @@ export interface ProductFixture {
    * finds it through the live sources and saves it (architecture.md §11 "Catalogue miss").
    */
   readonly inCatalog: boolean;
+  /** Manufacturer model codes a pasted link may carry (link reading path 1 → the store search, path 2). */
+  readonly modelCodes: readonly string[];
+  /** Shoe or clothing size, last in the variant line ("Mavi · 40"). */
+  readonly size: Localized | null;
 }
 
 interface ProductInput {
@@ -89,6 +95,8 @@ interface ProductInput {
   storeCount: number;
   hasBrandCode?: boolean;
   inCatalog?: boolean;
+  modelCodes?: string[];
+  size?: Localized;
 }
 
 function product(key: string, input: ProductInput): ProductFixture {
@@ -111,6 +119,8 @@ function product(key: string, input: ProductInput): ProductFixture {
     imageSha256: sha256For(key),
     hasBrandCode: input.hasBrandCode ?? true,
     inCatalog: input.inCatalog ?? true,
+    modelCodes: input.modelCodes ?? [],
+    size: input.size ?? null,
     searchTerms: text(terms("tr"), terms("en")),
   };
 }
@@ -204,6 +214,14 @@ export const PRODUCTS = {
     name: text("Sony ZV-E1 28-60 kit", "Sony ZV-E1 28-60 kit"), category: CATEGORIES.vlogCamera, brand: "Sony", model: "ZV-E1",
     family: "sony-zv-e1", bundle: text("28-60 kit", "28-60 kit"), colors: [black], familyBundles: [text("Gövde", "Body"), text("28-60 kit", "28-60 kit")],
     storeCount: 5, inCatalog: false,
+  }),
+  // Search and Add v5 (link reading): not in the catalogue; a pasted Trendyol link finds it by its
+  // model code through the store search (path 2). Name and variant as the 2026-11-19 search
+  // result gave them ("ASICS GEL-DEDICATE 8 - BLUE - 40", packages/sources recordings).
+  asicsGelDedicate8: product("asics-gel-dedicate-8", {
+    name: text("ASICS Gel-Dedicate 8", "ASICS Gel-Dedicate 8"), category: CATEGORIES.sportsShoes, brand: "ASICS", model: "Gel-Dedicate 8",
+    family: "asics-gel-dedicate-8", colors: [text("Mavi", "Blue")], size: text("40", "40"), storeCount: 1, inCatalog: false,
+    modelCodes: ["1042A237-101"],
   }),
   // Design Cases C (bulk add from one screenshot): items 2 and 3.
   wh1000xm5: product("sony-wh-1000xm5", {
