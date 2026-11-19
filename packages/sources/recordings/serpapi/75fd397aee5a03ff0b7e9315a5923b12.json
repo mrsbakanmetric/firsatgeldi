@@ -1,0 +1,26 @@
+{
+  "search_metadata": {
+    "id": "6afe8d7f1266d7e85d3321d1",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/SXBLXu-SK9NscFi-eY5r0Bopa4x4acr-gNAphTDEBco/6afe8d7f1266d7e85d3321d1.json",
+    "markdown_endpoint": "https://serpapi.com/searches/SXBLXu-SK9NscFi-eY5r0Bopa4x4acr-gNAphTDEBco/6afe8d7f1266d7e85d3321d1.md",
+    "created_at": "2026-11-19 05:47:43 UTC",
+    "processed_at": "2026-11-19 05:47:43 UTC",
+    "google_shopping_url": "https://www.google.com.tr/search?udm=28&q=qromax+D136B-114-02&oq=qromax+D136B-114-02&sourceid=chrome&ie=UTF-8&hl=tr&gl=tr",
+    "raw_html_file": "https://serpapi.com/searches/SXBLXu-SK9NscFi-eY5r0Bopa4x4acr-gNAphTDEBco/6afe8d7f1266d7e85d3321d1.html",
+    "total_time_taken": 0.31
+  },
+  "search_parameters": {
+    "engine": "google_shopping",
+    "q": "qromax D136B-114-02",
+    "google_domain": "google.com.tr",
+    "hl": "tr",
+    "gl": "tr",
+    "device": "desktop"
+  },
+  "search_information": {
+    "query_displayed": "qromax D136B-114-02",
+    "shopping_results_state": "Fully empty"
+  },
+  "error": "Google hasn't returned any results for this query."
+}
