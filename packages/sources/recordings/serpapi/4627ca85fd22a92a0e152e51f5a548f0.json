@@ -1,0 +1,222 @@
+{
+  "search_metadata": {
+    "id": "6afe8d4e8d42f8a2d3454f9b",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/SP2Eie8wTBXogCjpDIdJ_lYTjqFfyUd6-9t0o15-TF8/6afe8d4e8d42f8a2d3454f9b.json",
+    "markdown_endpoint": "https://serpapi.com/searches/SP2Eie8wTBXogCjpDIdJ_lYTjqFfyUd6-9t0o15-TF8/6afe8d4e8d42f8a2d3454f9b.md",
+    "created_at": "2026-11-19 05:46:54 UTC",
+    "processed_at": "2026-11-19 05:46:54 UTC",
+    "google_shopping_url": "https://www.google.com.tr/search?udm=28&q=apple+iphone+18+pro+256gb+glacier&oq=apple+iphone+18+pro+256gb+glacier&sourceid=chrome&ie=UTF-8&hl=tr&gl=tr",
+    "raw_html_file": "https://serpapi.com/searches/SP2Eie8wTBXogCjpDIdJ_lYTjqFfyUd6-9t0o15-TF8/6afe8d4e8d42f8a2d3454f9b.html",
+    "total_time_taken": 1.33
+  },
+  "search_parameters": {
+    "engine": "google_shopping",
+    "q": "apple iphone 18 pro 256gb glacier",
+    "google_domain": "google.com.tr",
+    "hl": "tr",
+    "gl": "tr",
+    "device": "desktop"
+  },
+  "search_information": {
+    "query_displayed": "apple iphone 18 pro 256gb glacier",
+    "shopping_results_state": "Results for exact spelling"
+  },
+  "shopping_results": [
+    {
+      "position": 1,
+      "title": "Apple iPhone 18 Pro",
+      "product_id": "647167597696511880",
+      "product_link": "https://www.google.com.tr/search?ibp=oshop&q=apple iphone 18 pro 256gb glacier&prds=catalogid:647167597696511880,productid:8157889785272162571,headlineOfferDocid:13974667280925276956,imageDocid:17035065661092834590,rds:PC_1010157498601838758|PROD_PC_1010157498601838758,gpcid:1010157498601838758,mid:576462913432074251,pvt:hg&hl=tr&gl=tr&udm=28",
+      "immersive_product_page_token": "lRUNanicbZPLrqtWEoaj9Av0I-web_mIBSwue8uRAC8w2Cxzv00sbuZqA8Y2Nuqn2SeJlAxzIvW0X-OcQZ4ljpRh_pJq8pfq1ydV_fHdvz_y6n8OTS3iPp8kfI0nQzCO2jEZzPSX_txl1_RSZV84AFmO41kOkiwJGBKy4Jc0vsRtV1TZbwzNAoaFPMvwDASA44jfyjzO2uqU7w6H_Lzq0ir7HVA8SzMMS3IETz73MDxkfq2OcZH_7bMEBQkGMgx4DnAUDXni8zkbv5KGtAfEsyBL8xxDAI7iWMj917B2q_0_ez8N1_z8-PqfuO_b_LXqy-6UvwLu9Un0SkKmSF6LNk6r_PxT0T-zv_zDis_HJxlkGZoheUDRFEmwNAnB5_52-SiLH6_XNv__R9F-XM4f5V_95y7ub4f02_ckGtSVdFUl07VQ2GZt6Eex73NESOApADLh-73o1paYEhYTt2WbErLirkXRQWWToTbMPZ7Q3VKOVliNZzmwakzmrk67jReYLmZC9zIGs9dm_sW32mxrBj2NSTxZXrmOG37OXJ1KFXlrI22M3PuUAm3ESj_oBFTCU09ZQYZz16L0ubVtkibwnMURyLDlA8clo84B1tpy7403i7W-bqlk1TaJH_VJIEK7KW_PXMdv-MEOetlqNT-T8TlsPDlqvUu-zvocAcUNMIwblQ5IiFIP20lzN2IEGj8IL1ltrSJK9nRkRfhk9baCyVjp4dbNCL0ue2vGO1fGECv3iyNHQ1KLVuzLqi1nTloBNyEhEZIcbZ2y0gysrU3q0PLEq12rd9NvB7O1Ok_RmoTMYq_WgvRY9p7L70zCgvjUkFGbWZFn0o6Hr7YTxSmVoayxhhBkRkqJt3S26p3LI_30ZFqVqk2AbereT64S7WzPs1CZuXilX8JAbDMC7zJfplwkm4nbX8KTbIX3rjLdcqcjl7JRaySOqO7WvYRXmHRcjUhQRGAvolLChAkxgmz68T6eD18JYW2w1wMETgR82bFBpK3HQ4F6b6yVRWO3Y_EGWP75I88fhJBif067rqnyb__6zt5J9lIS1PcXGwmWtN7bgo5s1UFLqTDVYaOK7y_7vZ2n13O-sB3LWAoiLgWmmlurniTlOPMK8LWhcAJZbcdkbE-HmsoocCicw8607e062Aj-zblHi3gWDB8aTJX3K1e4zeXzHDobpY3OHB5HXpy0B1LZeXp_UXY7ZYv2gujaaI8CpBuOusNLdbWkuQOTJoBI-DSNkzx9c_Tl32iA596k5Q9vqrEEHPuJh59Y-hOA5OLNXgJ_e6IfUU_ag6to0WNT9yYlvL8ISFoKccwj7QwalMdXQxj3MEQ3IRsft7I3CmGsOVN3XFvdRpx_XAyH-YCpYJzE1u_eX1bekmbAYGIsRcRUNbqRNbfHLOKoz4KpXcPhVnKp83BLezsJf-n9BT85pEGXJAHZwESizgtFu7_JBJ_OkLVn0beatCrdSOAA7-MHwZWKAabN0LHTaYxMeDjz5I3TwmARw1mSZXgf68mQnqJXs8FdvUg_1CdT3K4f_b1Ru3TrKYcL6d03oLu7m6oe1Cam7L0bT2eGL0mLCYGpS8NEoseUXzXhXJ22heNvhPuG10fmogfj9j5lxUpSm3O105i4ujIUyG_RfAOXB80Oe2zmSRrQ80Xb-tQBrHc2uhHOnPYyWVzCXW2uZXieFiknP7pNealaEEkmXqjk9WaYq2TuOdSfw6g7HbteYA3C2EyWKHSCo8lCIG7McQFQcxsyk-VzEueqyMuC5V_sPk8qQr0qM0MpHk7uzUQuTkN40xqqBpOsLFBYRu6J6K1urbDHlb_WisO5dmihYJG6_hO9WDit",
+      "serpapi_immersive_product_api": "https://serpapi.com/search.json?engine=google_immersive_product&page_token=lRUNanicbZPLrqtWEoaj9Av0I-web_mIBSwue8uRAC8w2Cxzv00sbuZqA8Y2Nuqn2SeJlAxzIvW0X-OcQZ4ljpRh_pJq8pfq1ydV_fHdvz_y6n8OTS3iPp8kfI0nQzCO2jEZzPSX_txl1_RSZV84AFmO41kOkiwJGBKy4Jc0vsRtV1TZbwzNAoaFPMvwDASA44jfyjzO2uqU7w6H_Lzq0ir7HVA8SzMMS3IETz73MDxkfq2OcZH_7bMEBQkGMgx4DnAUDXni8zkbv5KGtAfEsyBL8xxDAI7iWMj917B2q_0_ez8N1_z8-PqfuO_b_LXqy-6UvwLu9Un0SkKmSF6LNk6r_PxT0T-zv_zDis_HJxlkGZoheUDRFEmwNAnB5_52-SiLH6_XNv__R9F-XM4f5V_95y7ub4f02_ckGtSVdFUl07VQ2GZt6Eex73NESOApADLh-73o1paYEhYTt2WbErLirkXRQWWToTbMPZ7Q3VKOVliNZzmwakzmrk67jReYLmZC9zIGs9dm_sW32mxrBj2NSTxZXrmOG37OXJ1KFXlrI22M3PuUAm3ESj_oBFTCU09ZQYZz16L0ubVtkibwnMURyLDlA8clo84B1tpy7403i7W-bqlk1TaJH_VJIEK7KW_PXMdv-MEOetlqNT-T8TlsPDlqvUu-zvocAcUNMIwblQ5IiFIP20lzN2IEGj8IL1ltrSJK9nRkRfhk9baCyVjp4dbNCL0ue2vGO1fGECv3iyNHQ1KLVuzLqi1nTloBNyEhEZIcbZ2y0gysrU3q0PLEq12rd9NvB7O1Ok_RmoTMYq_WgvRY9p7L70zCgvjUkFGbWZFn0o6Hr7YTxSmVoayxhhBkRkqJt3S26p3LI_30ZFqVqk2AbereT64S7WzPs1CZuXilX8JAbDMC7zJfplwkm4nbX8KTbIX3rjLdcqcjl7JRaySOqO7WvYRXmHRcjUhQRGAvolLChAkxgmz68T6eD18JYW2w1wMETgR82bFBpK3HQ4F6b6yVRWO3Y_EGWP75I88fhJBif067rqnyb__6zt5J9lIS1PcXGwmWtN7bgo5s1UFLqTDVYaOK7y_7vZ2n13O-sB3LWAoiLgWmmlurniTlOPMK8LWhcAJZbcdkbE-HmsoocCicw8607e062Aj-zblHi3gWDB8aTJX3K1e4zeXzHDobpY3OHB5HXpy0B1LZeXp_UXY7ZYv2gujaaI8CpBuOusNLdbWkuQOTJoBI-DSNkzx9c_Tl32iA596k5Q9vqrEEHPuJh59Y-hOA5OLNXgJ_e6IfUU_ag6to0WNT9yYlvL8ISFoKccwj7QwalMdXQxj3MEQ3IRsft7I3CmGsOVN3XFvdRpx_XAyH-YCpYJzE1u_eX1bekmbAYGIsRcRUNbqRNbfHLOKoz4KpXcPhVnKp83BLezsJf-n9BT85pEGXJAHZwESizgtFu7_JBJ_OkLVn0beatCrdSOAA7-MHwZWKAabN0LHTaYxMeDjz5I3TwmARw1mSZXgf68mQnqJXs8FdvUg_1CdT3K4f_b1Ru3TrKYcL6d03oLu7m6oe1Cam7L0bT2eGL0mLCYGpS8NEoseUXzXhXJ22heNvhPuG10fmogfj9j5lxUpSm3O105i4ujIUyG_RfAOXB80Oe2zmSRrQ80Xb-tQBrHc2uhHOnPYyWVzCXW2uZXieFiknP7pNealaEEkmXqjk9WaYq2TuOdSfw6g7HbteYA3C2EyWKHSCo8lCIG7McQFQcxsyk-VzEueqyMuC5V_sPk8qQr0qM0MpHk7uzUQuTkN40xqqBpOsLFBYRu6J6K1urbDHlb_WisO5dmihYJG6_hO9WDit",
+      "serpapi_product_api": "https://serpapi.com/search.json?engine=google_product&page_token=lRUNanicbZPLrqtWEoaj9Av0I-web_mIBSwue8uRAC8w2Cxzv00sbuZqA8Y2Nuqn2SeJlAxzIvW0X-OcQZ4ljpRh_pJq8pfq1ydV_fHdvz_y6n8OTS3iPp8kfI0nQzCO2jEZzPSX_txl1_RSZV84AFmO41kOkiwJGBKy4Jc0vsRtV1TZbwzNAoaFPMvwDASA44jfyjzO2uqU7w6H_Lzq0ir7HVA8SzMMS3IETz73MDxkfq2OcZH_7bMEBQkGMgx4DnAUDXni8zkbv5KGtAfEsyBL8xxDAI7iWMj917B2q_0_ez8N1_z8-PqfuO_b_LXqy-6UvwLu9Un0SkKmSF6LNk6r_PxT0T-zv_zDis_HJxlkGZoheUDRFEmwNAnB5_52-SiLH6_XNv__R9F-XM4f5V_95y7ub4f02_ckGtSVdFUl07VQ2GZt6Eex73NESOApADLh-73o1paYEhYTt2WbErLirkXRQWWToTbMPZ7Q3VKOVliNZzmwakzmrk67jReYLmZC9zIGs9dm_sW32mxrBj2NSTxZXrmOG37OXJ1KFXlrI22M3PuUAm3ESj_oBFTCU09ZQYZz16L0ubVtkibwnMURyLDlA8clo84B1tpy7403i7W-bqlk1TaJH_VJIEK7KW_PXMdv-MEOetlqNT-T8TlsPDlqvUu-zvocAcUNMIwblQ5IiFIP20lzN2IEGj8IL1ltrSJK9nRkRfhk9baCyVjp4dbNCL0ue2vGO1fGECv3iyNHQ1KLVuzLqi1nTloBNyEhEZIcbZ2y0gysrU3q0PLEq12rd9NvB7O1Ok_RmoTMYq_WgvRY9p7L70zCgvjUkFGbWZFn0o6Hr7YTxSmVoayxhhBkRkqJt3S26p3LI_30ZFqVqk2AbereT64S7WzPs1CZuXilX8JAbDMC7zJfplwkm4nbX8KTbIX3rjLdcqcjl7JRaySOqO7WvYRXmHRcjUhQRGAvolLChAkxgmz68T6eD18JYW2w1wMETgR82bFBpK3HQ4F6b6yVRWO3Y_EGWP75I88fhJBif067rqnyb__6zt5J9lIS1PcXGwmWtN7bgo5s1UFLqTDVYaOK7y_7vZ2n13O-sB3LWAoiLgWmmlurniTlOPMK8LWhcAJZbcdkbE-HmsoocCicw8607e062Aj-zblHi3gWDB8aTJX3K1e4zeXzHDobpY3OHB5HXpy0B1LZeXp_UXY7ZYv2gujaaI8CpBuOusNLdbWkuQOTJoBI-DSNkzx9c_Tl32iA596k5Q9vqrEEHPuJh59Y-hOA5OLNXgJ_e6IfUU_ag6to0WNT9yYlvL8ISFoKccwj7QwalMdXQxj3MEQ3IRsft7I3CmGsOVN3XFvdRpx_XAyH-YCpYJzE1u_eX1bekmbAYGIsRcRUNbqRNbfHLOKoz4KpXcPhVnKp83BLezsJf-n9BT85pEGXJAHZwESizgtFu7_JBJ_OkLVn0beatCrdSOAA7-MHwZWKAabN0LHTaYxMeDjz5I3TwmARw1mSZXgf68mQnqJXs8FdvUg_1CdT3K4f_b1Ru3TrKYcL6d03oLu7m6oe1Cam7L0bT2eGL0mLCYGpS8NEoseUXzXhXJ22heNvhPuG10fmogfj9j5lxUpSm3O105i4ujIUyG_RfAOXB80Oe2zmSRrQ80Xb-tQBrHc2uhHOnPYyWVzCXW2uZXieFiknP7pNealaEEkmXqjk9WaYq2TuOdSfw6g7HbteYA3C2EyWKHSCo8lCIG7McQFQcxsyk-VzEueqyMuC5V_sPk8qQr0qM0MpHk7uzUQuTkN40xqqBpOsLFBYRu6J6K1urbDHlb_WisO5dmihYJG6_hO9WDit",
+      "source": "Apple",
+      "source_icon": "https://serpapi.com/searches/6afe8d4e8d42f8a2d3454f9b/images/kmRUBqV9GgsRjApa8dLFdbzWNGVjYfe24neOUqoA0eE.png",
+      "multiple_sources": true,
+      "price": "₺137.999,00",
+      "extracted_price": 137999.0,
+      "rating": 4.6,
+      "reviews": 2700000000,
+      "thumbnail": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSQ33-3a58Y82aY7sSvbn87VxFVT0Sg1nEUdq5N7ZOQsTQ3Q0WCgGN_0YOxfYT1T6Qt8RR5mDWBfKpqCuCVUdFIEzaBSkPbLVimbAzFVtMZNXH3Z_yQWQFh",
+      "serpapi_thumbnail": "https://serpapi.com/images/url/_TI2BHicDcnbDsEwAADQL9pNM5slItsYgk1tOt2LtN01suq0BB_lf_wN5_V8P61SQnqGUXF2ewlVlZqifKQ3UhHVMZ1de0O2VyE63syG6f88Py4nS5ZCADRAbBe7I4IdmT4odx30jFBmpo3FF8dysGOnSKDMIIBmHjbL-Gzi5FnjzMrGULmHg93P86DeiCG8h-hYRuvFmwTpZU-3qOup_46Q2hXxaQWK8wvmMGp_dms8OQ",
+      "thumbnails": [
+        "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSQ33-3a58Y82aY7sSvbn87VxFVT0Sg1nEUdq5N7ZOQsTQ3Q0WCgGN_0YOxfYT1T6Qt8RR5mDWBfKpqCuCVUdFIEzaBSkPbLVimbAzFVtMZNXH3Z_yQWQFh",
+        "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRshpYSjD_QMzqKVGCbqytD0oXGkxwGVA1v-3VID3gX2bRIzrUXagbO43GnJ0KRkhnweXywT_cDkf5UYv4hjCdn5-t6vCGGxFRr85tVYxZFru5zVaI1c7RztTxT",
+        "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTe1ka7cnmR8h-HyPZ9KUR3hABiUTPg6LOKbczNxtp8Dfk41RQXyYUADX0M5ekWgKZSj2Ftl-Am8gFtamYwhyH0lPrMw5jacjXUTjrrAgvg",
+        "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIjyL1j38cdd9Wjo0uWCaYmTML_S4Oi17BV-8xSRXc99kbze6i4uNnmHntiLhsLTCfW9eezKYWGa3dDqpLS4wOu7o-dcHO5T-T7rvlBoC6",
+        "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSx68cxgx3VlBk9iuA9Y59OEzyZa1Ktq0p9lRQITPRHiO9k0M8QDTctK4mWnBACSOZ-gHL1KzVPBX36ivzrmqq-E4Lbzufc0OfMN9lYE61s"
+      ],
+      "serpapi_thumbnails": [
+        "https://serpapi.com/images/url/_TI2BHicDcnbDsEwAADQL9pNM5slItsYgk1tOt2LtN01suq0BB_lf_wN5_V8P61SQnqGUXF2ewlVlZqifKQ3UhHVMZ1de0O2VyE63syG6f88Py4nS5ZCADRAbBe7I4IdmT4odx30jFBmpo3FF8dysGOnSKDMIIBmHjbL-Gzi5FnjzMrGULmHg93P86DeiCG8h-hYRuvFmwTpZU-3qOup_46Q2hXxaQWK8wvmMGp_dms8OQ",
+        "https://serpapi.com/images/url/NEAYM3icDcndCoIwGADQJzItsz-ICMVhUdGyod2Im-ZUmlO_dPpYvU1vU-f2fD8cQLYbXU8FawYJaaIBFcYkayGGnE1Y9dJbXkmZi2xXb_-32Z-TNWK45TK8FU50PY31kSCb1gM4RhWgUvWI7KedZhLPMbNgRrE3NvcgzuhlbiJxMI645KJPg6H3I-aUT-sednNe2ImwNFh0NkLKxc3KAhKqh9u8rZHE3pQt8Qi-8n9dfEA-",
+        "https://serpapi.com/images/url/sT8xVHicDclLDoIwFADAE_FTUSAxpoYgCYKIEIEdlNryr_Ci1uN4K2-js53vhwHw2VIUMuBJcCCVBOWgynSGAmos47FXZjZyXg90d9_-z0JBZR5wTLS22OChjwwmuSLMTS-Jlgzt6yQO6fp48kr8Dl7ADfvWrrTonIosQXaq-jppr9TLL83CgU5CvUEdKPrsyYSrduHkP_WmwE2axM00IfqgPy8OOk0",
+        "https://serpapi.com/images/url/tBfiaXicDcltDoIgAADQE5m6TKWttbRNW5RbsshfTYEUS0DBvo7TrbpNvb_v-2mMUXpu20yQ4aUMo5aphDOptSkNJxMiO1s3Uiku6mW_-N98tacgIWjTvqDbTkNCKcCtdEYcl0WHdvCcexl3g-hohc_8cCIAXKs387k37kWXCsNhoyGKLxgw9t4WOCmndN0rmHuPbAykRUmazZCFguF-i2Ts_wA0YDlv",
+        "https://serpapi.com/images/url/yyveiXicDclXDoIwAADQE7EUCSUxBpSIYY-g8AdlNawCxUCP4628jb7f9_00hOBF4bhygPOOSVkwJB8ObL2QjCDIwrHnlmbEGA31ZTr_T1GdAtxhuEky3OrtGHdaC9CqguQEXJ3uaSaYZOIx6AL_EXmBgVzQ8rbs3yJITLF_Dpp6Dd2UqQ1LMGnsaa-jhN507qeJ0UUrp2sFebeyHdAluiQsPyFYOOc"
+      ]
+    },
+    {
+      "position": 2,
+      "title": "Apple iPhone 18 Pro Max 256 GB",
+      "product_id": "17580927400314412484",
+      "product_link": "https://www.google.com.tr/search?ibp=oshop&q=apple iphone 18 pro 256gb glacier&prds=catalogid:17580927400314412484,productid:9514984893535686825,headlineOfferDocid:10568154831853920038,imageDocid:13829337762019707739,rds:PC_3344304139205899146|PROD_PC_3344304139205899146,gpcid:8934732874963728222,pvt:hg&hl=tr&gl=tr&udm=28",
+      "immersive_product_page_token": "MxBBQnicbZDLjqvYFYZbyQvkESrjko_YXAxUyZG4bLCxubPZmInFHQzYGDDYqB8mqtPdUmeYjpRpXuP0IM-SOlIP8w-WlvT_v5a-9d8f_vKRVf_2aGoVddksGfdotgSr1dr4Zie_dv01vSdjlf7GM4DmOZrjKYZi1tyaI5lfk2iMmmtRpf8CLMMRPMnSBEEBmgYkzdH_LLMobapLZuZ51svX5HuO-OwChuYowDEUT37GuX9UbVRkf_gUR_IUxbJrkgA8S7AsxX_t0-EbaUkniqJpiqDB9x7D8Tyg1z9ajimf_r_38-2e9c9vf426rsleq668XrJXwL1-Mr2SzLqIX4smSqqs_7noPm__9olGsxTJsTS_pliSI0nya1ulf__aTeNHWfx0vzfZfz6K5mPsP8rv85dr1E158vufSHjbydJ9J9nIgccmbY64IDBqKK_uQtw2nUF1biaByg3QfMTEM5GNfXzWZC-ATIL4wYQ2bRO-5AI4JoRThrVjY9hM0UU0vUvZx3AUzUDRjtgmbLJTkVrTsRf6NpkyMfKx0_qkEzRaojhEhsCElfTpkcTTD5S9K4eTXxu5Dgki9XzpiBsrQqPjeYh2cbkYftOGrd8nyBkwTsUYOdhUCypSjTxW56dDal1MKcEhUPzkc4-C8Jhhp_PPcNQXkXIUQ3bqx6gjA4dnsTdq3gsvNTDU5pYA0cWeLzvb0HX87h4iI8_kNPDb1E8xI_mt84gWbTYWg04pX7dbQ8ya1MEVQAZwGFw_PFflKAzHiyk7EQ60wMPhkvjK0wFGbSOjPfi-_Mlc2ZQY-GQJj4sjp5B-Jlv_ekBpGyvGId46D-8cer76aFPUKB5ItfQi5rrXRG7gS4naTMjTzjjoWqyEmofKQUddbiKmCj3HgWWKDFkfj4HYpIRhplihEFTsGHXj8aI4x8e1slFp6hBRzuKgz58Z6ByaR6I0UavoBtRGdIFL5KV6fE6Bbf_0GPr8GyFsLfaeM8ALAVY8F4TadsgL2PnDWV3VbjMUb4DlGWLNkoBhKPaX5Hqtq-z3P__gmpK7kYTd-4sLBUfanlxBh-7OgxupsHe3_U58fzmd3Cy599nK9RxrI4hGKayrpXHOs6S2C68CrN0KL1B2zRAPzSU_UykF8sLLTdt1D9tgL-DJe4SraBEszFjrKutkJExLiUfv6sKk1tf5s-XFWXvCHbvM7y-qaaoHeBJE5MITDKBueTvT2OzkDc3l6yQGRMwnSRRnyZunb_5AAzz3Jm3-9razNoBjv_DMF5b-Ahhy9eZuAD5c6GfYke4NqVr43J87mxLeXwQobYQo4qHWgxpm0d0ShhNzhJOQDs-p7KxCGM6crXvI3R1CDrerW77kBhUMs9jg6_uL7G_oNbjZhiGFxFzVupXW03MRjbBLg7nZMrep5BLviUr3MAvf9f5ifHJIN12SBOgCG4o6LxTNaVIIPlkY1l1E7NRJVaJQ4ACPjSfBlaoF5v3tys6XIbSZvOfJidOOwSpiFklRmMdwni3pU7S8WNzdD_X8fLHFw_bZPerdNTn4aj6S_mMPrg-0r863XR1R7glFc7_mS9JZH4GtS7eZhM85u2tCX10OhYf3wmPP68N61IPh8JjTQpZ2dV-Z2jqq7msKZFO4TGB80uztZNhZnAT0MmoHTOVga7pwIrwl6RSyGI_m2d4qTD-vEk55XvflWDUglGxjtSPvk2XL8dJxsOuP4fXSXjuBtQhrPzuicBU8TRECcW8PKwDr6ZbaLJ-RRrYTeUVw8Oh2WVwRu7u6rCnVN-JHPZOry-04aTV1BrOiruCxDNGF6JzrVmVbGW-1Iu_PHi0ULNxt_we55Ths",
+      "serpapi_immersive_product_api": "https://serpapi.com/search.json?engine=google_immersive_product&page_token=MxBBQnicbZDLjqvYFYZbyQvkESrjko_YXAxUyZG4bLCxubPZmInFHQzYGDDYqB8mqtPdUmeYjpRpXuP0IM-SOlIP8w-WlvT_v5a-9d8f_vKRVf_2aGoVddksGfdotgSr1dr4Zie_dv01vSdjlf7GM4DmOZrjKYZi1tyaI5lfk2iMmmtRpf8CLMMRPMnSBEEBmgYkzdH_LLMobapLZuZ51svX5HuO-OwChuYowDEUT37GuX9UbVRkf_gUR_IUxbJrkgA8S7AsxX_t0-EbaUkniqJpiqDB9x7D8Tyg1z9ajimf_r_38-2e9c9vf426rsleq668XrJXwL1-Mr2SzLqIX4smSqqs_7noPm__9olGsxTJsTS_pliSI0nya1ulf__aTeNHWfx0vzfZfz6K5mPsP8rv85dr1E158vufSHjbydJ9J9nIgccmbY64IDBqKK_uQtw2nUF1biaByg3QfMTEM5GNfXzWZC-ATIL4wYQ2bRO-5AI4JoRThrVjY9hM0UU0vUvZx3AUzUDRjtgmbLJTkVrTsRf6NpkyMfKx0_qkEzRaojhEhsCElfTpkcTTD5S9K4eTXxu5Dgki9XzpiBsrQqPjeYh2cbkYftOGrd8nyBkwTsUYOdhUCypSjTxW56dDal1MKcEhUPzkc4-C8Jhhp_PPcNQXkXIUQ3bqx6gjA4dnsTdq3gsvNTDU5pYA0cWeLzvb0HX87h4iI8_kNPDb1E8xI_mt84gWbTYWg04pX7dbQ8ya1MEVQAZwGFw_PFflKAzHiyk7EQ60wMPhkvjK0wFGbSOjPfi-_Mlc2ZQY-GQJj4sjp5B-Jlv_ekBpGyvGId46D-8cer76aFPUKB5ItfQi5rrXRG7gS4naTMjTzjjoWqyEmofKQUddbiKmCj3HgWWKDFkfj4HYpIRhplihEFTsGHXj8aI4x8e1slFp6hBRzuKgz58Z6ByaR6I0UavoBtRGdIFL5KV6fE6Bbf_0GPr8GyFsLfaeM8ALAVY8F4TadsgL2PnDWV3VbjMUb4DlGWLNkoBhKPaX5Hqtq-z3P__gmpK7kYTd-4sLBUfanlxBh-7OgxupsHe3_U58fzmd3Cy599nK9RxrI4hGKayrpXHOs6S2C68CrN0KL1B2zRAPzSU_UykF8sLLTdt1D9tgL-DJe4SraBEszFjrKutkJExLiUfv6sKk1tf5s-XFWXvCHbvM7y-qaaoHeBJE5MITDKBueTvT2OzkDc3l6yQGRMwnSRRnyZunb_5AAzz3Jm3-9razNoBjv_DMF5b-Ahhy9eZuAD5c6GfYke4NqVr43J87mxLeXwQobYQo4qHWgxpm0d0ShhNzhJOQDs-p7KxCGM6crXvI3R1CDrerW77kBhUMs9jg6_uL7G_oNbjZhiGFxFzVupXW03MRjbBLg7nZMrep5BLviUr3MAvf9f5ifHJIN12SBOgCG4o6LxTNaVIIPlkY1l1E7NRJVaJQ4ACPjSfBlaoF5v3tys6XIbSZvOfJidOOwSpiFklRmMdwni3pU7S8WNzdD_X8fLHFw_bZPerdNTn4aj6S_mMPrg-0r863XR1R7glFc7_mS9JZH4GtS7eZhM85u2tCX10OhYf3wmPP68N61IPh8JjTQpZ2dV-Z2jqq7msKZFO4TGB80uztZNhZnAT0MmoHTOVga7pwIrwl6RSyGI_m2d4qTD-vEk55XvflWDUglGxjtSPvk2XL8dJxsOuP4fXSXjuBtQhrPzuicBU8TRECcW8PKwDr6ZbaLJ-RRrYTeUVw8Oh2WVwRu7u6rCnVN-JHPZOry-04aTV1BrOiruCxDNGF6JzrVmVbGW-1Iu_PHi0ULNxt_we55Ths",
+      "serpapi_product_api": "https://serpapi.com/search.json?engine=google_product&page_token=MxBBQnicbZDLjqvYFYZbyQvkESrjko_YXAxUyZG4bLCxubPZmInFHQzYGDDYqB8mqtPdUmeYjpRpXuP0IM-SOlIP8w-WlvT_v5a-9d8f_vKRVf_2aGoVddksGfdotgSr1dr4Zie_dv01vSdjlf7GM4DmOZrjKYZi1tyaI5lfk2iMmmtRpf8CLMMRPMnSBEEBmgYkzdH_LLMobapLZuZ51svX5HuO-OwChuYowDEUT37GuX9UbVRkf_gUR_IUxbJrkgA8S7AsxX_t0-EbaUkniqJpiqDB9x7D8Tyg1z9ajimf_r_38-2e9c9vf426rsleq668XrJXwL1-Mr2SzLqIX4smSqqs_7noPm__9olGsxTJsTS_pliSI0nya1ulf__aTeNHWfx0vzfZfz6K5mPsP8rv85dr1E158vufSHjbydJ9J9nIgccmbY64IDBqKK_uQtw2nUF1biaByg3QfMTEM5GNfXzWZC-ATIL4wYQ2bRO-5AI4JoRThrVjY9hM0UU0vUvZx3AUzUDRjtgmbLJTkVrTsRf6NpkyMfKx0_qkEzRaojhEhsCElfTpkcTTD5S9K4eTXxu5Dgki9XzpiBsrQqPjeYh2cbkYftOGrd8nyBkwTsUYOdhUCypSjTxW56dDal1MKcEhUPzkc4-C8Jhhp_PPcNQXkXIUQ3bqx6gjA4dnsTdq3gsvNTDU5pYA0cWeLzvb0HX87h4iI8_kNPDb1E8xI_mt84gWbTYWg04pX7dbQ8ya1MEVQAZwGFw_PFflKAzHiyk7EQ60wMPhkvjK0wFGbSOjPfi-_Mlc2ZQY-GQJj4sjp5B-Jlv_ekBpGyvGId46D-8cer76aFPUKB5ItfQi5rrXRG7gS4naTMjTzjjoWqyEmofKQUddbiKmCj3HgWWKDFkfj4HYpIRhplihEFTsGHXj8aI4x8e1slFp6hBRzuKgz58Z6ByaR6I0UavoBtRGdIFL5KV6fE6Bbf_0GPr8GyFsLfaeM8ALAVY8F4TadsgL2PnDWV3VbjMUb4DlGWLNkoBhKPaX5Hqtq-z3P__gmpK7kYTd-4sLBUfanlxBh-7OgxupsHe3_U58fzmd3Cy599nK9RxrI4hGKayrpXHOs6S2C68CrN0KL1B2zRAPzSU_UykF8sLLTdt1D9tgL-DJe4SraBEszFjrKutkJExLiUfv6sKk1tf5s-XFWXvCHbvM7y-qaaoHeBJE5MITDKBueTvT2OzkDc3l6yQGRMwnSRRnyZunb_5AAzz3Jm3-9razNoBjv_DMF5b-Ahhy9eZuAD5c6GfYke4NqVr43J87mxLeXwQobYQo4qHWgxpm0d0ShhNzhJOQDs-p7KxCGM6crXvI3R1CDrerW77kBhUMs9jg6_uL7G_oNbjZhiGFxFzVupXW03MRjbBLg7nZMrep5BLviUr3MAvf9f5ifHJIN12SBOgCG4o6LxTNaVIIPlkY1l1E7NRJVaJQ4ACPjSfBlaoF5v3tys6XIbSZvOfJidOOwSpiFklRmMdwni3pU7S8WNzdD_X8fLHFw_bZPerdNTn4aj6S_mMPrg-0r863XR1R7glFc7_mS9JZH4GtS7eZhM85u2tCX10OhYf3wmPP68N61IPh8JjTQpZ2dV-Z2jqq7msKZFO4TGB80uztZNhZnAT0MmoHTOVga7pwIrwl6RSyGI_m2d4qTD-vEk55XvflWDUglGxjtSPvk2XL8dJxsOuP4fXSXjuBtQhrPzuicBU8TRECcW8PKwDr6ZbaLJ-RRrYTeUVw8Oh2WVwRu7u6rCnVN-JHPZOry-04aTV1BrOiruCxDNGF6JzrVmVbGW-1Iu_PHi0ULNxt_we55Ths",
+      "source": "Gürgençler Apple Premium Reseller",
+      "source_icon": "https://serpapi.com/images/i/iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAclBMVEXpWgz____oUwDpWQbnRgDoUADnSQDpVwDoTQDwl3fqXxXypov87ef2wa_529D3yrvzq5L-9_TqYyHxoYXsdkb75Nzvj2zzsJj0tJ7vjWjxm33sekv1u6jnQADrazHqZCTuh2D2x7brbDXwmXr40sXtgli9e7z3AAABCUlEQVQ4jdWSyXLEIAxEJQECr3gfj2N71vz_LwbGVa4yY09OOaSPPOiWhAD-pwQ5iWPKcZckHal9rPQpxZd63uGkRlzVv3vw-UXyoZL8ZVEEdQiZeTzCJCUrzUNCW865w5YmUeRlaQ3QvHWQnp-ni10qiAi2nL3_PPkiy7xErLf-oK8OgHYt3hrJMaIOKmT3qJpdB7HRoCKfsB1AjXitnLHUAKrBxIQTSNFKxMbPhiPsQi5cqGxxdr6abVoF_u60w1uCjetM3dPCxwSiAgesDak4s7D3jTRgmk_6kY0Xtb8I6old0X-bwz2hupVE79mrzDMcbXihjQ-XcIkY91dwlb5_yF9u_ML_VD_sQQqUvM02WwAAAABJRU5ErkJggg.png",
+      "multiple_sources": true,
+      "price": "₺149.999,00",
+      "extracted_price": 149999.0,
+      "rating": 4.8,
+      "reviews": 26,
+      "thumbnail": "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS_x4A3POiRNQgJWXy-ForMRmCbribbV2_Z5xeVdgwA9nfoptpRL1hhDdPZaezrwzq-YKq4rH39VdP2e8BjvGASEiYbscJXaa-BVkN8tyHh-XSzbp2I4sl-Qw",
+      "serpapi_thumbnail": "https://serpapi.com/images/url/ddL5iXicDclJDoIwAADAF1UiYAImxuAGboiQIHoh3aR1oaVtRHiV3_E3Otf5fpgxUo8ti9ZYddJQAgyqnUGlDTQcD7B4WpoJKXldTZvJ_8ZBTPwQZ-XbDZzkwNP4WG1ORQdWQu3T5xwpjlBul5fRm-akagO_vgppZLobMrYgyQXSXrV9A87bxlWR4-cksak3u73CIFvyM9J4U0AIZvk99kwXMVBkPZL22tUPcGx_4-g_gQ",
+      "thumbnails": [
+        "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS_x4A3POiRNQgJWXy-ForMRmCbribbV2_Z5xeVdgwA9nfoptpRL1hhDdPZaezrwzq-YKq4rH39VdP2e8BjvGASEiYbscJXaa-BVkN8tyHh-XSzbp2I4sl-Qw",
+        "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcS-1njvaT3cjZ-BP8bdE0GHnFG4xPICZDIVlha1yWkfqk2OFCHcoH9tfoDbcXupC4__VN0ydvqjuPJopWD3u6KZiqEuGCzqe1rbjgKDLt0o7V0b4PnLtZrP",
+        "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTe1ka7cnmR8h-HyPZ9KUR3hABiUTPg6LOKbczNxtp8Dfk41RQXyYUADX0M5ekWgKZSj2Ftl-Am8gFtamYwhyH0lPrMw5jacjXUTjrrAgvg",
+        "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIjyL1j38cdd9Wjo0uWCaYmTML_S4Oi17BV-8xSRXc99kbze6i4uNnmHntiLhsLTCfW9eezKYWGa3dDqpLS4wOu7o-dcHO5T-T7rvlBoC6",
+        "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQCrCKLcy_MwMZmjjxhV55dOB4C3gFqGP1el-d-beYbLy3CGbeasNJBp4rRN7rdw68Bquo1mX-57Vz3gH2ofUe3PDKEyyyAvfIGG5CbRodK"
+      ],
+      "serpapi_thumbnails": [
+        "https://serpapi.com/images/url/ddL5iXicDclJDoIwAADAF1UiYAImxuAGboiQIHoh3aR1oaVtRHiV3_E3Otf5fpgxUo8ti9ZYddJQAgyqnUGlDTQcD7B4WpoJKXldTZvJ_8ZBTPwQZ-XbDZzkwNP4WG1ORQdWQu3T5xwpjlBul5fRm-akagO_vgppZLobMrYgyQXSXrV9A87bxlWR4-cksak3u73CIFvyM9J4U0AIZvk99kwXMVBkPZL22tUPcGx_4-g_gQ",
+        "https://serpapi.com/images/url/e1h1bnicDclJDoIwFADQEyFFiQOJMVoUUKJNNGC6IbQgk3aAjxEP5X28jb7t-35KANU5ppkL3g4K8swAJtCo6CCFio-4fJhdKZWqRLHSy_8562O28PjZsET9TC8TXlNjQ-Ys2yLPFzvPfpEAUzeI7mVqDXFz0834tMM-l_4CbtJl_NorbCdJdERD9tR1T_ZSxe6knx5opbe9h986t1pWFwc3BCRnEWI2ESHQlvwAB_c-LA",
+        "https://serpapi.com/images/url/sT8xVHicDclLDoIwFADAE_FTUSAxpoYgCYKIEIEdlNryr_Ci1uN4K2-js53vhwHw2VIUMuBJcCCVBOWgynSGAmos47FXZjZyXg90d9_-z0JBZR5wTLS22OChjwwmuSLMTS-Jlgzt6yQO6fp48kr8Dl7ADfvWrrTonIosQXaq-jppr9TLL83CgU5CvUEdKPrsyYSrduHkP_WmwE2axM00IfqgPy8OOk0",
+        "https://serpapi.com/images/url/tBfiaXicDcltDoIgAADQE5m6TKWttbRNW5RbsshfTYEUS0DBvo7TrbpNvb_v-2mMUXpu20yQ4aUMo5aphDOptSkNJxMiO1s3Uiku6mW_-N98tacgIWjTvqDbTkNCKcCtdEYcl0WHdvCcexl3g-hohc_8cCIAXKs387k37kWXCsNhoyGKLxgw9t4WOCmndN0rmHuPbAykRUmazZCFguF-i2Ts_wA0YDlv",
+        "https://serpapi.com/images/url/3Tb8XHicDcnbEoFAAADQL6okiWaMqcWiizSjwYtpL91G7VZL1uf4K3_DeT3fTyEE721Now3uJBeUKAI1IzXvRSpKrGJWa33BOC-bfNku_mc7IZlDfAQd8Hwsb8EQXOuqehWJaZKDOwFGvmlhpNO7QhREL8iXBoCIpn24d_mki0OrI8N05rYPptdnxbSSt5Fvxyw7USNaeWsppfPMdhCaAMWMeD813DlN"
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "input_type": "link_with_icon",
+      "options": [
+        {
+          "text": "Yeni",
+          "shoprs": "CAEYCiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMggIChIEWWVuaViJqiBgAg",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=yeni+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYCiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMggIChIEWWVuaViJqiBgAg"
+        },
+        {
+          "text": "İkinci el",
+          "shoprs": "CAEYCiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMg4IChIKxLBraW5jaSBlbFiJqiBgAg",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=ikinci+el+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYCiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMg4IChIKxLBraW5jaSBlbFiJqiBgAg"
+        }
+      ]
+    },
+    {
+      "type": "Sıralama ölçütü:",
+      "input_type": "link",
+      "options": [
+        {
+          "text": "Alaka düzeyi",
+          "shoprs": "CAEYFyohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgoIFyoEEAEYAVAEYAI",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=apple+iphone+18+pro+256gb+glacier&shoprs=CAEYFyohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgoIFyoEEAEYAVAEYAI"
+        },
+        {
+          "text": "Fiyat: düşükten yükseğe",
+          "shoprs": "CAEYFyohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMigIFxIcRml5YXQ6IGTDvMWfw7xrdGVuIHnDvGtzZcSfZSoEEAEYAVABYAKIAQE",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=apple+iphone+18+pro+256gb+glacier&shoprs=CAEYFyohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMigIFxIcRml5YXQ6IGTDvMWfw7xrdGVuIHnDvGtzZcSfZSoEEAEYAVABYAKIAQE"
+        },
+        {
+          "text": "Fiyat: yüksekten düşüğe",
+          "shoprs": "CAEYFyohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMigIFxIcRml5YXQ6IHnDvGtzZWt0ZW4gZMO8xZ_DvMSfZSoEEAEYAVACYAKIAQI",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=apple+iphone+18+pro+256gb+glacier&shoprs=CAEYFyohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMigIFxIcRml5YXQ6IHnDvGtzZWt0ZW4gZMO8xZ_DvMSfZSoEEAEYAVACYAKIAQI"
+        },
+        {
+          "text": "Puan: Yüksekten düşüğe",
+          "shoprs": "CAEYFyohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMicIFxIbUHVhbjogWcO8a3Nla3RlbiBkw7zFn8O8xJ9lKgQQARgBUANgAogBAw",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=apple+iphone+18+pro+256gb+glacier&shoprs=CAEYFyohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMicIFxIbUHVhbjogWcO8a3Nla3RlbiBkw7zFn8O8xJ9lKgQQARgBUANgAogBAw"
+        }
+      ]
+    },
+    {
+      "type": "Mağazalar",
+      "input_type": "link",
+      "options": [
+        {
+          "text": "Teknosa",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgsIAhIHVGVrbm9zYViJqiBgAg",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=teknosa+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgsIAhIHVGVrbm9zYViJqiBgAg"
+        },
+        {
+          "text": "PttAVM.com",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMg4IAhIKUHR0QVZNLmNvbViJqiBgAg",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=pttavm.com+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMg4IAhIKUHR0QVZNLmNvbViJqiBgAg"
+        },
+        {
+          "text": "Gürgençler Apple Premium ...",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMicIAhIjR8O8cmdlbsOnbGVyIEFwcGxlIFByZW1pdW0gUmVzZWxsZXJYiaogYAI",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=g%C3%BCrgen%C3%A7ler+apple+premium+reseller+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMicIAhIjR8O8cmdlbsOnbGVyIEFwcGxlIFByZW1pdW0gUmVzZWxsZXJYiaogYAI"
+        },
+        {
+          "text": "Amazon.com.tr",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMhEIAhINQW1hem9uLmNvbS50cliJqiBgAg",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=amazon.com.tr+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMhEIAhINQW1hem9uLmNvbS50cliJqiBgAg"
+        },
+        {
+          "text": "Trendyol",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgwIAhIIVHJlbmR5b2xYiaogYAI",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=trendyol+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgwIAhIIVHJlbmR5b2xYiaogYAI"
+        },
+        {
+          "text": "letgo",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgkIAhIFbGV0Z29YiaogYAI",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=letgo+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgkIAhIFbGV0Z29YiaogYAI"
+        },
+        {
+          "text": "Vakkorama Online Shop",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMhkIAhIVVmFra29yYW1hIE9ubGluZSBTaG9wWImqIGAC",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=vakkorama+online+shop+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMhkIAhIVVmFra29yYW1hIE9ubGluZSBTaG9wWImqIGAC"
+        }
+      ]
+    },
+    {
+      "type": "Carousel Filters",
+      "options": [
+        {
+          "text": "Teknosa",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgsIAhIHVGVrbm9zYViJqiBgAQ",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=teknosa+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgsIAhIHVGVrbm9zYViJqiBgAQ",
+          "input_type": "link"
+        },
+        {
+          "text": "Yeni",
+          "shoprs": "CAEYCiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMggIChIEWWVuaViJqiBgAQ",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=yeni+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYCiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMggIChIEWWVuaViJqiBgAQ",
+          "input_type": "link_with_icon"
+        },
+        {
+          "text": "İkinci el",
+          "shoprs": "CAEYCiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMg4IChIKxLBraW5jaSBlbFiJqiBgAQ",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=ikinci+el+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYCiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMg4IChIKxLBraW5jaSBlbFiJqiBgAQ",
+          "input_type": "link_with_icon"
+        },
+        {
+          "text": "PttAVM.com",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMg4IAhIKUHR0QVZNLmNvbViJqiBgAQ",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=pttavm.com+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMg4IAhIKUHR0QVZNLmNvbViJqiBgAQ",
+          "input_type": "link"
+        },
+        {
+          "text": "Gürgençler Apple Premium ...",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMicIAhIjR8O8cmdlbsOnbGVyIEFwcGxlIFByZW1pdW0gUmVzZWxsZXJYiaogYAE",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=g%C3%BCrgen%C3%A7ler+apple+premium+reseller+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMicIAhIjR8O8cmdlbsOnbGVyIEFwcGxlIFByZW1pdW0gUmVzZWxsZXJYiaogYAE",
+          "input_type": "link"
+        },
+        {
+          "text": "Amazon.com.tr",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMhEIAhINQW1hem9uLmNvbS50cliJqiBgAQ",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=amazon.com.tr+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMhEIAhINQW1hem9uLmNvbS50cliJqiBgAQ",
+          "input_type": "link"
+        },
+        {
+          "text": "Trendyol",
+          "shoprs": "CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgwIAhIIVHJlbmR5b2xYiaogYAE",
+          "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_shopping&gl=tr&google_domain=google.com.tr&hl=tr&q=trendyol+apple+iphone+18+pro+256gb+glacier&shoprs=CAEYAiohYXBwbGUgaXBob25lIDE4IHBybyAyNTZnYiBnbGFjaWVyMgwIAhIIVHJlbmR5b2xYiaogYAE",
+          "input_type": "link"
+        }
+      ]
+    }
+  ]
+}
