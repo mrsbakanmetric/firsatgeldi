@@ -46,6 +46,7 @@ const REASON_KEYS: Readonly<Record<DroppedValue["reason"], TranslationKey>> = {
   VARIANT_NOT_IN_LINK: "devLink.ai.reasons.VARIANT_NOT_IN_LINK",
   NOT_IN_TEMPLATE: "devLink.ai.reasons.NOT_IN_TEMPLATE",
   DUPLICATE: "devLink.ai.reasons.DUPLICATE",
+  VALUE_REUSED: "devLink.ai.reasons.VALUE_REUSED",
 };
 
 const CONFIDENCE_KEYS: Readonly<Record<LinkIdentity["confidence"], TranslationKey>> = {

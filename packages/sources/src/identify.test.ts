@@ -13,6 +13,7 @@ import {
   identifyUserPrompt,
   type ProductClassifier,
   readIdentifyAnswer,
+  STORE_NOTES,
 } from "./identify.ts";
 import { type LinkTextReading, readLinkText } from "./link-text.ts";
 
@@ -126,6 +127,28 @@ describe("reading the model's answer", () => {
     expect(readIdentifyAnswer(AIRPODS, repeated).name).toBe("Apple iPhone");
   });
 
+  it("Trendyol boot: a stock code given as the model is not also the size; the name reads as shoppers write it", () => {
+    const boot = reading("https://www.trendyol.com/riccon/siyah-cilt-kadin-cizme-0012360-p-135941803?boutiqueId=61&merchantId=180000");
+    const identity = readIdentifyAnswer(
+      boot,
+      JSON.stringify({
+        category: "shoes",
+        brand: "riccon",
+        model: "0012360",
+        fields: [
+          { key: "type", value: "Çizme" },
+          { key: "gender", value: "Kadın" },
+          { key: "colour", value: "Siyah" },
+          { key: "size", value: "0012360" },
+        ],
+        confidence: "HIGH",
+      }),
+    );
+    expect(identity.dropped).toEqual([{ key: "size", value: "0012360", reason: "VALUE_REUSED" }]);
+    expect(identity.name).toBe("Riccon 0012360 Kadın Siyah Çizme");
+    expect(boot.attributes.generation).toBeNull();
+  });
+
   it("reads placeholder values ('none', 'Bilinmiyor') as no value", () => {
     const identity = readIdentifyAnswer(
       AIRPODS,
@@ -145,8 +168,10 @@ describe("prompt and schema", () => {
   it("offers exactly the category list and asks for no field outside it", () => {
     const properties = IDENTIFY_SCHEMA.properties as { category: { enum: string[] } };
     expect(properties.category.enum).toEqual(CATEGORIES.map((category) => category.key));
-    for (const category of CATEGORIES) expect(IDENTIFY_SYSTEM_PROMPT).toContain(`- ${category.key}:`);
-    expect(identifyUserPrompt(AIRPODS)).toBe("Store: TRENDYOL\nBrand from the link: apple\nName words: airpods pro 3\nModel code: none");
+    for (const category of CATEGORIES) expect(IDENTIFY_SYSTEM_PROMPT).toContain(`- ${category.key} (${category.name.tr}):`);
+    expect(identifyUserPrompt(AIRPODS)).toBe(
+      ["Store: TRENDYOL", "Store notes:", ...(STORE_NOTES.TRENDYOL ?? []).map((note) => `- ${note}`), "Brand from the link: apple", "Name words: airpods pro 3", "Model code: none"].join("\n"),
+    );
   });
 });
 

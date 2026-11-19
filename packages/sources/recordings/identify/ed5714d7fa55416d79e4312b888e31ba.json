@@ -1,0 +1,8 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "promptVersion": 1,
+  "input": "Store: TRENDYOL\nBrand from the link: riccon\nName words: siyah cilt kadin cizme 0012360\nModel code: none",
+  "answer": "{\n  \"category\": \"clothing\",\n  \"brand\": \"riccon\",\n  \"model\": \"0012360\",\n  \"fields\": [\n    {\n      \"key\": \"type\",\n      \"value\": \"cizme\"\n    },\n    {\n      \"key\": \"gender\",\n      \"value\": \"kadin\"\n    },\n    {\n      \"key\": \"colour\",\n      \"value\": \"siyah\"\n    },\n    {\n      \"key\": \"size\",\n      \"value\": \"0012360\"\n    }\n  ],\n  \"confidence\": \"HIGH\"\n}",
+  "durationMs": 62056
+}

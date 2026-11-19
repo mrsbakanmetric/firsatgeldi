@@ -1657,7 +1657,7 @@ export const en = {
       valueWithSource: "{value} · {source}",
       dropped: "Dropped",
       droppedItem: "{key}: {value} ({reason})",
-      reasons: { VARIANT_NOT_IN_LINK: "not in the link", NOT_IN_TEMPLATE: "not in the template", DUPLICATE: "repeated" },
+      reasons: { VARIANT_NOT_IN_LINK: "not in the link", NOT_IN_TEMPLATE: "not in the template", DUPLICATE: "repeated", VALUE_REUSED: "already used by another field" },
       runtime: "Model run",
       runtimeLive: "{model} · {seconds} s",
       runtimeCached: "{model} · saved answer ({seconds} s)",

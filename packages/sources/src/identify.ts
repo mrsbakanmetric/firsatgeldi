@@ -22,7 +22,7 @@ import type { LinkTextReading } from "./link-text.ts";
 import { normaliseWords } from "./vocabulary.ts";
 
 /** Bump when the prompt or schema changes: saved answers of an older prompt are not reused. */
-export const IDENTIFY_PROMPT_VERSION = 1;
+export const IDENTIFY_PROMPT_VERSION = 2;
 
 export interface ClassifierRequest {
   readonly system: string;
@@ -55,7 +55,7 @@ export interface IdentifiedField extends IdentifiedValue {
 export interface DroppedValue {
   readonly key: string;
   readonly value: string;
-  readonly reason: "NOT_IN_TEMPLATE" | "VARIANT_NOT_IN_LINK" | "DUPLICATE";
+  readonly reason: "NOT_IN_TEMPLATE" | "VARIANT_NOT_IN_LINK" | "DUPLICATE" | "VALUE_REUSED";
 }
 
 export interface LinkIdentity {
@@ -64,9 +64,10 @@ export interface LinkIdentity {
   readonly model: IdentifiedValue | null;
   readonly fields: readonly IdentifiedField[];
   /**
-   * The product's name as a shopper writes it: brand + model + the variant values the link
-   * carries, in the category template's order ("Apple iPhone 18 Pro Max 512 GB Burgundy").
-   * Facts from the model's knowledge never enter it. Null without a brand or a model.
+   * The product's name as a shopper writes it: brand + model + the variant values, then the
+   * facts, the link carries, each in the category template's order ("Apple iPhone 18 Pro
+   * Max 512 GB Burgundy", "Riccon 0012360 Kadın Siyah Çizme"). Facts from the model's
+   * knowledge never enter it. Null without a brand or a model.
    */
   readonly name: string | null;
   /** What the model said but the rules above did not keep, for the data test report. */
@@ -120,7 +121,7 @@ export const IDENTIFY_SCHEMA: Readonly<Record<string, unknown>> = {
 
 const categoryLine = (category: Category): string => {
   const fields = category.fields.map((field) => `${field.key} (${field.hint})`).join(", ");
-  return `- ${category.key}: ${category.hint}${fields ? `. Fields: ${fields}` : ""}`;
+  return `- ${category.key} (${category.name.tr}): ${category.hint}${fields ? `. Fields: ${fields}` : ""}`;
 };
 
 export const IDENTIFY_SYSTEM_PROMPT = [
@@ -138,9 +139,24 @@ export const IDENTIFY_SYSTEM_PROMPT = [
   ...CATEGORIES.map(categoryLine),
 ].join("\n");
 
+/**
+ * How each store writes its product links, for the model (user decision 2026-11-19: rules per
+ * store, Trendyol first). A store without notes gets none.
+ */
+export const STORE_NOTES: Readonly<Partial<Record<LinkTextReading["platform"], readonly string[]>>> = {
+  TRENDYOL: [
+    "The first part of a Trendyol link is the brand's page, so the brand is certain.",
+    "The name words are the seller's product title without Turkish letters (ı ş ğ ü ö ç are written i s g u o c). Write values with Turkish letters.",
+    "Digits or a letter-and-digit code at the end of the name words are the seller's stock code: the model only when there is no model name, never a size, colour or storage.",
+    "A clothing size or shoe number is in the link only when 'beden' or 'numara' stands next to it.",
+  ],
+};
+
 export function identifyUserPrompt(reading: LinkTextReading): string {
+  const notes = STORE_NOTES[reading.platform] ?? [];
   return [
     `Store: ${reading.platform}`,
+    ...(notes.length > 0 ? ["Store notes:", ...notes.map((note) => `- ${note}`)] : []),
     `Brand from the link: ${reading.brand ?? "unknown"}`,
     `Name words: ${reading.nameWords.join(" ") || "none"}`,
     `Model code: ${reading.modelCode ?? "none"}`,
@@ -197,6 +213,10 @@ export function readIdentifyAnswer(reading: LinkTextReading, text: string): Omit
     return kept === null ? null : { value: kept, source: inLink(kept, linkWords) ? "LINK" : "KNOWLEDGE" };
   };
 
+  const brand = sourced(answer.brand);
+  const model = sourced(answer.model);
+  // One value names one thing: a code the model already gave as the model is not also a size.
+  const usedValues = new Set([brand, model].filter((part): part is IdentifiedValue => part !== null).map((part) => normaliseWords(part.value).join(" ")));
   const fields: IdentifiedField[] = [];
   const dropped: DroppedValue[] = [];
   for (const { key, value: raw } of answer.fields) {
@@ -205,13 +225,14 @@ export function readIdentifyAnswer(reading: LinkTextReading, text: string): Omit
     const template = category.fields.find((field) => field.key === key);
     if (!template) dropped.push({ key, value, reason: "NOT_IN_TEMPLATE" });
     else if (fields.some((field) => field.key === key)) dropped.push({ key, value, reason: "DUPLICATE" });
+    else if (usedValues.has(normaliseWords(value).join(" "))) dropped.push({ key, value, reason: "VALUE_REUSED" });
     else if (inLink(value, linkWords)) fields.push({ key, kind: template.kind, name: template.name, value, source: "LINK" });
     else if (template.kind === "FACT") fields.push({ key, kind: template.kind, name: template.name, value, source: "KNOWLEDGE" });
     else dropped.push({ key, value, reason: "VARIANT_NOT_IN_LINK" });
+    const kept = fields.at(-1);
+    if (kept?.key === key && kept.value === value) usedValues.add(normaliseWords(value).join(" "));
   }
 
-  const brand = sourced(answer.brand);
-  const model = sourced(answer.model);
   return {
     category: { key: category.key, name: category.name },
     brand,
@@ -230,11 +251,13 @@ const capitalised = (value: string): string =>
 function productName(brand: IdentifiedValue | null, model: IdentifiedValue | null, fields: readonly IdentifiedField[], template: Category): string | null {
   if (!brand && !model) return null;
   const order = (key: string) => template.fields.findIndex((field) => field.key === key);
-  const variants = fields
-    .filter((field) => field.kind === "VARIANT" && field.source === "LINK")
-    .toSorted((a, b) => order(a.key) - order(b.key))
-    .map((field) => capitalised(field.value));
-  const words = [brand?.value, model?.value, ...variants].filter((part): part is string => Boolean(part));
+  const fromLink = (kind: FieldKind) =>
+    fields
+      .filter((field) => field.kind === kind && field.source === "LINK")
+      .toSorted((a, b) => order(a.key) - order(b.key))
+      .map((field) => capitalised(field.value));
+  // Variants first, then what the product is, as shoppers write it ("Kadın Siyah Çizme").
+  const words = [brand ? capitalised(brand.value) : undefined, model?.value, ...fromLink("VARIANT"), ...fromLink("FACT")].filter((part): part is string => Boolean(part));
   // A model that repeats the brand ("Apple iPhone") does not repeat it in the name.
   if (brand && model && normaliseWords(model.value)[0] === normaliseWords(brand.value)[0]) words.shift();
   return words.join(" ");

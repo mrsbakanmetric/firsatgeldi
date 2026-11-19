@@ -1666,7 +1666,7 @@ export const tr = {
       valueWithSource: "{value} · {source}",
       dropped: "Atılanlar",
       droppedItem: "{key}: {value} ({reason})",
-      reasons: { VARIANT_NOT_IN_LINK: "linkte yok", NOT_IN_TEMPLATE: "şablonda yok", DUPLICATE: "tekrar" },
+      reasons: { VARIANT_NOT_IN_LINK: "linkte yok", NOT_IN_TEMPLATE: "şablonda yok", DUPLICATE: "tekrar", VALUE_REUSED: "başka alanda zaten var" },
       runtime: "Çalışan model",
       runtimeLive: "{model} · {seconds} sn",
       runtimeCached: "{model} · kayıttan ({seconds} sn)",

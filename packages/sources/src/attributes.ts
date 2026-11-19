@@ -39,6 +39,12 @@ export interface ProductAttributes {
   readonly packCount: number | null;
 }
 
+/**
+ * A generation number has at most three digits and no leading zero ("18", "3", "20"); a
+ * longer run of digits or one starting with 0 is a stock or product code ("0012360").
+ */
+const GENERATION_NUMBER = /^[1-9]\d{0,2}$/;
+
 const first = (values: ReadonlySet<number> | undefined): number | null => (values && values.size > 0 ? ([...values][0] ?? null) : null);
 const unique = <T>(values: readonly T[]): T[] => [...new Set(values)];
 
@@ -56,7 +62,7 @@ interface ModelReading {
 function modelOf(words: readonly string[], brand: readonly string[]): ModelReading {
   for (let index = 1; index < words.length; index += 1) {
     const number = words[index] ?? "";
-    if (!DIGITS.test(number)) continue;
+    if (!GENERATION_NUMBER.test(number)) continue;
     let start = index - 1;
     while (start > 0 && SERIES_WORDS.has(words[start] ?? "")) start -= 1;
     const line = words[start] ?? "";
