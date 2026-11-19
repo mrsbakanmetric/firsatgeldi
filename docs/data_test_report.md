@@ -74,9 +74,9 @@ By search text: **model-code searches** (2, 4, 8, 13, 17, 19 — six searches): 
 - **Foreign listings:** Italian and Russian titles, prices in euro inside the title.
 - **Variant details missing:** titles often carry the model only ("Apple iPhone 18 Pro"), without storage or colour.
 
-## 6. Matching method [RECOMMENDED — not decided]
+## 6. Matching method [DECIDED 2026-11-19] (user)
 
-A proposal for the product match after path 2. It needs the user's decision before it is built.
+The product match after path 2, as proposed after round 1 and decided by the user on 2026-11-19 (`architecture.md` §10.1).
 
 1. **Normalise** every offer title and the link reading: lower case, Turkish letter folding, punctuation removed, part-number suffixes ignored ("MXP63TU/A" = "MXP63TU").
 2. **Hard filters** (an offer that fails one is dropped):
@@ -91,7 +91,7 @@ A proposal for the product match after path 2. It needs the user's decision befo
 4. **Confidence:**
    - **High** (one clear best offer, all hard filters passed, variant details agree): the product is proposed, and the user still confirms it (product rule 1, "verify first").
    - **Low** (no offer left, or several close scores): the user sees the **3 closest results** to choose from (the existing "Hangisi seninki?" closest-three pattern), plus "Adıyla ara".
-5. **Search text:** when the link has a model code, search brand + model + the key name words instead of brand + model code alone (model-code-only searches gave 0 of 6). Generic words ("akilli", "telefon", "ekran uydu alicili") may be dropped. A second search per link is not proposed (budget).
+5. **Search text:** when the link has a model code, search brand + model + the key name words instead of brand + model code alone (model-code-only searches gave 0 of 6). Generic words ("akilli", "telefon", "ekran uydu alicili") may be dropped. One search per link; no second search (budget).
 
 ## 7. Hidden-seller rule
 
@@ -99,7 +99,8 @@ The saved answers contain store and seller names (`source`) and prices. They sta
 
 ## 8. Open after this round
 
-- The user's decision on the matching method (section 6).
+- Building the matching method (section 6) in `packages/sources`, tested on the 16 recordings (no new SerpApi search).
+- The link card for the closest three (design side).
 - Path 3: the stores' official APIs (the user applies for access).
 - Store product pages and site search per store (Appendix A sources), with the politeness rules; Trendyol answered 403 to an identifiable User-Agent and disallows `?q=` in robots.txt.
 - Fields not measured yet: seller, ratings, stock, delivery, installments, warranty, old price (Appendix A › Fields measured).
