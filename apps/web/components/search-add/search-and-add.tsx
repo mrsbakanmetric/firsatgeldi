@@ -27,7 +27,7 @@ import { clearDraft, readDraft, RESUME_PARAM, saveDraft } from "./draft";
 import { formatDay, money, useNow } from "./format";
 import { type AttributeChange, BulkList, type BulkState, type Candidate, Candidates, Understood } from "./mark-step";
 import { PhotoArea, PhotoWatchers } from "./photos";
-import { isLink, PhotoInput, takeHandedFiles } from "../input-source/input-source";
+import { asLink, isLink, PhotoInput, takeHandedFiles } from "../input-source/input-source";
 import { CatalogueSearchBox, imageUrl, LinkProblemLine } from "../catalogue-search/catalogue-search-box";
 import { usePhotos } from "./use-photos";
 
@@ -153,7 +153,8 @@ export function SearchAndAdd({ locale }: { locale: Locale }) {
   );
 
   /** A link from "Ara", another page or "Tekrar dene": the same as "Bu linkle devam et" (design v5). */
-  const runLink = (link: string) => {
+  const runLink = (typed: string) => {
+    const link = asLink(typed);
     setError(null);
     setLastText("");
     lastIdentify.current = { body: { link }, markProductId: null };

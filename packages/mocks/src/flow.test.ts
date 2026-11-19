@@ -111,7 +111,7 @@ describe("search and identify", () => {
 
   it("identify a pasted store link: the user's own platform, seller and price (design case A)", async () => {
     const { data } = await api.call("identify", { body: { link: "https://www.hepsiburada.com/insta360-ace-pro-2-flash-print-bundle-p-HBC00007K2P9" } });
-    expect(data.link).toEqual({ platformId: PLATFORMS.HEPSIBURADA.id, platformName: "Hepsiburada", sellerName: "Kamera Dünyası", pricePaid, brand: null, modelCode: null });
+    expect(data.link).toEqual({ platformId: PLATFORMS.HEPSIBURADA.id, platformName: "Hepsiburada", sellerName: "Kamera Dünyası", pricePaid, brand: "insta360", modelCode: null });
     expect(data.linkProblem).toBeNull();
     expect(data.candidates[0]?.product.id).toBe(product.id);
   });

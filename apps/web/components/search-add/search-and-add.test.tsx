@@ -610,7 +610,7 @@ describe.each(LOCALES)("Search and Add — design v5, link reading — %s", (loc
     ["SHORT_LINK", "https://ty.gl/k3Xa9QpL", ""],
     ["UNSUPPORTED_STORE", "https://ornekmagaza.com/urun/12345", ""],
     ["NOT_A_PRODUCT_PAGE", "https://www.trendyol.com/sr?wc=109", ""],
-    ["NOT_FOUND", "https://www.mediamarkt.com.tr/tr/product/_sony-wh-ch720n-kulaklik-1234567.html", "CH720N"],
+    ["NOT_FOUND", "https://www.mediamarkt.com.tr/tr/product/_sony-wh-ch720n-kulaklik-1234567.html", "sony CH720N"],
   ] as const)("edge state %s: one line and “Adıyla ara”, which goes back to a typed search", async (problem, link, nameText) => {
     show(locale);
     await paste(link);
@@ -624,6 +624,13 @@ describe.each(LOCALES)("Search and Add — design v5, link reading — %s", (loc
     const box = screen.getByRole("combobox") as HTMLInputElement;
     expect(box.value).toBe(nameText);
     expect(document.activeElement).toBe(box);
+  });
+
+  it("a link pasted without https:// is read as a link (Amazon mobile link from the data test)", async () => {
+    show(locale);
+    await paste("amazon.com.tr/gp/aw/d/B0GPD3SJQW?pd_rd_plhdr=t&qid=1795066409&i=aps");
+    expect(await screen.findByText(t("searchAdd.suggest.linkProblem.NOT_FOUND"), undefined, { timeout: 3000 })).toBeDefined();
+    expect(screen.getByText(t("searchAdd.suggest.linkDetected", { platform: "Amazon TR" }))).toBeDefined();
   });
 
   it("“Ara” with a link that gives no product shows the same line on the page", async () => {
