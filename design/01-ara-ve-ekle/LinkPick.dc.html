@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Link okuma · en yakın 3</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{rootStyle}}">
+
+<header style="display: flex; flex-direction: column; gap: var(--s1)">
+<h1 style="margin: 0; font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700">{{t.title}}</h1>
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500; color: var(--text-muted)">{{t.subtitle}}</span>
+</header>
+
+<section style="display: flex; flex-direction: column; gap: var(--s4)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">{{t.secA}}</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6); align-items: start">
+<div style="display: flex; flex-direction: column; gap: var(--s2)">
+<span style="font-size: var(--fs-bsm); font-weight: 600; color: var(--text-muted)">{{t.a1}}</span>
+<div style="display: flex; align-items: center; gap: var(--s2); min-height: 48px; padding: 0 var(--s1) 0 var(--s4); box-sizing: border-box; background: var(--surface); border: 2px solid var(--primary); border-radius: var(--r-xl); box-shadow: var(--sh-md)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; color: var(--text-muted)" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+<span style="flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: var(--fs-body)">{{url}}</span>
+<button type="button" style="height: 36px; padding: 0 var(--s4); flex: none; border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">{{t.search}}</button>
+</div>
+<div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-md); padding: var(--s3); display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--info)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>{{t.storeLink}}</span>
+<span style="{{chip}}"><span style="color: var(--text-muted)">{{t.brand}}</span> asics</span>
+<span style="{{chip}}"><span style="color: var(--text-muted)">{{t.model}}</span> 1042A237-101</span>
+</div>
+<fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: var(--s2)">
+<legend style="padding: 0; margin-bottom: var(--s2); font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{t.notExact}}</legend>
+<sc-for list="{{rowsNone}}" as="r" hint-placeholder-count="3">
+<label style="{{r.style}}">
+<input type="radio" name="pickA1" checked="{{r.checked}}" style="width: 20px; height: 20px; flex: none; margin: 0; accent-color: var(--primary)">
+<span role="img" aria-label="{{t.img}}" style="width: 56px; height: 56px; flex: none; border-radius: var(--r-sm); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><path d="{{shoe.a}}" style="fill: var(--text)"/><path d="{{shoe.b}}" style="fill: var(--text-muted)"/><path d="{{shoe.c}}" style="fill: var(--surface)"/></svg></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{r.name}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{r.variant}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{r.stores}}</span>
+</span>
+</label>
+</sc-for>
+</fieldset>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s3)"><span style="display: inline-flex; align-items: center; gap: var(--s1)"><span style="font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted)">{{t.none}}</span><button type="button" style="height: 36px; padding: 0 var(--s2); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">{{t.byName}}</button></span><button type="button" aria-disabled="true" style="{{btnOff}}">{{t.continuePick}}</button></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: var(--s2)">
+<span style="font-size: var(--fs-bsm); font-weight: 600; color: var(--text-muted)">{{t.a2}}</span>
+<div style="display: flex; align-items: center; gap: var(--s2); min-height: 48px; padding: 0 var(--s1) 0 var(--s4); box-sizing: border-box; background: var(--surface); border: 2px solid var(--primary); border-radius: var(--r-xl); box-shadow: var(--sh-md)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; color: var(--text-muted)" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+<span style="flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: var(--fs-body)">{{url}}</span>
+<button type="button" style="height: 36px; padding: 0 var(--s4); flex: none; border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">{{t.search}}</button>
+</div>
+<div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-md); padding: var(--s3); display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--info)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>{{t.storeLink}}</span>
+<span style="{{chip}}"><span style="color: var(--text-muted)">{{t.brand}}</span> asics</span>
+<span style="{{chip}}"><span style="color: var(--text-muted)">{{t.model}}</span> 1042A237-101</span>
+</div>
+<fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: var(--s2)">
+<legend style="padding: 0; margin-bottom: var(--s2); font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{t.notExact}}</legend>
+<sc-for list="{{rowsPicked}}" as="r" hint-placeholder-count="3">
+<label style="{{r.style}}">
+<input type="radio" name="pickA2" checked="{{r.checked}}" style="width: 20px; height: 20px; flex: none; margin: 0; accent-color: var(--primary)">
+<span role="img" aria-label="{{t.img}}" style="width: 56px; height: 56px; flex: none; border-radius: var(--r-sm); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><path d="{{shoe.a}}" style="fill: var(--text)"/><path d="{{shoe.b}}" style="fill: var(--text-muted)"/><path d="{{shoe.c}}" style="fill: var(--surface)"/></svg></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{r.name}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{r.variant}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{r.stores}}</span>
+</span>
+</label>
+</sc-for>
+</fieldset>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: var(--s3)"><span style="display: inline-flex; align-items: center; gap: var(--s1)"><span style="font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted)">{{t.none}}</span><button type="button" style="height: 36px; padding: 0 var(--s2); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">{{t.byName}}</button></span><button type="button" style="{{btnOn}}">{{t.continuePick}}</button></div>
+</div>
+</div>
+</div>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{t.after}}</span>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: var(--s4)">
+<h2 style="margin: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600">{{t.secB}}</h2>
+<div style="display: flex; gap: var(--s6); align-items: flex-start">
+<div style="width: 390px; flex: none; box-sizing: border-box; padding: var(--s4); display: flex; flex-direction: column; gap: var(--s2); background: var(--background); border: 1px solid var(--border); border-radius: var(--r-xl)">
+<div style="display: flex; align-items: center; gap: var(--s2); min-height: 48px; padding: 0 var(--s1) 0 var(--s4); box-sizing: border-box; background: var(--surface); border: 2px solid var(--primary); border-radius: var(--r-xl); box-shadow: var(--sh-md)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; color: var(--text-muted)" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+<span style="flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: var(--fs-body)">{{url}}</span>
+<button type="button" style="height: 36px; padding: 0 var(--s4); flex: none; border: 0; border-radius: var(--r-md); background: var(--primary); color: var(--on-primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">{{t.search}}</button>
+</div>
+<div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--sh-md); padding: var(--s3); display: flex; flex-direction: column; gap: var(--s3)">
+<div style="display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center">
+<span style="display: inline-flex; align-items: center; gap: var(--s1); font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 600; color: var(--info)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>{{t.storeLink}}</span>
+<span style="{{chip}}"><span style="color: var(--text-muted)">{{t.brand}}</span> asics</span>
+<span style="{{chip}}"><span style="color: var(--text-muted)">{{t.model}}</span> 1042A237-101</span>
+</div>
+<fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: var(--s2)">
+<legend style="padding: 0; margin-bottom: var(--s2); font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{t.notExact}}</legend>
+<sc-for list="{{rowsPicked}}" as="r" hint-placeholder-count="3">
+<label style="{{r.style}}">
+<input type="radio" name="pickB" checked="{{r.checked}}" style="width: 20px; height: 20px; flex: none; margin: 0; accent-color: var(--primary)">
+<span role="img" aria-label="{{t.img}}" style="width: 56px; height: 56px; flex: none; border-radius: var(--r-sm); background: var(--surface-alt); display: flex; align-items: center; justify-content: center"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><path d="{{shoe.a}}" style="fill: var(--text)"/><path d="{{shoe.b}}" style="fill: var(--text-muted)"/><path d="{{shoe.c}}" style="fill: var(--surface)"/></svg></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 600">{{r.name}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{r.variant}}</span>
+<span style="font-size: var(--fs-cap); line-height: var(--lh-cap); font-weight: 500; color: var(--text-muted)">{{r.stores}}</span>
+</span>
+</label>
+</sc-for>
+</fieldset>
+<div style="display: flex; flex-direction: column; gap: var(--s2)"><button type="button" style="{{btnOnFull}}">{{t.continuePick}}</button><div style="display: flex; align-items: center; justify-content: center; gap: var(--s1)"><span style="font-size: var(--fs-bsm); font-weight: 500; color: var(--text-muted)">{{t.none}}</span><button type="button" style="height: var(--touch); padding: 0 var(--s2); border: 0; background: transparent; color: var(--primary); font: inherit; font-size: var(--fs-bsm); font-weight: 600">{{t.byName}}</button></div></div>
+</div>
+</div>
+<ul style="margin: 0; padding-left: var(--s5); display: flex; flex-direction: column; gap: var(--s2); max-width: 520px">
+<sc-for list="{{t.rules}}" as="x" hint-placeholder-count="5"><li style="font-size: var(--fs-bsm); line-height: var(--lh-bsm); font-weight: 500">{{x}}</li></sc-for>
+</ul>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"lang":{"editor":"enum","options":["tr","en"],"default":"tr"},"$preview":{"width":1280,"height":1700}}'>
+class Component extends DCLogic {
+  tokens() {
+    return {
+      light: {"primary":"#047857","primary-subtle":"#D1FAE5","on-primary":"#FFFFFF","on-primary-subtle":"#065F46","savings":"#047857","warning":"#A16207","warning-subtle":"#FEF3C7","on-warning-subtle":"#854D0E","danger":"#B91C1C","danger-subtle":"#FEE2E2","savings-subtle":"#D1FAE5","info":"#0369A1","info-subtle":"#E0F2FE","background":"#F7FAF9","surface":"#FFFFFF","surface-alt":"#EEF4F2","border":"#DCE5E1","divider":"#DCE5E1","text":"#0B1F33","text-muted":"#4A5D6E"},
+      dark: {"primary":"#34D399","primary-subtle":"#0F3A2C","on-primary":"#052E22","on-primary-subtle":"#6EE7B7","savings":"#34D399","warning":"#FBBF24","warning-subtle":"#3A2E0B","on-warning-subtle":"#FCD34D","danger":"#F87171","danger-subtle":"#3B1416","savings-subtle":"#0F3A2C","info":"#38BDF8","info-subtle":"#0B2A3D","background":"#07131F","surface":"#0E1E2E","surface-alt":"#16293B","border":"#24384B","divider":"#24384B","text":"#EEF4F2","text-muted":"#9FB3C4"}
+    };
+  }
+  base() {
+    return {"font":"Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif","s1":"4px","s2":"8px","s3":"12px","s4":"16px","s5":"20px","s6":"24px","s12":"48px","r-sm":"6px","r-md":"10px","r-lg":"14px","r-xl":"20px","r-pill":"999px","sh-sm":"0 1px 2px rgba(11,31,51,0.06)","sh-md":"0 4px 12px rgba(11,31,51,0.08)","fs-h1":"28px","lh-h1":"36px","fs-h3":"18px","lh-h3":"26px","fs-body":"16px","lh-body":"24px","fs-bsm":"14px","lh-bsm":"20px","fs-cap":"12px","lh-cap":"16px","fs-price":"18px","fs-btn":"16px","touch":"44px","thumb-sm":"48px"};
+  }
+  strings() {
+    return {
+      tr: {
+        title: 'Ara ve Ekle · Link okuma · en yakın 3 (v5.2 taslak)', subtitle: 'Linkteki ürünle tek ve net bir eşleşme yoksa. Tek net eşleşme varsa v5 kartı aynen kalır (ürün önerilir, kullanıcı yine onaylar).',
+        secA: 'A · Arama kutusunda link kartı · emin değiliz (Ana Sayfa ve Ara ve Ekle)', a1: 'A1 · Henüz seçilmedi', a2: 'A2 · Biri seçildi',
+        secB: 'B · Telefon (390)',
+        search: 'Ara', storeLink: 'Trendyol linki', brand: 'Marka', model: 'Model kodu', img: 'Ürün görseli',
+        notExact: 'Linkteki ürünü tam eşleştiremedik. Seninki hangisi?',
+        none: 'Hiçbiri değil mi?', byName: 'Adıyla ara', continuePick: 'Bu ürünle devam et',
+        after: 'Seçip devam edince: Nasıl anladık atlanır, ürün işaretlenir, onay paneli v5\'teki gibi açılır (platform linkten, satıcı ve ödediğin fiyat boş, "Evet, bu?" uyarı tonunda).',
+        stores: (n) => n + ' mağazada',
+        p1: 'ASICS Gel-Dedicate 8 Kadın Tenis Ayakkabısı', v1: 'Mavi · 40',
+        p2: 'ASICS Gel-Dedicate 8', v2: 'Mavi / Beyaz · 40',
+        p3: 'ASICS Gel-Dedicate 8 Clay', v3: 'Mavi · 40',
+        rules: ['En fazla 3 ürün; en yakını üstte. Hiçbiri önceden seçili gelmez.', 'Satıcı, platform ve fiyat gösterilmez; yalnızca kaç mağazada olduğu.', '"Bu ürünle devam et" bir ürün seçilene kadar pasif.', '"Adıyla ara" yazılı aramayı açar (kenar durumlarındaki gibi).', 'Ürün aranırken v5.1 iskeleti aynen kalır; eşleşme yoksa "ürün bulunamadı" kenar durumu.']
+      },
+      en: {
+        title: 'Search and Add · Link reading · closest 3 (v5.2 draft)', subtitle: 'When there is no single clear match for the product in the link. With one clear match the v5 card stays as is (product proposed, the user still confirms).',
+        secA: 'A · Link card in the search box · not sure (Home and Search and Add)', a1: 'A1 · Nothing picked yet', a2: 'A2 · One picked',
+        secB: 'B · Phone (390)',
+        search: 'Search', storeLink: 'Trendyol link', brand: 'Brand', model: 'Model code', img: 'Product image',
+        notExact: "We couldn't match the product in the link exactly. Which one is yours?",
+        none: 'None of these?', byName: 'Search by name', continuePick: 'Continue with this product',
+        after: 'After picking and continuing: How we understood it is skipped, the product is marked and the confirm panel opens as in v5 (platform from the link, seller and price paid empty, "Is this it?" in the warning tone).',
+        stores: (n) => 'in ' + n + ' stores',
+        p1: "ASICS Gel-Dedicate 8 Women's Tennis Shoes", v1: 'Blue · 40',
+        p2: 'ASICS Gel-Dedicate 8', v2: 'Blue / White · 40',
+        p3: 'ASICS Gel-Dedicate 8 Clay', v3: 'Blue · 40',
+        rules: ['At most 3 products, the closest first. None is pre-selected.', 'No seller, platform or price; only the number of stores.', '"Continue with this product" is disabled until one is picked.', '"Search by name" opens a typed search (as in the edge states).', 'While finding, the v5.1 skeleton stays; no match at all → the "product not found" edge state.']
+      }
+    };
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'light';
+    const lang = this.props.lang ?? 'tr';
+    const c = this.tokens()[theme] || this.tokens().light, b = this.base();
+    const t = this.strings()[lang] || this.strings().tr;
+    let s = '';
+    for (const k in c) s += '--' + k + ':' + c[k] + ';';
+    for (const k in b) s += '--' + k + ':' + b[k] + ';';
+    s += 'width:1280px;min-height:1700px;box-sizing:border-box;padding:48px;display:flex;flex-direction:column;gap:48px;background:var(--background);color:var(--text);font-family:var(--font)';
+    const row = 'display:flex;gap:12px;align-items:center;padding:8px 12px;min-height:72px;box-sizing:border-box;border-radius:14px;background:var(--surface);cursor:pointer;';
+    const off = row + 'border:1px solid var(--border)';
+    const on = row + 'border:2px solid var(--primary);background:var(--primary-subtle)';
+    const items = [[t.p1, t.v1, 4], [t.p2, t.v2, 2], [t.p3, t.v3, 3]];
+    const mk = (pick) => items.map((x, i) => ({ name: x[0], variant: x[1], stores: t.stores(x[2]), checked: i === pick, style: i === pick ? on : off }));
+    const btn = 'height:36px;padding:0 16px;flex:none;border:0;border-radius:10px;background:var(--primary);color:var(--on-primary);font:inherit;font-size:14px;font-weight:600;';
+    return {
+      rootStyle: s, t,
+      url: 'trendyol.com/asics/gel-dedicate-8-kadin-tenis-ayakkabisi-1042a237-101-p-754059415',
+      chip: 'display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px;box-sizing:border-box;border:1px solid var(--border);border-radius:999px;background:var(--surface-alt);color:var(--text);font-size:12px;font-weight:600',
+      shoe: { a: 'M3 29c6 0 10-4 12-10l7 2c2 4 6 6 12 6h9a2 2 0 0 1 2 2v4H3z', b: 'M3 33h42v5H3z', c: 'M20 22h3v2h-3zM25 24h3v2h-3z' },
+      rowsNone: mk(-1), rowsPicked: mk(0),
+      btnOff: btn + 'opacity:0.4', btnOn: btn, btnOnFull: btn + 'width:100%;height:48px'
+    };
+  }
+}
+</script>
+</body>
+</html>
