@@ -17,7 +17,26 @@
 // as markup. The offers carry store and seller names; they stay on the server (product
 // rule 3) — this module only ranks them.
 import type { ShoppingOffer } from "./google-shopping.ts";
-import { isCodeWord, type LinkTextReading, MEASURE } from "./link-text.ts";
+import type { LinkTextReading } from "./link-text.ts";
+import {
+  ACCESSORY_WORDS,
+  COLOUR_KEYS,
+  CONDITION_WORDS,
+  DIGITS,
+  FOREIGN_WORDS,
+  fold,
+  isCodeWord,
+  isKeyWord,
+  LETTERS,
+  MEASURE,
+  measuresOf,
+  normaliseWords,
+  PACK_COUNT,
+  PACK_WORDS,
+  SERIES_WORDS,
+} from "./vocabulary.ts";
+
+export { fold, normaliseWords } from "./vocabulary.ts";
 
 export interface MatchSettings {
   /** Weight of "how many of the link's key words the title has". */
@@ -80,124 +99,30 @@ export type ProductMatch =
   | (MatchBase & { readonly confidence: "HIGH"; readonly proposed: ScoredOffer })
   | (MatchBase & { readonly confidence: "LOW"; readonly closest: readonly ScoredOffer[] });
 
-// ── Word lists (folded forms) ───────────────────────────────────────────────────────
+// ── Match-only rules ────────────────────────────────────────────────────────────────
 
-/** Words that say nothing about which product it is; dropped from the search text and the score. */
-const GENERIC_WORDS = new Set(["akilli", "telefon", "telefonu", "cep", "ekran", "uydu", "alicili"]);
-const STOP_WORDS = new Set(["ve", "ile", "and"]);
-/** Series words: an offer with one the link does not have is another product ("Pro Max", "Plus", "Cellular", noise cancelling). */
-const SERIES_WORDS = new Set(["pro", "max", "plus", "ultra", "mini", "lite", "sonic", "flow", "maxv", "cellular", "anc", "noise", "gurultu"]);
-const PACK_WORDS = new Set(["pack", "paket", "set", "seti", "bundle"]);
-/** "2li", "3lu" ("2'li", "3'lü" after folding). */
-const PACK_COUNT = /^(?:[2-9]|\d{2,})l[iu]$/;
-const ACCESSORY_WORDS = new Set(["uyumlu", "icin", "kilif", "kumanda", "kumandasi", "braket", "braketi", "yedek", "compatible", "fircasi", "dahildegildir"]);
-const CONDITION_WORDS = new Set(["yenilenmis", "teshir", "vitrin", "outlet", "used", "refurbished", "acikkutu", "ikinciel", "secondhand"]);
-/** Words of foreign listings seen in round 1 (Italian, German, English). */
-const FOREIGN_WORDS = new Set(["con", "per", "miglior", "prezzo", "und", "mit", "with", "the", "for"]);
-const NON_LATIN_SCRIPT = /[Ѐ-ӿ؀-ۿ]/;
+const NON_LATIN_SCRIPT = /[\u0400-\u04FF\u0600-\u06FF]/;
 const FOREIGN_CURRENCY = /[€$£]/;
 const TL_PRICE = /₺|\bTL\b|\bTRY\b/;
-/** Two-word names read as one word. */
-const PHRASES: Readonly<Record<string, string>> = {
-  "gece yarisi": "geceyarisi",
-  "yildiz isigi": "yildizisigi",
-  "uzay grisi": "uzaygrisi",
-  "kum beji": "kumbeji",
-  "space gray": "uzaygrisi",
-  "space grey": "uzaygrisi",
-  "acik kutu": "acikkutu",
-  "ikinci el": "ikinciel",
-  "second hand": "secondhand",
-  "dahil degildir": "dahildegildir",
-};
-/** English colour names in titles, read as the Turkish ones the store links use. */
-const SYNONYMS: Readonly<Record<string, string>> = {
-  starlight: "yildizisigi",
-  midnight: "geceyarisi",
-  black: "siyah",
-  white: "beyaz",
-  blue: "mavi",
-  red: "kirmizi",
-  green: "yesil",
-  gray: "gri",
-  grey: "gri",
-  silver: "gumus",
-  gold: "altin",
-  pink: "pembe",
-  purple: "mor",
-  orange: "turuncu",
-  yellow: "sari",
-};
-const COLOURS = new Set([
-  "siyah", "beyaz", "mavi", "kirmizi", "yesil", "gri", "gumus", "altin", "pembe", "mor", "bordo", "lacivert", "krem", "turuncu", "sari",
-  "kahverengi", "geceyarisi", "yildizisigi", "uzaygrisi", "kumbeji",
-]);
-/** Units whose values must agree; storage is compared in GB. */
-const DIMENSIONS: Readonly<Record<string, { readonly dimension: string; readonly factor: number }>> = {
-  mb: { dimension: "storage", factor: 1 / 1024 },
-  gb: { dimension: "storage", factor: 1 },
-  tb: { dimension: "storage", factor: 1024 },
-  mm: { dimension: "mm", factor: 1 },
-  inc: { dimension: "inch", factor: 1 },
-  inch: { dimension: "inch", factor: 1 },
-  w: { dimension: "watt", factor: 1 },
-};
-
-// ── Normalising ─────────────────────────────────────────────────────────────────────
-
-/** "mxp63tu/a" → "mxp63tu". */
-const PART_SUFFIX = /\b([a-z0-9]{4,})\/[a-z]\b/g;
-/** "36.000" → "36000". */
-const THOUSANDS = /(\d)[.,](\d{3})(?!\d)/g;
-/** "2'li" → "2li", "43''" → "43". */
-const APOSTROPHES = /['’`]/g;
-const NON_WORD = /[^a-z0-9]+/;
-const DIGITS = /^\d+$/;
-const LETTERS = /^[a-z]+$/;
-const SINGLE_LETTER = /^[a-z]$/;
+const COLOURS = new Set(Object.keys(COLOUR_KEYS));
 /** A short model name: letters then digits, shorter than a model code ("s8", "c211", "m3"). */
 const SHORT_MODEL = /^([a-z]+)(\d+)$/;
 const LEADING_DIGITS = /^(\d+)/;
-const MEASURE_PARTS = /^(\d+(?:[.,]\d+)?)([a-z]+)$/;
 
-/** Lower case with Turkish letters folded to ASCII ("İ" → "i", "ı" → "i", "ş" → "s"). */
-export function fold(text: string): string {
-  return text.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "").replace(/ı/g, "i");
-}
-
-/** Words of a title or a link reading: folded, punctuation dropped, "128 gb" → "128gb", colour names unified. */
-export function normaliseWords(text: string): string[] {
-  const raw = fold(text).replace(PART_SUFFIX, "$1").replace(THOUSANDS, "$1$2").replace(APOSTROPHES, "").split(NON_WORD).filter(Boolean);
-  const out: string[] = [];
-  for (let index = 0; index < raw.length; index += 1) {
-    const word = raw[index] ?? "";
-    const next = raw[index + 1];
-    if (next !== undefined) {
-      const phrase = PHRASES[`${word} ${next}`];
-      if (phrase) {
-        out.push(phrase);
-        index += 1;
-        continue;
-      }
-      if (DIGITS.test(word) && LETTERS.test(next) && MEASURE.test(word + next)) {
-        out.push(word + next);
-        index += 1;
-        continue;
-      }
-    }
-    out.push(SYNONYMS[word] ?? word);
-  }
-  return out;
-}
-
-const isKeyWord = (word: string): boolean => !GENERIC_WORDS.has(word) && !STOP_WORDS.has(word) && !SINGLE_LETTER.test(word);
 const compactCode = (code: string): string => fold(code).replace(/[^a-z0-9]/g, "");
 
-/** Two model codes are the same when they differ at most by one trailing letter ("mjrr4tua" = "mjrr4tu"). */
+/**
+ * Two model codes are the same when one is the other plus a short letter suffix: a region or
+ * platform tag ("mjrr4tua" = "mjrr4tu", "75t8cgtv" = "75t8c", "mxp63tu" = "mxp63"; data test
+ * links 2 and 4). A suffix with a digit is another model ("75t8d" ≠ "75t8c"); the shorter code
+ * must still be a model code (at least five characters, letters and digits).
+ */
+const CODE_SUFFIX = /^[a-z]{1,3}$/;
+
 function sameCode(a: string, b: string): boolean {
   if (a === b) return true;
   const [longer, shorter] = a.length > b.length ? [a, b] : [b, a];
-  return longer.length === shorter.length + 1 && longer.startsWith(shorter) && SINGLE_LETTER.test(longer.slice(-1));
+  return isCodeWord(shorter) && longer.startsWith(shorter) && CODE_SUFFIX.test(longer.slice(shorter.length));
 }
 
 /** The link's name words that identify the product, as path 1 wrote them (brand and generic words left out). */
@@ -227,21 +152,6 @@ interface LinkProfile {
   readonly series: readonly string[];
   readonly colours: ReadonlySet<string>;
   readonly measures: ReadonlyMap<string, ReadonlySet<number>>;
-}
-
-function measuresOf(words: readonly string[]): Map<string, Set<number>> {
-  const result = new Map<string, Set<number>>();
-  for (const word of words) {
-    if (!MEASURE.test(word)) continue;
-    const parts = MEASURE_PARTS.exec(word);
-    const unit = parts?.[2] ? DIMENSIONS[parts[2]] : undefined;
-    if (!parts?.[1] || !unit) continue;
-    const value = Number(parts[1].replace(",", ".")) * unit.factor;
-    const values = result.get(unit.dimension) ?? new Set<number>();
-    values.add(value);
-    result.set(unit.dimension, values);
-  }
-  return result;
 }
 
 function profileOf(reading: LinkTextReading): LinkProfile {
@@ -372,7 +282,9 @@ export function matchProduct(reading: LinkTextReading, offers: readonly Shopping
       index,
       offer,
       score: settings.recallWeight * recall + settings.precisionWeight * precision - (conflict ? settings.variantConflictPenalty : 0),
-      identityComplete: identityComplete(present, key, link),
+      // The link's model code in the title identifies the product on its own (matching order:
+      // brand + model code first, product_spect.md §8.3); the brand filter already passed.
+      identityComplete: hasLinkCode || identityComplete(present, key, link),
       variantConflict: conflict,
     });
   });

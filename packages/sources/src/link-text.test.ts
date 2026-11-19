@@ -20,6 +20,17 @@ describe("readLinkText — path 1, the link text itself", () => {
       modelCode: "1042A237-101",
       sellerExternalId: null,
       searchText: "asics gel dedicate 8 kadin tenis ayakkabisi 1042a237-101",
+      attributes: {
+        generation: { line: "dedicate", number: "8" },
+        series: [],
+        storageGb: null,
+        screenInch: null,
+        sizeMm: null,
+        powerW: null,
+        colours: [],
+        gender: "WOMEN",
+        packCount: null,
+      },
     });
   });
 

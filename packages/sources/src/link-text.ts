@@ -7,6 +7,8 @@
 // 2026-11-19: Trendyol 6, Hepsiburada 4, Teknosa 3, Amazon 3, MediaMarkt 3). Share-link
 // hosts stay [ASSUMPTION] (platforms.ts).
 import { type PlatformCode, platformOfHost, platformOfShortLinkHost } from "./platforms.ts";
+import { type ProductAttributes, readAttributes } from "./attributes.ts";
+import { isCodeWord, isScreenSize, normaliseWords } from "./vocabulary.ts";
 
 export type LinkTextFailure =
   /** Not an http(s) URL. */
@@ -42,6 +44,12 @@ export interface LinkTextReading {
   readonly sellerExternalId: string | null;
   /** Brand + name + model code, for the catalogue match and the path 2 search. */
   readonly searchText: string;
+  /**
+   * What the rules read from the name words: model line and generation, series, storage,
+   * screen size, colours, gender, pack size (attributes.ts). No category: that is not
+   * read from the link text by rules.
+   */
+  readonly attributes: ProductAttributes;
 }
 
 export type LinkTextResult =
@@ -99,14 +107,6 @@ const PATH_READERS: Readonly<Record<PlatformCode, PathReader>> = {
 const WORD_SEPARATOR = /[-_+\s]+/;
 const HAS_DIGIT = /\d/;
 const HAS_LETTER = /[a-z]/;
-/** A model code word mixes letters and digits and is at least this long ("1042a237", "ep2231", "1000xm5"); shorter ones are name parts ("v15", "s24"). */
-const MODEL_CODE_MIN_LENGTH = 5;
-/** A number with a unit is a size, capacity or resolution, never a model code ("256gb", "1tb", "40mm", "1080p"). */
-export const MEASURE = /^\d+(?:[.,]\d+)?(?:gb|tb|mb|mm|cm|inc|inch|w|mah|hz|mp|k|p|ml|lt|kg|gr|g)$/;
-/** One inch in centimetres: a screen size is written twice, "75-190" or "40-102". */
-const CM_PER_INCH = 2.54;
-/** Rounding slack for the centimetre value ("75" → 190.5 → "190"). */
-const SCREEN_SIZE_SLACK_CM = 1.5;
 
 function words(slug: string): string[] {
   let text: string;
@@ -118,15 +118,7 @@ function words(slug: string): string[] {
   return text.toLowerCase().split(WORD_SEPARATOR).filter(Boolean);
 }
 
-/** Shared with the product match (matching.ts): offer titles carry model codes the same way. */
-export const isCodeWord = (word: string): boolean => word.length >= MODEL_CODE_MIN_LENGTH && HAS_DIGIT.test(word) && HAS_LETTER.test(word) && !MEASURE.test(word);
 const isNumberWord = (word: string | undefined): boolean => word !== undefined && HAS_DIGIT.test(word) && !HAS_LETTER.test(word);
-
-/** "75-190" / "40-102": a screen size in inches and centimetres, not part of a model code. */
-function isScreenSize(inches: string | undefined, centimetres: string | undefined): boolean {
-  if (!isNumberWord(inches) || !isNumberWord(centimetres)) return false;
-  return Math.abs(Number(inches) * CM_PER_INCH - Number(centimetres)) <= SCREEN_SIZE_SLACK_CM;
-}
 
 /**
  * The model code and where it starts. Preferred: the code at the end of the name
@@ -201,6 +193,7 @@ export function readLinkText(link: string): LinkTextResult {
       modelCode: model?.code ?? null,
       sellerExternalId: match.sellerExternalId || null,
       searchText: searchWords.join(" "),
+      attributes: readAttributes(normaliseWords(nameWords.join(" ")), normaliseWords(brandWords.join(" "))),
     },
   };
 }

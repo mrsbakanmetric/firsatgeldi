@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { readGoogleShopping, type ShoppingOffer } from "./google-shopping.ts";
+import { pathTwoQuery, readGoogleShopping, type ShoppingOffer } from "./google-shopping.ts";
 import { type LinkTextReading, readLinkText } from "./link-text.ts";
+import { readAttributes } from "./attributes.ts";
 import { fold, keyNameWords, matchProduct, normaliseWords, type ProductMatch } from "./matching.ts";
 import { cacheKey } from "./serpapi.ts";
 
@@ -171,6 +172,7 @@ const LENOVO_READING: LinkTextReading = {
   modelCode: "226V16GB",
   sellerExternalId: null,
   searchText: "",
+  attributes: readAttributes(["yoga", "slim", "7", "aura", "laptop"], ["lenovo"]),
 };
 
 interface SavedCase {
@@ -264,8 +266,9 @@ describe("the method on the saved answers (data test round 1)", () => {
     const match = matchProduct(reading(onvo.link), await savedOffers(onvo.savedQuery));
     expect(match.confidence).toBe("LOW");
     if (match.confidence !== "LOW") return;
-    expect(match.ranked.map((scored) => scored.index)).toEqual([2, 23, 9]);
-    expect(match.closest.map((scored) => scored.index)).toEqual([2, 9]);
+    // Offer 1 ("Onvo 4K Ultra HD …") is kept since "Ultra HD" is no longer read as a series word.
+    expect(match.ranked.map((scored) => scored.index)).toEqual([2, 23, 9, 1]);
+    expect(match.closest.map((scored) => scored.index)).toEqual([2, 9, 1]);
   });
 
   it("never proposes a wrong product, and finds the linked product whenever the answer has it (the 16 searches of round 1)", async () => {
@@ -279,5 +282,34 @@ describe("the method on the saved answers (data test round 1)", () => {
       lowMissed: count("LOW_MISSED"),
       lowNotInAnswer: count("LOW_NOT_IN_ANSWER"),
     }).toEqual({ highCorrect: 11, highWrong: 0, lowInClosest: 0, lowMissed: 0, lowNotInAnswer: 5 });
+  });
+});
+
+// ── The 5 answers of the new search text (2026-11-19, data_test_report.md §8) ───────
+// Saved under the text `pathTwoQuery` builds today, so this also checks that the search text
+// has not changed. `correct` checked by hand as above.
+const NEW_TEXT_CASES: readonly { no: number; link: string; correct: readonly number[] }[] = [
+  // Offer 1 (index 0) writes the code with a platform suffix: "75T8CGTV".
+  { no: 2, link: "https://www.trendyol.com/tcl/75t8c-75-190-ekran-uydu-alicili-4k-ultra-hd-smart-qled-google-tv-p-940343537", correct: [0] },
+  { no: 4, link: "https://www.trendyol.com/apple/airpods-4-nesil-mxp63tu-a-p-857508954", correct: [0, 12, 21, 34, 37] },
+  { no: 8, link: "https://www.hepsiburada.com/onvo-40vq80f3fa-40-102-ekran-uydu-alicili-full-hd-whaleos-qled-tv-pm-HBC0000GM15FD", correct: [1] },
+  {
+    no: 13,
+    link: "https://www.teknosa.com/qromax-2-kamerali-set-arac-yuz-har-algilayan-gece-goruslu-36ir-led-5mp-sony-lensli-1080p-dome-guvenlik-kamerasi-seti-d136b-114-02-p-781351509",
+    correct: [1],
+  },
+  { no: 17, link: "https://www.mediamarkt.com.tr/tr/product/_apple-mjrr4tua-iphone-18-pro-256-gb-akilli-telefon-bordo-1256758.html", correct: [2] },
+];
+
+describe("the method on the new search text answers", () => {
+  it.each(NEW_TEXT_CASES)("link $no → the right product is proposed", async ({ link, correct }) => {
+    const linkReading = reading(link);
+    expect(outcomeOf(matchProduct(linkReading, await savedOffers(pathTwoQuery(linkReading))), correct)).toBe("HIGH_CORRECT");
+  });
+
+  it("proposes the offer that carries the link's model code over a look-alike priced far below (link 4)", async () => {
+    const airpods = reading("https://www.trendyol.com/apple/airpods-4-nesil-mxp63tu-a-p-857508954");
+    const match = matchProduct(airpods, await savedOffers(pathTwoQuery(airpods)));
+    expect(match.confidence === "HIGH" && match.proposed.offer.title).toBe("Kulaklik Apple AirPods 4 Mxp63");
   });
 });
