@@ -1,0 +1,8 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "promptVersion": 1,
+  "input": "Store: TRENDYOL\nBrand from the link: apple\nName words: watch se 3 gps cellular 44mm yildiz isigi aluminyum kasa ve kum beji spor kordon m l\nModel code: none",
+  "answer": "{\n  \"category\": \"smartwatch\",\n  \"brand\": \"Apple\",\n  \"model\": \"Watch SE 3\",\n  \"fields\": [\n    {\n      \"key\": \"case\",\n      \"value\": \"44 mm aluminium\"\n    },\n    {\n      \"key\": \"connectivity\",\n      \"value\": \"GPS + Cellular\"\n    },\n    {\n      \"key\": \"band\",\n      \"value\": \"spor kordon\"\n    },\n    {\n      \"key\": \"colour\",\n      \"value\": \"kum beji\"\n    }\n  ],\n  \"confidence\": \"HIGH\"\n}",
+  "durationMs": 16205
+}

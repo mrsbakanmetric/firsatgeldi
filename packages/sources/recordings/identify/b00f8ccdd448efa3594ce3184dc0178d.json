@@ -1,0 +1,8 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "promptVersion": 1,
+  "input": "Store: AMAZON_TR\nBrand from the link: apple\nName words: apple iphone promotion teknolojisine retina\nModel code: none",
+  "answer": "{\n  \"category\": \"phone\",\n  \"brand\": \"Apple\",\n  \"model\": \"iPhone\",\n  \"fields\": [\n    {\n      \"key\": \"storage\",\n      \"value\": \"none\"\n    },\n    {\n      \"key\": \"colour\",\n      \"value\": \"none\"\n    }\n  ],\n  \"confidence\": \"HIGH\"\n}",
+  "durationMs": 13523
+}

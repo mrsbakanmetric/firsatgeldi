@@ -23,6 +23,7 @@ describe("readAttributes — rules layer", () => {
   it("reads colours in Turkish and English as language-neutral keys", () => {
     expect(fromTitle("Yıldız Işığı Alüminyum Kasa ve Kum Beji Kordon").colours).toEqual(["STARLIGHT", "SAND_BEIGE"]);
     expect(fromTitle("iPhone 18 Pro Max Burgundy").colours).toEqual(["BURGUNDY"]);
+    expect(fromTitle("iPhone 18 Pro Max Burgonya").colours).toEqual(["BURGUNDY"]);
     expect(fromTitle("Gece Yarısı · Midnight").colours).toEqual(["MIDNIGHT"]);
     expect(fromTitle("Space Gray").colours).toEqual(["SPACE_GRAY"]);
   });
@@ -85,6 +86,14 @@ describe("readLinkText — attributes from real links", () => {
     [
       "https://www.mediamarkt.com.tr/tr/product/_apple-mjrr4tua-iphone-18-pro-256-gb-akilli-telefon-bordo-1256758.html",
       { generation: { line: "iphone", number: "18" }, series: ["pro"], storageGb: 256, colours: ["BURGUNDY"] },
+    ],
+    [
+      "https://www.teknosa.com/apple-iphone-18-pro-max-512gb-burgonya-akilli-telefon-p-100000065177",
+      { generation: { line: "iphone", number: "18" }, model: "iphone 18 pro max", storageGb: 512, colours: ["BURGUNDY"] },
+    ],
+    [
+      "https://www.mediamarkt.com.tr/tr/product/_apple-mjxv4tua-iphone-18-pro-max-512-gb-akilli-telefon-bordo-1256778.html",
+      { generation: { line: "iphone", number: "18" }, model: "iphone 18 pro max", storageGb: 512, colours: ["BURGUNDY"] },
     ],
     ["https://www.mediamarkt.com.tr/tr/product/_apple-35-w-cift-usb-c-baglanti-noktali-guc-adaptoru-1236495.html", { powerW: 35 }],
     [

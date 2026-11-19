@@ -90,6 +90,25 @@ describe("reading the model's answer", () => {
     expect(identity.model).toBeNull();
   });
 
+  it("keeps a colour the link writes another way (link 'burgonya', model 'Burgundy')", () => {
+    const teknosa = reading("https://www.teknosa.com/apple-iphone-18-pro-max-512gb-burgonya-akilli-telefon-p-100000065177");
+    const identity = readIdentifyAnswer(
+      teknosa,
+      JSON.stringify({
+        category: "phone",
+        brand: "Apple",
+        model: "iPhone 18 Pro Max",
+        fields: [
+          { key: "storage", value: "512 GB" },
+          { key: "colour", value: "Burgundy" },
+        ],
+        confidence: "HIGH",
+      }),
+    );
+    expect(identity.fields.map(({ key, source }) => `${key}:${source}`)).toEqual(["storage:LINK", "colour:LINK"]);
+    expect(identity.dropped).toEqual([]);
+  });
+
   it("reads placeholder values ('none', 'Bilinmiyor') as no value", () => {
     const identity = readIdentifyAnswer(
       AIRPODS,

@@ -1,0 +1,8 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "promptVersion": 1,
+  "input": "Store: TEKNOSA\nBrand from the link: apple\nName words: apple iphone 18 pro max 512gb burgonya akilli telefon\nModel code: none",
+  "answer": "{\n  \"category\": \"phone\",\n  \"brand\": \"Apple\",\n  \"model\": \"iPhone 18 Pro Max\",\n  \"fields\": [\n    {\n      \"key\": \"storage\",\n      \"value\": \"512 GB\"\n    },\n    {\n      \"key\": \"colour\",\n      \"value\": \"Burgundy\"\n    }\n  ],\n  \"confidence\": \"HIGH\"\n}",
+  "durationMs": 18430
+}

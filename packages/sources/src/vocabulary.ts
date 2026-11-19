@@ -112,6 +112,7 @@ const SYNONYMS: Readonly<Record<string, string>> = {
   yellow: "sari",
   burgundy: "bordo",
   bordeaux: "bordo",
+  burgonya: "bordo",
   navy: "lacivert",
   beige: "bej",
   brown: "kahverengi",
