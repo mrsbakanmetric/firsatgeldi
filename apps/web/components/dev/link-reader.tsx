@@ -15,6 +15,8 @@ import { useTranslator } from "../shell/parts";
 
 interface Row {
   readonly id: number;
+  /** Shown in the column header ("Link 2"); counts up from 1. */
+  readonly no: number;
   readonly link: string;
   readonly result: LinkTextResult;
 }
@@ -129,7 +131,7 @@ export function LinkReader({ locale }: { locale: Locale }) {
     event.preventDefault();
     const link = draft.trim();
     if (!link) return;
-    setRows((current) => [{ id: Date.now(), link, result: readLinkText(link) }, ...current]);
+    setRows((current) => [{ id: Date.now(), no: Math.max(0, ...current.map((each) => each.no)) + 1, link, result: readLinkText(link) }, ...current]);
     setDraft("");
   }
 
@@ -171,33 +173,36 @@ export function LinkReader({ locale }: { locale: Locale }) {
           <table className="w-full text-left text-body-sm" aria-label={t("devLink.tableLabel")}>
             <thead className="bg-surface-alt">
               <tr>
-                <th scope="col" className="p-2">
-                  <span className="sr-only">{t("devLink.remove")}</span>
+                <th scope="col" className="p-2 text-caption font-semibold whitespace-nowrap text-text-muted">
+                  {t("devLink.attribute")}
                 </th>
-                {COLUMNS.map((column) => (
-                  <th key={column} scope="col" className="p-2 text-caption font-semibold whitespace-nowrap text-text-muted">
-                    {t(`devLink.columns.${column}`)}
+                {rows.map((row) => (
+                  <th key={row.id} scope="col" className="p-2 text-caption font-semibold whitespace-nowrap text-text-muted">
+                    <span className="inline-flex items-center gap-1">
+                      {t("devLink.linkNumber", { number: row.no })}
+                      <Button
+                        variant="ghost"
+                        size="compact"
+                        iconOnly
+                        icon={X}
+                        label={t("devLink.remove", { number: row.no })}
+                        onClick={() => setRows((current) => current.filter((each) => each.id !== row.id))}
+                      />
+                    </span>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => (
-                <tr key={row.id} className="border-t border-divider align-top">
-                  <td className="p-2">
-                    <Button
-                      variant="ghost"
-                      size="compact"
-                      iconOnly
-                      icon={X}
-                      label={t("devLink.remove")}
-                      onClick={() => setRows((current) => current.filter((each) => each.id !== row.id))}
-                    />
-                  </td>
-                  {COLUMNS.map((column) => (
+              {COLUMNS.map((column) => (
+                <tr key={column} className="border-t border-divider align-top">
+                  <th scope="row" className="p-2 font-semibold whitespace-nowrap text-text-muted">
+                    {t(`devLink.columns.${column}`)}
+                  </th>
+                  {rows.map((row) => (
                     <td
-                      key={column}
-                      className={column === "link" || column === "name" ? "min-w-(--size-side-column-width) p-2 break-all text-text-muted" : "p-2 whitespace-nowrap text-text"}
+                      key={row.id}
+                      className={column === "link" || column === "name" ? "min-w-(--size-side-column-width) p-2 break-all text-text" : "p-2 whitespace-nowrap text-text"}
                     >
                       {cell(row, column)}
                     </td>
