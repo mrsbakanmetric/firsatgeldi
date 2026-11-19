@@ -127,6 +127,11 @@ export function LinkReader({ locale }: { locale: Locale }) {
     }
   }
 
+  // Only the fields this link gave: a field no link in the table has a value for is not a row
+  // (no "Cinsiyet" for AirPods). The result and the link itself are always shown.
+  const ALWAYS: readonly ColumnKey[] = ["result", "link"];
+  const visibleColumns = COLUMNS.filter((column) => ALWAYS.includes(column) || rows.some((row) => cell(row, column) !== none));
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const link = draft.trim();
@@ -195,7 +200,7 @@ export function LinkReader({ locale }: { locale: Locale }) {
               </tr>
             </thead>
             <tbody>
-              {COLUMNS.map((column) => (
+              {visibleColumns.map((column) => (
                 <tr key={column} className="border-t border-divider align-top">
                   <th scope="row" className="p-2 font-semibold whitespace-nowrap text-text-muted">
                     {t(`devLink.columns.${column}`)}

@@ -81,3 +81,32 @@ describe("link reading test page — several links", () => {
     expect(screen.queryByText("1198082362")).toBeNull();
   });
 });
+
+describe("link reading test page — rows follow the link", () => {
+  const t = createTranslator("tr");
+  const rowNames = () => screen.getAllByRole("rowheader").map((header) => header.textContent);
+
+  async function readOne(link: string) {
+    const user = userEvent.setup();
+    render(<LinkReader locale="tr" />);
+    await user.type(screen.getByLabelText(t("devLink.field")), link);
+    await user.click(screen.getByRole("button", { name: t("devLink.read") }));
+  }
+
+  it("AirPods: no gender, storage, screen or colour rows — the link says nothing about them", async () => {
+    await readOne("https://www.trendyol.com/apple/airpods-4-nesil-mxp63tu-a-p-857508954");
+    expect(rowNames()).toEqual(
+      ["result", "store", "productId", "brand", "category", "modelCode", "generation", "name", "link"].map((column) => t(`devLink.columns.${column}` as "devLink.columns.result")),
+    );
+  });
+
+  it("a shoe link shows gender; a TV link shows the screen size", async () => {
+    await readOne("https://www.trendyol.com/asics/gel-dedicate-8-kadin-tenis-ayakkabisi-1042a237-101-p-754059415");
+    expect(rowNames()).toContain(t("devLink.columns.gender"));
+    expect(rowNames()).not.toContain(t("devLink.columns.screen"));
+    cleanup();
+    await readOne("https://www.trendyol.com/tcl/75t8c-75-190-ekran-uydu-alicili-4k-ultra-hd-smart-qled-google-tv-p-940343537");
+    expect(rowNames()).toContain(t("devLink.columns.screen"));
+    expect(rowNames()).not.toContain(t("devLink.columns.gender"));
+  });
+});
