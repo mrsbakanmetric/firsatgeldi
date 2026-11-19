@@ -40,6 +40,15 @@ describe("SerpApi client — never a real search in tests", () => {
     expect(Object.fromEntries(url.searchParams)).toMatchObject({ engine: "google_immersive_product", gl: "tr", hl: "tr", page_token: "token-1" });
   });
 
+  it("searches the web under the same cap, saved like a search", async () => {
+    const fetch = fakeFetch(JSON.stringify({ organic_results: [] }));
+    const client = createSerpApiClient({ apiKey: KEY, maxQueries: 1, cacheDir: dir, fetch });
+    expect((await client.googleWeb("ring light")).fromCache).toBe(false);
+    expect((await client.googleWeb("ring light")).fromCache).toBe(true);
+    const url = new URL(String(fetch.mock.calls[0]?.[0]));
+    expect(Object.fromEntries(url.searchParams)).toMatchObject({ engine: "google", gl: "tr", hl: "tr", q: "ring light" });
+  });
+
   it("stops before sending when the run's cap is used up", async () => {
     const fetch = fakeFetch("{}");
     const client = createSerpApiClient({ apiKey: KEY, maxQueries: 1, cacheDir: dir, fetch });

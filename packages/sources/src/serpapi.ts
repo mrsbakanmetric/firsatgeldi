@@ -11,6 +11,8 @@ const SERPAPI_ENDPOINT = "https://serpapi.com/search.json";
 const SHOPPING_PARAMS = { engine: "google_shopping", gl: "tr", hl: "tr", google_domain: "google.com.tr" } as const;
 /** Google's product page behind a Shopping result (`immersive_product_page_token`): every field the product carries. */
 const PRODUCT_PARAMS = { engine: "google_immersive_product", gl: "tr", hl: "tr", google_domain: "google.com.tr" } as const;
+/** Google web search, Turkish results: the pages Google knows for a product (e.g. its store page). */
+const WEB_PARAMS = { engine: "google", gl: "tr", hl: "tr", google_domain: "google.com.tr" } as const;
 const REQUEST_TIMEOUT_MS = 30_000;
 
 export class SerpApiBudgetError extends Error {
@@ -50,6 +52,8 @@ export interface SerpApiClient {
   googleShopping(query: string): Promise<SavedAnswer>;
   /** The product page of one Shopping result, by its `immersive_product_page_token`. */
   googleProduct(pageToken: string): Promise<SavedAnswer>;
+  /** Google web search (organic results). */
+  googleWeb(query: string): Promise<SavedAnswer>;
   /** Live searches spent in this run. */
   spent(): number;
 }
@@ -93,6 +97,7 @@ export function createSerpApiClient(config: SerpApiConfig): SerpApiClient {
   return {
     googleShopping: (query) => search({ ...SHOPPING_PARAMS, q: query }),
     googleProduct: (pageToken) => search({ ...PRODUCT_PARAMS, page_token: pageToken }),
+    googleWeb: (query) => search({ ...WEB_PARAMS, q: query }),
     spent: () => spent,
   };
 }
