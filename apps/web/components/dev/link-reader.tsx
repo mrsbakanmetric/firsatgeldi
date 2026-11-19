@@ -105,7 +105,7 @@ export function LinkReader({ locale }: { locale: Locale }) {
       case "modelCode":
         return reading.modelCode ?? none;
       case "generation":
-        return attributes.generation ? `${attributes.generation.line} ${attributes.generation.number}` : none;
+        return attributes.model ?? none;
       case "series":
         return list(attributes.series);
       case "storage":

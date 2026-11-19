@@ -43,7 +43,7 @@ describe.each(LOCALES)("link reading test page (%s)", (locale) => {
     expect(valueOf("devLink.columns.sellerId")).toEqual(["968"]);
     expect(valueOf("devLink.columns.brand")).toEqual(["apple"]);
     expect(valueOf("devLink.columns.category")).toEqual([t("devLink.values.categoryLater")]);
-    expect(valueOf("devLink.columns.generation")).toEqual(["iphone 18"]);
+    expect(valueOf("devLink.columns.generation")).toEqual(["iphone 18 pro max"]);
     expect(valueOf("devLink.columns.series")).toEqual(["pro, max"]);
     expect(valueOf("devLink.columns.storage")).toEqual([t("devLink.values.storage", { value: "512" })]);
     expect(valueOf("devLink.columns.colours")).toEqual(["BURGUNDY"]);

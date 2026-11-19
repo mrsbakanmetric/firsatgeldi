@@ -22,6 +22,7 @@ describe("readLinkText — path 1, the link text itself", () => {
       searchText: "asics gel dedicate 8 kadin tenis ayakkabisi 1042a237-101",
       attributes: {
         generation: { line: "dedicate", number: "8" },
+        model: "dedicate 8",
         series: [],
         storageGb: null,
         screenInch: null,

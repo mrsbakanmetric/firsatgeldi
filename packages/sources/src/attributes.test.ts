@@ -32,6 +32,11 @@ describe("readAttributes — rules layer", () => {
     expect(fromTitle("Onvo 40 102 ekran", ["onvo"]).generation).toBeNull();
   });
 
+  it("keeps series words between the line and the number in the model (AirPods Pro 3)", () => {
+    expect(fromTitle("AirPods Pro 3", ["apple"])).toMatchObject({ generation: { line: "airpods", number: "3" }, model: "airpods pro 3", series: ["pro"] });
+    expect(fromTitle("iPhone 18 Pro Max 512 GB", ["apple"])).toMatchObject({ generation: { line: "iphone", number: "18" }, model: "iphone 18 pro max" });
+  });
+
   it("does not read 'Ultra HD' or 'Full HD' as a series", () => {
     expect(fromTitle("4K Ultra HD Smart QLED TV").series).toEqual([]);
     expect(fromTitle("Full HD WhaleOS QLED TV").series).toEqual([]);
@@ -86,6 +91,7 @@ describe("readLinkText — attributes from real links", () => {
       "https://www.trendyol.com/asics/gel-dedicate-8-kadin-tenis-ayakkabisi-1042a237-101-p-754059415",
       { generation: { line: "dedicate", number: "8" }, gender: "WOMEN" },
     ],
+    ["https://www.trendyol.com/apple/airpods-pro-3-p-987974460", { generation: { line: "airpods", number: "3" }, model: "airpods pro 3", series: ["pro"] }],
   ] as const)("%s", (link, expected) => {
     expect(attributesOf(link)).toMatchObject(expected);
   });

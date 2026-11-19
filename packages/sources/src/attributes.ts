@@ -23,6 +23,8 @@ import {
 export interface ProductAttributes {
   /** The model line and its generation number ("iphone" 18, "se" 3, "saros" 20, "dedicate" 8). */
   readonly generation: { readonly line: string; readonly number: string } | null;
+  /** The model as the name writes it, from the line to the last series word ("airpods pro 3", "iphone 18 pro max"). */
+  readonly model: string | null;
   /** Series words in reading order ("pro", "max"). */
   readonly series: readonly string[];
   readonly storageGb: number | null;
@@ -40,13 +42,30 @@ export interface ProductAttributes {
 const first = (values: ReadonlySet<number> | undefined): number | null => (values && values.size > 0 ? ([...values][0] ?? null) : null);
 const unique = <T>(values: readonly T[]): T[] => [...new Set(values)];
 
-function generationOf(words: readonly string[], brand: readonly string[]): ProductAttributes["generation"] {
-  for (let index = 0; index < words.length - 1; index += 1) {
-    const line = words[index] ?? "";
-    const number = words[index + 1] ?? "";
-    if (LETTERS.test(line) && line.length > 1 && isKeyWord(line) && !brand.includes(line) && DIGITS.test(number)) return { line, number };
+interface ModelReading {
+  readonly generation: ProductAttributes["generation"];
+  readonly model: string | null;
+}
+
+/**
+ * The model line, its generation number and the model as written. Series words may sit
+ * between the line and the number ("airpods pro 3": line "airpods", generation 3) or after
+ * the number ("iphone 18 pro max"); the model keeps them in place ("airpods pro 3",
+ * "iphone 18 pro max"). The brand is never the line.
+ */
+function modelOf(words: readonly string[], brand: readonly string[]): ModelReading {
+  for (let index = 1; index < words.length; index += 1) {
+    const number = words[index] ?? "";
+    if (!DIGITS.test(number)) continue;
+    let start = index - 1;
+    while (start > 0 && SERIES_WORDS.has(words[start] ?? "")) start -= 1;
+    const line = words[start] ?? "";
+    if (!LETTERS.test(line) || line.length < 2 || !isKeyWord(line) || brand.includes(line) || SERIES_WORDS.has(line)) continue;
+    let end = index + 1;
+    while (end < words.length && SERIES_WORDS.has(words[end] ?? "")) end += 1;
+    return { generation: { line, number }, model: words.slice(start, end).join(" ") };
   }
-  return null;
+  return { generation: null, model: null };
 }
 
 function screenInchOf(words: readonly string[], inches: number | null): number | null {
@@ -77,8 +96,10 @@ function genderOf(words: readonly string[]): Gender | null {
 /** Attributes read from normalised words; `brand` words are never a model line. */
 export function readAttributes(words: readonly string[], brand: readonly string[] = []): ProductAttributes {
   const measures = measuresOf(words);
+  const { generation, model } = modelOf(words, brand);
   return {
-    generation: generationOf(words, brand),
+    generation,
+    model,
     series: unique(words.filter((word) => SERIES_WORDS.has(word))),
     storageGb: first(measures.get("storage")),
     screenInch: screenInchOf(words, first(measures.get("inch"))),
