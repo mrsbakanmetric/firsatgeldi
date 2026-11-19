@@ -118,6 +118,19 @@ describe("confidence", () => {
     const match = matchProduct(IPHONE_18, [offer("Apple iPhone 17 Pro"), offer("Apple iPhone 18 Pro Max")]);
     expect(match).toMatchObject({ confidence: "LOW", closest: [], ranked: [] });
   });
+
+  it("shows each product once in the closest three: the same normalised title from another store is skipped", () => {
+    const match = matchProduct(WATCH_SE_3, [
+      offer("Apple Watch SE GPS 40mm Alüminyum Kasa"),
+      offer("APPLE watch se gps 40 mm aluminyum kasa"),
+      offer("Apple Watch SE GPS 40mm"),
+      offer("Apple Watch SE GPS"),
+    ]);
+    expect(match.confidence).toBe("LOW");
+    if (match.confidence !== "LOW") return;
+    expect(match.closest.map((scored) => scored.index)).toEqual([0, 2, 3]);
+    expect(match.ranked).toHaveLength(4);
+  });
 });
 
 // ── The 17 saved answers of the data test (2026-11-19) ──────────────────────────────
@@ -243,6 +256,16 @@ describe("the method on the saved answers (data test round 1)", () => {
   it.each(SAVED_CASES)("link $no → $expected", async (saved) => {
     const linkReading = typeof saved.link === "string" ? reading(saved.link) : saved.link;
     expect(outcomeOf(matchProduct(linkReading, await savedOffers(saved.savedQuery)), saved.correct)).toBe(saved.expected);
+  });
+
+  it("link 8: the two offers titled 'Onvo Ekran Uydu Alıcılı Full Hd Qled Tv' appear once in the closest results", async () => {
+    const onvo = SAVED_CASES.find((saved) => saved.no === 8);
+    if (!onvo || typeof onvo.link !== "string") throw new Error("link 8 missing");
+    const match = matchProduct(reading(onvo.link), await savedOffers(onvo.savedQuery));
+    expect(match.confidence).toBe("LOW");
+    if (match.confidence !== "LOW") return;
+    expect(match.ranked.map((scored) => scored.index)).toEqual([2, 23, 9]);
+    expect(match.closest.map((scored) => scored.index)).toEqual([2, 9]);
   });
 
   it("never proposes a wrong product, and finds the linked product whenever the answer has it (the 16 searches of round 1)", async () => {

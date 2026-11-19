@@ -381,5 +381,24 @@ export function matchProduct(reading: LinkTextReading, offers: readonly Shopping
   const ranked = candidates.toSorted((a, b) => Number(sure(b)) - Number(sure(a)) || b.score - a.score || a.index - b.index);
   const best = ranked[0];
   if (best && sure(best)) return { confidence: "HIGH", proposed: best, ranked, dropped };
-  return { confidence: "LOW", closest: ranked.slice(0, settings.closestCount), ranked, dropped };
+  return { confidence: "LOW", closest: closestDistinct(ranked, settings.closestCount), ranked, dropped };
+}
+
+/**
+ * The closest offers, one per product: offers from different stores often carry the same
+ * title, and the user would see the same choice twice. Titles are compared normalised
+ * ("Onvo Ekran Uydu Alıcılı Full Hd Qled Tv" = "ONVO ekran uydu alicili full HD QLED TV");
+ * the best-ranked offer of each title is kept.
+ */
+function closestDistinct(ranked: readonly ScoredOffer[], count: number): ScoredOffer[] {
+  const seen = new Set<string>();
+  const closest: ScoredOffer[] = [];
+  for (const scored of ranked) {
+    if (closest.length >= count) break;
+    const title = normaliseWords(scored.offer.title).join(" ");
+    if (seen.has(title)) continue;
+    seen.add(title);
+    closest.push(scored);
+  }
+  return closest;
 }
