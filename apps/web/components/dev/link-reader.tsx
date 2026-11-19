@@ -131,7 +131,8 @@ export function LinkReader({ locale }: { locale: Locale }) {
     event.preventDefault();
     const link = draft.trim();
     if (!link) return;
-    setRows((current) => [{ id: Date.now(), no: Math.max(0, ...current.map((each) => each.no)) + 1, link, result: readLinkText(link) }, ...current]);
+    // Each "Çöz" starts over: the table shows only the link just read.
+    setRows([{ id: Date.now(), no: 1, link, result: readLinkText(link) }]);
     setDraft("");
   }
 

@@ -67,7 +67,7 @@ describe.each(LOCALES)("link reading test page (%s)", (locale) => {
 });
 
 describe("link reading test page — several links", () => {
-  it("puts each link in its own column, newest first", async () => {
+  it("starts over on each read: only the last link is shown", async () => {
     const t = createTranslator("tr");
     const user = userEvent.setup();
     render(<LinkReader locale="tr" />);
@@ -77,6 +77,7 @@ describe("link reading test page — several links", () => {
     }
     const storage = screen.getByRole("rowheader", { name: t("devLink.columns.storage") }).closest("tr");
     if (!storage) throw new Error("no storage row");
-    expect(within(storage).getAllByRole("cell").map((cell) => cell.textContent)).toEqual([t("devLink.values.storage", { value: "128" }), t("devLink.values.storage", { value: "512" })]);
+    expect(within(storage).getAllByRole("cell").map((cell) => cell.textContent)).toEqual([t("devLink.values.storage", { value: "128" })]);
+    expect(screen.queryByText("1198082362")).toBeNull();
   });
 });

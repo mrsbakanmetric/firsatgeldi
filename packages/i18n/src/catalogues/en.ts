@@ -1604,7 +1604,7 @@ export const en = {
     title: "Link reading test",
     caption: "Development only · what the link text says; no request to the store",
     field: "Product link",
-    helper: "Paste a store product link; each link adds a row to the table.",
+    helper: "Paste a store product link; each Read fills the table again with this link only.",
     read: "Read",
     clear: "Clear table",
     attribute: "Field",

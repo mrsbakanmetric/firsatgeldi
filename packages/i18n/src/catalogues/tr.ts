@@ -1613,7 +1613,7 @@ export const tr = {
     title: "Link okuma testi",
     caption: "Yalnız geliştirmede açılır · linkin metninden okunanlar; mağazaya istek gitmez",
     field: "Ürün linki",
-    helper: "Bir mağaza ürün linki yapıştır; her link tabloya bir satır ekler.",
+    helper: "Bir mağaza ürün linki yapıştır; her Çöz'de tablo yalnız bu linkle yeniden dolar.",
     read: "Çöz",
     clear: "Tabloyu temizle",
     attribute: "Özellik",
