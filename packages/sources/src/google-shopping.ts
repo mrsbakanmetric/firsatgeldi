@@ -2,6 +2,7 @@
 // found by path 1 (architecture.md §10.1). Store text is untrusted data: only known fields
 // are read, each checked for its type; anything else is ignored.
 import type { LinkTextReading } from "./link-text.ts";
+import { keyNameWords } from "./matching.ts";
 
 export interface ShoppingOffer {
   readonly position: number | null;
@@ -10,6 +11,10 @@ export interface ShoppingOffer {
   readonly source: string | null;
   /** Price in TL as a number (SerpApi `extracted_price`). */
   readonly price: number | null;
+  /** The price as Google writes it ("₺5.477,98"): tells a TL listing from a foreign one. */
+  readonly priceText: string | null;
+  /** Google's own condition label for a used or refurbished offer (`second_hand_condition`). */
+  readonly condition: string | null;
   /** Claimed old price (`extracted_old_price`), when shown. */
   readonly oldPrice: number | null;
   readonly rating: number | null;
@@ -25,10 +30,16 @@ export interface ShoppingReading {
   readonly offers: readonly ShoppingOffer[];
 }
 
-/** The search text for path 2: brand + model code when the link has one (most exact), otherwise every word path 1 read. */
+/**
+ * The search text for path 2 [DECIDED 2026-11-19] (architecture.md §10.1): brand + model
+ * code + the key name words, never the model code alone (model-code-only searches found
+ * 0 of 6 in round 1). Generic words ("akilli", "ekran uydu alicili") are dropped. A link
+ * without a model code keeps every word path 1 read, so its saved answer stays valid.
+ * One search per link.
+ */
 export function pathTwoQuery(reading: LinkTextReading): string {
-  if (reading.modelCode) return [reading.brand, reading.modelCode].filter(Boolean).join(" ");
-  return reading.searchText;
+  if (!reading.modelCode) return reading.searchText;
+  return [reading.brand, reading.modelCode, ...keyNameWords(reading)].filter(Boolean).join(" ");
 }
 
 type Json = Readonly<Record<string, unknown>>;
@@ -45,6 +56,8 @@ function offerOf(item: Json): ShoppingOffer | null {
     title,
     source: text(item.source),
     price: number(item.extracted_price),
+    priceText: text(item.price),
+    condition: text(item.second_hand_condition),
     oldPrice: number(item.extracted_old_price),
     rating: number(item.rating),
     reviews: number(item.reviews),

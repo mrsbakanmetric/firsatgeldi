@@ -6,11 +6,13 @@
 //
 // `link` runs path 1 (link text): no request to the store, no SerpApi search.
 // `--search` adds path 2: one Google Shopping search through SerpApi with what path 1
-// read. Saved answers (recordings/serpapi) are reused and cost nothing; a run spends at
-// most `--max-queries` live searches (default 1). The key is read from the root `.env`.
+// read, then the product match (matching.ts): one proposed offer (HIGH) or the closest
+// three (LOW). Saved answers (recordings/serpapi) are reused and cost nothing; a run spends
+// at most `--max-queries` live searches (default 1). The key is read from the root `.env`.
 import { join } from "node:path";
 import { readLinkText } from "./link-text.ts";
 import { pathTwoQuery, readGoogleShopping } from "./google-shopping.ts";
+import { matchProduct, type ProductMatch, type ScoredOffer } from "./matching.ts";
 import { createSerpApiClient } from "./serpapi.ts";
 
 const USAGE = "Usage: data-test link <url> [--search] [--max-queries N]";
@@ -21,6 +23,15 @@ const DEFAULT_MAX_QUERIES = 1;
 function flagValue(args: readonly string[], flag: string): string | undefined {
   const index = args.indexOf(flag);
   return index >= 0 ? args[index + 1] : undefined;
+}
+
+const brief = (scored: ScoredOffer) => ({ index: scored.index, title: scored.offer.title, score: Number(scored.score.toFixed(3)) });
+
+function matchSummary(match: ProductMatch) {
+  const dropped = match.dropped.length;
+  return match.confidence === "HIGH"
+    ? { confidence: match.confidence, proposed: brief(match.proposed), candidates: match.ranked.length, dropped }
+    : { confidence: match.confidence, closest: match.closest.map(brief), candidates: match.ranked.length, dropped };
 }
 
 function print(value: unknown): void {
@@ -53,7 +64,9 @@ async function main(args: readonly string[]): Promise<number> {
   const client = createSerpApiClient({ apiKey, maxQueries, cacheDir: RECORDINGS_DIR });
   const query = pathTwoQuery(result.reading);
   const answer = await client.googleShopping(query);
-  print({ path1: result.reading, path2: { query, fromCache: answer.fromCache, searchesSpent: client.spent(), ...readGoogleShopping(answer.body) } });
+  const shopping = readGoogleShopping(answer.body);
+  const match = matchSummary(matchProduct(result.reading, shopping.offers));
+  print({ path1: result.reading, path2: { query, fromCache: answer.fromCache, searchesSpent: client.spent(), ...shopping }, match });
   return 0;
 }
 
