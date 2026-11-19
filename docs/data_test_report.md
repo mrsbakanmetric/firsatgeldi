@@ -1,6 +1,6 @@
 # Data test report — round 1: pasted store links (paths 1 and 2)
 
-> **Status:** step 23 in progress (🛠) · **Round:** 1 of the data test · **Date:** 2026-11-19 · **Owner:** implementation side (Claude Code)
+> **Status:** step 23 in progress (🛠) · **Round:** 1 of the data test, plus the matching method on its saved answers (section 7) · **Date:** 2026-11-19 · **Owner:** implementation side (Claude Code)
 > Scope and method: `docs/implementation_plan.md` Appendix A; link reading order: `docs/architecture.md` §10.1.
 
 ## 1. What this round measured
@@ -93,13 +93,65 @@ The product match after path 2, as proposed after round 1 and decided by the use
    - **Low** (no offer left, or several close scores): the user sees the **3 closest results** to choose from (the existing "Hangisi seninki?" closest-three pattern), plus "Adıyla ara".
 5. **Search text:** when the link has a model code, search brand + model + the key name words instead of brand + model code alone (model-code-only searches gave 0 of 6). Generic words ("akilli", "telefon", "ekran uydu alicili") may be dropped. One search per link; no second search (budget).
 
-## 7. Hidden-seller rule
+## 7. Matching method on the saved answers
+
+The method of section 6, built in `packages/sources` (`matchProduct`, #152), run on the saved answers of this round. No new SerpApi search. The test `packages/sources/src/matching.test.ts` holds the same table and fails if a result changes.
+
+**How "right" was decided:** every offer of every answer was checked by hand on its title. An offer counts as the linked product when it has the same model and generation, is new and is a single item. Where the title states storage, size or colour, they must match too. A title that leaves them out still counts, as in section 2. This time every offer of an answer was checked (up to 40), not only the first 12. So links 4 and 17 now have the right product in the answer (positions 30 and 13), although section 2 says "Not found" for them.
+
+### Results per link
+
+"Kept" = offers left after the hard filters / offers in the answer. "Proposed" is the position of the offer the method proposes (HIGH). For LOW, the user would see the closest three.
+
+| # | Store | Confidence | Proposed (position · title) | Right? | Kept | Offers that are the linked product |
+|---|---|---|---|---|---|---|
+| 1 | Trendyol | HIGH | 1 · ASICS GEL-DEDICATE 8 - BLUE - 40 | Yes | 8 / 12 | 1 |
+| 2 | Trendyol | LOW | — | — | 6 / 12 | 0 |
+| 3 | Trendyol | HIGH | 1 · Apple iPhone 18 Pro | Yes | 1 / 2 | 1 |
+| 4 | Trendyol | HIGH | 30 · Apple AirPods 4 | Yes | 7 / 40 | 2 |
+| 5 | Trendyol | HIGH | 12 · Apple Watch SE 3 GPS Alüminyum Kasa ve Spor Kordon | Yes | 18 / 40 | 6 |
+| 7 | Hepsiburada | HIGH | 36 · Roborock … Robot Vacuum S8 Pro … | Yes (see limits) | 18 / 40 | 3 |
+| 8 | Hepsiburada | LOW | — | — | 3 / 26 | 0 |
+| 9 | Hepsiburada | HIGH | 7 · Apple İphone 15 128 Gb Siyah … | Yes | 5 / 22 | 5 |
+| 10 | Hepsiburada | HIGH | 28 · Apple Watch SE 3 | Yes | 15 / 40 | 2 |
+| 11 | Teknosa | HIGH | 32 · ROBOROCK Saros 20 Robot Süpürge Siyah | Yes | 13 / 34 | 3 |
+| 12 | Teknosa | HIGH | 1 · Apple iPhone 17 Pro | Yes | 3 / 11 | 3 |
+| 13 | Teknosa | LOW | — (no result) | — | 0 / 0 | 0 |
+| 15 | Amazon TR | LOW | — | — | 1 / 4 | 0 |
+| 16 | Amazon TR | HIGH | 2 · Tapo Tp-Link C211 2k 3mp … Kamerası | Yes | 12 / 40 | 12 |
+| 17 | MediaMarkt | HIGH | 13 · Apple iPhone 18 Pro | Yes | 17 / 40 | 5 |
+| 18 | MediaMarkt | HIGH | 18 · Apple 35 W Çift Usb-c Bağlantı Noktalı Güç Adaptörü | Yes | 6 / 40 | 3 |
+| 19 | MediaMarkt | LOW | — (nothing kept) | — | 0 / 40 | 0 |
+
+### Totals for the 16 searches of this round (link 1 not counted)
+
+| Outcome | Count | Links |
+|---|---|---|
+| HIGH, the right product proposed | **11** | 3, 4, 5, 7, 9, 10, 11, 12, 16, 17, 18 |
+| HIGH, a wrong product proposed | **0** | — |
+| LOW, the right product among the closest three | 0 | — |
+| LOW, the right product in the answer but not in the closest three | 0 | — |
+| LOW, the answer does not have the right product | 5 | 2, 8, 13, 15, 19 |
+
+Compared with section 2: the first result was right in **4 of 16**; the method proposes the right product in **11 of 16** and never proposes a wrong one. In the 5 LOW cases the answer itself does not contain the linked product, so no match method could find it there.
+
+### Known limits
+
+- **Old search text.** These answers were saved with the round 1 search text: brand + model code alone for the 6 model-code links (2, 4, 8, 13, 17, 19). This measures the **matching method**, not the **new search text** of section 6 item 5. Measuring the new text needs up to **6 new searches** (one per model-code link). They are not run yet: they need the user's go-ahead (SerpApi budget, at most 19 of 250 used this month).
+- **Brand missing from the title.** The brand filter drops offers whose title leaves out the brand, even when they are the right product (e.g. "Watch Se 3 Gps 40 mm Yıldız Işığı …" for link 5, "S8 Pro Akıllı Robot Süpürge" for link 7). The right product was still found in those links.
+- **Link 7.** The proposed title names "Roborock … S8 Pro" but its spec line (10000 Pa) looks unusual. By the title rule above it counts as right; a store page or the store API (path 3) would confirm it.
+- **A wrong model code from path 1.** For link 19, path 1 read a wrong model code from a glued store slug (section 2). The model-code filter then dropped every offer that carries a code (39 of 40), so the answer is LOW with nothing to choose. The user sees "Ürünü bulamadık" + "Adıyla ara".
+- **Same title several times.** The closest three can show the same title twice (offers from different stores with identical titles, e.g. link 8). Grouping identical titles is not built.
+- **Titles only.** The method reads titles only. Seller, price, stock and the product page are not used (section 9).
+- **Small sample.** 16 searches, electronics only; no clothing link yet.
+
+## 8. Hidden-seller rule
 
 The saved answers contain store and seller names (`source`) and prices. They stay in `packages/sources/recordings/` and in this report's raw data: `packages/mocks` and the app do not read them, and no seller name, store name or price from a search reaches a screen, a response, a notification or an e-mail (product rule 3). Seller and price of the user's own purchase still come only from the user (product rule 7).
 
-## 8. Open after this round
+## 9. Open after this round
 
-- Building the matching method (section 6) in `packages/sources`, tested on the 16 recordings (no new SerpApi search).
+- Measuring the new search text (section 6 item 5) on the 6 model-code links: up to 6 new SerpApi searches, waiting for the user's go-ahead (section 7, known limits).
 - Path 3: the stores' official APIs (the user applies for access).
 - Store product pages and site search per store (Appendix A sources), with the politeness rules; Trendyol answered 403 to an identifiable User-Agent and disallows `?q=` in robots.txt.
 - Fields not measured yet: seller, ratings, stock, delivery, installments, warranty, old price (Appendix A › Fields measured).
