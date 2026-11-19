@@ -3,14 +3,37 @@
 // in tr and en, every text from the catalogue; a link it cannot read says why; axe clean.
 import { createTranslator, LOCALES } from "@firsatgeldi/i18n";
 import { axeViolations } from "@firsatgeldi/ui/test";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import type { LinkIdentity } from "@firsatgeldi/sources/identify";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LinkReader } from "./link-reader";
 
 const IPHONE = "https://www.trendyol.com/apple/iphone-18-pro-max-512gb-burgundy-p-1198082362?boutiqueId=691662&merchantId=968";
 
-afterEach(cleanup);
+/** What /api/dev/identify answers for the iPhone link (the route itself runs the local model). */
+const IPHONE_IDENTITY: LinkIdentity = {
+  category: { key: "phone", name: { tr: "Cep telefonu", en: "Mobile phone" } },
+  brand: { value: "Apple", source: "LINK" },
+  model: { value: "iPhone 18 Pro Max", source: "LINK" },
+  fields: [{ key: "storage", kind: "VARIANT", name: { tr: "Depolama", en: "Storage" }, value: "512 GB", source: "LINK" }],
+  dropped: [{ key: "colour", value: "black", reason: "VARIANT_NOT_IN_LINK" }],
+  confidence: "HIGH",
+  provider: "ollama",
+  modelId: "qwen3:4b",
+  durationMs: 11500,
+  fromCache: false,
+};
+
+let answer: () => Promise<Response> = async () => Response.json({ identity: IPHONE_IDENTITY });
+beforeEach(() => {
+  answer = async () => Response.json({ identity: IPHONE_IDENTITY });
+  vi.stubGlobal("fetch", vi.fn(() => answer()));
+});
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 describe.each(LOCALES)("link reading test page (%s)", (locale) => {
   const t = createTranslator(locale);
@@ -42,7 +65,7 @@ describe.each(LOCALES)("link reading test page (%s)", (locale) => {
     expect(valueOf("devLink.columns.productId")).toEqual(["1198082362"]);
     expect(valueOf("devLink.columns.sellerId")).toEqual(["968"]);
     expect(valueOf("devLink.columns.brand")).toEqual(["apple"]);
-    expect(valueOf("devLink.columns.category")).toEqual([t("devLink.values.categoryLater")]);
+    await waitFor(() => expect(valueOf("devLink.columns.category")).toEqual([IPHONE_IDENTITY.category.name[locale]]));
     expect(valueOf("devLink.columns.generation")).toEqual(["iphone 18 pro max"]);
     expect(valueOf("devLink.columns.series")).toEqual(["pro, max"]);
     expect(valueOf("devLink.columns.storage")).toEqual([t("devLink.values.storage", { value: "512" })]);
@@ -75,7 +98,8 @@ describe("link reading test page — several links", () => {
       await user.type(screen.getByLabelText(t("devLink.field")), link);
       await user.click(screen.getByRole("button", { name: t("devLink.read") }));
     }
-    const storage = screen.getByRole("rowheader", { name: t("devLink.columns.storage") }).closest("tr");
+    const rules = screen.getByRole("table", { name: t("devLink.tableLabel") });
+    const storage = within(rules).getByRole("rowheader", { name: t("devLink.columns.storage") }).closest("tr");
     if (!storage) throw new Error("no storage row");
     expect(within(storage).getAllByRole("cell").map((cell) => cell.textContent)).toEqual([t("devLink.values.storage", { value: "128" })]);
     expect(screen.queryByText("1198082362")).toBeNull();
@@ -84,7 +108,10 @@ describe("link reading test page — several links", () => {
 
 describe("link reading test page — rows follow the link", () => {
   const t = createTranslator("tr");
-  const rowNames = () => screen.getAllByRole("rowheader").map((header) => header.textContent);
+  const rowNames = () =>
+    within(screen.getByRole("table", { name: t("devLink.tableLabel") }))
+      .getAllByRole("rowheader")
+      .map((header) => header.textContent);
 
   async function readOne(link: string) {
     const user = userEvent.setup();
@@ -108,5 +135,33 @@ describe("link reading test page — rows follow the link", () => {
     await readOne("https://www.trendyol.com/tcl/75t8c-75-190-ekran-uydu-alicili-4k-ultra-hd-smart-qled-google-tv-p-940343537");
     expect(rowNames()).toContain(t("devLink.columns.screen"));
     expect(rowNames()).not.toContain(t("devLink.columns.gender"));
+  });
+});
+
+describe.each(LOCALES)("link reading test page — AI layer (%s)", (locale) => {
+  const t = createTranslator(locale);
+
+  async function readIphone() {
+    const user = userEvent.setup();
+    render(<LinkReader locale={locale} />);
+    await user.type(screen.getByLabelText(t("devLink.field")), IPHONE);
+    await user.click(screen.getByRole("button", { name: t("devLink.read") }));
+  }
+
+  it("adds the model's rows with their source, what was dropped, and which model ran", async () => {
+    await readIphone();
+    const ai = await screen.findByRole("table", { name: t("devLink.ai.section") });
+    const rowOf = (label: string) => within(ai).getByRole("rowheader", { name: label }).closest("tr")?.textContent ?? "";
+    expect(rowOf(t("devLink.ai.model"))).toContain(t("devLink.ai.valueWithSource", { value: "iPhone 18 Pro Max", source: t("devLink.ai.sources.LINK") }));
+    expect(rowOf(IPHONE_IDENTITY.fields[0]?.name[locale] ?? "")).toContain("512 GB");
+    expect(rowOf(t("devLink.ai.dropped"))).toContain(t("devLink.ai.reasons.VARIANT_NOT_IN_LINK"));
+    expect(rowOf(t("devLink.ai.runtime"))).toContain("qwen3:4b");
+  });
+
+  it("says when the local model is not running", async () => {
+    answer = async () => Response.json({ error: "UNAVAILABLE" }, { status: 503 });
+    await readIphone();
+    expect(await screen.findByText(t("devLink.ai.UNAVAILABLE"))).toBeTruthy();
+    expect(screen.queryByRole("table", { name: t("devLink.ai.section") })).toBeNull();
   });
 });

@@ -8,6 +8,7 @@
 import { formatNumber } from "@firsatgeldi/core";
 import type { Locale, TranslationKey } from "@firsatgeldi/i18n";
 import { type LinkTextFailure, type LinkTextResult, PLATFORM_DOMAINS, readLinkText } from "@firsatgeldi/sources";
+import type { DroppedValue, IdentifiedValue, LinkIdentity } from "@firsatgeldi/sources/identify";
 import { Button, EmptyState, PageTemplate, TextField } from "@firsatgeldi/ui";
 import { Link2, X } from "lucide-react";
 import { type FormEvent, useState } from "react";
@@ -19,6 +20,51 @@ interface Row {
   readonly no: number;
   readonly link: string;
   readonly result: LinkTextResult;
+  /** The AI layer's answer (dev route /api/dev/identify, local model through Ollama). */
+  readonly ai: AiState;
+}
+
+type AiFailure = "UNAVAILABLE" | "ANSWER";
+
+type AiState =
+  | { readonly status: "idle" }
+  | { readonly status: "loading" }
+  | { readonly status: "done"; readonly identity: LinkIdentity }
+  | { readonly status: "error"; readonly reason: AiFailure };
+
+const AI_FAILURE_KEYS: Readonly<Record<AiFailure, TranslationKey>> = {
+  UNAVAILABLE: "devLink.ai.UNAVAILABLE",
+  ANSWER: "devLink.ai.ANSWER",
+};
+
+const SOURCE_KEYS: Readonly<Record<IdentifiedValue["source"], TranslationKey>> = {
+  LINK: "devLink.ai.sources.LINK",
+  KNOWLEDGE: "devLink.ai.sources.KNOWLEDGE",
+};
+
+const REASON_KEYS: Readonly<Record<DroppedValue["reason"], TranslationKey>> = {
+  VARIANT_NOT_IN_LINK: "devLink.ai.reasons.VARIANT_NOT_IN_LINK",
+  NOT_IN_TEMPLATE: "devLink.ai.reasons.NOT_IN_TEMPLATE",
+  DUPLICATE: "devLink.ai.reasons.DUPLICATE",
+};
+
+const CONFIDENCE_KEYS: Readonly<Record<LinkIdentity["confidence"], TranslationKey>> = {
+  HIGH: "devLink.ai.confidenceValues.HIGH",
+  MEDIUM: "devLink.ai.confidenceValues.MEDIUM",
+  LOW: "devLink.ai.confidenceValues.LOW",
+};
+
+const MS_PER_SECOND = 1000;
+
+async function identify(link: string): Promise<AiState> {
+  try {
+    const response = await fetch("/api/dev/identify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ link }) });
+    const body = (await response.json()) as { identity?: LinkIdentity; error?: string };
+    if (response.ok && body.identity) return { status: "done", identity: body.identity };
+    return { status: "error", reason: body.error === "ANSWER" ? "ANSWER" : "UNAVAILABLE" };
+  } catch {
+    return { status: "error", reason: "UNAVAILABLE" };
+  }
 }
 
 type ColumnKey =
@@ -101,6 +147,9 @@ export function LinkReader({ locale }: { locale: Locale }) {
       case "brand":
         return reading.brand ?? none;
       case "category":
+        if (row.ai.status === "done") return row.ai.identity.category.name[locale];
+        if (row.ai.status === "loading") return t("devLink.ai.loading");
+        if (row.ai.status === "error") return t(AI_FAILURE_KEYS[row.ai.reason]);
         return t("devLink.values.categoryLater");
       case "modelCode":
         return reading.modelCode ?? none;
@@ -132,13 +181,47 @@ export function LinkReader({ locale }: { locale: Locale }) {
   const ALWAYS: readonly ColumnKey[] = ["result", "link"];
   const visibleColumns = COLUMNS.filter((column) => ALWAYS.includes(column) || rows.some((row) => cell(row, column) !== none));
 
+  const withSource = (value: IdentifiedValue) => t("devLink.ai.valueWithSource", { value: value.value, source: t(SOURCE_KEYS[value.source]) });
+
+  /** The AI layer's rows: brand and model as the model writes them, then only the fields it gave. */
+  function aiRowsOf(identity: LinkIdentity): { key: string; label: string; value: string }[] {
+    const seconds = formatNumber(identity.durationMs / MS_PER_SECOND, locale, { maximumFractionDigits: 1 });
+    return [
+      ...(identity.brand ? [{ key: "brand", label: t("devLink.ai.brand"), value: withSource(identity.brand) }] : []),
+      ...(identity.model ? [{ key: "model", label: t("devLink.ai.model"), value: withSource(identity.model) }] : []),
+      ...identity.fields.map((field) => ({ key: `field-${field.key}`, label: field.name[locale], value: withSource(field) })),
+      { key: "confidence", label: t("devLink.ai.confidence"), value: t(CONFIDENCE_KEYS[identity.confidence]) },
+      ...(identity.dropped.length > 0
+        ? [
+            {
+              key: "dropped",
+              label: t("devLink.ai.dropped"),
+              value: identity.dropped.map((item) => t("devLink.ai.droppedItem", { key: item.key, value: item.value, reason: t(REASON_KEYS[item.reason]) })).join(" · "),
+            },
+          ]
+        : []),
+      {
+        key: "runtime",
+        label: t("devLink.ai.runtime"),
+        value: t(identity.fromCache ? "devLink.ai.runtimeCached" : "devLink.ai.runtimeLive", { model: identity.modelId, seconds }),
+      },
+    ];
+  }
+
+  const latest = rows[0];
+  const aiRows = latest?.ai.status === "done" ? aiRowsOf(latest.ai.identity) : [];
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const link = draft.trim();
     if (!link) return;
     // Each "Çöz" starts over: the table shows only the link just read.
-    setRows([{ id: Date.now(), no: 1, link, result: readLinkText(link) }]);
+    const id = Date.now();
+    const result = readLinkText(link);
+    setRows([{ id, no: 1, link, result, ai: result.ok ? { status: "loading" } : { status: "idle" } }]);
     setDraft("");
+    if (!result.ok) return;
+    void identify(link).then((ai) => setRows((current) => current.map((row) => (row.id === id ? { ...row, ai } : row))));
   }
 
   return (
@@ -217,6 +300,21 @@ export function LinkReader({ locale }: { locale: Locale }) {
               ))}
             </tbody>
           </table>
+          {aiRows.length > 0 && (
+            <table className="w-full border-t border-border text-left text-body-sm" aria-label={t("devLink.ai.section")}>
+              <caption className="bg-surface-alt p-2 text-left text-caption font-semibold text-text-muted">{t("devLink.ai.section")}</caption>
+              <tbody>
+                {aiRows.map((aiRow) => (
+                  <tr key={aiRow.key} className="border-t border-divider align-top">
+                    <th scope="row" className="p-2 font-semibold whitespace-nowrap text-text-muted">
+                      {aiRow.label}
+                    </th>
+                    <td className="w-full p-2 break-words text-text">{aiRow.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
     </PageTemplate>
