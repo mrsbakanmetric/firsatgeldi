@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-19 · Claude Code
+- **Done:** data test brought forward (#138, #139); link reading order 1 → 2 → 3 (#140); path 1 link text (#141, #146: 19 real links, all five stores) and path 2 SerpApi client with saved answers (#142); Search and Add v5 link reading (#144); sample answer for any link removed (#145); round 1 report + 16 recordings (#147). SerpApi: at most 19 of 250 this month.
+- **Decided (user):** link reading order (`architecture.md` §10.1); the data test before the paused Phase 1 steps (plan §2); the 27 sample products stay, only the any-link sample answer removed (#145, two-step approval).
+- **Open:** product matching method — user decision waiting (recommended: closest 3 results, `docs/data_test_report.md` §6) · [ASSUMPTION] contract fields (`DetectedLink.brand`, `modelCode`, `IdentifyResult.linkProblem`) to write into `architecture.md` §16.1 · visual check of Search and Add v5 · path 3, store pages, seller and price fields · #137 (design-side log) still open.
+- **Next:** the user decides the matching method; then build it in `packages/sources` (no new SerpApi search without the user's go-ahead).
+
+---
+
 ## 2026-11-19 · claude.ai
 - **Done:** link reading design for Search and Add — v5 (#143: link card, confirm panel with seller and price paid empty + one info line, four edge states; tr/en, light/dark, 390/1280) and v5.1 (this PR: no chips while loading, matches #144). Panel [OPEN] item decided in `modules.md` and `architecture.md` §10.1 (#143).
 - **Decided (user):** platform from the link locked with "Değiştir"; product name from the search title, never from the link's name words; "Evet, bunu aldım" disabled until seller and price paid are typed; the 27 sample products stay (only the any-link sample answer removed, #145); the plan's old "sample answer for any link" line to be corrected by Claude Code.
