@@ -4,6 +4,14 @@ Shared memory across sessions (Claude Code and claude.ai). Newest entry first. E
 
 ---
 
+## 2026-11-19 · claude.ai
+- **Done:** link reading design for Search and Add — v5 (#143: link card, confirm panel with seller and price paid empty + one info line, four edge states; tr/en, light/dark, 390/1280) and v5.1 (this PR: no chips while loading, matches #144). Panel [OPEN] item decided in `modules.md` and `architecture.md` §10.1 (#143).
+- **Decided (user):** platform from the link locked with "Değiştir"; product name from the search title, never from the link's name words; "Evet, bunu aldım" disabled until seller and price paid are typed; the 27 sample products stay (only the any-link sample answer removed, #145); the plan's old "sample answer for any link" line to be corrected by Claude Code.
+- **Open:** data test report #147 — first Google Shopping result right in 4 of 16 searches; matching method [RECOMMENDED] (brand, model code, generation, bundle, condition; closest 3 when unsure) needs the user's decision and may change the link card (choose among 3) · project mirrors to refresh after merge · My Savings v2 check still waiting.
+- **Next:** user decides the matching method from #147; then the design side redraws the link card for "closest 3" if chosen.
+
+---
+
 ## 2026-11-16 → 19 · Claude Code
 - **Done:** Product Detail texts cleanup (#112) and contract spec (#113); Sign-in and Sign-up (#116 spec, #118, #119) ✅; Settings and Account (#121 spec, #123, #124, #125) ✅; My Profile `/profil` (#127 spec, #128, #129) ✅; Notifications page + bell panel (#132 spec, #133, #134, #135) ✅; flaky sign-up test fix (#122).
 - **Shared code:** `core` Turkish suffix phrases from tables — "12 Aralık'a kadar", "Ekim 2026'dan beri", "1 Kasım'da", "18.05'te"; Turkish times with a dot everywhere; endpoint registry `activityVariants`; live connection status; new canonical parts for Settings, Profile and Notifications.
