@@ -14,11 +14,20 @@ import { useApiMutation, useApiQuery } from "../../lib/api/hooks";
 import { searchAddHref } from "../../lib/handoff";
 
 const URL_PATTERN = /^https?:\/\/\S+\.\S+/i;
+/** A link pasted without "https://" ("amazon.com.tr/gp/aw/d/…"): a host name and a path, no spaces. */
+const BARE_LINK_PATTERN = /^(?:[a-z0-9-]+\.)+[a-z]{2,}\/\S*$/i;
 /** Uploads for identification (database.md §14b `uploads.purpose`). */
 export const IDENTIFY_PURPOSE = "IDENTIFY" as const;
 
 export function isLink(text: string): boolean {
-  return URL_PATTERN.test(text.trim());
+  const typed = text.trim();
+  return URL_PATTERN.test(typed) || BARE_LINK_PATTERN.test(typed);
+}
+
+/** The link as sent to `POST /identify` (a URL): "https://" added when it was pasted without one. */
+export function asLink(text: string): string {
+  const typed = text.trim();
+  return URL_PATTERN.test(typed) ? typed : `https://${typed}`;
 }
 
 /** The upload limits (types, size, count) — read before any upload, never typed into text. */
@@ -34,7 +43,7 @@ export function useLinkCheck(text: string, onError: (error: ApiError) => void): 
   const check = useApiMutation("identify", { onError });
   const { mutate, reset } = check;
   useEffect(() => {
-    if (link) mutate({ body: { link: typed } });
+    if (link) mutate({ body: { link: asLink(typed) } });
     else reset();
   }, [link, typed, mutate, reset]);
   return { link, pending: check.isPending, result: check.data?.data ?? null };
