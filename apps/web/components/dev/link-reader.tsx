@@ -47,6 +47,7 @@ const REASON_KEYS: Readonly<Record<DroppedValue["reason"], TranslationKey>> = {
   NOT_IN_TEMPLATE: "devLink.ai.reasons.NOT_IN_TEMPLATE",
   DUPLICATE: "devLink.ai.reasons.DUPLICATE",
   VALUE_REUSED: "devLink.ai.reasons.VALUE_REUSED",
+  TITLE_CHANGED: "devLink.ai.reasons.TITLE_CHANGED",
 };
 
 const CONFIDENCE_KEYS: Readonly<Record<LinkIdentity["confidence"], TranslationKey>> = {
@@ -189,6 +190,7 @@ export function LinkReader({ locale }: { locale: Locale }) {
     const seconds = formatNumber(identity.durationMs / MS_PER_SECOND, locale, { maximumFractionDigits: 1 });
     return [
       ...(identity.name ? [{ key: "name", label: t("devLink.ai.name"), value: identity.name }] : []),
+      ...(identity.stockCode ? [{ key: "stockCode", label: t("devLink.ai.stockCode"), value: identity.stockCode }] : []),
       ...(identity.brand ? [{ key: "brand", label: t("devLink.ai.brand"), value: withSource(identity.brand) }] : []),
       ...(identity.model ? [{ key: "model", label: t("devLink.ai.model"), value: withSource(identity.model) }] : []),
       ...identity.fields.map((field) => ({ key: `field-${field.key}`, label: field.name[locale], value: withSource(field) })),

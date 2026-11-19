@@ -118,13 +118,16 @@ describe("reading the model's answer", () => {
       ["https://www.teknosa.com/apple-iphone-18-pro-max-512gb-burgonya-akilli-telefon-p-100000065177", "Burgundy"],
       ["https://www.mediamarkt.com.tr/tr/product/_apple-mjxv4tua-iphone-18-pro-max-512-gb-akilli-telefon-bordo-1256778.html", "bordo"],
     ].map(([link, colour]) => readIdentifyAnswer(reading(link ?? ""), answer(colour ?? "")).name);
-    expect(names).toEqual(["Apple iPhone 18 Pro Max 512 GB Burgundy", "Apple iPhone 18 Pro Max 512 GB Burgundy", "Apple iPhone 18 Pro Max 512 GB Bordo"]);
+    // Trendyol's name is the link's title (the model gave none here, so the link words as they are).
+    expect(names).toEqual(["Apple Iphone 18 Pro Max 512gb Burgundy", "Apple iPhone 18 Pro Max 512 GB Burgundy", "Apple iPhone 18 Pro Max 512 GB Bordo"]);
   });
 
-  it("keeps knowledge out of the name and does not repeat the brand", () => {
-    expect(readIdentifyAnswer(AIRPODS, AIRPODS_ANSWER).name).toBe("Apple AirPods Pro 3");
+  it("keeps knowledge out of the name and does not repeat the brand (stores without a title in the link)", () => {
+    const teknosa = reading("https://www.teknosa.com/apple-iphone-18-pro-max-512gb-burgonya-akilli-telefon-p-100000065177");
+    const knowledge = JSON.stringify({ category: "phone", brand: "Apple", model: "iPhone 18 Pro Max", fields: [{ key: "storage", value: "1 TB" }], confidence: "HIGH" });
+    expect(readIdentifyAnswer(teknosa, knowledge).name).toBe("Apple iPhone 18 Pro Max");
     const repeated = JSON.stringify({ category: "phone", brand: "Apple", model: "Apple iPhone", fields: [], confidence: "LOW" });
-    expect(readIdentifyAnswer(AIRPODS, repeated).name).toBe("Apple iPhone");
+    expect(readIdentifyAnswer(teknosa, repeated).name).toBe("Apple iPhone");
   });
 
   it("Trendyol boot: a stock code given as the model is not also the size; the name reads as shoppers write it", () => {
@@ -145,8 +148,33 @@ describe("reading the model's answer", () => {
       }),
     );
     expect(identity.dropped).toEqual([{ key: "size", value: "0012360", reason: "VALUE_REUSED" }]);
-    expect(identity.name).toBe("Riccon 0012360 Kadın Siyah Çizme");
+    expect(identity.name).toBe("Riccon Siyah Cilt Kadin Cizme");
     expect(boot.attributes.generation).toBeNull();
+  });
+
+  it("Trendyol: the name is the brand and the title the link carries, with Turkish letters restored", () => {
+    const tights = reading("https://www.trendyol.com/katia-bony/ici-havlu-cocuk-tayt-antrasit-p-797541984?boutiqueId=61&merchantId=4227");
+    const answer = (title: string) =>
+      JSON.stringify({ category: "clothing", brand: "Katia Bony", model: null, fields: [{ key: "type", value: "tayt" }], title, confidence: "HIGH" });
+    expect(readIdentifyAnswer(tights, answer("İçi Havlu Çocuk Tayt Antrasit"))).toMatchObject({ name: "Katia Bony İçi Havlu Çocuk Tayt Antrasit", stockCode: null });
+
+    const boot = reading("https://www.trendyol.com/riccon/siyah-cilt-kadin-cizme-0012360-p-135941803?boutiqueId=61&merchantId=180000");
+    const bootAnswer = JSON.stringify({ category: "shoes", brand: "riccon", model: null, fields: [], title: "Siyah Cilt Kadın Çizme", confidence: "HIGH" });
+    expect(readIdentifyAnswer(boot, bootAnswer)).toMatchObject({ name: "Riccon Siyah Cilt Kadın Çizme", stockCode: "0012360" });
+
+    const iphone = reading("https://www.trendyol.com/apple/iphone-18-pro-max-512gb-burgundy-p-1198082362?boutiqueId=691662&merchantId=968");
+    const iphoneAnswer = JSON.stringify({ category: "phone", brand: "Apple", model: "iPhone 18 Pro Max", fields: [], title: "iPhone 18 Pro Max 512GB Burgundy", confidence: "HIGH" });
+    expect(readIdentifyAnswer(iphone, iphoneAnswer).name).toBe("Apple iPhone 18 Pro Max 512GB Burgundy");
+  });
+
+  it("Trendyol: a title the model changed is not used; the link words are", () => {
+    const tights = reading("https://www.trendyol.com/katia-bony/ici-havlu-cocuk-tayt-antrasit-p-797541984");
+    const identity = readIdentifyAnswer(
+      tights,
+      JSON.stringify({ category: "clothing", brand: "Katia Bony", model: null, fields: [], title: "İçi Havlu Kız Çocuk Tayt Antrasit", confidence: "HIGH" }),
+    );
+    expect(identity.name).toBe("Katia Bony Ici Havlu Cocuk Tayt Antrasit");
+    expect(identity.dropped).toEqual([{ key: "title", value: "İçi Havlu Kız Çocuk Tayt Antrasit", reason: "TITLE_CHANGED" }]);
   });
 
   it("reads placeholder values ('none', 'Bilinmiyor') as no value", () => {

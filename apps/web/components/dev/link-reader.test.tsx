@@ -18,6 +18,7 @@ const IPHONE_IDENTITY: LinkIdentity = {
   model: { value: "iPhone 18 Pro Max", source: "LINK" },
   fields: [{ key: "storage", kind: "VARIANT", name: { tr: "Depolama", en: "Storage" }, value: "512 GB", source: "LINK" }],
   name: "Apple iPhone 18 Pro Max 512 GB",
+  stockCode: null,
   dropped: [{ key: "colour", value: "black", reason: "VARIANT_NOT_IN_LINK" }],
   confidence: "HIGH",
   provider: "ollama",

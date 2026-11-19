@@ -19,10 +19,10 @@ import { join } from "node:path";
 import { z } from "zod";
 import { type Category, CATEGORIES, categoryByKey, type FieldKind, type LocalisedName } from "./categories.ts";
 import type { LinkTextReading } from "./link-text.ts";
-import { normaliseWords } from "./vocabulary.ts";
+import { fold, isCodeWord, normaliseWords } from "./vocabulary.ts";
 
 /** Bump when the prompt or schema changes: saved answers of an older prompt are not reused. */
-export const IDENTIFY_PROMPT_VERSION = 2;
+export const IDENTIFY_PROMPT_VERSION = 3;
 
 export interface ClassifierRequest {
   readonly system: string;
@@ -55,7 +55,7 @@ export interface IdentifiedField extends IdentifiedValue {
 export interface DroppedValue {
   readonly key: string;
   readonly value: string;
-  readonly reason: "NOT_IN_TEMPLATE" | "VARIANT_NOT_IN_LINK" | "DUPLICATE" | "VALUE_REUSED";
+  readonly reason: "NOT_IN_TEMPLATE" | "VARIANT_NOT_IN_LINK" | "DUPLICATE" | "VALUE_REUSED" | "TITLE_CHANGED";
 }
 
 export interface LinkIdentity {
@@ -70,6 +70,8 @@ export interface LinkIdentity {
    * knowledge never enter it. Null without a brand or a model.
    */
   readonly name: string | null;
+  /** The seller's stock code at the end of a Trendyol title ("0012360"): kept, never part of the name. */
+  readonly stockCode: string | null;
   /** What the model said but the rules above did not keep, for the data test report. */
   readonly dropped: readonly DroppedValue[];
   readonly confidence: "HIGH" | "MEDIUM" | "LOW";
@@ -114,9 +116,10 @@ export const IDENTIFY_SCHEMA: Readonly<Record<string, unknown>> = {
         required: ["key", "value"],
       },
     },
+    title: { type: ["string", "null"] },
     confidence: { type: "string", enum: [...CONFIDENCE] },
   },
-  required: ["category", "brand", "model", "fields", "confidence"],
+  required: ["category", "brand", "model", "fields", "title", "confidence"],
 };
 
 const categoryLine = (category: Category): string => {
@@ -133,7 +136,8 @@ export const IDENTIFY_SYSTEM_PROMPT = [
   "2. brand and model: the product's real brand and model name, written properly (e.g. 'Apple', 'AirPods Pro 3'). Null when you cannot tell.",
   "3. fields: only the listed fields of that category. A colour, size, storage or other variant only when the link words say it. Write values in Turkish when the link is Turkish.",
   "4. Never add price, weight, battery, features or any field that is not listed. Leave out what you do not know.",
-  "5. confidence: HIGH only when you are sure of both category and model.",
+  "5. title: the name words as a product title with Turkish letters and capitals restored. The same words in the same order: add, drop or change nothing. Leave out a stock code at the end.",
+  "6. confidence: HIGH only when you are sure of both category and model.",
   "",
   "Categories:",
   ...CATEGORIES.map(categoryLine),
@@ -170,6 +174,7 @@ const AnswerSchema = z.object({
   brand: z.string().nullable(),
   model: z.string().nullable(),
   fields: z.array(z.object({ key: z.string(), value: z.string() })),
+  title: z.string().nullable().optional(),
   confidence: z.enum(CONFIDENCE),
 });
 
@@ -233,13 +238,15 @@ export function readIdentifyAnswer(reading: LinkTextReading, text: string): Omit
     if (kept?.key === key && kept.value === value) usedValues.add(normaliseWords(value).join(" "));
   }
 
+  const titled = TITLE_IN_LINK.has(reading.platform) ? titledName(reading, brand, answer.title ?? null) : null;
   return {
     category: { key: category.key, name: category.name },
     brand,
     model,
     fields,
-    name: productName(brand, model, fields, category),
-    dropped,
+    name: titled?.name ?? productName(brand, model, fields, category),
+    stockCode: titled?.stockCode ?? null,
+    dropped: titled?.dropped ? [...dropped, titled.dropped] : dropped,
     confidence: answer.confidence,
   };
 }
@@ -261,6 +268,57 @@ function productName(brand: IdentifiedValue | null, model: IdentifiedValue | nul
   // A model that repeats the brand ("Apple iPhone") does not repeat it in the name.
   if (brand && model && normaliseWords(model.value)[0] === normaliseWords(brand.value)[0]) words.shift();
   return words.join(" ");
+}
+
+// ── The title a store writes into its link ───────────────────────────────────────────
+
+/**
+ * Stores whose link carries the seller's product title between the brand and the id
+ * (`trendyol.com/{brand}/{title}-p-{id}`, user finding 2026-11-19). For them the name is the
+ * brand and that title, written properly, not a reassembly of fields.
+ */
+const TITLE_IN_LINK: ReadonlySet<LinkTextReading["platform"]> = new Set(["TRENDYOL"]);
+/** A long run of digits or one starting with 0 ("0012360"), or a letter-and-digit code. */
+const STOCK_CODE = /^(?:\d{5,}|0\d+)$/;
+
+/** The title words of the link and the stock code at their end, if any. */
+function linkTitle(reading: LinkTextReading): { readonly words: readonly string[]; readonly stockCode: string | null } {
+  const words = [...reading.nameWords];
+  const last = words.at(-1) ?? "";
+  if (words.length > 1 && (STOCK_CODE.test(last) || isCodeWord(last))) return { words: words.slice(0, -1), stockCode: words.at(-1) ?? null };
+  return { words, stockCode: null };
+}
+
+/** Letters and digits only, folded: "İçi Havlu" and "ici-havlu" read the same. */
+const letters = (text: string): string => fold(text).replace(/[^\p{L}\p{N}]/gu, "");
+
+/**
+ * Link words with their first letter capitalised ("katia bony" → "Katia Bony"). Link words
+ * have lost their Turkish letters, so an "i" is not turned into "İ": it may have been "ı".
+ */
+const capitalisedWords = (words: readonly string[]): string => words.map((word) => word.replace(/^\p{L}/u, (letter) => letter.toUpperCase())).join(" ");
+
+interface TitledName {
+  readonly name: string;
+  readonly stockCode: string | null;
+  readonly dropped: DroppedValue | null;
+}
+
+/**
+ * Brand + the link's title. The model only restores Turkish letters and capitals: its title
+ * is kept when its letters equal the link's, in the same order; otherwise the link words are
+ * used as they are and the model's title is reported as changed.
+ */
+function titledName(reading: LinkTextReading, brand: IdentifiedValue | null, answerTitle: string | null): TitledName | null {
+  const { words, stockCode } = linkTitle(reading);
+  if (words.length === 0) return null;
+  const linkBrand = reading.brand ?? "";
+  const brandName = brand && letters(brand.value) === letters(linkBrand) ? capitalised(brand.value) : capitalisedWords(linkBrand.split(" ").filter(Boolean));
+  const proposed = clean(answerTitle);
+  const kept = proposed !== null && letters(proposed) === letters(words.join(" "));
+  const title = kept ? proposed : capitalisedWords(words);
+  const name = brandName && !letters(title).startsWith(letters(brandName)) ? `${brandName} ${title}` : title;
+  return { name, stockCode, dropped: proposed !== null && !kept ? { key: "title", value: proposed, reason: "TITLE_CHANGED" } : null };
 }
 
 // ── Saved answers and the call budget ───────────────────────────────────────────────
