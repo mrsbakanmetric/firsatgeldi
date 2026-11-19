@@ -1,6 +1,6 @@
 # Data test report — round 1: pasted store links (paths 1 and 2)
 
-> **Status:** step 23 in progress (🛠) · **Round:** 1 of the data test, plus the matching method on its saved answers (section 7) · **Date:** 2026-11-19 · **Owner:** implementation side (Claude Code)
+> **Status:** step 23 in progress (🛠) · **Round:** 1 of the data test, plus the matching method on its saved answers (section 7) and the new search text on the model-code links (section 8) · **Date:** 2026-11-19 · **Owner:** implementation side (Claude Code)
 > Scope and method: `docs/implementation_plan.md` Appendix A; link reading order: `docs/architecture.md` §10.1.
 
 ## 1. What this round measured
@@ -137,21 +137,61 @@ Compared with section 2: the first result was right in **4 of 16**; the method p
 
 ### Known limits
 
-- **Old search text.** These answers were saved with the round 1 search text: brand + model code alone for the 6 model-code links (2, 4, 8, 13, 17, 19). This measures the **matching method**, not the **new search text** of section 6 item 5. Measuring the new text needs up to **6 new searches** (one per model-code link). They are not run yet: they need the user's go-ahead (SerpApi budget, at most 19 of 250 used this month).
+- **Old search text.** These answers were saved with the round 1 search text: brand + model code alone for the 6 model-code links (2, 4, 8, 13, 17, 19). This section measures the **matching method**, not the **new search text** of section 6 item 5. Section 8 measures the new search text.
 - **Brand missing from the title.** The brand filter drops offers whose title leaves out the brand, even when they are the right product (e.g. "Watch Se 3 Gps 40 mm Yıldız Işığı …" for link 5, "S8 Pro Akıllı Robot Süpürge" for link 7). The right product was still found in those links.
 - **Link 7.** The proposed title names "Roborock … S8 Pro" but its spec line (10000 Pa) looks unusual. By the title rule above it counts as right; a store page or the store API (path 3) would confirm it.
 - **A wrong model code from path 1.** For link 19, path 1 read a wrong model code from a glued store slug (section 2). The model-code filter then dropped every offer that carries a code (39 of 40), so the answer is LOW with nothing to choose. The user sees "Ürünü bulamadık" + "Adıyla ara".
-- **Same title several times.** The closest three can show the same title twice (offers from different stores with identical titles, e.g. link 8). Grouping identical titles is not built.
-- **Titles only.** The method reads titles only. Seller, price, stock and the product page are not used (section 9).
+- **Same title several times.** Fixed in #154: the closest three show each normalised title once (link 8 now shows 2 distinct offers instead of 3 with one repeated).
+- **Titles only.** The method reads titles only. Seller, price, stock and the product page are not used (section 10).
 - **Small sample.** 16 searches, electronics only; no clothing link yet.
 
-## 8. Hidden-seller rule
+## 8. New search text on the model-code links (2026-11-19)
+
+The search text of section 6 item 5 (brand + model code + the key name words, generic words dropped; `pathTwoQuery`, #152), tried with the user's go-ahead on the model-code links. One live search per link (`--max-queries 1`); every answer is saved under `packages/sources/recordings/serpapi/`. The match is the method of section 7, as built in #152 and #154, unchanged.
+
+**Searched: 5 of the 6 links.** Link 19 (Lenovo, MediaMarkt) was not searched: its full link was not kept (section 2 lists only what path 1 read from it), so its new search text cannot be built. It needs the link again.
+
+| # | Search text (new) | Offers | Is the linked product in the answer? (position) | Confidence | Proposed (position · title) | Right? |
+|---|---|---|---|---|---|---|
+| 2 | `tcl 75T8C 75 190 4k ultra hd smart qled google tv` | 17 | **Yes** (1: "TCL 75T8CGTV 4K QLED 75" …") | HIGH | 9 · TCL 4K Ultra HD Ekran Uydu Alıcılı Google Smart QLED TV | **No** — the title names no model or size |
+| 4 | `apple MXP63TU airpods 4 nesil` | 39 | Yes (22, 35, 38 …) | HIGH | 22 · Apple AirPods 4 | Yes by the title rule (see below) |
+| 8 | `onvo 40VQ80F3FA 40 102 full hd whaleos qled tv` | 31 | **Yes** (2) | HIGH | 2 · Onvo 40VQ80F3FA 40'' 102 Ekran Uydu Alıcılı Full Hd Whaleos QLED TV | Yes |
+| 13 | `qromax D136B-114-02 2 kamerali set … guvenlik kamerasi seti` | 7 | **Yes** (2) | HIGH | 2 · Qromax 2 Kameralı Set … Dome Güvenlik Kamerası Seti D136b-114-02 | Yes |
+| 17 | `apple MJRR4TUA iphone 18 pro 256 gb bordo` | 5 | Yes (3) | HIGH | 3 · Apple iPhone 18 Pro | Yes |
+
+### Old and new search text on the same 5 links
+
+| | Old text (brand + model code) | New text |
+|---|---|---|
+| Linked product in the answer | 2 of 5 (4, 17) | **5 of 5** |
+| Right product proposed (HIGH) | 2 | **4** (4, 8, 13, 17) |
+| Wrong product proposed (HIGH) | 0 | **1** (2) |
+| LOW / no result | 3 (2, 8, 13) | 0 |
+
+**Finding:** the new search text brings the linked product into the answer every time; on these links the old text did so 2 times in 5. Two of them, Onvo 40VQ80F3FA and the Qromax set, are now found with their exact model code in the title.
+
+### What went wrong on link 2, and two other observations
+
+- **Link 2 — wrong proposal, two weaknesses of the method (not fixed here; code change in its own PR):**
+  1. "Ultra" in "4K **Ultra** HD" is read as a series word (like "S8 **Ultra**"). The link has no other generation, model name or series, so "brand + ultra" was enough to make the generic title of offer 9 look complete. "Ultra HD" (and "Full HD") should be read as one phrase.
+  2. The right offer (position 1) writes the model code with a suffix: "75T8C**GTV**". The model-code filter compares codes exactly, except for one trailing letter. So it read "75T8CGTV" as another model and dropped the offer. A short letter suffix (e.g. "GTV", and "TU" in "MXP63" vs "MXP63TU") should count as the same code.
+- **Link 4 — price far below the others:** the proposed "Apple AirPods 4" (position 22) costs a quarter to a third of the other "Apple AirPods 4" offers (positions 35 and 38), and the answer also has look-alikes ("Benzeri", "Appleb", "Uyumlu …"). The title rule counts it as right, but the price suggests a fake or a misleading listing. The method does not compare prices; whether it should is not decided [OPEN]. Offer 35 carries the exact code ("Mxp63") but is dropped for the same suffix reason as link 2.
+- **Link 17:** four of the five offers are "Apple iPhone 18 Pro **Max**"; the series filter dropped them correctly.
+
+### SerpApi usage
+
+- 5 live searches in this run (one per searched link; none failed, none retried).
+- **This month: at most 24 of 250** (19 before + 5).
+
+## 9. Hidden-seller rule
 
 The saved answers contain store and seller names (`source`) and prices. They stay in `packages/sources/recordings/` and in this report's raw data: `packages/mocks` and the app do not read them, and no seller name, store name or price from a search reaches a screen, a response, a notification or an e-mail (product rule 3). Seller and price of the user's own purchase still come only from the user (product rule 7).
 
-## 9. Open after this round
+## 10. Open after this round
 
-- Measuring the new search text (section 6 item 5) on the 6 model-code links: up to 6 new SerpApi searches, waiting for the user's go-ahead (section 7, known limits).
+- Link 2's two weaknesses (section 8): read "Ultra HD" / "Full HD" as one phrase, and accept a short letter suffix on a model code. This is a code change in its own PR, re-measured on the saved answers with no new search.
+- Link 19 (Lenovo): its full link is needed for the new search text (1 search left of the 6 approved).
+- Whether the match should treat a price far below the other offers of the same product as a warning (section 8, link 4) [OPEN].
 - Path 3: the stores' official APIs (the user applies for access).
 - Store product pages and site search per store (Appendix A sources), with the politeness rules; Trendyol answered 403 to an identifiable User-Agent and disallows `?q=` in robots.txt.
 - Fields not measured yet: seller, ratings, stock, delivery, installments, warranty, old price (Appendix A › Fields measured).
