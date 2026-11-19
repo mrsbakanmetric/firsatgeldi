@@ -1648,6 +1648,7 @@ export const en = {
       loading: "The model is thinking…",
       UNAVAILABLE: "Local model not running: is Ollama on?",
       ANSWER: "The model's answer could not be read",
+      name: "Product name",
       brand: "Brand (model)",
       model: "Product model",
       confidence: "Confidence",

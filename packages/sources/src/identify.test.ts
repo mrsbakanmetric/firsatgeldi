@@ -109,6 +109,23 @@ describe("reading the model's answer", () => {
     expect(identity.dropped).toEqual([]);
   });
 
+  it("writes the product name from brand, model and the variants the link carries (Trendyol, Teknosa, MediaMarkt)", () => {
+    const answer = (colour: string) =>
+      JSON.stringify({ category: "phone", brand: "Apple", model: "iPhone 18 Pro Max", fields: [{ key: "colour", value: colour }, { key: "storage", value: "512 GB" }], confidence: "HIGH" });
+    const names = [
+      ["https://www.trendyol.com/apple/iphone-18-pro-max-512gb-burgundy-p-1198082362?boutiqueId=691662&merchantId=968", "burgundy"],
+      ["https://www.teknosa.com/apple-iphone-18-pro-max-512gb-burgonya-akilli-telefon-p-100000065177", "Burgundy"],
+      ["https://www.mediamarkt.com.tr/tr/product/_apple-mjxv4tua-iphone-18-pro-max-512-gb-akilli-telefon-bordo-1256778.html", "bordo"],
+    ].map(([link, colour]) => readIdentifyAnswer(reading(link ?? ""), answer(colour ?? "")).name);
+    expect(names).toEqual(["Apple iPhone 18 Pro Max 512 GB Burgundy", "Apple iPhone 18 Pro Max 512 GB Burgundy", "Apple iPhone 18 Pro Max 512 GB Bordo"]);
+  });
+
+  it("keeps knowledge out of the name and does not repeat the brand", () => {
+    expect(readIdentifyAnswer(AIRPODS, AIRPODS_ANSWER).name).toBe("Apple AirPods Pro 3");
+    const repeated = JSON.stringify({ category: "phone", brand: "Apple", model: "Apple iPhone", fields: [], confidence: "LOW" });
+    expect(readIdentifyAnswer(AIRPODS, repeated).name).toBe("Apple iPhone");
+  });
+
   it("reads placeholder values ('none', 'Bilinmiyor') as no value", () => {
     const identity = readIdentifyAnswer(
       AIRPODS,

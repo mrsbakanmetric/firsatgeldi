@@ -187,6 +187,7 @@ export function LinkReader({ locale }: { locale: Locale }) {
   function aiRowsOf(identity: LinkIdentity): { key: string; label: string; value: string }[] {
     const seconds = formatNumber(identity.durationMs / MS_PER_SECOND, locale, { maximumFractionDigits: 1 });
     return [
+      ...(identity.name ? [{ key: "name", label: t("devLink.ai.name"), value: identity.name }] : []),
       ...(identity.brand ? [{ key: "brand", label: t("devLink.ai.brand"), value: withSource(identity.brand) }] : []),
       ...(identity.model ? [{ key: "model", label: t("devLink.ai.model"), value: withSource(identity.model) }] : []),
       ...identity.fields.map((field) => ({ key: `field-${field.key}`, label: field.name[locale], value: withSource(field) })),

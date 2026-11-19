@@ -63,6 +63,12 @@ export interface LinkIdentity {
   readonly brand: IdentifiedValue | null;
   readonly model: IdentifiedValue | null;
   readonly fields: readonly IdentifiedField[];
+  /**
+   * The product's name as a shopper writes it: brand + model + the variant values the link
+   * carries, in the category template's order ("Apple iPhone 18 Pro Max 512 GB Burgundy").
+   * Facts from the model's knowledge never enter it. Null without a brand or a model.
+   */
+  readonly name: string | null;
   /** What the model said but the rules above did not keep, for the data test report. */
   readonly dropped: readonly DroppedValue[];
   readonly confidence: "HIGH" | "MEDIUM" | "LOW";
@@ -204,14 +210,34 @@ export function readIdentifyAnswer(reading: LinkTextReading, text: string): Omit
     else dropped.push({ key, value, reason: "VARIANT_NOT_IN_LINK" });
   }
 
+  const brand = sourced(answer.brand);
+  const model = sourced(answer.model);
   return {
     category: { key: category.key, name: category.name },
-    brand: sourced(answer.brand),
-    model: sourced(answer.model),
+    brand,
+    model,
     fields,
+    name: productName(brand, model, fields, category),
     dropped,
     confidence: answer.confidence,
   };
+}
+
+/** "burgundy" → "Burgundy"; a value the model already capitalised ("iPhone", "GB") stays as written. */
+const capitalised = (value: string): string =>
+  value === value.toLocaleLowerCase("tr") ? value.replace(/^\p{L}/u, (letter) => letter.toLocaleUpperCase("tr")) : value;
+
+function productName(brand: IdentifiedValue | null, model: IdentifiedValue | null, fields: readonly IdentifiedField[], template: Category): string | null {
+  if (!brand && !model) return null;
+  const order = (key: string) => template.fields.findIndex((field) => field.key === key);
+  const variants = fields
+    .filter((field) => field.kind === "VARIANT" && field.source === "LINK")
+    .toSorted((a, b) => order(a.key) - order(b.key))
+    .map((field) => capitalised(field.value));
+  const words = [brand?.value, model?.value, ...variants].filter((part): part is string => Boolean(part));
+  // A model that repeats the brand ("Apple iPhone") does not repeat it in the name.
+  if (brand && model && normaliseWords(model.value)[0] === normaliseWords(brand.value)[0]) words.shift();
+  return words.join(" ");
 }
 
 // ── Saved answers and the call budget ───────────────────────────────────────────────

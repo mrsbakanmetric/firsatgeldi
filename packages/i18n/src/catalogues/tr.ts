@@ -1657,6 +1657,7 @@ export const tr = {
       loading: "Model düşünüyor…",
       UNAVAILABLE: "Yerel model çalışmıyor: Ollama açık mı?",
       ANSWER: "Modelin cevabı okunamadı",
+      name: "Ürün adı",
       brand: "Marka (model)",
       model: "Ürün modeli",
       confidence: "Güven",

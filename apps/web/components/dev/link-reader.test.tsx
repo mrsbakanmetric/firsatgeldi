@@ -17,6 +17,7 @@ const IPHONE_IDENTITY: LinkIdentity = {
   brand: { value: "Apple", source: "LINK" },
   model: { value: "iPhone 18 Pro Max", source: "LINK" },
   fields: [{ key: "storage", kind: "VARIANT", name: { tr: "Depolama", en: "Storage" }, value: "512 GB", source: "LINK" }],
+  name: "Apple iPhone 18 Pro Max 512 GB",
   dropped: [{ key: "colour", value: "black", reason: "VARIANT_NOT_IN_LINK" }],
   confidence: "HIGH",
   provider: "ollama",
@@ -152,6 +153,7 @@ describe.each(LOCALES)("link reading test page — AI layer (%s)", (locale) => {
     await readIphone();
     const ai = await screen.findByRole("table", { name: t("devLink.ai.section") });
     const rowOf = (label: string) => within(ai).getByRole("rowheader", { name: label }).closest("tr")?.textContent ?? "";
+    expect(rowOf(t("devLink.ai.name"))).toContain("Apple iPhone 18 Pro Max 512 GB");
     expect(rowOf(t("devLink.ai.model"))).toContain(t("devLink.ai.valueWithSource", { value: "iPhone 18 Pro Max", source: t("devLink.ai.sources.LINK") }));
     expect(rowOf(IPHONE_IDENTITY.fields[0]?.name[locale] ?? "")).toContain("512 GB");
     expect(rowOf(t("devLink.ai.dropped"))).toContain(t("devLink.ai.reasons.VARIANT_NOT_IN_LINK"));
