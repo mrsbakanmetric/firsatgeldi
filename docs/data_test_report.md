@@ -100,7 +100,6 @@ The saved answers contain store and seller names (`source`) and prices. They sta
 ## 8. Open after this round
 
 - Building the matching method (section 6) in `packages/sources`, tested on the 16 recordings (no new SerpApi search).
-- The link card for the closest three (design side).
 - Path 3: the stores' official APIs (the user applies for access).
 - Store product pages and site search per store (Appendix A sources), with the politeness rules; Trendyol answered 403 to an identifiable User-Agent and disallows `?q=` in robots.txt.
 - Fields not measured yet: seller, ratings, stock, delivery, installments, warranty, old price (Appendix A › Fields measured).
