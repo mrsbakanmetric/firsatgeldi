@@ -266,31 +266,6 @@ export function offerByListingUrl(url: string): OfferFixture | undefined {
   return OFFERS.find((item) => url.startsWith(listingUrl(item)));
 }
 
-/**
- * Any pasted link of these stores answers with a sample listing (development only; real
- * link resolution comes with Phase 2 — architecture.md §11): Hepsiburada → the design's
- * own purchase (Ace Pro 2 Flash Print at Kamera Dünyası), Trendyol → Dyson V15 at a sample seller.
- */
-const SAMPLE_LINK_OFFERS: Readonly<Partial<Record<PlatformKey, { product: ProductKey; seller: SellerKey }>>> = {
-  HEPSIBURADA: { product: "acePro2FlashPrint", seller: "kameraDunyasi" },
-  TRENDYOL: { product: "dysonV15", seller: "supurgeMerkezi" },
-};
-
-/** The listing of a pasted link: an exact fixture listing, otherwise the store's sample listing. */
-export function offerForLink(url: string): OfferFixture | undefined {
-  const exact = offerByListingUrl(url);
-  if (exact) return exact;
-  let host: string;
-  try {
-    host = new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return undefined;
-  }
-  const platform = (Object.keys(PLATFORMS) as PlatformKey[]).find((key) => PLATFORMS[key].domain === host);
-  const sample = platform ? SAMPLE_LINK_OFFERS[platform] : undefined;
-  return sample ? OFFERS.find((item) => item.product === sample.product && item.seller === sample.seller) : undefined;
-}
-
 export function productKeyOf(id: string): ProductKey | undefined {
   return (Object.keys(PRODUCTS) as ProductKey[]).find((key) => PRODUCTS[key].id === id);
 }

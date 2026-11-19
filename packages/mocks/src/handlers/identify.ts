@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 import type { ApiLocale, LinkProblem } from "@firsatgeldi/contracts";
 import { type LinkTextFailure, readLinkText } from "@firsatgeldi/sources";
 import { ATTRIBUTE_LABELS, BULK_SCREENSHOT, CATEGORIES, MATCH_CRITICAL_ATTRIBUTES, type ProductFixture, PRODUCT_LIST, PRODUCTS, SIMILAR } from "../fixtures/catalog";
-import { listingUrl, offerByListingUrl, type OfferFixture, offerForLink, OFFERS, type PlatformKey, PLATFORMS, SELLERS } from "../fixtures/market";
+import { listingUrl, offerByListingUrl, type OfferFixture, OFFERS, type PlatformKey, PLATFORMS, SELLERS } from "../fixtures/market";
 import { pick } from "../fixtures/text";
 import { ORDER_SCREENSHOT_EXTRACTION } from "../fixtures/users";
 import { newId } from "../ids";
@@ -201,7 +201,7 @@ interface LinkReading {
  * a listing of the fixtures (the user's own purchase with seller and price, design case A) →
  * path 1, the link text (`packages/sources`, the real reader) → path 2, the store search
  * (here: the product whose model code the link carries; no live search in the mock) →
- * the store's sample listing (development) → not found. Seller and price paid stay null
+ * not found. Seller and price paid stay null
  * unless a listing gives them: the user types them (design v5).
  */
 function readLink(link: string | null): LinkReading | null {
@@ -225,8 +225,6 @@ function readLink(link: string | null): LinkReading | null {
   const modelCode = text.reading.modelCode;
   const found = modelCode ? PRODUCT_LIST.find((product) => product.modelCodes.includes(modelCode)) : undefined;
   if (found) return { link: own, problem: null, product: found };
-  const sample = offerForLink(link);
-  if (sample) return listing(sample);
   return { link: own, problem: "NOT_FOUND", product: null };
 }
 
