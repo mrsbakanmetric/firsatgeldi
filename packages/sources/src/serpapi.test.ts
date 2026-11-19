@@ -30,6 +30,16 @@ describe("SerpApi client — never a real search in tests", () => {
     expect(Object.fromEntries(url.searchParams)).toMatchObject({ engine: "google_shopping", gl: "tr", hl: "tr", q: "asics 1042A237-101", api_key: KEY });
   });
 
+  it("reads a product page by its token under the same cap, saved like a search", async () => {
+    const fetch = fakeFetch(JSON.stringify({ product_results: {} }));
+    const client = createSerpApiClient({ apiKey: KEY, maxQueries: 1, cacheDir: dir, fetch });
+    expect((await client.googleProduct("token-1")).fromCache).toBe(false);
+    expect((await client.googleProduct("token-1")).fromCache).toBe(true);
+    await expect(client.googleShopping("next")).rejects.toBeInstanceOf(SerpApiBudgetError);
+    const url = new URL(String(fetch.mock.calls[0]?.[0]));
+    expect(Object.fromEntries(url.searchParams)).toMatchObject({ engine: "google_immersive_product", gl: "tr", hl: "tr", page_token: "token-1" });
+  });
+
   it("stops before sending when the run's cap is used up", async () => {
     const fetch = fakeFetch("{}");
     const client = createSerpApiClient({ apiKey: KEY, maxQueries: 1, cacheDir: dir, fetch });

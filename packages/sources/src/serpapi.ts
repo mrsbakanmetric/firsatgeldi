@@ -9,6 +9,8 @@ import { join } from "node:path";
 const SERPAPI_ENDPOINT = "https://serpapi.com/search.json";
 /** Google Shopping, Turkish results (Appendix A: `engine=google_shopping`, `gl=tr`, `hl=tr`). */
 const SHOPPING_PARAMS = { engine: "google_shopping", gl: "tr", hl: "tr", google_domain: "google.com.tr" } as const;
+/** Google's product page behind a Shopping result (`immersive_product_page_token`): every field the product carries. */
+const PRODUCT_PARAMS = { engine: "google_immersive_product", gl: "tr", hl: "tr", google_domain: "google.com.tr" } as const;
 const REQUEST_TIMEOUT_MS = 30_000;
 
 export class SerpApiBudgetError extends Error {
@@ -46,6 +48,8 @@ export interface SavedAnswer {
 
 export interface SerpApiClient {
   googleShopping(query: string): Promise<SavedAnswer>;
+  /** The product page of one Shopping result, by its `immersive_product_page_token`. */
+  googleProduct(pageToken: string): Promise<SavedAnswer>;
   /** Live searches spent in this run. */
   spent(): number;
 }
@@ -88,6 +92,7 @@ export function createSerpApiClient(config: SerpApiConfig): SerpApiClient {
 
   return {
     googleShopping: (query) => search({ ...SHOPPING_PARAMS, q: query }),
+    googleProduct: (pageToken) => search({ ...PRODUCT_PARAMS, page_token: pageToken }),
     spent: () => spent,
   };
 }
