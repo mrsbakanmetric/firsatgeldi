@@ -172,13 +172,13 @@ describe("pasted links — reading order of architecture.md §10.1 (design v5)",
   });
 
   it.each([
-    ["https://www.hepsiburada.com/herhangi-bir-urun-p-HBC0000XYZ", "Hepsiburada", "Kamera Dünyası", PRODUCTS.acePro2FlashPrint.id],
-    ["https://trendyol.com/marka/baska-bir-urun-p-12345?boutiqueId=1", "Trendyol", "Süpürge Merkezi", PRODUCTS.dysonV15.id],
-  ])("%s → the store's sample listing (development): own platform, seller, price", async (link, platformName, sellerName, productId) => {
+    ["https://www.hepsiburada.com/herhangi-bir-urun-p-HBC0000XYZ", "Hepsiburada"],
+    ["https://trendyol.com/marka/baska-bir-urun-p-12345?boutiqueId=1", "Trendyol"],
+  ])("%s → a product the link text does not lead to is not found: no sample listing, no seller, no price", async (link, platformName) => {
     const { data } = await t2.api.call("identify", { body: { link } });
-    expect(data.link).toMatchObject({ platformName, sellerName });
-    expect(data.link?.pricePaid).not.toBeNull();
-    expect(data.candidates[0]?.product.id).toBe(productId);
+    expect(data.linkProblem).toBe("NOT_FOUND");
+    expect(data.candidates).toEqual([]);
+    expect(data.link).toMatchObject({ platformName, sellerName: null, pricePaid: null });
   });
 
   it.each([

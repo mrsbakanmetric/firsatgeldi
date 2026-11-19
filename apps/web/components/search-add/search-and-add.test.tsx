@@ -543,13 +543,13 @@ describe.each(LOCALES)("Search and Add — design v4 — %s", (locale) => {
     expect(await screen.findByText(new RegExp(t("searchAdd.understood.changedShort", { label: chip.querySelector("span")?.textContent ?? "" })))).toBeDefined();
   });
 
-  it("a pasted Trendyol link (any path) is recognised in development: platform, seller and price come from the link", async () => {
+  it("a Trendyol link to a product the link text does not lead to: “not found” and “Adıyla ara”, never a sample product", async () => {
     show(locale);
     await userEvent.type(screen.getByRole("combobox"), "https://www.trendyol.com/herhangi-bir-urun-p-998877");
-    await userEvent.click(await screen.findByRole("button", { name: t("searchAdd.suggest.linkContinue") }, { timeout: 3000 }));
-    expect(await screen.findByRole("radio", { name: new RegExp(PRODUCTS.dysonV15.name[locale]), checked: true })).toBeDefined();
-    expect(await screen.findByText(t("searchAdd.confirm.prefilledLink"))).toBeDefined();
-    expect((screen.getByLabelText(t("searchAdd.confirm.seller")) as HTMLInputElement).value).toBe(SELLERS.supurgeMerkezi.name);
+    expect(await screen.findByText(t("searchAdd.suggest.linkProblem.NOT_FOUND"), undefined, { timeout: 3000 })).toBeDefined();
+    expect(screen.getByRole("button", { name: t("searchAdd.suggest.searchByName") })).toBeDefined();
+    expect(screen.queryByRole("button", { name: t("searchAdd.suggest.linkContinue") })).toBeNull();
+    expect(screen.queryByText(PRODUCTS.dysonV15.name[locale])).toBeNull();
   });
 });
 
