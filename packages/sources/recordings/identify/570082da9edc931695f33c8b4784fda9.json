@@ -1,0 +1,8 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "promptVersion": 3,
+  "input": "Store: TRENDYOL\nStore notes:\n- The first part of a Trendyol link is the brand's page, so the brand is certain.\n- The name words are the seller's product title without Turkish letters (ı ş ğ ü ö ç are written i s g u o c). Write values with Turkish letters.\n- Digits or a letter-and-digit code at the end of the name words are the seller's stock code: the model only when there is no model name, never a size, colour or storage.\n- A clothing size or shoe number is in the link only when 'beden' or 'numara' stands next to it.\nBrand from the link: icollagen\nName words: kolajen ve prebiyotik tablet 60 adet\nModel code: none",
+  "answer": "{\n  \"category\": \"other\",\n  \"brand\": \"icollagen\",\n  \"model\": null,\n  \"fields\": [\n    {\n      \"key\": \"type\",\n      \"value\": \"tablet\"\n    }\n  ],\n  \"title\": \"Kolajen ve prebiyotik tablet 60 adet\",\n  \"confidence\": \"HIGH\"\n  }",
+  "durationMs": 9084
+}

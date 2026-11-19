@@ -22,7 +22,7 @@ import type { LinkTextReading } from "./link-text.ts";
 import { fold, isCodeWord, normaliseWords } from "./vocabulary.ts";
 
 /** Bump when the prompt or schema changes: saved answers of an older prompt are not reused. */
-export const IDENTIFY_PROMPT_VERSION = 3;
+export const IDENTIFY_PROMPT_VERSION = 4;
 
 export interface ClassifierRequest {
   readonly system: string;
@@ -281,12 +281,24 @@ const TITLE_IN_LINK: ReadonlySet<LinkTextReading["platform"]> = new Set(["TRENDY
 /** A long run of digits or one starting with 0 ("0012360"), or a letter-and-digit code. */
 const STOCK_CODE = /^(?:\d{5,}|0\d+)$/;
 
-/** The title words of the link and the stock code at their end, if any. */
+const isStockCodeWord = (word: string): boolean => STOCK_CODE.test(word) || isCodeWord(word);
+
+/** The title words of the link and the stock code at their end, if any ("50333999"; codes in a row are one code). */
 function linkTitle(reading: LinkTextReading): { readonly words: readonly string[]; readonly stockCode: string | null } {
-  const words = [...reading.nameWords];
-  const last = words.at(-1) ?? "";
-  if (words.length > 1 && (STOCK_CODE.test(last) || isCodeWord(last))) return { words: words.slice(0, -1), stockCode: words.at(-1) ?? null };
-  return { words, stockCode: null };
+  let end = reading.nameWords.length;
+  while (end > 1 && isStockCodeWord(reading.nameWords[end - 1] ?? "")) end -= 1;
+  const code = reading.nameWords.slice(end);
+  return { words: reading.nameWords.slice(0, end), stockCode: code.length > 0 ? code.join("-") : null };
+}
+
+/** The model's title without a stock code it left at the end, when that code is the link's. */
+function withoutStockCode(title: string, stockCode: string | null): string {
+  if (!stockCode) return title;
+  const parts = title.trim().split(/\s+/);
+  for (let start = parts.length - 1; start > 0; start -= 1) {
+    if (letters(parts.slice(start).join(" ")) === letters(stockCode)) return parts.slice(0, start).join(" ");
+  }
+  return title;
 }
 
 /** Letters and digits only, folded: "İçi Havlu" and "ici-havlu" read the same. */
@@ -314,7 +326,8 @@ function titledName(reading: LinkTextReading, brand: IdentifiedValue | null, ans
   if (words.length === 0) return null;
   const linkBrand = reading.brand ?? "";
   const brandName = brand && letters(brand.value) === letters(linkBrand) ? capitalised(brand.value) : capitalisedWords(linkBrand.split(" ").filter(Boolean));
-  const proposed = clean(answerTitle);
+  const answered = clean(answerTitle);
+  const proposed = answered === null ? null : withoutStockCode(answered, stockCode);
   const kept = proposed !== null && letters(proposed) === letters(words.join(" "));
   const title = kept ? proposed : capitalisedWords(words);
   const name = brandName && !letters(title).startsWith(letters(brandName)) ? `${brandName} ${title}` : title;

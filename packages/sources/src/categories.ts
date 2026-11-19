@@ -95,7 +95,14 @@ export const CATEGORIES: readonly Category[] = [
     key: "clothing",
     name: { tr: "Giyim", en: "Clothing" },
     hint: "clothes",
-    fields: [field("type", "FACT", "Tip", "Type", "shirt, coat, dress …"), GENDER, COLOUR, SIZE, field("material", "VARIANT", "Kumaş", "Material", "fabric")],
+    fields: [
+      field("type", "FACT", "Tip", "Type", "shirt, coat, dress …"),
+      GENDER,
+      COLOUR,
+      SIZE,
+      field("fit", "VARIANT", "Kalıp", "Fit", "cut such as regular, slim, oversize; not a size"),
+      field("material", "VARIANT", "Kumaş", "Material", "fabric"),
+    ],
   },
   {
     key: "shoes",

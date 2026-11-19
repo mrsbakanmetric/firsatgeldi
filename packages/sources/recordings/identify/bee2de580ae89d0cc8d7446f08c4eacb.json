@@ -1,0 +1,8 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b",
+  "promptVersion": 3,
+  "input": "Store: TRENDYOL\nStore notes:\n- The first part of a Trendyol link is the brand's page, so the brand is certain.\n- The name words are the seller's product title without Turkish letters (ı ş ğ ü ö ç are written i s g u o c). Write values with Turkish letters.\n- Digits or a letter-and-digit code at the end of the name words are the seller's stock code: the model only when there is no model name, never a size, colour or storage.\n- A clothing size or shoe number is in the link only when 'beden' or 'numara' stands next to it.\nBrand from the link: apple\nName words: iphone 16 128gb laciverttas\nModel code: none",
+  "answer": "{\n  \"category\": \"phone\",\n  \"brand\": \"Apple\",\n  \"model\": \"iPhone 16\",\n  \"fields\": [\n    {\n      \"key\": \"storage\",\n      \"value\": \"128 GB\"\n    },\n    {\n      \"key\": \"colour\",\n      \"value\": \"Lacivert\"\n    }\n  ],\n  \"title\": \"iPhone 16 128GB Lacivert\",\n  \"confidence\": \"HIGH\"\n  }",
+  "durationMs": 12828
+}

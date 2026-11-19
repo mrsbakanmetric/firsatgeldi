@@ -167,6 +167,28 @@ describe("reading the model's answer", () => {
     expect(readIdentifyAnswer(iphone, iphoneAnswer).name).toBe("Apple iPhone 18 Pro Max 512GB Burgundy");
   });
 
+  it("Trendyol: codes at the end are one stock code; a title that kept it is still used; 'Regular Fit' is the fit, not the size", () => {
+    const shirt = reading("https://www.trendyol.com/pierre-cardin/beyaz-regular-fit-basic-tisort-50333999-vr013-p-1196828079?merchantId=150370&boutiqueId=61");
+    const identity = readIdentifyAnswer(
+      shirt,
+      JSON.stringify({
+        category: "clothing",
+        brand: "Pierre Cardin",
+        model: null,
+        fields: [
+          { key: "colour", value: "Beyaz" },
+          { key: "fit", value: "Regular Fit" },
+        ],
+        title: "Beyaz Regular Fit Basic Tişört 50333999",
+        confidence: "HIGH",
+      }),
+    );
+    expect(identity).toMatchObject({ name: "Pierre Cardin Beyaz Regular Fit Basic Tişört", stockCode: "50333999", dropped: [] });
+    expect(identity.fields.map(({ key, source }) => `${key}:${source}`)).toEqual(["colour:LINK", "fit:LINK"]);
+    const boot = reading("https://www.trendyol.com/riccon/siyah-cilt-kadin-cizme-0012360-p-135941803");
+    expect(readIdentifyAnswer(boot, JSON.stringify({ category: "shoes", brand: null, model: null, fields: [], title: null, confidence: "LOW" })).stockCode).toBe("0012360");
+  });
+
   it("Trendyol: a title the model changed is not used; the link words are", () => {
     const tights = reading("https://www.trendyol.com/katia-bony/ici-havlu-cocuk-tayt-antrasit-p-797541984");
     const identity = readIdentifyAnswer(
