@@ -102,7 +102,7 @@ const HAS_LETTER = /[a-z]/;
 /** A model code word mixes letters and digits and is at least this long ("1042a237", "ep2231", "1000xm5"); shorter ones are name parts ("v15", "s24"). */
 const MODEL_CODE_MIN_LENGTH = 5;
 /** A number with a unit is a size, capacity or resolution, never a model code ("256gb", "1tb", "40mm", "1080p"). */
-const MEASURE = /^\d+(?:[.,]\d+)?(?:gb|tb|mb|mm|cm|inc|inch|w|mah|hz|mp|k|p|ml|lt|kg|gr|g)$/;
+export const MEASURE = /^\d+(?:[.,]\d+)?(?:gb|tb|mb|mm|cm|inc|inch|w|mah|hz|mp|k|p|ml|lt|kg|gr|g)$/;
 /** One inch in centimetres: a screen size is written twice, "75-190" or "40-102". */
 const CM_PER_INCH = 2.54;
 /** Rounding slack for the centimetre value ("75" → 190.5 → "190"). */
@@ -118,7 +118,8 @@ function words(slug: string): string[] {
   return text.toLowerCase().split(WORD_SEPARATOR).filter(Boolean);
 }
 
-const isCodeWord = (word: string): boolean => word.length >= MODEL_CODE_MIN_LENGTH && HAS_DIGIT.test(word) && HAS_LETTER.test(word) && !MEASURE.test(word);
+/** Shared with the product match (matching.ts): offer titles carry model codes the same way. */
+export const isCodeWord = (word: string): boolean => word.length >= MODEL_CODE_MIN_LENGTH && HAS_DIGIT.test(word) && HAS_LETTER.test(word) && !MEASURE.test(word);
 const isNumberWord = (word: string | undefined): boolean => word !== undefined && HAS_DIGIT.test(word) && !HAS_LETTER.test(word);
 
 /** "75-190" / "40-102": a screen size in inches and centimetres, not part of a model code. */
